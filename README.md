@@ -16,7 +16,7 @@ Installation
 ------------
 
 ```shell
-yarn add react react-dom react-usefetcher
+yarn add react-usefetcher
 ```
 
 Usage
