@@ -29,11 +29,16 @@ import useFetch from 'react-usefetch'
 
 function App() {
   const [data, loading, error] = useFetch('https://example.com')
-  return error ? (
-    'Error!'
-  ) : loading ? (
-    'Loading!'
-  ) : (
+  
+  if (error) {
+    return 'Error!'
+  }
+  
+  if (loading) {
+    return 'Loading!'
+  }
+  
+  return (
     <code>
       <pre>{data}</pre>
     </code>
