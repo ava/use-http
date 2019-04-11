@@ -6,6 +6,7 @@
     </a>
 </p>
 
+<img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
 Need to fetch some data? Try this one out.
 
 ### Examples
@@ -16,7 +17,7 @@ Installation
 ------------
 
 ```shell
-yarn add react-usefetcher
+yarn add use-http
 ```
 
 Usage
@@ -24,15 +25,20 @@ Usage
 
 ### Stateless
 ```jsx 
-import useFetch from 'react-usefetch'
+import useFetch from 'use-http'
 
 function App() {
   const [data, loading, error] = useFetch('https://example.com')
-  return error ? (
-    'Error!'
-  ) : loading ? (
-    'Loading!'
-  ) : (
+  
+  if (error) {
+    return 'Error!'
+  }
+  
+  if (loading) {
+    return 'Loading!'
+  }
+  
+  return (
     <code>
       <pre>{data}</pre>
     </code>
