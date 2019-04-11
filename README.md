@@ -25,7 +25,7 @@ Usage
 
 ### Stateless
 ```jsx 
-import useFetch from 'react-usefetch'
+import useFetch from 'use-http'
 
 function App() {
   const [data, loading, error] = useFetch('https://example.com')
