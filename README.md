@@ -17,7 +17,7 @@ Installation
 ------------
 
 ```shell
-yarn add react-usefetcher
+yarn add use-http
 ```
 
 Usage
