@@ -1,6 +1,6 @@
 {
-  "name": "react-usefetcher",
-  "version": "0.1.12",
+  "name": "react-use-http",
+  "version": "0.1.13",
   "main": "src/useFetch.js",
   "dependencies": {
     "react": "^16.8.6",
