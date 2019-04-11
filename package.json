@@ -1,5 +1,5 @@
 {
-  "name": "react-usefetch",
+  "name": "use-http",
   "version": "0.1.0",
   "private": true,
   "main": "src/useFetch.js",
