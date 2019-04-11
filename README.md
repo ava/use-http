@@ -1,4 +1,4 @@
-<h1 align="center">usePortal</h1>
+<h1 align="center">useFetch</h1>
 <p align="center">🐶 A React hook for making http requests</p>
 <p align="center">
     <a href="https://github.com/alex-cory/react-useportal/pulls">
@@ -16,7 +16,7 @@ Installation
 ------------
 
 ```shell
-yarn add react react-dom react-usefetch
+yarn add react-usefetcher
 ```
 
 Usage
@@ -52,5 +52,5 @@ Options
 const options = {
   method: 'POST'
 }
-const [data, loading, error] = usePortal(url, options)
+const [data, loading, error] = useFetch(url, options)
 ```
