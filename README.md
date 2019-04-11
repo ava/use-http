@@ -52,5 +52,5 @@ Options
 const options = {
   method: 'POST'
 }
-const [data, loading, error] = usePortal(url, options)
+const [data, loading, error] = useFetch(url, options)
 ```
