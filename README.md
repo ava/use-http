@@ -6,6 +6,7 @@
     </a>
 </p>
 
+<img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
 Need to fetch some data? Try this one out.
 
 ### Examples
