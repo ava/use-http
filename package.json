@@ -1,6 +1,6 @@
 {
   "name": "react-usefetcher",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "main": "src/useFetch.js",
   "dependencies": {
     "react": "^16.8.6",
