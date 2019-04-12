@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback } from 'react'
 
 export function useFetch(url, options) {
+  // if on server, return loading
+  if (!global.window) return [null, true, null]
+
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
