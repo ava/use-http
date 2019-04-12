@@ -8,7 +8,7 @@ log() {
 }
 
 if [ ! -d "$MAIN_BUILD_DIRECTORY" ]; then
-  log "No build directory existed, plesae build before running postbuild..."
+  log "No build directory existed, please build before running postbuild..."
 fi
 
 COMPILED_MAIN_FILE=$(find ./build/static -name 'main.*.chunk.js')
