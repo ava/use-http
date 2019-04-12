@@ -53,7 +53,7 @@ function App() {
 Or you can use one of the nice helper hooks. All of them accept the second `options` parameter.
 
 ```jsx
-import { useGet, usePost, usePatch, useDelete } from 'use-http'
+import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
 
 function App() {
   const [data, loading, error] = useGet('https://example.com')
