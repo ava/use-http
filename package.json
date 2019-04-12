@@ -16,7 +16,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build && ./src/postBuild.sh",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepublishOnly": "yarn build"
   },
   "eslintConfig": {
     "extends": "react-app"
