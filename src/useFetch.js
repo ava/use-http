@@ -22,3 +22,5 @@ export function useFetch(url, options) {
   }, [fetchData])
   return [data, loading, error]
 }
+
+export default useFetch
