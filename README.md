@@ -45,6 +45,28 @@ function App() {
   )
 }
 ```
+or you can use one of the nice helper hooks
+```
+import { useGet, usePost, usePatch, useDelete } from 'use-http'
+
+function App() {
+  const [data, loading, error] = useGet('https://example.com')
+  
+  if (error) {
+    return 'Error!'
+  }
+  
+  if (loading) {
+    return 'Loading!'
+  }
+  
+  return (
+    <code>
+      <pre>{data}</pre>
+    </code>
+  )
+}
+```
 
 Options
 -----
