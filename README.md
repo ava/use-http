@@ -46,6 +46,7 @@ function App() {
 }
 ```
 or you can use one of the nice helper hooks
+
 ```jsx
 import { useGet, usePost, usePatch, useDelete } from 'use-http'
 
