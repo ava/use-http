@@ -32,6 +32,7 @@ function App() {
     method: 'POST',
     body: {}, // whatever data you want to send
   }
+  
   const [data, loading, error] = useFetch('https://example.com', options)
   
   if (error) {
