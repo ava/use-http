@@ -74,12 +74,3 @@ Options
 | Option                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `options` | This is exactly what you would pass to the normal js `fetch` |
-
-
-### Option Usage
-```js
-const options = {
-  method: 'POST'
-}
-const [data, loading, error] = useFetch(url, options)
-```
