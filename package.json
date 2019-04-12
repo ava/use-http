@@ -1,11 +1,12 @@
 {
   "name": "use-usefetcher",
-  "version": "0.1.16",
-  "main": "src/useFetch.js",
+  "version": "0.1.17",
+  "main": "index.js",
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "2.1.8"
+    "react-scripts": "2.1.8",
+    "react-usefetcher": "^0.1.12"
   },
   "scripts": {
     "start": "react-scripts start",
