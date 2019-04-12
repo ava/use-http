@@ -1,6 +1,6 @@
 {
-  "name": "use-usefetcher",
-  "version": "0.1.21",
+  "name": "use-http",
+  "version": "0.1.22",
   "main": "src/main.js",
   "dependencies": {
     "react": "^16.8.6",
