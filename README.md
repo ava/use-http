@@ -7,7 +7,7 @@
 </p>
 
 <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
-Need to fetch some data? Try this one out.
+Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That means it works with SSR (server side rendering).
 
 ### Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Code Sandbox Example</a>
@@ -27,7 +27,11 @@ Usage
 import useFetch from 'use-http'
 
 function App() {
-  const options = { method: 'GET' } // whatever other options you want like headers
+  // add whatever other options you would add to `fetch` such as headers
+  const options = {
+    method: 'POST',
+    body: {}, // whatever data you want to send
+  }
   const [data, loading, error] = useFetch('https://example.com', options)
   
   if (error) {
