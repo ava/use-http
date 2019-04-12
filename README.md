@@ -23,7 +23,6 @@ yarn add use-http
 Usage
 -----
 
-### Stateless
 ```jsx 
 import useFetch from 'use-http'
 
