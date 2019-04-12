@@ -1,6 +1,6 @@
 {
   "name": "use-usefetcher",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "main": "index.js",
   "dependencies": {
     "react": "^16.8.6",
