@@ -12,7 +12,12 @@ export function useFetch(url, options) {
     try {
       setLoading(true)
       const response = await fetch(url, options)
-      const data = await response.json()
+      let data = null
+      try {
+        data = await response.json()
+      } catch (Error) {
+        data = await response.text()
+      }
       setData(data)
       setLoading(false)
     } catch (err) {
@@ -23,6 +28,7 @@ export function useFetch(url, options) {
   useEffect(() => {
     fetchData()
   }, [fetchData])
+
   return [data, loading, error]
 }
 
