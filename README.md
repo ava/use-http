@@ -23,12 +23,35 @@ yarn add use-http
 Usage
 -----
 
-### Stateless
 ```jsx 
 import useFetch from 'use-http'
 
 function App() {
-  const [data, loading, error] = useFetch('https://example.com')
+  const options = { method: 'GET' } // whatever other options you want like headers
+  const [data, loading, error] = useFetch('https://example.com', options)
+  
+  if (error) {
+    return 'Error!'
+  }
+  
+  if (loading) {
+    return 'Loading!'
+  }
+  
+  return (
+    <code>
+      <pre>{data}</pre>
+    </code>
+  )
+}
+```
+Or you can use one of the nice helper hooks. All of them accept the second `options` parameter.
+
+```jsx
+import { useGet, usePost, usePatch, useDelete } from 'use-http'
+
+function App() {
+  const [data, loading, error] = useGet('https://example.com')
   
   if (error) {
     return 'Error!'
@@ -51,12 +74,3 @@ Options
 | Option                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `options` | This is exactly what you would pass to the normal js `fetch` |
-
-
-### Option Usage
-```js
-const options = {
-  method: 'POST'
-}
-const [data, loading, error] = useFetch(url, options)
-```
