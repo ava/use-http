@@ -74,6 +74,17 @@ function App() {
 }
 ```
 
+Hooks
+----
+| Option                | Description                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| `useFetch` | The base hook |
+| `useGet` | Defaults to a GET request |
+| `usePost` | Defaults to a POST request |
+| `usePut` | Defaults to a PUT request |
+| `usePatch` | Defaults to a PATCH request |
+| `useDelete` | Defaults to a DELETE request |
+
 Options
 -----
 | Option                | Description                                                                              |
