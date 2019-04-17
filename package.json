@@ -1,7 +1,7 @@
 {
   "name": "use-http-test",
-  "version": "0.1.33",
-  "main": "src/main.js",
+  "version": "0.1.34",
+  "main": "build/main.js",
   "keywords": [
     "react hook",
     "isomorphic",
