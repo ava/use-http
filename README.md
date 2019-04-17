@@ -33,7 +33,10 @@ function App() {
     body: {}, // whatever data you want to send
   }
   
-  const [data, loading, error] = useFetch('https://example.com', options)
+  var [data, loading, error] = useFetch('https://example.com', options)
+  
+  // want to use object destructuring? You can do that too like:
+  var { data, loading, error } = useFetch('https://example.com', options)
   
   if (error) {
     return 'Error!'
