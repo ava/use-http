@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 
 export function useFetch(url, options) {
   // if on server, return loading
-  if (!global.window) return [null, true, null]
+  if (!global.window) return Object.assign([null, true, null], { data: null, loading: true, error: null })
 
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -29,7 +29,7 @@ export function useFetch(url, options) {
     fetchData()
   }, [fetchData])
 
-  return [data, loading, error]
+  return Object.assign([data, loading, error], { data, loading, error })
 }
 
 export default useFetch
