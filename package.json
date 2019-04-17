@@ -1,7 +1,16 @@
 {
   "name": "use-http",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "main": "src/main.js",
+  "keywords": [
+    "react hook",
+    "isomorphic",
+    "use",
+    "http",
+    "fetch",
+    "hook",
+    "react"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/alex-cory/react-usefetch.git"
