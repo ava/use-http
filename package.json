@@ -1,6 +1,6 @@
 {
-  "name": "use-http-test",
-  "version": "0.1.29",
+  "name": "use-http",
+  "version": "0.1.30",
   "main": "src/main.js",
   "peerDependencies": {
     "react": "^16.8.0"
@@ -8,7 +8,7 @@
   "dependencies": {
     "react": "^16.8.6",
     "react-scripts": "2.1.8",
-    "use-http-test": "^0.1.28"
+    "use-http-test": "^0.1.29"
   },
   "devDependencies": {
     "react-dom": "^16.8.6"
