@@ -1,13 +1,12 @@
 {
-  "name": "use-http",
-  "version": "0.1.23",
+  "name": "use-http-test",
+  "version": "0.1.25",
   "main": "build/main.js",
   "peerDependencies": {
     "react": "^16.8.0"
   },
   "dependencies": {
-    "react-scripts": "2.1.8",
-    "react-usefetcher": "^0.1.12"
+    "react-scripts": "2.1.8"
   },
   "devDependencies": {
     "react-dom": "^16.8.6"
