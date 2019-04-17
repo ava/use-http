@@ -8055,15 +8055,6 @@ react-scripts@2.1.8:
   optionalDependencies:
     fsevents "1.2.4"
 
-react-usefetcher@^0.1.12:
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/react-usefetcher/-/react-usefetcher-0.1.12.tgz#a29a00d943b2d4b865186d089153b2b10d2e2e3e"
-  integrity sha512-wNXmlovwP/71pDlIaGv8+tZDOsYVqav//ElziFId5gQrNsYeEDdCjtqRPQQwgNHwZW2zKYTTNUBJkK6RXePn4Q==
-  dependencies:
-    react "^16.8.6"
-    react-dom "^16.8.6"
-    react-scripts "2.1.8"
-
 react@^16.8.6:
   version "16.8.6"
   resolved "https://registry.yarnpkg.com/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
@@ -9600,6 +9591,23 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+use-http-test@^0.1.28:
+  version "0.1.28"
+  resolved "https://registry.yarnpkg.com/use-http-test/-/use-http-test-0.1.28.tgz#7e5fb174c8bb2225d7b92e42dbb9258d0c370f85"
+  integrity sha512-o3POoy1csWkJdLF+ih+MWQOkmHXVDdNde7hbLyj0avZ4uizHn/gQz4LXENYRFS6fBtNcdpRAGnRE6GgKTV9eog==
+  dependencies:
+    react "^16.8.6"
+    react-scripts "2.1.8"
+
+use-http-test@^0.1.29:
+  version "0.1.29"
+  resolved "https://registry.yarnpkg.com/use-http-test/-/use-http-test-0.1.29.tgz#c179c275e563f34ab609bb09e50adaa4c2eb011a"
+  integrity sha512-y6HOfus8fNZOwg/Hzy47tF9a4p54NUfi8cKS9v3XDJ8cV7ZSMw3fod8qEWV4hBlMLv9q6df9+nJcIf7//hlP4w==
+  dependencies:
+    react "^16.8.6"
+    react-scripts "2.1.8"
+    use-http-test "^0.1.28"
 
 use@^3.1.0:
   version "3.1.1"

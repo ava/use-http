@@ -1,8 +1,6 @@
 import React from 'react';
-// import logo from './logo.svg';
 import './App.css';
-// import useFetch from 'react-usefetcher'
-import useFetch from './main'
+import useFetch from './useFetch'
 
 const App = () => {
   const [data, loading, error] = useFetch('https://api.etilbudsavis.dk/v2/dealerfront?country_id=DK')
