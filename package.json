@@ -14,6 +14,10 @@
     "hook",
     "react"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alex-cory/react-usefetch.git"
+  },
   "files": [
     "build/index.js"
   ],
