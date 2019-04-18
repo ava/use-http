@@ -1,6 +1,6 @@
 {
-  "name": "michael-deploy-test-two",
-  "version": "0.0.44",
+  "name": "michael-deploy-test-three",
+  "version": "0.0.2",
   "main": "build/index.js",
   "files": [
     "build/index.js"
@@ -20,7 +20,7 @@
     "webpack-cli": "^3.3.0"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack --mode production",
+    "build": "NODE_ENV=production webpack -p --mode production",
     "dev": "webpack --mode development",
     "prepublishOnly": "yarn build"
   }
