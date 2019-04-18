@@ -1,6 +1,6 @@
 {
   "name": "michael-deploy-test-three",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "main": "build/index.js",
   "files": [
     "build/index.js"
