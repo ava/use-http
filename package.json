@@ -1,7 +1,10 @@
 {
   "name": "use-http",
-  "version": "0.1.23",
-  "main": "build/main.js",
+  "version": "0.1.24",
+  "main": "build/index.js",
+  "files": [
+    "build/index.js"
+  ],
   "peerDependencies": {
     "react": "^16.8.0"
   },
@@ -13,19 +16,8 @@
     "react-dom": "^16.8.6"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build && ./src/postBuild.sh",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development",
     "prepublishOnly": "yarn build"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  }
 }
