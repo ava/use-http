@@ -1,6 +1,6 @@
 {
-  "name": "use-http",
-  "version": "0.1.24",
+  "name": "michael-deploy-test-two",
+  "version": "0.0.38",
   "main": "build/index.js",
   "files": [
     "build/index.js"
@@ -8,12 +8,15 @@
   "peerDependencies": {
     "react": "^16.8.0"
   },
-  "dependencies": {
-    "react-scripts": "2.1.8",
-    "react-usefetcher": "^0.1.12"
-  },
   "devDependencies": {
-    "react-dom": "^16.8.6"
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0"
   },
   "scripts": {
     "build": "webpack --mode production",
