@@ -1,7 +1,19 @@
 {
   "name": "use-http",
   "version": "0.1.38",
+  "homepage": "https://codesandbox.io/embed/km04k9k9x5",
   "main": "build/index.js",
+  "keywords": [
+    "react hook",
+    "react-hook",
+    "use",
+    "isomorphic",
+    "use",
+    "http",
+    "fetch",
+    "hook",
+    "react"
+  ],
   "files": [
     "build/index.js"
   ],
