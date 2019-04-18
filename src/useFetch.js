@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 
 export function useFetch(url, options) {
   // if on server, return loading
-  if (!global.window) return Object.assign([null, true, null], { data: null, loading: true, error: null })
+  if (typeof window === 'undefined') return Object.assign([null, true, null], { data: null, loading: true, error: null })
 
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)

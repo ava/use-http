@@ -21,6 +21,7 @@ module.exports = {
     library: 'index',
     libraryTarget: 'umd',
     filename: 'index.js',
+    globalObject: "this"
   },
   externals: {
     react: {
