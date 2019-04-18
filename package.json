@@ -1,6 +1,6 @@
 {
   "name": "use-http-test-deploy",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "build/index.js",
   "files": [
     "build/index.js"
@@ -13,7 +13,7 @@
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
-    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
     "eslint-plugin-react-hooks": "^1.6.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
