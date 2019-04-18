@@ -1,6 +1,6 @@
 {
-  "name": "michael-deploy-test-two",
-  "version": "0.0.38",
+  "name": "use-http",
+  "version": "0.1.24",
   "main": "build/index.js",
   "files": [
     "build/index.js"
