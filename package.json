@@ -1,6 +1,6 @@
 {
   "name": "use-http-test-deploy",
-  "version": "0.0.20",
+  "version": "0.0.22",
   "main": "build/index.js",
   "files": [
     "build/index.js"
@@ -10,10 +10,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.4.3",
     "babel-loader": "^8.0.5",
-    "babel-polyfill": "^6.26.0",
     "eslint-plugin-react-hooks": "^1.6.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
@@ -21,7 +22,7 @@
     "webpack-cli": "^3.3.0"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack -p --mode production",
+    "build": "webpack --mode production",
     "dev": "webpack --mode development",
     "prepublishOnly": "yarn build"
   }
