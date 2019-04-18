@@ -1,8 +1,8 @@
 {
   "name": "use-http",
-  "version": "0.1.37",
+  "version": "0.1.38",
   "homepage": "https://codesandbox.io/embed/km04k9k9x5",
-  "main": "src/main.js",
+  "main": "build/index.js",
   "keywords": [
     "react hook",
     "react-hook",
@@ -18,31 +18,27 @@
     "type": "git",
     "url": "https://github.com/alex-cory/react-usefetch.git"
   },
+  "files": [
+    "build/index.js"
+  ],
   "peerDependencies": {
     "react": "^16.8.0"
   },
-  "dependencies": {
-    "react": "^16.8.6",
-    "react-scripts": "2.1.8",
-    "use-http-test": "^0.1.29"
-  },
   "devDependencies": {
-    "react-dom": "^16.8.6"
+    "@babel/core": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.4.3",
+    "babel-loader": "^8.0.5",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build && ./src/postBuild.sh",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development",
     "prepublishOnly": "yarn build"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  }
 }
