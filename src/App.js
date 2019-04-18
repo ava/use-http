@@ -4,7 +4,9 @@ import useFetch from './useFetch'
 
 const App = () => {
   const [data, loading, error] = useFetch('https://api.etilbudsavis.dk/v2/dealerfront?country_id=DK')
+
   if (loading) return 'Loading...'
+
   return (
     <div className="App">
       <header className="App-header">
