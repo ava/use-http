@@ -31,7 +31,6 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.4.3",
     "babel-loader": "^8.0.5",
-    "eslint-plugin-react-hooks": "^1.6.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "webpack": "^4.30.0",
