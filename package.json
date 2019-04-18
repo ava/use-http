@@ -1,6 +1,6 @@
 {
-  "name": "use-http-test-deploy",
-  "version": "0.0.22",
+  "name": "use-http",
+  "version": "0.1.38",
   "main": "build/index.js",
   "files": [
     "build/index.js"
