@@ -93,3 +93,10 @@ Options
 | Option                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `options` | This is exactly what you would pass to the normal js `fetch` |
+
+Todos
+------
+ - [ ] Make abortable (add `abort` to abort the http request)
+ - [ ] Make work with React Suspense
+ - [ ] Allow option to fetch on server instead of just having `loading` state
+ - [ ] Allow option for callback for response.json() vs response.text()
