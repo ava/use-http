@@ -1,9 +1,12 @@
 {
   "name": "use-http-test",
-  "version": "0.1.35",
-  "main": "build/main.js",
+  "version": "0.1.36",
+  "homepage": "https://codesandbox.io/embed/km04k9k9x5",
+  "main": "src/main.js",
   "keywords": [
     "react hook",
+    "react-hook",
+    "use",
     "isomorphic",
     "use",
     "http",
