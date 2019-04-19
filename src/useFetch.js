@@ -1,16 +1,36 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useCallback, useReducer } from 'react'
+
+const initialState = {
+  data: null,
+  loading: true,
+  error: null
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'request':
+      return { ...state, loading: true }
+    case 'success':
+      return { data: action.payload, loading: false, error: null }
+    case 'fail':
+      return { ...state, loading: false, error: action.payload }
+    default:
+      return state
+  }
+}
 
 export function useFetch(url, options) {
   // if on server, return loading
   if (typeof window === 'undefined') return Object.assign([null, true, null], { data: null, loading: true, error: null })
-
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  
+//   const [data, setData] = useState(null)
+//   const [loading, setLoading] = useState(true)
+//   const [error, setError] = useState(null)
+  const [{ data, loading, error }, dispatch] = useReducer(reducer, initialState)
 
   const fetchData = useCallback(async () => {
     try {
-      setLoading(true)
+      dispatch({ type: 'request' })
       const response = await fetch(url, options)
       let data = null
       try {
@@ -18,10 +38,9 @@ export function useFetch(url, options) {
       } catch (Error) {
         data = await response.text()
       }
-      setData(data)
-      setLoading(false)
+      dispatch({ type: 'success', payload: data })
     } catch (err) {
-      setError(err)
+      dispatch({ type: 'fail', payload: err })
     }
   }, [url])
 
