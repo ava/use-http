@@ -45,7 +45,7 @@ function App() {
       no: 'way',
     })
     // OR
-   request.post({
+    request.post({
       no: 'way',
     })
   }
