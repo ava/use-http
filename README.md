@@ -29,52 +29,66 @@ import useFetch from 'use-http'
 function App() {
   // add whatever other options you would add to `fetch` such as headers
   const options = {
-    method: 'POST',
-    body: {}, // whatever data you want to send
+    onMount: true // will fire on componentDidMount
   }
   
-  var [data, loading, error] = useFetch('https://example.com', options)
+  var [data, loading, error, request] = useFetch('https://example.com', options)
   
-  // want to use object destructuring? You can do that too like:
-  var { data, loading, error } = useFetch('https://example.com', options)
+  // if you want to access the http methods directly using array destructuring, just do
+  var [data, loading, error, { get, post, patch put, del }] = useFetch('https://example.com', options)
   
-  if (error) {
-    return 'Error!'
+  // want to use object destructuring? You can do that too
+  var { data, loading, error, request, get, post, patch, put, del } = useFetch('https://example.com')
+  
+  const postData = () => {
+    post({
+      no: 'way',
+    })
+    // OR
+    request.post({
+      no: 'way',
+    })
   }
-  
-  if (loading) {
-    return 'Loading!'
-  }
+
+  if (error) return 'Error!'
+  if (loading) return 'Loading!'
   
   return (
-    <code>
-      <pre>{data}</pre>
-    </code>
+    <>
+      <button onClick={postData}>Post Some Data</button>
+      <code>
+        <pre>{data}</pre>
+      </code>
+    </>
   )
 }
+```
+You can also do relative routes
+```jsx
+const [data, loading, error, request] = useFetch({
+  baseUrl: 'https://example.com'
+})
+
+request.post('/todos', {
+  id: 'someID',
+  text: 'this is what my todo is'
+})
 ```
 Or you can use one of the nice helper hooks. All of them accept the second `options` parameter.
 
 ```jsx
 import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
 
-function App() {
-  const [data, loading, error] = useGet('https://example.com')
-  
-  if (error) {
-    return 'Error!'
+const [data, loading, error, patch] = usePatch({
+  url: 'https://example.com',
+  headers: {
+    'Content-type': 'application/json; charset=UTF-8'
   }
-  
-  if (loading) {
-    return 'Loading!'
-  }
-  
-  return (
-    <code>
-      <pre>{data}</pre>
-    </code>
-  )
-}
+})
+
+patch({
+  no: 'way'
+})
 ```
 
 Hooks
@@ -90,9 +104,32 @@ Hooks
 
 Options
 -----
-| Option                | Description                                                                              |
-| --------------------- | ---------------------------------------------------------------------------------------- |
-| `options` | This is exactly what you would pass to the normal js `fetch` |
+
+This is exactly what you would pass to the normal js `fetch`, with a little extra.
+
+| Option                | Description                                                               |  Default     |
+| --------------------- | --------------------------------------------------------------------------|------------- |
+| `onMount` | Once the component mounts, the http request will run immediately | false |
+| `baseUrl` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
+
+```jsx
+const {
+  data,
+  loading,
+  error,
+  request,
+  get,
+  post,
+  patch,
+  put,
+  del,
+  // delete
+} = useFetch({
+  url: 'https://example.com',
+  baseUrl: 'https://example.com',
+  onMount: true
+})
+```
 
 Todos
 ------
@@ -100,5 +137,3 @@ Todos
  - [ ] Make work with React Suspense
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
- - [ ] Add a `refetch` option
- - [ ] Potentially add syntax like `useFetch({ url: '', method: '' })`
