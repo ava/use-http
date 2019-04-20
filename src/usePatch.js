@@ -1,9 +1,9 @@
 import useFetch from './useFetch'
 
 export const usePatch = (url, options) => {
-  const response = useFetch(url, {
+  const { data, loading, error, patch } = useFetch(url, {
     method: 'PATCH',
     ...options
   })
-  return response
+  return Object.assign([ data, loading, error, patch ], { data, loading, error, patch })
 }

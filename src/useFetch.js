@@ -1,22 +1,66 @@
 import { useEffect, useState, useCallback } from 'react'
 
-export function useFetch(url, options) {
-  // if on server, return loading
-  if (!global.window) return Object.assign([null, true, null], { data: null, loading: true, error: null })
+const isObject = obj => obj === Object(obj) && Object.prototype.toString.call(obj) !== '[object Array]'
+
+export function useFetch(arg1, arg2) {
+  let url = null
+  let options = {}
+  let onMount = false
+  let baseUrl = ''
+  let method = 'GET'
+
+  if (typeof arg1 === 'string') {
+    url = arg1
+    if (isObject(arg2)) options = arg2
+  } else if (isObject(arg1)) {
+    const fetchObj = arg1
+    if (true) {
+      // take out all the things that are not normal `fetch` options
+      // need to take this out of scope so can set the variables below correctly
+      let { url, onMount, timeout, baseUrl, ...rest } = fetchObj
+      options = rest
+    }
+    if (fetchObj.url) url = fetchObj.url
+    if (fetchObj.onMount) onMount = fetchObj.onMount
+    if (fetchObj.method) method = fetchObj.method
+    if (fetchObj.baseUrl) baseUrl = fetchObj.baseUrl
+  }
 
   const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(onMount)
   const [error, setError] = useState(null)
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(method => async (fArg1, fArg2) => {
+    let query = ''
+    const fetchOptions = {}
+    if (isObject(fArg1) && method !== 'GET') {
+      fetchOptions.body = JSON.stringify(fArg1)
+    } else if (baseUrl && typeof fArg1 === 'string') {
+      url = baseUrl + fArg1
+      if (isObject(fArg2)) fetchOptions.body = JSON.stringify(fArg2)
+    }
+    if (typeof fArg1 === 'string' && typeof fArg2 === 'string') {
+      const base = fArg1
+      query = fArg2
+      url = base + query
+    }
+
     try {
       setLoading(true)
-      const response = await fetch(url, options)
+      const response = await fetch(url + query, {
+        method,
+        ...options,
+        ...fetchOptions,
+      })
       let data = null
       try {
         data = await response.json()
-      } catch (Error) {
-        data = await response.text()
+      } catch (err) {
+        try {
+          data = await response.text()
+        } catch (err) {
+          setError(`Currently only supports JSON and Text response types: ${err}`)
+        }
       }
       setData(data)
       setLoading(false)
@@ -25,11 +69,22 @@ export function useFetch(url, options) {
     }
   }, [url])
 
+  const get = useCallback(fetchData('GET'))
+  const post = useCallback(fetchData('POST'))
+  const patch = useCallback(fetchData('PATCH'))
+  const put = useCallback(fetchData('PUT'))
+  const del = useCallback(fetchData('DELETE'))
+
+  const request = { get, post, patch, put, del, delete: del }
+
   useEffect(() => {
-    fetchData()
+    if (onMount) request[method.toLowerCase()]()
   }, [fetchData])
 
-  return Object.assign([data, loading, error], { data, loading, error })
+  return Object.assign(
+    [ data, loading, error, request ],
+    { data, loading, error, request, ...request }
+  )
 }
 
 export default useFetch

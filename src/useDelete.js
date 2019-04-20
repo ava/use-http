@@ -1,9 +1,9 @@
 import useFetch from './useFetch'
 
 export const useDelete = (url, options) => {
-  const response = useFetch(url, {
+  const { data, loading, error, del } = useFetch(url, {
     method: 'DELETE',
     ...options
   })
-  return response
+  return Object.assign([ data, loading, error, del ], { data, loading, error, del, delete: del })
 }
