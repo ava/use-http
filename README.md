@@ -133,5 +133,3 @@ Todos
  - [ ] Make work with React Suspense
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
- - [ ] Add a `refetch` option
- - [ ] Potentially add syntax like `useFetch({ url: '', method: '' })`
