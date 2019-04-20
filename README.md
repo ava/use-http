@@ -65,7 +65,7 @@ function App() {
 ```
 You can also do relative routes
 ```jsx
-var [ data, loading, error, request ] = useFetch({
+const [ data, loading, error, request ] = useFetch({
   baseUrl: 'https://example.com'
 })
 
@@ -79,7 +79,7 @@ Or you can use one of the nice helper hooks. All of them accept the second `opti
 ```jsx
 import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
 
-var [ data, loading, error, patch ] = usePatch({
+const [ data, loading, error, patch ] = usePatch({
   url: 'https://example.com',
   headers: {
     'Content-type': 'application/json; charset=UTF-8'
