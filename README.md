@@ -85,6 +85,10 @@ const [data, loading, error, patch] = usePatch({
     'Content-type': 'application/json; charset=UTF-8'
   }
 })
+
+patch({
+  no: 'way'
+})
 ```
 
 Hooks
