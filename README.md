@@ -69,12 +69,10 @@ var [ data, loading, error, request ] = useFetch({
   baseUrl: 'https://example.com'
 })
 
-const handleClick = () => {
-  request.post('/todos', {
-    id: 'someID',
-    text: 'this is what my todo is'
-  })
-}
+request.post('/todos', {
+  id: 'someID',
+  text: 'this is what my todo is'
+})
 ```
 Or you can use one of the nice helper hooks. All of them accept the second `options` parameter.
 
