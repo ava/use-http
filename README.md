@@ -32,10 +32,10 @@ function App() {
     onMount: true // will fire on componentDidMount
   }
   
-  var [ data, loading, error, request ] = useFetch('https://example.com', options)
+  var [data, loading, error, request] = useFetch('https://example.com', options)
   
   // if you want to access the http methods directly using array destructuring, just do
-  var [ data, loading, error, { get, post, patch put, del } ] = useFetch('https://example.com', options)
+  var [data, loading, error, { get, post, patch put, del }] = useFetch('https://example.com', options)
   
   // want to use object destructuring? You can do that too
   var { data, loading, error, request, get, post, patch, put, del } = useFetch('https://example.com')
@@ -65,7 +65,7 @@ function App() {
 ```
 You can also do relative routes
 ```jsx
-const [ data, loading, error, request ] = useFetch({
+const [data, loading, error, request] = useFetch({
   baseUrl: 'https://example.com'
 })
 
@@ -79,7 +79,7 @@ Or you can use one of the nice helper hooks. All of them accept the second `opti
 ```jsx
 import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
 
-const [ data, loading, error, patch ] = usePatch({
+const [data, loading, error, patch] = usePatch({
   url: 'https://example.com',
   headers: {
     'Content-type': 'application/json; charset=UTF-8'
