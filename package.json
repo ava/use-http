@@ -2,7 +2,7 @@
   "name": "use-http",
   "version": "0.1.41",
   "homepage": "https://codesandbox.io/embed/km04k9k9x5",
-  "main": "src/main.js",
+  "main": "dist/index.js",
   "keywords": [
     "react hook",
     "react-hook",
@@ -27,17 +27,12 @@
     "use-http-test": "^0.1.29"
   },
   "devDependencies": {
+    "parcel-bundler": "^1.12.3",
     "react-dom": "^16.8.6"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build && ./src/postBuild.sh",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "prepublishOnly": "yarn build"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "dev": "parcel examples/index.html --open",
+    "build": "parcel build ./src/*"
   },
   "browserslist": [
     ">0.2%",

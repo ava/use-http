@@ -1,7 +1,0 @@
-export { default } from 'src/useFetch'
-export * from 'src/useFetch'
-export * from 'src/useGet'
-export * from 'src/usePost'
-export * from 'src/usePut'
-export * from 'src/usePatch'
-export * from 'src/useDelete'

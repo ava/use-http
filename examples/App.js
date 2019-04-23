@@ -1,7 +1,8 @@
 import React from 'react';
-import './App.css';
-import useFetch from './useFetch'
-import { useGet, usePost } from './main'
+// import './App.css';
+// import useFetch from './useFetch'
+// import useFetch, { useGet, usePost } from '../src/main'
+import useFetch, { useGet, usePost } from '../dist'
 
 const App = () => {
   // const [data, loading, error, refetch] = useFetch('https://api.etilbudsavis.dk/v2/dealerfront?country_id=DK')
@@ -37,9 +38,9 @@ const App = () => {
   // const [data, loading, error, request] = useFetch('https://jsonplaceholder.typicode.com/posts/1')
 
   // const { data, loading, error, request, get, post, patch, put, del } = useFetch('https://jsonplaceholder.typicode.com/posts/1')
-  const { data, loading, error, request, get, post, patch, put, del } = useFetch({
-    baseUrl: 'https://jsonplaceholder.typicode.com/posts'
-  })
+  // const { data, loading, error, request, get, post, patch, put, del } = useFetch({
+  //   baseUrl: 'https://jsonplaceholder.typicode.com/posts'
+  // })
 
   // useEffect(() => {
   //   // on component did mount or use 'onMount' option above
@@ -115,15 +116,16 @@ const App = () => {
   }
 
 
-  if (error) return 'Error...'
-  if (loading) return 'Loading...'
+  // if (error) return 'Error...'
+  // if (loading) return 'Loading...'
 
   return (
     <div className="App">
+      HELLO WORL
       <header className="App-header">
         <button onClick={handleClick}>CLICK</button>
         <code style={{ display: 'block' }}>
-          <pre>{JSON.stringify(data, null, 2)}</pre>
+          {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
         </code>
       </header>
     </div>

@@ -37,7 +37,7 @@ export function useFetch(arg1, arg2) {
     method => async (fArg1, fArg2) => {
       let query = ''
       const fetchOptions = {}
-      if (isObject(fArg1) && method !== 'GET') {
+      if (isObject(fArg1) && method.toLowerCase() !== 'get') {
         fetchOptions.body = JSON.stringify(fArg1)
       } else if (baseUrl && typeof fArg1 === 'string') {
         url = baseUrl + fArg1
