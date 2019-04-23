@@ -22,6 +22,7 @@ yarn add use-http
 
 Usage
 -----
+#### Basic Usage
 
 ```jsx 
 import useFetch from 'use-http'
@@ -34,17 +35,10 @@ function App() {
   
   var [data, loading, error, request] = useFetch('https://example.com', options)
   
-  // if you want to access the http methods directly using array destructuring, just do
-  var [data, loading, error, { get, post, patch put, del }] = useFetch('https://example.com', options)
-  
   // want to use object destructuring? You can do that too
-  var { data, loading, error, request, get, post, patch, put, del } = useFetch('https://example.com')
+  var { data, loading, error, request } = useFetch('https://example.com')
   
   const postData = () => {
-    post({
-      no: 'way',
-    })
-    // OR
     request.post({
       no: 'way',
     })
@@ -63,7 +57,17 @@ function App() {
   )
 }
 ```
-You can also do relative routes
+#### Destructured methods
+```jsx
+var [data, loading, error, { post }] = useFetch('https://example.com')
+
+var { data, loading, error, post } = useFetch('https://example.com')
+
+post({
+  no: 'way',
+})
+```
+#### Relative routes
 ```jsx
 const [data, loading, error, request] = useFetch({
   baseUrl: 'https://example.com'
@@ -74,7 +78,7 @@ request.post('/todos', {
   text: 'this is what my todo is'
 })
 ```
-Or you can use one of the nice helper hooks. All of them accept the second `options` parameter.
+#### Helper hooks
 
 ```jsx
 import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
@@ -137,3 +141,5 @@ Todos
  - [ ] Make work with React Suspense
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
+ - [ ] add `timeout`
+ - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
