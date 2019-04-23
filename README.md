@@ -135,6 +135,10 @@ const {
 })
 ```
 
+Credits
+--------
+use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios) 
+
 Todos
 ------
  - [ ] Make abortable (add `abort` to abort the http request)
