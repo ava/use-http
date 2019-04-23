@@ -28,8 +28,7 @@ Usage
 import useFetch from 'use-http'
 
 function App() {
-  // add whatever other options you would add to `fetch` such as headers
-  const options = {
+  const options = { // accepts all `fetch` options
     onMount: true // will fire on componentDidMount
   }
   
