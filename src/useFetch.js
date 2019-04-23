@@ -1,3 +1,4 @@
+import 'babel-polyfill' // so async await works ;)
 import { useEffect, useState, useCallback } from 'react'
 
 const isObject = obj => obj === Object(obj) && Object.prototype.toString.call(obj) !== '[object Array]'
