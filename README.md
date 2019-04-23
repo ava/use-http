@@ -73,8 +73,7 @@ const [data, loading, error, request] = useFetch({
 })
 
 request.post('/todos', {
-  id: 'someID',
-  text: 'this is what my todo is'
+  no: 'way'
 })
 ```
 #### Helper hooks
@@ -90,7 +89,7 @@ const [data, loading, error, patch] = usePatch({
 })
 
 patch({
-  no: 'way'
+  yes: 'way',
 })
 ```
 
