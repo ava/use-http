@@ -145,3 +145,4 @@ Todos
  - [ ] Allow option for callback for response.json() vs response.text()
  - [ ] add `timeout`
  - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
+ - [ ] error handling if no url is passed
