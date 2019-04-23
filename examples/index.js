@@ -7,24 +7,8 @@ import useFetch, { useGet, usePost } from '../src/index'
 // import useFetch, { useGet, usePost } from '../dist'
 
 const App = () => {
-  const [data, loading, error, refetch] = useFetch('https://api.etilbudsavis.dk/v2/dealerfront?country_id=DK')
-  // const handleClick = () => {
-  //   refetch()
-  // }
-  // const {data, loading, error, request} = useGet('https://api.etilbudsavis.dk/v2/dealerfront?country_id=DK')
-  // const handleClick = () => {
-  //   Get()
-  // }
-
-  // console.log('DATA: ', data)
-
-  // const [data, loading, error] = usePost('https://jsonplaceholder.typicode.com/posts', {
-  //   body: JSON.stringify({
-  //     title: 'foo',
-  //     body: 'bar',
-  //     userId: 1
-  //   }) 
-  // })
+  const [data, loading, error, { get }] = useFetch('https://api.etilbudsavis.dk/v2/dealerfront?country_id=DK')
+  const handleClick = () => get()
 
   // WORKS 😍
   // const [data, loading, error, request] = useFetch({
@@ -52,7 +36,7 @@ const App = () => {
   // const [data, loading, error, get] = useGet({
   //   url: 'https://jsonplaceholder.typicode.com/posts/1'
   // })
-  const handleClick = () => {
+  const handleClick2 = () => {
     // get('/1')
     // post('/', {
     //   // params: '?no=way&something=true',
@@ -118,16 +102,15 @@ const App = () => {
   }
 
 
-  // if (error) return 'Error...'
-  // if (loading) return 'Loading...'
+  if (error) return 'Error...'
+  if (loading) return 'Loading...'
 
   return (
     <div className="App">
-      HELLO WORL
       <header className="App-header">
         <button onClick={handleClick}>CLICK</button>
         <code style={{ display: 'block' }}>
-          {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
+          <pre>{JSON.stringify(data, null, 2)}</pre>
         </code>
       </header>
     </div>

@@ -34,8 +34,7 @@ export function useFetch(arg1, arg2) {
   const [loading, setLoading] = useState(onMount)
   const [error, setError] = useState(null)
 
-  const fetchData = useCallback(
-    method => async (fArg1, fArg2) => {
+  const fetchData = useCallback(method => async (fArg1, fArg2) => {
       let query = ''
       const fetchOptions = {}
       if (isObject(fArg1) && method.toLowerCase() !== 'get') {
@@ -57,16 +56,13 @@ export function useFetch(arg1, arg2) {
         try {
           data = await response.json()
         } catch (err) {
-          try {
-            data = await response.text()
-          } catch (err) {
-            setError(`Currently only supports JSON and Text response types: ${err}`)
-          }
+          data = await response.text()
         }
         setData(data)
-        setLoading(false)
       } catch (err) {
         setError(err)
+      } finally {
+        setLoading(false)
       }
     },
     [url]

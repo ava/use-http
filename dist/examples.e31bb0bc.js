@@ -33850,43 +33850,39 @@ function useFetch(arg1, arg2) {
 
                 case 13:
                   _data = _context.sent;
-                  _context.next = 27;
+                  _context.next = 21;
                   break;
 
                 case 16:
                   _context.prev = 16;
                   _context.t0 = _context["catch"](10);
-                  _context.prev = 18;
-                  _context.next = 21;
+                  _context.next = 20;
                   return response.text();
 
-                case 21:
+                case 20:
                   _data = _context.sent;
+
+                case 21:
+                  setData(_data);
                   _context.next = 27;
                   break;
 
                 case 24:
                   _context.prev = 24;
-                  _context.t1 = _context["catch"](18);
-                  setError("Currently only supports JSON and Text response types: ".concat(_context.t1));
+                  _context.t1 = _context["catch"](4);
+                  setError(_context.t1);
 
                 case 27:
-                  setData(_data);
+                  _context.prev = 27;
                   setLoading(false);
-                  _context.next = 34;
-                  break;
+                  return _context.finish(27);
 
-                case 31:
-                  _context.prev = 31;
-                  _context.t2 = _context["catch"](4);
-                  setError(_context.t2);
-
-                case 34:
+                case 30:
                 case "end":
                   return _context.stop();
               }
             }
-          }, _callee, null, [[4, 31], [10, 16], [18, 24]]);
+          }, _callee, null, [[4, 24, 27, 30], [10, 16]]);
         }));
 
         return function (_x, _x2) {
@@ -34213,22 +34209,11 @@ var App = function App() {
       data = _useFetch2[0],
       loading = _useFetch2[1],
       error = _useFetch2[2],
-      refetch = _useFetch2[3]; // const handleClick = () => {
-  //   refetch()
-  // }
-  // const {data, loading, error, request} = useGet('https://api.etilbudsavis.dk/v2/dealerfront?country_id=DK')
-  // const handleClick = () => {
-  //   Get()
-  // }
-  // console.log('DATA: ', data)
-  // const [data, loading, error] = usePost('https://jsonplaceholder.typicode.com/posts', {
-  //   body: JSON.stringify({
-  //     title: 'foo',
-  //     body: 'bar',
-  //     userId: 1
-  //   }) 
-  // })
-  // WORKS 😍
+      get = _useFetch2[3].get;
+
+  var handleClick = function handleClick() {
+    return get();
+  }; // WORKS 😍
   // const [data, loading, error, request] = useFetch({
   //   url: 'https://jsonplaceholder.typicode.com/posts/1',
   //   // baseUrl: '', // then you can do: request.post({ url: '/posts', body: {} })
@@ -34252,75 +34237,75 @@ var App = function App() {
   // })
 
 
-  var handleClick = function handleClick() {} // get('/1')
-  // post('/', {
-  //   // params: '?no=way&something=true',
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // patch('/1', {
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // put('/1', {
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // del('/1')
-  // request.get()
-  // request.post({
-  //   // params: '?no=way&something=true',
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // request.patch({
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // request.put({
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // request.delete({
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // get()
-  // post({
-  //   // params: '?no=way&something=true',
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // patch({
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // put({
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // del({
-  //   title: 'foo',
-  //   body: 'bar',
-  //   userId: 1
-  // })
-  // if (error) return 'Error...'
-  // if (loading) return 'Loading...'
-  ;
+  var handleClick2 = function handleClick2() {// get('/1')
+    // post('/', {
+    //   // params: '?no=way&something=true',
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // patch('/1', {
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // put('/1', {
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // del('/1')
+    // request.get()
+    // request.post({
+    //   // params: '?no=way&something=true',
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // request.patch({
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // request.put({
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // request.delete({
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // get()
+    // post({
+    //   // params: '?no=way&something=true',
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // patch({
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // put({
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+    // del({
+    //   title: 'foo',
+    //   body: 'bar',
+    //   userId: 1
+    // })
+  };
 
+  if (error) return 'Error...';
+  if (loading) return 'Loading...';
   return _react.default.createElement("div", {
     className: "App"
-  }, "HELLO WORL", _react.default.createElement("header", {
+  }, _react.default.createElement("header", {
     className: "App-header"
   }, _react.default.createElement("button", {
     onClick: handleClick
@@ -34328,7 +34313,7 @@ var App = function App() {
     style: {
       display: 'block'
     }
-  })));
+  }, _react.default.createElement("pre", null, JSON.stringify(data, null, 2)))));
 };
 
 (0, _reactDom.render)(_react.default.createElement(App, null), document.getElementById('root')); // If you want your app to work offline and load faster, you can change
@@ -34364,7 +34349,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56755" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63592" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
