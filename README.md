@@ -1,7 +1,7 @@
 <h1 align="center">useFetch</h1>
 <p align="center">🐶 React hook for making isomorphic http requests</p>
 <p align="center">
-    <a href="https://github.com/alex-cory/react-usefetch/pulls">
+    <a href="https://github.com/alex-cory/use-http/pulls">
       <img src="https://camo.githubusercontent.com/d4e0f63e9613ee474a7dfdc23c240b9795712c96/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e2e737667" />
     </a>
 </p>
@@ -22,29 +22,22 @@ yarn add use-http
 
 Usage
 -----
+#### Basic Usage
 
 ```jsx 
 import useFetch from 'use-http'
 
 function App() {
-  // add whatever other options you would add to `fetch` such as headers
-  const options = {
+  const options = { // accepts all `fetch` options
     onMount: true // will fire on componentDidMount
   }
   
   var [data, loading, error, request] = useFetch('https://example.com', options)
   
-  // if you want to access the http methods directly using array destructuring, just do
-  var [data, loading, error, { get, post, patch put, del }] = useFetch('https://example.com', options)
-  
   // want to use object destructuring? You can do that too
-  var { data, loading, error, request, get, post, patch, put, del } = useFetch('https://example.com')
+  var { data, loading, error, request } = useFetch('https://example.com')
   
   const postData = () => {
-    post({
-      no: 'way',
-    })
-    // OR
     request.post({
       no: 'way',
     })
@@ -63,18 +56,27 @@ function App() {
   )
 }
 ```
-You can also do relative routes
+#### Destructured methods
+```jsx
+var [data, loading, error, { post }] = useFetch('https://example.com')
+
+var { data, loading, error, post } = useFetch('https://example.com')
+
+post({
+  no: 'way',
+})
+```
+#### Relative routes
 ```jsx
 const [data, loading, error, request] = useFetch({
   baseUrl: 'https://example.com'
 })
 
 request.post('/todos', {
-  id: 'someID',
-  text: 'this is what my todo is'
+  no: 'way'
 })
 ```
-Or you can use one of the nice helper hooks. All of them accept the second `options` parameter.
+#### Helper hooks
 
 ```jsx
 import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
@@ -87,8 +89,24 @@ const [data, loading, error, patch] = usePatch({
 })
 
 patch({
-  no: 'way'
+  yes: 'way',
 })
+```
+
+#### Coming Soon: `abort`
+
+```jsx
+const { data, loading, request } = useFetch({
+  baseUrl: `https://api.github.com/search`
+})
+
+const searchGithub = e => request.get(`/repositories?q=${e.target.value || "''"}`)
+
+<>
+  <input onChange={searchGithub} />
+  <button onClick={request.abort}>Abort</button>
+  {loading ? 'Loading...' : <code><pre>{data}</pre></code>}
+</>
 ```
 
 Hooks
@@ -131,9 +149,16 @@ const {
 })
 ```
 
+Credits
+--------
+use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios) 
+
 Todos
 ------
  - [ ] Make abortable (add `abort` to abort the http request)
  - [ ] Make work with React Suspense
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
+ - [ ] add `timeout`
+ - [ ] error handling if no url is passed
+ - [ ] tests
