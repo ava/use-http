@@ -19,6 +19,10 @@ Installation
 ```shell
 yarn add use-http
 ```
+or
+```shell
+npm i -S use-http
+```
 
 Usage
 -----
