@@ -22,7 +22,6 @@
     "react": "^16.8.0"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "react": "^16.8.6"
   },
   "devDependencies": {
