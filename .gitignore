@@ -12,7 +12,8 @@
 /coverage
 
 # production
-/build
+/dist
+!dist/.gitkeep
 
 # misc
 .DS_Store
