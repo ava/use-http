@@ -32934,7 +32934,7 @@ require('./modules/web.immediate');
 require('./modules/web.dom.iterable');
 module.exports = require('./modules/_core');
 
-},{"./modules/es6.symbol":"../node_modules/core-js/modules/es6.symbol.js","./modules/es6.object.create":"../node_modules/core-js/modules/es6.object.create.js","./modules/es6.object.define-property":"../node_modules/core-js/modules/es6.object.define-property.js","./modules/es6.object.define-properties":"../node_modules/core-js/modules/es6.object.define-properties.js","./modules/es6.object.get-own-property-descriptor":"../node_modules/core-js/modules/es6.object.get-own-property-descriptor.js","./modules/es6.object.get-prototype-of":"../node_modules/core-js/modules/es6.object.get-prototype-of.js","./modules/es6.object.keys":"../node_modules/core-js/modules/es6.object.keys.js","./modules/es6.object.get-own-property-names":"../node_modules/core-js/modules/es6.object.get-own-property-names.js","./modules/es6.object.freeze":"../node_modules/core-js/modules/es6.object.freeze.js","./modules/es6.object.seal":"../node_modules/core-js/modules/es6.object.seal.js","./modules/es6.object.prevent-extensions":"../node_modules/core-js/modules/es6.object.prevent-extensions.js","./modules/es6.object.is-frozen":"../node_modules/core-js/modules/es6.object.is-frozen.js","./modules/es6.object.is-sealed":"../node_modules/core-js/modules/es6.object.is-sealed.js","./modules/es6.object.is-extensible":"../node_modules/core-js/modules/es6.object.is-extensible.js","./modules/es6.object.assign":"../node_modules/core-js/modules/es6.object.assign.js","./modules/es6.object.is":"../node_modules/core-js/modules/es6.object.is.js","./modules/es6.object.set-prototype-of":"../node_modules/core-js/modules/es6.object.set-prototype-of.js","./modules/es6.object.to-string":"../node_modules/core-js/modules/es6.object.to-string.js","./modules/es6.function.bind":"../node_modules/core-js/modules/es6.function.bind.js","./modules/es6.function.name":"../node_modules/core-js/modules/es6.function.name.js","./modules/es6.function.has-instance":"../node_modules/core-js/modules/es6.function.has-instance.js","./modules/es6.parse-int":"../node_modules/core-js/modules/es6.parse-int.js","./modules/es6.parse-float":"../node_modules/core-js/modules/es6.parse-float.js","./modules/es6.number.constructor":"../node_modules/core-js/modules/es6.number.constructor.js","./modules/es6.number.to-fixed":"../node_modules/core-js/modules/es6.number.to-fixed.js","./modules/es6.number.to-precision":"../node_modules/core-js/modules/es6.number.to-precision.js","./modules/es6.number.epsilon":"../node_modules/core-js/modules/es6.number.epsilon.js","./modules/es6.number.is-finite":"../node_modules/core-js/modules/es6.number.is-finite.js","./modules/es6.number.is-integer":"../node_modules/core-js/modules/es6.number.is-integer.js","./modules/es6.number.is-nan":"../node_modules/core-js/modules/es6.number.is-nan.js","./modules/es6.number.is-safe-integer":"../node_modules/core-js/modules/es6.number.is-safe-integer.js","./modules/es6.number.max-safe-integer":"../node_modules/core-js/modules/es6.number.max-safe-integer.js","./modules/es6.number.min-safe-integer":"../node_modules/core-js/modules/es6.number.min-safe-integer.js","./modules/es6.number.parse-float":"../node_modules/core-js/modules/es6.number.parse-float.js","./modules/es6.number.parse-int":"../node_modules/core-js/modules/es6.number.parse-int.js","./modules/es6.math.acosh":"../node_modules/core-js/modules/es6.math.acosh.js","./modules/es6.math.asinh":"../node_modules/core-js/modules/es6.math.asinh.js","./modules/es6.math.atanh":"../node_modules/core-js/modules/es6.math.atanh.js","./modules/es6.math.cbrt":"../node_modules/core-js/modules/es6.math.cbrt.js","./modules/es6.math.clz32":"../node_modules/core-js/modules/es6.math.clz32.js","./modules/es6.math.cosh":"../node_modules/core-js/modules/es6.math.cosh.js","./modules/es6.math.expm1":"../node_modules/core-js/modules/es6.math.expm1.js","./modules/es6.math.fround":"../node_modules/core-js/modules/es6.math.fround.js","./modules/es6.math.hypot":"../node_modules/core-js/modules/es6.math.hypot.js","./modules/es6.math.imul":"../node_modules/core-js/modules/es6.math.imul.js","./modules/es6.math.log10":"../node_modules/core-js/modules/es6.math.log10.js","./modules/es6.math.log1p":"../node_modules/core-js/modules/es6.math.log1p.js","./modules/es6.math.log2":"../node_modules/core-js/modules/es6.math.log2.js","./modules/es6.math.sign":"../node_modules/core-js/modules/es6.math.sign.js","./modules/es6.math.sinh":"../node_modules/core-js/modules/es6.math.sinh.js","./modules/es6.math.tanh":"../node_modules/core-js/modules/es6.math.tanh.js","./modules/es6.math.trunc":"../node_modules/core-js/modules/es6.math.trunc.js","./modules/es6.string.from-code-point":"../node_modules/core-js/modules/es6.string.from-code-point.js","./modules/es6.string.raw":"../node_modules/core-js/modules/es6.string.raw.js","./modules/es6.string.trim":"../node_modules/core-js/modules/es6.string.trim.js","./modules/es6.string.iterator":"../node_modules/core-js/modules/es6.string.iterator.js","./modules/es6.string.code-point-at":"../node_modules/core-js/modules/es6.string.code-point-at.js","./modules/es6.string.ends-with":"../node_modules/core-js/modules/es6.string.ends-with.js","./modules/es6.string.includes":"../node_modules/core-js/modules/es6.string.includes.js","./modules/es6.string.repeat":"../node_modules/core-js/modules/es6.string.repeat.js","./modules/es6.string.starts-with":"../node_modules/core-js/modules/es6.string.starts-with.js","./modules/es6.string.anchor":"../node_modules/core-js/modules/es6.string.anchor.js","./modules/es6.string.big":"../node_modules/core-js/modules/es6.string.big.js","./modules/es6.string.blink":"../node_modules/core-js/modules/es6.string.blink.js","./modules/es6.string.bold":"../node_modules/core-js/modules/es6.string.bold.js","./modules/es6.string.fixed":"../node_modules/core-js/modules/es6.string.fixed.js","./modules/es6.string.fontcolor":"../node_modules/core-js/modules/es6.string.fontcolor.js","./modules/es6.string.fontsize":"../node_modules/core-js/modules/es6.string.fontsize.js","./modules/es6.string.italics":"../node_modules/core-js/modules/es6.string.italics.js","./modules/es6.string.link":"../node_modules/core-js/modules/es6.string.link.js","./modules/es6.string.small":"../node_modules/core-js/modules/es6.string.small.js","./modules/es6.string.strike":"../node_modules/core-js/modules/es6.string.strike.js","./modules/es6.string.sub":"../node_modules/core-js/modules/es6.string.sub.js","./modules/es6.string.sup":"../node_modules/core-js/modules/es6.string.sup.js","./modules/es6.date.now":"../node_modules/core-js/modules/es6.date.now.js","./modules/es6.date.to-json":"../node_modules/core-js/modules/es6.date.to-json.js","./modules/es6.date.to-iso-string":"../node_modules/core-js/modules/es6.date.to-iso-string.js","./modules/es6.date.to-string":"../node_modules/core-js/modules/es6.date.to-string.js","./modules/es6.date.to-primitive":"../node_modules/core-js/modules/es6.date.to-primitive.js","./modules/es6.array.is-array":"../node_modules/core-js/modules/es6.array.is-array.js","./modules/es6.array.from":"../node_modules/core-js/modules/es6.array.from.js","./modules/es6.array.of":"../node_modules/core-js/modules/es6.array.of.js","./modules/es6.array.join":"../node_modules/core-js/modules/es6.array.join.js","./modules/es6.array.slice":"../node_modules/core-js/modules/es6.array.slice.js","./modules/es6.array.sort":"../node_modules/core-js/modules/es6.array.sort.js","./modules/es6.array.for-each":"../node_modules/core-js/modules/es6.array.for-each.js","./modules/es6.array.map":"../node_modules/core-js/modules/es6.array.map.js","./modules/es6.array.filter":"../node_modules/core-js/modules/es6.array.filter.js","./modules/es6.array.some":"../node_modules/core-js/modules/es6.array.some.js","./modules/es6.array.every":"../node_modules/core-js/modules/es6.array.every.js","./modules/es6.array.reduce":"../node_modules/core-js/modules/es6.array.reduce.js","./modules/es6.array.reduce-right":"../node_modules/core-js/modules/es6.array.reduce-right.js","./modules/es6.array.index-of":"../node_modules/core-js/modules/es6.array.index-of.js","./modules/es6.array.last-index-of":"../node_modules/core-js/modules/es6.array.last-index-of.js","./modules/es6.array.copy-within":"../node_modules/core-js/modules/es6.array.copy-within.js","./modules/es6.array.fill":"../node_modules/core-js/modules/es6.array.fill.js","./modules/es6.array.find":"../node_modules/core-js/modules/es6.array.find.js","./modules/es6.array.find-index":"../node_modules/core-js/modules/es6.array.find-index.js","./modules/es6.array.species":"../node_modules/core-js/modules/es6.array.species.js","./modules/es6.array.iterator":"../node_modules/core-js/modules/es6.array.iterator.js","./modules/es6.regexp.constructor":"../node_modules/core-js/modules/es6.regexp.constructor.js","./modules/es6.regexp.exec":"../node_modules/core-js/modules/es6.regexp.exec.js","./modules/es6.regexp.to-string":"../node_modules/core-js/modules/es6.regexp.to-string.js","./modules/es6.regexp.flags":"../node_modules/core-js/modules/es6.regexp.flags.js","./modules/es6.regexp.match":"../node_modules/core-js/modules/es6.regexp.match.js","./modules/es6.regexp.replace":"../node_modules/core-js/modules/es6.regexp.replace.js","./modules/es6.regexp.search":"../node_modules/core-js/modules/es6.regexp.search.js","./modules/es6.regexp.split":"../node_modules/core-js/modules/es6.regexp.split.js","./modules/es6.promise":"../node_modules/core-js/modules/es6.promise.js","./modules/es6.map":"../node_modules/core-js/modules/es6.map.js","./modules/es6.set":"../node_modules/core-js/modules/es6.set.js","./modules/es6.weak-map":"../node_modules/core-js/modules/es6.weak-map.js","./modules/es6.weak-set":"../node_modules/core-js/modules/es6.weak-set.js","./modules/es6.typed.array-buffer":"../node_modules/core-js/modules/es6.typed.array-buffer.js","./modules/es6.typed.data-view":"../node_modules/core-js/modules/es6.typed.data-view.js","./modules/es6.typed.int8-array":"../node_modules/core-js/modules/es6.typed.int8-array.js","./modules/es6.typed.uint8-array":"../node_modules/core-js/modules/es6.typed.uint8-array.js","./modules/es6.typed.uint8-clamped-array":"../node_modules/core-js/modules/es6.typed.uint8-clamped-array.js","./modules/es6.typed.int16-array":"../node_modules/core-js/modules/es6.typed.int16-array.js","./modules/es6.typed.uint16-array":"../node_modules/core-js/modules/es6.typed.uint16-array.js","./modules/es6.typed.int32-array":"../node_modules/core-js/modules/es6.typed.int32-array.js","./modules/es6.typed.uint32-array":"../node_modules/core-js/modules/es6.typed.uint32-array.js","./modules/es6.typed.float32-array":"../node_modules/core-js/modules/es6.typed.float32-array.js","./modules/es6.typed.float64-array":"../node_modules/core-js/modules/es6.typed.float64-array.js","./modules/es6.reflect.apply":"../node_modules/core-js/modules/es6.reflect.apply.js","./modules/es6.reflect.construct":"../node_modules/core-js/modules/es6.reflect.construct.js","./modules/es6.reflect.define-property":"../node_modules/core-js/modules/es6.reflect.define-property.js","./modules/es6.reflect.delete-property":"../node_modules/core-js/modules/es6.reflect.delete-property.js","./modules/es6.reflect.enumerate":"../node_modules/core-js/modules/es6.reflect.enumerate.js","./modules/es6.reflect.get":"../node_modules/core-js/modules/es6.reflect.get.js","./modules/es6.reflect.get-own-property-descriptor":"../node_modules/core-js/modules/es6.reflect.get-own-property-descriptor.js","./modules/es6.reflect.get-prototype-of":"../node_modules/core-js/modules/es6.reflect.get-prototype-of.js","./modules/es6.reflect.has":"../node_modules/core-js/modules/es6.reflect.has.js","./modules/es6.reflect.is-extensible":"../node_modules/core-js/modules/es6.reflect.is-extensible.js","./modules/es6.reflect.own-keys":"../node_modules/core-js/modules/es6.reflect.own-keys.js","./modules/es6.reflect.prevent-extensions":"../node_modules/core-js/modules/es6.reflect.prevent-extensions.js","./modules/es6.reflect.set":"../node_modules/core-js/modules/es6.reflect.set.js","./modules/es6.reflect.set-prototype-of":"../node_modules/core-js/modules/es6.reflect.set-prototype-of.js","./modules/es7.array.includes":"../node_modules/core-js/modules/es7.array.includes.js","./modules/es7.array.flat-map":"../node_modules/core-js/modules/es7.array.flat-map.js","./modules/es7.array.flatten":"../node_modules/core-js/modules/es7.array.flatten.js","./modules/es7.string.at":"../node_modules/core-js/modules/es7.string.at.js","./modules/es7.string.pad-start":"../node_modules/core-js/modules/es7.string.pad-start.js","./modules/es7.string.pad-end":"../node_modules/core-js/modules/es7.string.pad-end.js","./modules/es7.string.trim-left":"../node_modules/core-js/modules/es7.string.trim-left.js","./modules/es7.string.trim-right":"../node_modules/core-js/modules/es7.string.trim-right.js","./modules/es7.string.match-all":"../node_modules/core-js/modules/es7.string.match-all.js","./modules/es7.symbol.async-iterator":"../node_modules/core-js/modules/es7.symbol.async-iterator.js","./modules/es7.symbol.observable":"../node_modules/core-js/modules/es7.symbol.observable.js","./modules/es7.object.get-own-property-descriptors":"../node_modules/core-js/modules/es7.object.get-own-property-descriptors.js","./modules/es7.object.values":"../node_modules/core-js/modules/es7.object.values.js","./modules/es7.object.entries":"../node_modules/core-js/modules/es7.object.entries.js","./modules/es7.object.define-getter":"../node_modules/core-js/modules/es7.object.define-getter.js","./modules/es7.object.define-setter":"../node_modules/core-js/modules/es7.object.define-setter.js","./modules/es7.object.lookup-getter":"../node_modules/core-js/modules/es7.object.lookup-getter.js","./modules/es7.object.lookup-setter":"../node_modules/core-js/modules/es7.object.lookup-setter.js","./modules/es7.map.to-json":"../node_modules/core-js/modules/es7.map.to-json.js","./modules/es7.set.to-json":"../node_modules/core-js/modules/es7.set.to-json.js","./modules/es7.map.of":"../node_modules/core-js/modules/es7.map.of.js","./modules/es7.set.of":"../node_modules/core-js/modules/es7.set.of.js","./modules/es7.weak-map.of":"../node_modules/core-js/modules/es7.weak-map.of.js","./modules/es7.weak-set.of":"../node_modules/core-js/modules/es7.weak-set.of.js","./modules/es7.map.from":"../node_modules/core-js/modules/es7.map.from.js","./modules/es7.set.from":"../node_modules/core-js/modules/es7.set.from.js","./modules/es7.weak-map.from":"../node_modules/core-js/modules/es7.weak-map.from.js","./modules/es7.weak-set.from":"../node_modules/core-js/modules/es7.weak-set.from.js","./modules/es7.global":"../node_modules/core-js/modules/es7.global.js","./modules/es7.system.global":"../node_modules/core-js/modules/es7.system.global.js","./modules/es7.error.is-error":"../node_modules/core-js/modules/es7.error.is-error.js","./modules/es7.math.clamp":"../node_modules/core-js/modules/es7.math.clamp.js","./modules/es7.math.deg-per-rad":"../node_modules/core-js/modules/es7.math.deg-per-rad.js","./modules/es7.math.degrees":"../node_modules/core-js/modules/es7.math.degrees.js","./modules/es7.math.fscale":"../node_modules/core-js/modules/es7.math.fscale.js","./modules/es7.math.iaddh":"../node_modules/core-js/modules/es7.math.iaddh.js","./modules/es7.math.isubh":"../node_modules/core-js/modules/es7.math.isubh.js","./modules/es7.math.imulh":"../node_modules/core-js/modules/es7.math.imulh.js","./modules/es7.math.rad-per-deg":"../node_modules/core-js/modules/es7.math.rad-per-deg.js","./modules/es7.math.radians":"../node_modules/core-js/modules/es7.math.radians.js","./modules/es7.math.scale":"../node_modules/core-js/modules/es7.math.scale.js","./modules/es7.math.umulh":"../node_modules/core-js/modules/es7.math.umulh.js","./modules/es7.math.signbit":"../node_modules/core-js/modules/es7.math.signbit.js","./modules/es7.promise.finally":"../node_modules/core-js/modules/es7.promise.finally.js","./modules/es7.promise.try":"../node_modules/core-js/modules/es7.promise.try.js","./modules/es7.reflect.define-metadata":"../node_modules/core-js/modules/es7.reflect.define-metadata.js","./modules/es7.reflect.delete-metadata":"../node_modules/core-js/modules/es7.reflect.delete-metadata.js","./modules/es7.reflect.get-metadata":"../node_modules/core-js/modules/es7.reflect.get-metadata.js","./modules/es7.reflect.get-metadata-keys":"../node_modules/core-js/modules/es7.reflect.get-metadata-keys.js","./modules/es7.reflect.get-own-metadata":"../node_modules/core-js/modules/es7.reflect.get-own-metadata.js","./modules/es7.reflect.get-own-metadata-keys":"../node_modules/core-js/modules/es7.reflect.get-own-metadata-keys.js","./modules/es7.reflect.has-metadata":"../node_modules/core-js/modules/es7.reflect.has-metadata.js","./modules/es7.reflect.has-own-metadata":"../node_modules/core-js/modules/es7.reflect.has-own-metadata.js","./modules/es7.reflect.metadata":"../node_modules/core-js/modules/es7.reflect.metadata.js","./modules/es7.asap":"../node_modules/core-js/modules/es7.asap.js","./modules/es7.observable":"../node_modules/core-js/modules/es7.observable.js","./modules/web.timers":"../node_modules/core-js/modules/web.timers.js","./modules/web.immediate":"../node_modules/core-js/modules/web.immediate.js","./modules/web.dom.iterable":"../node_modules/core-js/modules/web.dom.iterable.js","./modules/_core":"../node_modules/core-js/modules/_core.js"}],"../node_modules/babel-polyfill/node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
+},{"./modules/es6.symbol":"../node_modules/core-js/modules/es6.symbol.js","./modules/es6.object.create":"../node_modules/core-js/modules/es6.object.create.js","./modules/es6.object.define-property":"../node_modules/core-js/modules/es6.object.define-property.js","./modules/es6.object.define-properties":"../node_modules/core-js/modules/es6.object.define-properties.js","./modules/es6.object.get-own-property-descriptor":"../node_modules/core-js/modules/es6.object.get-own-property-descriptor.js","./modules/es6.object.get-prototype-of":"../node_modules/core-js/modules/es6.object.get-prototype-of.js","./modules/es6.object.keys":"../node_modules/core-js/modules/es6.object.keys.js","./modules/es6.object.get-own-property-names":"../node_modules/core-js/modules/es6.object.get-own-property-names.js","./modules/es6.object.freeze":"../node_modules/core-js/modules/es6.object.freeze.js","./modules/es6.object.seal":"../node_modules/core-js/modules/es6.object.seal.js","./modules/es6.object.prevent-extensions":"../node_modules/core-js/modules/es6.object.prevent-extensions.js","./modules/es6.object.is-frozen":"../node_modules/core-js/modules/es6.object.is-frozen.js","./modules/es6.object.is-sealed":"../node_modules/core-js/modules/es6.object.is-sealed.js","./modules/es6.object.is-extensible":"../node_modules/core-js/modules/es6.object.is-extensible.js","./modules/es6.object.assign":"../node_modules/core-js/modules/es6.object.assign.js","./modules/es6.object.is":"../node_modules/core-js/modules/es6.object.is.js","./modules/es6.object.set-prototype-of":"../node_modules/core-js/modules/es6.object.set-prototype-of.js","./modules/es6.object.to-string":"../node_modules/core-js/modules/es6.object.to-string.js","./modules/es6.function.bind":"../node_modules/core-js/modules/es6.function.bind.js","./modules/es6.function.name":"../node_modules/core-js/modules/es6.function.name.js","./modules/es6.function.has-instance":"../node_modules/core-js/modules/es6.function.has-instance.js","./modules/es6.parse-int":"../node_modules/core-js/modules/es6.parse-int.js","./modules/es6.parse-float":"../node_modules/core-js/modules/es6.parse-float.js","./modules/es6.number.constructor":"../node_modules/core-js/modules/es6.number.constructor.js","./modules/es6.number.to-fixed":"../node_modules/core-js/modules/es6.number.to-fixed.js","./modules/es6.number.to-precision":"../node_modules/core-js/modules/es6.number.to-precision.js","./modules/es6.number.epsilon":"../node_modules/core-js/modules/es6.number.epsilon.js","./modules/es6.number.is-finite":"../node_modules/core-js/modules/es6.number.is-finite.js","./modules/es6.number.is-integer":"../node_modules/core-js/modules/es6.number.is-integer.js","./modules/es6.number.is-nan":"../node_modules/core-js/modules/es6.number.is-nan.js","./modules/es6.number.is-safe-integer":"../node_modules/core-js/modules/es6.number.is-safe-integer.js","./modules/es6.number.max-safe-integer":"../node_modules/core-js/modules/es6.number.max-safe-integer.js","./modules/es6.number.min-safe-integer":"../node_modules/core-js/modules/es6.number.min-safe-integer.js","./modules/es6.number.parse-float":"../node_modules/core-js/modules/es6.number.parse-float.js","./modules/es6.number.parse-int":"../node_modules/core-js/modules/es6.number.parse-int.js","./modules/es6.math.acosh":"../node_modules/core-js/modules/es6.math.acosh.js","./modules/es6.math.asinh":"../node_modules/core-js/modules/es6.math.asinh.js","./modules/es6.math.atanh":"../node_modules/core-js/modules/es6.math.atanh.js","./modules/es6.math.cbrt":"../node_modules/core-js/modules/es6.math.cbrt.js","./modules/es6.math.clz32":"../node_modules/core-js/modules/es6.math.clz32.js","./modules/es6.math.cosh":"../node_modules/core-js/modules/es6.math.cosh.js","./modules/es6.math.expm1":"../node_modules/core-js/modules/es6.math.expm1.js","./modules/es6.math.fround":"../node_modules/core-js/modules/es6.math.fround.js","./modules/es6.math.hypot":"../node_modules/core-js/modules/es6.math.hypot.js","./modules/es6.math.imul":"../node_modules/core-js/modules/es6.math.imul.js","./modules/es6.math.log10":"../node_modules/core-js/modules/es6.math.log10.js","./modules/es6.math.log1p":"../node_modules/core-js/modules/es6.math.log1p.js","./modules/es6.math.log2":"../node_modules/core-js/modules/es6.math.log2.js","./modules/es6.math.sign":"../node_modules/core-js/modules/es6.math.sign.js","./modules/es6.math.sinh":"../node_modules/core-js/modules/es6.math.sinh.js","./modules/es6.math.tanh":"../node_modules/core-js/modules/es6.math.tanh.js","./modules/es6.math.trunc":"../node_modules/core-js/modules/es6.math.trunc.js","./modules/es6.string.from-code-point":"../node_modules/core-js/modules/es6.string.from-code-point.js","./modules/es6.string.raw":"../node_modules/core-js/modules/es6.string.raw.js","./modules/es6.string.trim":"../node_modules/core-js/modules/es6.string.trim.js","./modules/es6.string.iterator":"../node_modules/core-js/modules/es6.string.iterator.js","./modules/es6.string.code-point-at":"../node_modules/core-js/modules/es6.string.code-point-at.js","./modules/es6.string.ends-with":"../node_modules/core-js/modules/es6.string.ends-with.js","./modules/es6.string.includes":"../node_modules/core-js/modules/es6.string.includes.js","./modules/es6.string.repeat":"../node_modules/core-js/modules/es6.string.repeat.js","./modules/es6.string.starts-with":"../node_modules/core-js/modules/es6.string.starts-with.js","./modules/es6.string.anchor":"../node_modules/core-js/modules/es6.string.anchor.js","./modules/es6.string.big":"../node_modules/core-js/modules/es6.string.big.js","./modules/es6.string.blink":"../node_modules/core-js/modules/es6.string.blink.js","./modules/es6.string.bold":"../node_modules/core-js/modules/es6.string.bold.js","./modules/es6.string.fixed":"../node_modules/core-js/modules/es6.string.fixed.js","./modules/es6.string.fontcolor":"../node_modules/core-js/modules/es6.string.fontcolor.js","./modules/es6.string.fontsize":"../node_modules/core-js/modules/es6.string.fontsize.js","./modules/es6.string.italics":"../node_modules/core-js/modules/es6.string.italics.js","./modules/es6.string.link":"../node_modules/core-js/modules/es6.string.link.js","./modules/es6.string.small":"../node_modules/core-js/modules/es6.string.small.js","./modules/es6.string.strike":"../node_modules/core-js/modules/es6.string.strike.js","./modules/es6.string.sub":"../node_modules/core-js/modules/es6.string.sub.js","./modules/es6.string.sup":"../node_modules/core-js/modules/es6.string.sup.js","./modules/es6.date.now":"../node_modules/core-js/modules/es6.date.now.js","./modules/es6.date.to-json":"../node_modules/core-js/modules/es6.date.to-json.js","./modules/es6.date.to-iso-string":"../node_modules/core-js/modules/es6.date.to-iso-string.js","./modules/es6.date.to-string":"../node_modules/core-js/modules/es6.date.to-string.js","./modules/es6.date.to-primitive":"../node_modules/core-js/modules/es6.date.to-primitive.js","./modules/es6.array.is-array":"../node_modules/core-js/modules/es6.array.is-array.js","./modules/es6.array.from":"../node_modules/core-js/modules/es6.array.from.js","./modules/es6.array.of":"../node_modules/core-js/modules/es6.array.of.js","./modules/es6.array.join":"../node_modules/core-js/modules/es6.array.join.js","./modules/es6.array.slice":"../node_modules/core-js/modules/es6.array.slice.js","./modules/es6.array.sort":"../node_modules/core-js/modules/es6.array.sort.js","./modules/es6.array.for-each":"../node_modules/core-js/modules/es6.array.for-each.js","./modules/es6.array.map":"../node_modules/core-js/modules/es6.array.map.js","./modules/es6.array.filter":"../node_modules/core-js/modules/es6.array.filter.js","./modules/es6.array.some":"../node_modules/core-js/modules/es6.array.some.js","./modules/es6.array.every":"../node_modules/core-js/modules/es6.array.every.js","./modules/es6.array.reduce":"../node_modules/core-js/modules/es6.array.reduce.js","./modules/es6.array.reduce-right":"../node_modules/core-js/modules/es6.array.reduce-right.js","./modules/es6.array.index-of":"../node_modules/core-js/modules/es6.array.index-of.js","./modules/es6.array.last-index-of":"../node_modules/core-js/modules/es6.array.last-index-of.js","./modules/es6.array.copy-within":"../node_modules/core-js/modules/es6.array.copy-within.js","./modules/es6.array.fill":"../node_modules/core-js/modules/es6.array.fill.js","./modules/es6.array.find":"../node_modules/core-js/modules/es6.array.find.js","./modules/es6.array.find-index":"../node_modules/core-js/modules/es6.array.find-index.js","./modules/es6.array.species":"../node_modules/core-js/modules/es6.array.species.js","./modules/es6.array.iterator":"../node_modules/core-js/modules/es6.array.iterator.js","./modules/es6.regexp.constructor":"../node_modules/core-js/modules/es6.regexp.constructor.js","./modules/es6.regexp.exec":"../node_modules/core-js/modules/es6.regexp.exec.js","./modules/es6.regexp.to-string":"../node_modules/core-js/modules/es6.regexp.to-string.js","./modules/es6.regexp.flags":"../node_modules/core-js/modules/es6.regexp.flags.js","./modules/es6.regexp.match":"../node_modules/core-js/modules/es6.regexp.match.js","./modules/es6.regexp.replace":"../node_modules/core-js/modules/es6.regexp.replace.js","./modules/es6.regexp.search":"../node_modules/core-js/modules/es6.regexp.search.js","./modules/es6.regexp.split":"../node_modules/core-js/modules/es6.regexp.split.js","./modules/es6.promise":"../node_modules/core-js/modules/es6.promise.js","./modules/es6.map":"../node_modules/core-js/modules/es6.map.js","./modules/es6.set":"../node_modules/core-js/modules/es6.set.js","./modules/es6.weak-map":"../node_modules/core-js/modules/es6.weak-map.js","./modules/es6.weak-set":"../node_modules/core-js/modules/es6.weak-set.js","./modules/es6.typed.array-buffer":"../node_modules/core-js/modules/es6.typed.array-buffer.js","./modules/es6.typed.data-view":"../node_modules/core-js/modules/es6.typed.data-view.js","./modules/es6.typed.int8-array":"../node_modules/core-js/modules/es6.typed.int8-array.js","./modules/es6.typed.uint8-array":"../node_modules/core-js/modules/es6.typed.uint8-array.js","./modules/es6.typed.uint8-clamped-array":"../node_modules/core-js/modules/es6.typed.uint8-clamped-array.js","./modules/es6.typed.int16-array":"../node_modules/core-js/modules/es6.typed.int16-array.js","./modules/es6.typed.uint16-array":"../node_modules/core-js/modules/es6.typed.uint16-array.js","./modules/es6.typed.int32-array":"../node_modules/core-js/modules/es6.typed.int32-array.js","./modules/es6.typed.uint32-array":"../node_modules/core-js/modules/es6.typed.uint32-array.js","./modules/es6.typed.float32-array":"../node_modules/core-js/modules/es6.typed.float32-array.js","./modules/es6.typed.float64-array":"../node_modules/core-js/modules/es6.typed.float64-array.js","./modules/es6.reflect.apply":"../node_modules/core-js/modules/es6.reflect.apply.js","./modules/es6.reflect.construct":"../node_modules/core-js/modules/es6.reflect.construct.js","./modules/es6.reflect.define-property":"../node_modules/core-js/modules/es6.reflect.define-property.js","./modules/es6.reflect.delete-property":"../node_modules/core-js/modules/es6.reflect.delete-property.js","./modules/es6.reflect.enumerate":"../node_modules/core-js/modules/es6.reflect.enumerate.js","./modules/es6.reflect.get":"../node_modules/core-js/modules/es6.reflect.get.js","./modules/es6.reflect.get-own-property-descriptor":"../node_modules/core-js/modules/es6.reflect.get-own-property-descriptor.js","./modules/es6.reflect.get-prototype-of":"../node_modules/core-js/modules/es6.reflect.get-prototype-of.js","./modules/es6.reflect.has":"../node_modules/core-js/modules/es6.reflect.has.js","./modules/es6.reflect.is-extensible":"../node_modules/core-js/modules/es6.reflect.is-extensible.js","./modules/es6.reflect.own-keys":"../node_modules/core-js/modules/es6.reflect.own-keys.js","./modules/es6.reflect.prevent-extensions":"../node_modules/core-js/modules/es6.reflect.prevent-extensions.js","./modules/es6.reflect.set":"../node_modules/core-js/modules/es6.reflect.set.js","./modules/es6.reflect.set-prototype-of":"../node_modules/core-js/modules/es6.reflect.set-prototype-of.js","./modules/es7.array.includes":"../node_modules/core-js/modules/es7.array.includes.js","./modules/es7.array.flat-map":"../node_modules/core-js/modules/es7.array.flat-map.js","./modules/es7.array.flatten":"../node_modules/core-js/modules/es7.array.flatten.js","./modules/es7.string.at":"../node_modules/core-js/modules/es7.string.at.js","./modules/es7.string.pad-start":"../node_modules/core-js/modules/es7.string.pad-start.js","./modules/es7.string.pad-end":"../node_modules/core-js/modules/es7.string.pad-end.js","./modules/es7.string.trim-left":"../node_modules/core-js/modules/es7.string.trim-left.js","./modules/es7.string.trim-right":"../node_modules/core-js/modules/es7.string.trim-right.js","./modules/es7.string.match-all":"../node_modules/core-js/modules/es7.string.match-all.js","./modules/es7.symbol.async-iterator":"../node_modules/core-js/modules/es7.symbol.async-iterator.js","./modules/es7.symbol.observable":"../node_modules/core-js/modules/es7.symbol.observable.js","./modules/es7.object.get-own-property-descriptors":"../node_modules/core-js/modules/es7.object.get-own-property-descriptors.js","./modules/es7.object.values":"../node_modules/core-js/modules/es7.object.values.js","./modules/es7.object.entries":"../node_modules/core-js/modules/es7.object.entries.js","./modules/es7.object.define-getter":"../node_modules/core-js/modules/es7.object.define-getter.js","./modules/es7.object.define-setter":"../node_modules/core-js/modules/es7.object.define-setter.js","./modules/es7.object.lookup-getter":"../node_modules/core-js/modules/es7.object.lookup-getter.js","./modules/es7.object.lookup-setter":"../node_modules/core-js/modules/es7.object.lookup-setter.js","./modules/es7.map.to-json":"../node_modules/core-js/modules/es7.map.to-json.js","./modules/es7.set.to-json":"../node_modules/core-js/modules/es7.set.to-json.js","./modules/es7.map.of":"../node_modules/core-js/modules/es7.map.of.js","./modules/es7.set.of":"../node_modules/core-js/modules/es7.set.of.js","./modules/es7.weak-map.of":"../node_modules/core-js/modules/es7.weak-map.of.js","./modules/es7.weak-set.of":"../node_modules/core-js/modules/es7.weak-set.of.js","./modules/es7.map.from":"../node_modules/core-js/modules/es7.map.from.js","./modules/es7.set.from":"../node_modules/core-js/modules/es7.set.from.js","./modules/es7.weak-map.from":"../node_modules/core-js/modules/es7.weak-map.from.js","./modules/es7.weak-set.from":"../node_modules/core-js/modules/es7.weak-set.from.js","./modules/es7.global":"../node_modules/core-js/modules/es7.global.js","./modules/es7.system.global":"../node_modules/core-js/modules/es7.system.global.js","./modules/es7.error.is-error":"../node_modules/core-js/modules/es7.error.is-error.js","./modules/es7.math.clamp":"../node_modules/core-js/modules/es7.math.clamp.js","./modules/es7.math.deg-per-rad":"../node_modules/core-js/modules/es7.math.deg-per-rad.js","./modules/es7.math.degrees":"../node_modules/core-js/modules/es7.math.degrees.js","./modules/es7.math.fscale":"../node_modules/core-js/modules/es7.math.fscale.js","./modules/es7.math.iaddh":"../node_modules/core-js/modules/es7.math.iaddh.js","./modules/es7.math.isubh":"../node_modules/core-js/modules/es7.math.isubh.js","./modules/es7.math.imulh":"../node_modules/core-js/modules/es7.math.imulh.js","./modules/es7.math.rad-per-deg":"../node_modules/core-js/modules/es7.math.rad-per-deg.js","./modules/es7.math.radians":"../node_modules/core-js/modules/es7.math.radians.js","./modules/es7.math.scale":"../node_modules/core-js/modules/es7.math.scale.js","./modules/es7.math.umulh":"../node_modules/core-js/modules/es7.math.umulh.js","./modules/es7.math.signbit":"../node_modules/core-js/modules/es7.math.signbit.js","./modules/es7.promise.finally":"../node_modules/core-js/modules/es7.promise.finally.js","./modules/es7.promise.try":"../node_modules/core-js/modules/es7.promise.try.js","./modules/es7.reflect.define-metadata":"../node_modules/core-js/modules/es7.reflect.define-metadata.js","./modules/es7.reflect.delete-metadata":"../node_modules/core-js/modules/es7.reflect.delete-metadata.js","./modules/es7.reflect.get-metadata":"../node_modules/core-js/modules/es7.reflect.get-metadata.js","./modules/es7.reflect.get-metadata-keys":"../node_modules/core-js/modules/es7.reflect.get-metadata-keys.js","./modules/es7.reflect.get-own-metadata":"../node_modules/core-js/modules/es7.reflect.get-own-metadata.js","./modules/es7.reflect.get-own-metadata-keys":"../node_modules/core-js/modules/es7.reflect.get-own-metadata-keys.js","./modules/es7.reflect.has-metadata":"../node_modules/core-js/modules/es7.reflect.has-metadata.js","./modules/es7.reflect.has-own-metadata":"../node_modules/core-js/modules/es7.reflect.has-own-metadata.js","./modules/es7.reflect.metadata":"../node_modules/core-js/modules/es7.reflect.metadata.js","./modules/es7.asap":"../node_modules/core-js/modules/es7.asap.js","./modules/es7.observable":"../node_modules/core-js/modules/es7.observable.js","./modules/web.timers":"../node_modules/core-js/modules/web.timers.js","./modules/web.immediate":"../node_modules/core-js/modules/web.immediate.js","./modules/web.dom.iterable":"../node_modules/core-js/modules/web.dom.iterable.js","./modules/_core":"../node_modules/core-js/modules/_core.js"}],"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 /**
  * Copyright (c) 2014, Facebook, Inc.
@@ -33725,7 +33725,7 @@ define(String.prototype, "padRight", "".padEnd);
 "pop,reverse,shift,keys,values,entries,indexOf,every,some,forEach,map,filter,find,findIndex,includes,join,slice,concat,push,splice,unshift,sort,lastIndexOf,reduce,reduceRight,copyWithin,fill".split(",").forEach(function (key) {
   [][key] && define(Array, key, Function.call.bind([][key]));
 });
-},{"core-js/shim":"../node_modules/core-js/shim.js","regenerator-runtime/runtime":"../node_modules/babel-polyfill/node_modules/regenerator-runtime/runtime.js","core-js/fn/regexp/escape":"../node_modules/core-js/fn/regexp/escape.js"}],"../src/useFetch.js":[function(require,module,exports) {
+},{"core-js/shim":"../node_modules/core-js/shim.js","regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","core-js/fn/regexp/escape":"../node_modules/core-js/fn/regexp/escape.js"}],"../src/useFetch.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -33810,6 +33810,8 @@ function useFetch(arg1, arg2) {
       error = _useState6[0],
       setError = _useState6[1];
 
+  var controller = (0, _react.useRef)(null);
+  var abortedCount = (0, _react.useRef)(0);
   var fetchData = (0, _react.useCallback)(function (method) {
     return (
       /*#__PURE__*/
@@ -33817,72 +33819,82 @@ function useFetch(arg1, arg2) {
         var _ref = _asyncToGenerator(
         /*#__PURE__*/
         regeneratorRuntime.mark(function _callee(fArg1, fArg2) {
-          var query, fetchOptions, response, _data;
+          var query, response, _data;
 
           return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
+                  if (controller.current !== null) {
+                    controller.current.abort();
+                    abortedCount.current++;
+                  }
+
+                  if ('AbortController' in window) {
+                    controller.current = new AbortController();
+                    options.signal = controller.current.signal;
+                  }
+
                   query = '';
-                  fetchOptions = {};
 
                   if (isObject(fArg1) && method.toLowerCase() !== 'get') {
-                    fetchOptions.body = JSON.stringify(fArg1);
+                    options.body = JSON.stringify(fArg1);
                   } else if (baseUrl && typeof fArg1 === 'string') {
                     url = baseUrl + fArg1;
-                    if (isObject(fArg2)) fetchOptions.body = JSON.stringify(fArg2);
+                    if (isObject(fArg2)) options.body = JSON.stringify(fArg2);
                   }
 
                   if (typeof fArg1 === 'string' && typeof fArg2 === 'string') query = fArg2;
-                  _context.prev = 4;
+                  _context.prev = 5;
                   setLoading(true);
-                  _context.next = 8;
+                  _context.next = 9;
                   return fetch(url + query, _objectSpread({
                     method: method
-                  }, options, fetchOptions));
+                  }, options));
 
-                case 8:
+                case 9:
                   response = _context.sent;
                   _data = null;
-                  _context.prev = 10;
-                  _context.next = 13;
+                  _context.prev = 11;
+                  _context.next = 14;
                   return response.json();
 
-                case 13:
+                case 14:
                   _data = _context.sent;
-                  _context.next = 21;
+                  _context.next = 22;
                   break;
 
-                case 16:
-                  _context.prev = 16;
-                  _context.t0 = _context["catch"](10);
-                  _context.next = 20;
+                case 17:
+                  _context.prev = 17;
+                  _context.t0 = _context["catch"](11);
+                  _context.next = 21;
                   return response.text();
 
-                case 20:
+                case 21:
                   _data = _context.sent;
 
-                case 21:
+                case 22:
                   setData(_data);
-                  _context.next = 27;
+                  controller.current = null;
+                  _context.next = 29;
                   break;
 
-                case 24:
-                  _context.prev = 24;
-                  _context.t1 = _context["catch"](4);
-                  setError(_context.t1);
+                case 26:
+                  _context.prev = 26;
+                  _context.t1 = _context["catch"](5);
+                  if (_context.t1.name !== 'AbortError') setError(_context.t1);
 
-                case 27:
-                  _context.prev = 27;
+                case 29:
+                  _context.prev = 29;
                   setLoading(false);
-                  return _context.finish(27);
+                  return _context.finish(29);
 
-                case 30:
+                case 32:
                 case "end":
                   return _context.stop();
               }
             }
-          }, _callee, null, [[4, 24, 27, 30], [10, 16]]);
+          }, _callee, null, [[5, 26, 29, 32], [11, 17]]);
         }));
 
         return function (_x, _x2) {
@@ -33896,22 +33908,34 @@ function useFetch(arg1, arg2) {
   var patch = (0, _react.useCallback)(fetchData('PATCH'));
   var put = (0, _react.useCallback)(fetchData('PUT'));
   var del = (0, _react.useCallback)(fetchData('DELETE'));
+
+  var abort = function abort() {
+    controller.current && controller.current.abort();
+  };
+
   var request = {
     get: get,
     post: post,
     patch: patch,
     put: put,
     del: del,
-    delete: del
+    delete: del,
+    abort: abort,
+    abortedCount: abortedCount.current
   };
   (0, _react.useEffect)(function () {
-    if (onMount) request[method.toLowerCase()]();
+    if (onMount) request[method.toLowerCase()](); // return () => {
+    //   if (controller.current !== null) {
+    //     controller.current.abort()
+    //   }
+    // }
   }, []);
   return Object.assign([data, loading, error, request], _objectSpread({
     data: data,
     loading: loading,
     error: error,
-    request: request
+    request: request,
+    abort: abort
   }, request));
 }
 
@@ -34184,15 +34208,13 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 },{"./useFetch":"../src/useFetch.js","./useGet":"../src/useGet.js","./usePost":"../src/usePost.js","./usePut":"../src/usePut.js","./usePatch":"../src/usePatch.js","./useDelete":"../src/useDelete.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
-var _react = _interopRequireDefault(require("react"));
+var _react = _interopRequireWildcard(require("react"));
 
 var _reactDom = require("react-dom");
 
 var _index = _interopRequireWildcard(require("../src/index"));
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -34202,125 +34224,197 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-// import useFetch, { useGet, usePost } from '../dist'
-var App = function App() {
-  var _useFetch = (0, _index.default)('https://api.etilbudsavis.dk/v2/dealerfront?country_id=DK'),
+var delayedUrl = 'https://httpbin.org/delay/3'; // chuck: https://api.icndb.com/jokes/random/%3FlimitTo=[nerdy]&escape=javascript - handles POST too
+// const allUrl = 'https://km04k9k9x5.codesandbox.io/test.json'
+
+var baseUrl = 'https://jsonplaceholder.typicode.com';
+var postUrl = baseUrl + '/posts'; // POST https://jsonplaceholder.typicode.com/posts
+
+var allUrl = postUrl + '/1'; // everything else: https://jsonplaceholder.typicode.com/posts/1
+
+/**
+ * Abortable demos
+ * - https://github.com/dai-shi/react-hooks-async
+ */
+
+function App() {
+  var _useState = (0, _react.useState)(0),
+      _useState2 = _slicedToArray(_useState, 2),
+      successful = _useState2[0],
+      setSuccessful = _useState2[1];
+
+  var _useState3 = (0, _react.useState)(0),
+      _useState4 = _slicedToArray(_useState3, 2),
+      redundant = _useState4[0],
+      setRedundant = _useState4[1];
+
+  var _useFetch = (0, _index.default)(postUrl),
       _useFetch2 = _slicedToArray(_useFetch, 4),
-      data = _useFetch2[0],
-      loading = _useFetch2[1],
-      error = _useFetch2[2],
-      get = _useFetch2[3].get;
+      aData = _useFetch2[0],
+      loadingA = _useFetch2[1],
+      errorA = _useFetch2[2],
+      requestA = _useFetch2[3];
 
-  var handleClick = function handleClick() {
-    return get();
-  }; // WORKS 😍
-  // const [data, loading, error, request] = useFetch({
-  //   url: 'https://jsonplaceholder.typicode.com/posts/1',
-  //   // baseUrl: '', // then you can do: request.post({ url: '/posts', body: {} })
-  //   headers: {
-  //     "Content-type": "application/json; charset=UTF-8"
-  //   },
-  //   // timeout: 1000,
-  //   // onMount: true, // run on component did mount
-  // })
-  // const [data, loading, error, request] = useFetch('https://jsonplaceholder.typicode.com/posts/1')
-  // const { data, loading, error, request, get, post, patch, put, del } = useFetch('https://jsonplaceholder.typicode.com/posts/1')
-  // const { data, loading, error, request, get, post, patch, put, del } = useFetch({
-  //   baseUrl: 'https://jsonplaceholder.typicode.com/posts'
-  // })
-  // useEffect(() => {
-  //   // on component did mount or use 'onMount' option above
-  //   request.get()
-  // }, [request])
-  // const [data, loading, error, get] = useGet({
-  //   url: 'https://jsonplaceholder.typicode.com/posts/1'
-  // })
+  var totalApiRequests = (0, _react.useRef)(0);
 
-
-  var handleClick2 = function handleClick2() {// get('/1')
-    // post('/', {
-    //   // params: '?no=way&something=true',
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // patch('/1', {
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // put('/1', {
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // del('/1')
-    // request.get()
-    // request.post({
-    //   // params: '?no=way&something=true',
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // request.patch({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // request.put({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // request.delete({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // get()
-    // post({
-    //   // params: '?no=way&something=true',
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // patch({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // put({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // del({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
+  var handleAbortChange = function handleAbortChange() {
+    totalApiRequests.current++;
+    requestA.post({
+      id: 'cool'
+    });
   };
 
-  if (error) return 'Error...';
-  if (loading) return 'Loading...';
-  return _react.default.createElement("div", {
-    className: "App"
-  }, _react.default.createElement("header", {
-    className: "App-header"
-  }, _react.default.createElement("button", {
-    onClick: handleClick
-  }, "CLICK"), _react.default.createElement("code", {
+  var _useFetch3 = (0, _index.default)(delayedUrl),
+      _useFetch4 = _slicedToArray(_useFetch3, 4),
+      bData = _useFetch4[0],
+      loadingB = _useFetch4[1],
+      _ = _useFetch4[2],
+      requestB = _useFetch4[3];
+
+  var clearAbortCount = function clearAbortCount() {}; // const [data1, loading1, error1, request1] = useFetch(allUrl)
+  // const handleClick = () => request1.get()
+  // const [data2, loading2, error2, { get }] = useFetch(allUrl)
+  // const handleClick2 = () => get()
+  // const [postData, loadingPost, errorPost, post] = usePost({
+  //   baseUrl: baseUrl
+  // })
+  // const handleBaseURLClick = () => {
+  //   post('/posts', {
+  //     title: 'foo',
+  //     body: 'bar',
+  //     userId: 1
+  //   })
+  // }
+  // const [patchData, loadingPatch, errorPatch, patch] = usePatch(allUrl)
+  // const handlePatchClick = () => {
+  //   patch({
+  //     title: 'foo',
+  //     body: 'bar',
+  //     userId: 1
+  //   })
+  // }
+  // const [deleteData, loadingDelete, errorDel, del] = useDelete(allUrl)
+  // const handleDeleteClick = () => del()
+  // const { data: data3, loading: loading3 } = useFetch(allUrl, { onMount: true })
+  // const { data: data4, loading: loading4 } = useGet(allUrl, { onMount: true })
+  // const [data5, loading5] = useGet(allUrl, { onMount: true })
+  // const [postOnMountData, loadingPostOnMount] = usePost(postUrl, {
+  //   body: JSON.stringify({
+  //     title: 'foo',
+  //     body: 'bar',
+  //     userId: 1
+  //   }),
+  //   headers: {
+  //     'Content-type': 'application/json; charset=UTF-8'
+  //   },
+  //   onMount: true
+  // })
+  // const [putData, loadingPut] = usePut({
+  //   url: allUrl,
+  //   onMount: true
+  // })
+  // const loading = loading1 || loading2 || loading3 || loading4 || loading5 || loadingPostOnMount || loadingPost || loadingPatch || loadingPut
+  // const loading = loadingA
+  // if (loading) return 'Loading...'
+
+
+  var data = {// 'useFetch, array destructuring, request.get()': {
+    //   data: data1,
+    //   onClick: handleClick
+    // },
+    // 'useFetch, array destructuring, get()': {
+    //   data: data2,
+    //   onClick: handleClick2
+    // },
+    // 'usePost, baseUrl + relative routes': {
+    //   data: postData,
+    //   onClick: handleBaseURLClick
+    // },
+    // usePatch: {
+    //   data: patchData,
+    //   onClick: handlePatchClick
+    // },
+    // useDelete: {
+    //   data: deleteData,
+    //   onClick: handleDeleteClick
+    // },
+    // 'useFetch, object destructuring': {
+    //   data: data3
+    // },
+    // 'useGet, object destructuring': {
+    //   data: data4
+    // },
+    // 'useGet, array destructuring': {
+    //   data: data5
+    // },
+    // 'usePost, onMount, headers, body': {
+    //   data: postOnMountData
+    // },
+    // 'usePut, usePut({ url: "", onMount })': {
+    //   data: putData
+    // }
+  };
+  var ghUrl = 'https://api.github.com/search';
+
+  var _useFetch5 = (0, _index.default)({
+    baseUrl: "https://api.github.com/search"
+  }),
+      _useFetch6 = _slicedToArray(_useFetch5, 4),
+      ghData = _useFetch6[0],
+      ghLoading = _useFetch6[1],
+      ghError = _useFetch6[2],
+      ghRequest = _useFetch6[3];
+
+  var searchGithub = function searchGithub(_ref) {
+    var query = _ref.target.value;
+    ghRequest.get("/repositories?q=".concat(query || "''"));
+  };
+
+  return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("h1", null, "Github Repo Search Demo"), _react.default.createElement("input", {
+    onChange: searchGithub
+  }), ghLoading ? _react.default.createElement("div", {
+    style: {
+      display: 'flex'
+    }
+  }, "Loading...", _react.default.createElement("button", {
+    onClick: function onClick() {
+      return ghRequest.abort();
+    }
+  }, "Cancel Request")) : ghData && ghData.items && ghData.items.map(function (_ref2) {
+    var id = _ref2.id,
+        name = _ref2.name,
+        html_url = _ref2.html_url;
+    return _react.default.createElement("li", {
+      key: id
+    }, _react.default.createElement("a", {
+      target: "_blank",
+      rel: "noreferrer noopener",
+      href: html_url
+    }, name));
+  }), _react.default.createElement("h1", null, "Typeaheads Demo"), _react.default.createElement("input", {
+    onChange: handleAbortChange
+  }), _react.default.createElement("div", null, "Successful Requests: ", totalApiRequests.current - requestA.abortedCount), _react.default.createElement("div", null, "Canceled Requests: ", requestA.abortedCount), _react.default.createElement("h1", null, "On Click Demo"), _react.default.createElement("button", {
+    onClick: function onClick() {
+      return requestB.post({
+        no: 'way'
+      });
+    }
+  }, "Fetch Data"), loadingB ? _react.default.createElement("div", {
+    style: {
+      display: 'flex'
+    }
+  }, "Loading...", _react.default.createElement("button", {
+    onClick: function onClick() {
+      return requestB.abort();
+    }
+  }, "Cancel Request")) : bData && _react.default.createElement("code", {
     style: {
       display: 'block'
     }
-  }, _react.default.createElement("pre", null, JSON.stringify(data, null, 2)))));
-};
+  }, _react.default.createElement("pre", null, JSON.stringify(bData, null, 2))));
+}
 
-(0, _reactDom.render)(_react.default.createElement(App, null), document.getElementById('root')); // If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-// serviceWorker.unregister();
-//
+(0, _reactDom.render)(_react.default.createElement(App, null), document.getElementById('root'));
 },{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","../src/index":"../src/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -34349,7 +34443,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63592" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54045" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

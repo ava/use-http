@@ -1,5 +1,5 @@
 import 'babel-polyfill' // so async await works ;)
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useLayoutEffect, useRef } from 'react'
 
 const isObject = obj => obj === Object(obj) && Object.prototype.toString.call(obj) !== '[object Array]'
 
@@ -33,15 +33,26 @@ export function useFetch(arg1, arg2) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(onMount)
   const [error, setError] = useState(null)
+  const controller = useRef(null)
+  const abortedCount = useRef(0)
 
   const fetchData = useCallback(method => async (fArg1, fArg2) => {
+      if (controller.current !== null) {
+        controller.current.abort()
+        abortedCount.current++
+      }
+
+      if ('AbortController' in window) {
+        controller.current = new AbortController()
+        options.signal = controller.current.signal
+      }
+
       let query = ''
-      const fetchOptions = {}
       if (isObject(fArg1) && method.toLowerCase() !== 'get') {
-        fetchOptions.body = JSON.stringify(fArg1)
+        options.body = JSON.stringify(fArg1)
       } else if (baseUrl && typeof fArg1 === 'string') {
         url = baseUrl + fArg1
-        if (isObject(fArg2)) fetchOptions.body = JSON.stringify(fArg2)
+        if (isObject(fArg2)) options.body = JSON.stringify(fArg2)
       }
       if (typeof fArg1 === 'string' && typeof fArg2 === 'string') query = fArg2
 
@@ -49,8 +60,7 @@ export function useFetch(arg1, arg2) {
         setLoading(true)
         const response = await fetch(url + query, {
           method,
-          ...options,
-          ...fetchOptions
+          ...options
         })
         let data = null
         try {
@@ -59,8 +69,9 @@ export function useFetch(arg1, arg2) {
           data = await response.text()
         }
         setData(data)
+        controller.current = null
       } catch (err) {
-        setError(err)
+        if (err.name !== 'AbortError') setError(err)
       } finally {
         setLoading(false)
       }
@@ -74,13 +85,22 @@ export function useFetch(arg1, arg2) {
   const put = useCallback(fetchData('PUT'))
   const del = useCallback(fetchData('DELETE'))
 
-  const request = { get, post, patch, put, del, delete: del }
+  const abort = () => {
+    controller.current && controller.current.abort()
+  }
+
+  const request = { get, post, patch, put, del, delete: del, abort, abortedCount: abortedCount.current }
 
   useEffect(() => {
     if (onMount) request[method.toLowerCase()]()
+    // return () => {
+    //   if (controller.current !== null) {
+    //     controller.current.abort()
+    //   }
+    // }
   }, [])
 
-  return Object.assign([data, loading, error, request], { data, loading, error, request, ...request })
+  return Object.assign([data, loading, error, request], { data, loading, error, request, abort, ...request })
 }
 
 export default useFetch

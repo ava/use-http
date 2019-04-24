@@ -1,126 +1,185 @@
-import React from 'react';
-import { render } from 'react-dom';
-// import './index.css';
-// import App from './App';
-// import * as serviceWorker from './serviceWorker';
-import useFetch, { useGet, usePost } from '../src/index'
-// import useFetch, { useGet, usePost } from '../dist'
+import React, { useState, Fragment, useRef } from 'react'
+import { render } from 'react-dom'
+import useFetch, { useGet, usePost, usePatch, usePut, useDelete } from '../src/index'
 
-const App = () => {
-  const [data, loading, error, { get }] = useFetch('https://api.etilbudsavis.dk/v2/dealerfront?country_id=DK')
-  const handleClick = () => get()
+const delayedUrl = 'https://httpbin.org/delay/3'
+// chuck: https://api.icndb.com/jokes/random/%3FlimitTo=[nerdy]&escape=javascript - handles POST too
+// const allUrl = 'https://km04k9k9x5.codesandbox.io/test.json'
+const baseUrl = 'https://jsonplaceholder.typicode.com'
+const postUrl = baseUrl + '/posts'
+// POST https://jsonplaceholder.typicode.com/posts
+const allUrl = postUrl + '/1'
+// everything else: https://jsonplaceholder.typicode.com/posts/1
 
-  // WORKS 😍
-  // const [data, loading, error, request] = useFetch({
-  //   url: 'https://jsonplaceholder.typicode.com/posts/1',
-  //   // baseUrl: '', // then you can do: request.post({ url: '/posts', body: {} })
-  //   headers: {
-  //     "Content-type": "application/json; charset=UTF-8"
-  //   },
-  //   // timeout: 1000,
-  //   // onMount: true, // run on component did mount
-  // })
 
-  // const [data, loading, error, request] = useFetch('https://jsonplaceholder.typicode.com/posts/1')
 
-  // const { data, loading, error, request, get, post, patch, put, del } = useFetch('https://jsonplaceholder.typicode.com/posts/1')
-  // const { data, loading, error, request, get, post, patch, put, del } = useFetch({
-  //   baseUrl: 'https://jsonplaceholder.typicode.com/posts'
-  // })
+/**
+ * Abortable demos
+ * - https://github.com/dai-shi/react-hooks-async
+ */
 
-  // useEffect(() => {
-  //   // on component did mount or use 'onMount' option above
-  //   request.get()
-  // }, [request])
 
-  // const [data, loading, error, get] = useGet({
-  //   url: 'https://jsonplaceholder.typicode.com/posts/1'
-  // })
-  const handleClick2 = () => {
-    // get('/1')
-    // post('/', {
-    //   // params: '?no=way&something=true',
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // patch('/1', {
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // put('/1', {
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // del('/1')
-    // request.get()
-    // request.post({
-    //   // params: '?no=way&something=true',
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // request.patch({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // request.put({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // request.delete({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // get()
-    // post({
-    //   // params: '?no=way&something=true',
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // patch({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // put({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
-    // del({
-    //   title: 'foo',
-    //   body: 'bar',
-    //   userId: 1
-    // })
+function App() {
+  const [successful, setSuccessful] = useState(0)
+  const [redundant, setRedundant] = useState(0)
+  const [aData, loadingA, errorA, requestA] = useFetch(postUrl)
+  const totalApiRequests = useRef(0)
+
+  const handleAbortChange = () => {
+    totalApiRequests.current++
+    requestA.post({
+      id: 'cool'
+    })
   }
 
+  const [bData, loadingB, _, requestB] = useFetch(delayedUrl)
+  const clearAbortCount = () => {
 
-  if (error) return 'Error...'
-  if (loading) return 'Loading...'
+  }
+
+  // const [data1, loading1, error1, request1] = useFetch(allUrl)
+  // const handleClick = () => request1.get()
+
+  // const [data2, loading2, error2, { get }] = useFetch(allUrl)
+  // const handleClick2 = () => get()
+
+  // const [postData, loadingPost, errorPost, post] = usePost({
+  //   baseUrl: baseUrl
+  // })
+  // const handleBaseURLClick = () => {
+  //   post('/posts', {
+  //     title: 'foo',
+  //     body: 'bar',
+  //     userId: 1
+  //   })
+  // }
+
+  // const [patchData, loadingPatch, errorPatch, patch] = usePatch(allUrl)
+  // const handlePatchClick = () => {
+  //   patch({
+  //     title: 'foo',
+  //     body: 'bar',
+  //     userId: 1
+  //   })
+  // }
+
+  // const [deleteData, loadingDelete, errorDel, del] = useDelete(allUrl)
+  // const handleDeleteClick = () => del()
+
+  // const { data: data3, loading: loading3 } = useFetch(allUrl, { onMount: true })
+
+  // const { data: data4, loading: loading4 } = useGet(allUrl, { onMount: true })
+  // const [data5, loading5] = useGet(allUrl, { onMount: true })
+
+  // const [postOnMountData, loadingPostOnMount] = usePost(postUrl, {
+  //   body: JSON.stringify({
+  //     title: 'foo',
+  //     body: 'bar',
+  //     userId: 1
+  //   }),
+  //   headers: {
+  //     'Content-type': 'application/json; charset=UTF-8'
+  //   },
+  //   onMount: true
+  // })
+
+  // const [putData, loadingPut] = usePut({
+  //   url: allUrl,
+  //   onMount: true
+  // })
+
+  // const loading = loading1 || loading2 || loading3 || loading4 || loading5 || loadingPostOnMount || loadingPost || loadingPatch || loadingPut
+  // const loading = loadingA
+
+  // if (loading) return 'Loading...'
+  const data = {
+    // 'useFetch, array destructuring, request.get()': {
+    //   data: data1,
+    //   onClick: handleClick
+    // },
+    // 'useFetch, array destructuring, get()': {
+    //   data: data2,
+    //   onClick: handleClick2
+    // },
+    // 'usePost, baseUrl + relative routes': {
+    //   data: postData,
+    //   onClick: handleBaseURLClick
+    // },
+    // usePatch: {
+    //   data: patchData,
+    //   onClick: handlePatchClick
+    // },
+    // useDelete: {
+    //   data: deleteData,
+    //   onClick: handleDeleteClick
+    // },
+    // 'useFetch, object destructuring': {
+    //   data: data3
+    // },
+    // 'useGet, object destructuring': {
+    //   data: data4
+    // },
+    // 'useGet, array destructuring': {
+    //   data: data5
+    // },
+    // 'usePost, onMount, headers, body': {
+    //   data: postOnMountData
+    // },
+    // 'usePut, usePut({ url: "", onMount })': {
+    //   data: putData
+    // }
+  }
+
+  const ghUrl = 'https://api.github.com/search'
+  const [ghData, ghLoading, ghError, ghRequest] = useFetch({
+    baseUrl: `https://api.github.com/search`
+  })
+  const searchGithub = ({ target: { value: query } }) => {
+    ghRequest.get(`/repositories?q=${query || "''"}`)
+  }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <button onClick={handleClick}>CLICK</button>
+    <>
+      <h1>Github Repo Search Demo</h1>
+      <input onChange={searchGithub} />
+      {ghLoading ? (
+        <div style={{display: 'flex'}}>
+          Loading...
+          <button onClick={() => ghRequest.abort()}>Cancel Request</button>
+        </div>
+      ) : ghData && ghData.items && (
+        ghData.items.map(({ id, name, html_url }) => (
+          <li key={id}><a target="_blank" rel="noreferrer noopener" href={html_url}>{name}</a></li>
+        ))
+      )}
+      <h1>Typeaheads Demo</h1>
+      <input onChange={handleAbortChange} />
+      <div>Successful Requests: {totalApiRequests.current - requestA.abortedCount}</div>
+      <div>Canceled Requests: {requestA.abortedCount}</div>
+      <h1>On Click Demo</h1>
+      <button onClick={() => requestB.post({ no: 'way' })}>Fetch Data</button>
+      {loadingB ? (
+        <div style={{display: 'flex'}}>
+          Loading...
+          <button onClick={() => requestB.abort()}>Cancel Request</button>
+        </div>
+      ) : bData && (
         <code style={{ display: 'block' }}>
-          <pre>{JSON.stringify(data, null, 2)}</pre>
+          <pre>{JSON.stringify(bData, null, 2)}</pre>
         </code>
-      </header>
-    </div>
-  );
+      )}
+      {/* <button onClick={clearAbortCount}>Clear Count</button> */}
+      {/* {Object.entries(data).map(([name, { data, onClick }]) => (
+        <Fragment key={name}>
+          <h2>{name}</h2>
+          <code style={{ display: 'block' }}>
+            <pre>{JSON.stringify(data, null, 2)}</pre>
+          </code>
+          {onClick && <button onClick={onClick}> Click Me</button>}
+        </Fragment>
+      ))} */}
+    </>
+  )
 }
 
-render(<App />, document.getElementById('root'));
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-// serviceWorker.unregister();
-// 
+render(<App />, document.getElementById('root'))
