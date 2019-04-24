@@ -93,6 +93,22 @@ patch({
 })
 ```
 
+#### Coming Soon: `abort`
+
+```jsx
+const { data, loading, request } = useFetch({
+  baseUrl: `https://api.github.com/search`
+})
+
+const searchGithub = e => request.get(`/repositories?q=${e.target.value || "''"}`)
+
+<>
+  <input onChange={searchGithub} />
+  <button onClick={request.abort()}>Abort</button>
+  {loading ? 'Loading...' : <code><pre>{data}</pre></code>}
+</>
+```
+
 Hooks
 ----
 | Option                | Description                                                                              |
@@ -144,5 +160,4 @@ Todos
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
  - [ ] add `timeout`
- - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
  - [ ] error handling if no url is passed
