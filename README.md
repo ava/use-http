@@ -22,29 +22,22 @@ yarn add use-http
 
 Usage
 -----
+#### Basic Usage
 
 ```jsx 
 import useFetch from 'use-http'
 
 function App() {
-  // add whatever other options you would add to `fetch` such as headers
-  const options = {
+  const options = { // accepts all `fetch` options
     onMount: true // will fire on componentDidMount
   }
   
   var [data, loading, error, request] = useFetch('https://example.com', options)
   
-  // if you want to access the http methods directly using array destructuring, just do
-  var [data, loading, error, { get, post, patch put, del }] = useFetch('https://example.com', options)
-  
   // want to use object destructuring? You can do that too
-  var { data, loading, error, request, get, post, patch, put, del } = useFetch('https://example.com')
+  var { data, loading, error, request } = useFetch('https://example.com')
   
   const postData = () => {
-    post({
-      no: 'way',
-    })
-    // OR
     request.post({
       no: 'way',
     })
@@ -63,18 +56,27 @@ function App() {
   )
 }
 ```
-You can also do relative routes
+#### Destructured methods
+```jsx
+var [data, loading, error, { post }] = useFetch('https://example.com')
+
+var { data, loading, error, post } = useFetch('https://example.com')
+
+post({
+  no: 'way',
+})
+```
+#### Relative routes
 ```jsx
 const [data, loading, error, request] = useFetch({
   baseUrl: 'https://example.com'
 })
 
 request.post('/todos', {
-  id: 'someID',
-  text: 'this is what my todo is'
+  no: 'way'
 })
 ```
-Or you can use one of the nice helper hooks. All of them accept the second `options` parameter.
+#### Helper hooks
 
 ```jsx
 import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
@@ -87,7 +89,7 @@ const [data, loading, error, patch] = usePatch({
 })
 
 patch({
-  no: 'way'
+  yes: 'way',
 })
 ```
 
@@ -131,9 +133,16 @@ const {
 })
 ```
 
+Credits
+--------
+use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios) 
+
 Todos
 ------
  - [ ] Make abortable (add `abort` to abort the http request)
  - [ ] Make work with React Suspense
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
+ - [ ] add `timeout`
+ - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
+ - [ ] error handling if no url is passed
