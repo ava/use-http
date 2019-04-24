@@ -1,4 +1,4 @@
-import 'babel-polyfill' // so async await works ;)
+import 'idempotent-babel-polyfill' // so async await works ;)
 import { useEffect, useState, useCallback, useLayoutEffect, useRef } from 'react'
 
 const isObject = obj => obj === Object(obj) && Object.prototype.toString.call(obj) !== '[object Array]'
@@ -93,6 +93,7 @@ export function useFetch(arg1, arg2) {
 
   useEffect(() => {
     if (onMount) request[method.toLowerCase()]()
+    // can probably have the user do this with request.abort() if they want it
     // return () => {
     //   if (controller.current !== null) {
     //     controller.current.abort()
