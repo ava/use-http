@@ -104,7 +104,7 @@ const searchGithub = e => request.get(`/repositories?q=${e.target.value || "''"}
 
 <>
   <input onChange={searchGithub} />
-  <button onClick={request.abort()}>Abort</button>
+  <button onClick={request.abort}>Abort</button>
   {loading ? 'Loading...' : <code><pre>{data}</pre></code>}
 </>
 ```
