@@ -161,3 +161,4 @@ Todos
  - [ ] Allow option for callback for response.json() vs response.text()
  - [ ] add `timeout`
  - [ ] error handling if no url is passed
+ - [ ] tests
