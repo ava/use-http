@@ -160,7 +160,7 @@ use-http is heavily inspired by the popular http client [axios](https://github.c
 Todos
 ------
  - [ ] Make abortable (add `abort` to abort the http request)
- - [ ] Make work with React Suspense [current exmaple WIP](https://codesandbox.io/s/7ww5950no0)
+ - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
  - [ ] add `timeout`
