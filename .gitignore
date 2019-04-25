@@ -28,3 +28,9 @@ yarn-error.log*
 
 # Using Yarn
 package-lock.json
+
+# IDE config
+.idea
+*.iml
+/venv
+.vscode
