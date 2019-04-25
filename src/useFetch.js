@@ -1,7 +1,7 @@
 import 'idempotent-babel-polyfill' // so async await works ;)
 import { useEffect, useState, useCallback } from 'react'
 
-const isObject = obj => obj === Object(obj) && Object.prototype.toString.call(obj) !== '[object Array]'
+const isObject = obj => Object.prototype.toString.call(obj) === '[object Object]'
 
 export function useFetch(arg1, arg2) {
   let url = null

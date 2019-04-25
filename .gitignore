@@ -30,3 +30,9 @@ package-lock.json
 
 # Gitkeep files
 !.gitkeep
+
+# IDE config
+.idea
+*.iml
+/venv
+.vscode
