@@ -179,3 +179,4 @@ Todos
  - [ ] error handling if no url is passed
  - [ ] tests
  - [ ] port to typescript
+ - [ ] badges, I like the way [these guys do it](https://github.com/GitSquared/edex-ui)
