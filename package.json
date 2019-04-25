@@ -25,12 +25,18 @@
     "react": "^16.8.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/preset-react": "^7.0.0",
+    "babel-jest": "^24.7.1",
     "idempotent-babel-polyfill": "^7.0.0",
+    "jest": "^24.7.1",
     "parcel-bundler": "^1.12.3",
     "react-dom": "^16.8.6"
   },
   "scripts": {
     "dev": "parcel examples/index.html --open",
-    "build": "parcel build --target node ./src/*"
+    "build": "parcel build --target node ./src/*",
+    "test": "jest"
   }
 }
