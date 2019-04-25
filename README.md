@@ -152,6 +152,18 @@ const {
   onMount: true
 })
 ```
+or
+```jsx
+const [data, loading, error, request] = useFetch({
+  url: 'https://example.com',
+  baseUrl: 'https://example.com',
+  onMount: true
+})
+
+// 1 caveat, only use `request.delete`, don't destructure like below
+// that's what `del` is for since `delete` is a key word
+const { get, post, patch, put, del, delete } = request
+```
 
 Credits
 --------
