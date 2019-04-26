@@ -12,10 +12,6 @@
 <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
 Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That means it works with SSR (server side rendering).
 
-<br/>
-
-**If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!**
-
 ### Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Code Sandbox Example</a>
 
@@ -169,7 +165,11 @@ const { get, post, patch, put, del, delete } = request
 
 Credits
 --------
-use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios) 
+use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios)
+
+Feature Requests/Ideas
+----------------------
+If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
 
 Todos
 ------
