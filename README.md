@@ -30,48 +30,46 @@ Usage
 ```jsx 
 import useFetch from 'use-http'
 
-function App() {
+function Todos() {
   const options = { // accepts all `fetch` options
     onMount: true // will fire on componentDidMount
   }
   
-  var [data, loading, error, request] = useFetch('https://example.com', options)
+  const todos = useFetch('https://example.com/todos', options)
   
-  // want to use object destructuring? You can do that too
-  var { data, loading, error, request } = useFetch('https://example.com')
-  
-  const postData = () => {
-    request.post({
-      no: 'way',
+  const addTodo = () => {
+    todos.post({
+      title: 'no way',
     })
   }
 
-  if (error) return 'Error!'
-  if (loading) return 'Loading!'
+  if (todos.error) return 'Error!'
+  if (todos.loading) return 'Loading...'
   
   return (
     <>
-      <button onClick={postData}>Post Some Data</button>
-      <code>
-        <pre>{data}</pre>
-      </code>
+      <button onClick={addTodo}>Add Todo</button>
+      {todos.data.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
     </>
   )
 }
 ```
 #### Destructured methods
 ```jsx
-var [data, loading, error, { post }] = useFetch('https://example.com')
+var [data, loading, error, request] = useFetch('https://example.com')
 
-var { data, loading, error, post } = useFetch('https://example.com')
+// want to use object destructuring? You can do that too
+var { data, loading, error, request } = useFetch('https://example.com')
 
-post({
+request.post({
   no: 'way',
 })
 ```
 #### Relative routes
 ```jsx
-const [data, loading, error, request] = useFetch({
+const request = useFetch({
   baseUrl: 'https://example.com'
 })
 
@@ -99,16 +97,18 @@ patch({
 #### Coming Soon: `abort`
 
 ```jsx
-const { data, loading, request } = useFetch({
-  baseUrl: `https://api.github.com/search`
+const githubRepos = useFetch({
+  baseUrl: `https://api.github.com/search/repositories`
 })
 
-const searchGithub = e => request.get(`/repositories?q=${e.target.value || "''"}`)
+const searchGithub = e => githubRepos.get(`?q=${e.target.value || "''"}`)
 
 <>
   <input onChange={searchGithub} />
-  <button onClick={request.abort}>Abort</button>
-  {loading ? 'Loading...' : <code><pre>{data}</pre></code>}
+  <button onClick={githubRepos.abort}>Abort</button>
+  {githubRepos.loading ? 'Loading...' : githubRepos.data.items.map(repo => (
+    <div key={repo.id}>{repo.name}</div>
+  ))}
 </>
 ```
 
