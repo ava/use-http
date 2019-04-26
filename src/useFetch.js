@@ -36,12 +36,11 @@ export function useFetch(arg1, arg2) {
 
   const fetchData = useCallback(method => async (fArg1, fArg2) => {
       let query = ''
-      const fetchOptions = {}
       if (isObject(fArg1) && method.toLowerCase() !== 'get') {
-        fetchOptions.body = JSON.stringify(fArg1)
+        options.body = JSON.stringify(fArg1)
       } else if (baseUrl && typeof fArg1 === 'string') {
         url = baseUrl + fArg1
-        if (isObject(fArg2)) fetchOptions.body = JSON.stringify(fArg2)
+        if (isObject(fArg2)) options.body = JSON.stringify(fArg2)
       }
       if (typeof fArg1 === 'string' && typeof fArg2 === 'string') query = fArg2
 
@@ -50,7 +49,6 @@ export function useFetch(arg1, arg2) {
         const response = await fetch(url + query, {
           method,
           ...options,
-          ...fetchOptions
         })
         let data = null
         try {
