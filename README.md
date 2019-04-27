@@ -183,6 +183,8 @@ Todos
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
  - [ ] add `timeout`
+ - [ ] add `debounce`
+ - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
  - [ ] error handling if no url is passed
  - [ ] tests
  - [ ] port to typescript
