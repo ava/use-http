@@ -100,7 +100,7 @@ const githubRepos = useFetch({
   baseUrl: `https://api.github.com/search/repositories?q=`
 })
 
-// the line below is not isomorphic, but for simplicity I'm going to use the browsers `encodeURI`
+// the line below is not isomorphic, but for simplicity we're using the browsers `encodeURI`
 const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 
 <>
