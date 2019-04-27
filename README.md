@@ -142,8 +142,8 @@ const {
   post,
   patch,
   put,
-  del,
-  // delete
+  delete // don't destructure `delete` though, it's a keyword
+  del,   // <- that's why we have this (del). or use `request.delete`
 } = useFetch({
   url: 'https://example.com',
   baseUrl: 'https://example.com',
@@ -158,9 +158,14 @@ const [data, loading, error, request] = useFetch({
   onMount: true
 })
 
-// 1 caveat, only use `request.delete`, don't destructure like below
-// that's what `del` is for since `delete` is a key word
-const { get, post, patch, put, del, delete } = request
+const {
+  get,
+  post,
+  patch,
+  put,
+  delete // don't destructure `delete` though, it's a keyword
+  del,   // <- that's why we have this (del). or use `request.delete`
+} = request
 ```
 
 Credits
