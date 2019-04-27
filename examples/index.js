@@ -18,166 +18,60 @@ const allUrl = postUrl + '/1'
  * - https://github.com/dai-shi/react-hooks-async
  */
 
-
-function App() {
-  const [successful, setSuccessful] = useState(0)
-  const [redundant, setRedundant] = useState(0)
-  const [aData, loadingA, errorA, requestA] = useFetch(postUrl)
-  const totalApiRequests = useRef(0)
-
-  const handleAbortChange = () => {
-    totalApiRequests.current++
-    requestA.post({
-      id: 'cool'
-    })
-  }
-
-  const [bData, loadingB, _, requestB] = useFetch(delayedUrl)
-  const clearAbortCount = () => {
-
-  }
-
-  // const [data1, loading1, error1, request1] = useFetch(allUrl)
-  // const handleClick = () => request1.get()
-
-  // const [data2, loading2, error2, { get }] = useFetch(allUrl)
-  // const handleClick2 = () => get()
-
-  // const [postData, loadingPost, errorPost, post] = usePost({
-  //   baseUrl: baseUrl
-  // })
-  // const handleBaseURLClick = () => {
-  //   post('/posts', {
-  //     title: 'foo',
-  //     body: 'bar',
-  //     userId: 1
-  //   })
-  // }
-
-  // const [patchData, loadingPatch, errorPatch, patch] = usePatch(allUrl)
-  // const handlePatchClick = () => {
-  //   patch({
-  //     title: 'foo',
-  //     body: 'bar',
-  //     userId: 1
-  //   })
-  // }
-
-  // const [deleteData, loadingDelete, errorDel, del] = useDelete(allUrl)
-  // const handleDeleteClick = () => del()
-
-  // const { data: data3, loading: loading3 } = useFetch(allUrl, { onMount: true })
-
-  // const { data: data4, loading: loading4 } = useGet(allUrl, { onMount: true })
-  // const [data5, loading5] = useGet(allUrl, { onMount: true })
-
-  // const [postOnMountData, loadingPostOnMount] = usePost(postUrl, {
-  //   body: JSON.stringify({
-  //     title: 'foo',
-  //     body: 'bar',
-  //     userId: 1
-  //   }),
-  //   headers: {
-  //     'Content-type': 'application/json; charset=UTF-8'
-  //   },
-  //   onMount: true
-  // })
-
-  // const [putData, loadingPut] = usePut({
-  //   url: allUrl,
-  //   onMount: true
-  // })
-
-  // const loading = loading1 || loading2 || loading3 || loading4 || loading5 || loadingPostOnMount || loadingPost || loadingPatch || loadingPut
-  // const loading = loadingA
-
-  // if (loading) return 'Loading...'
-  const data = {
-    // 'useFetch, array destructuring, request.get()': {
-    //   data: data1,
-    //   onClick: handleClick
-    // },
-    // 'useFetch, array destructuring, get()': {
-    //   data: data2,
-    //   onClick: handleClick2
-    // },
-    // 'usePost, baseUrl + relative routes': {
-    //   data: postData,
-    //   onClick: handleBaseURLClick
-    // },
-    // usePatch: {
-    //   data: patchData,
-    //   onClick: handlePatchClick
-    // },
-    // useDelete: {
-    //   data: deleteData,
-    //   onClick: handleDeleteClick
-    // },
-    // 'useFetch, object destructuring': {
-    //   data: data3
-    // },
-    // 'useGet, object destructuring': {
-    //   data: data4
-    // },
-    // 'useGet, array destructuring': {
-    //   data: data5
-    // },
-    // 'usePost, onMount, headers, body': {
-    //   data: postOnMountData
-    // },
-    // 'usePut, usePut({ url: "", onMount })': {
-    //   data: putData
-    // }
-  }
-
-  const ghUrl = 'https://api.github.com/search'
-  const [ghData, ghLoading, ghError, ghRequest] = useFetch({
-    baseUrl: `https://api.github.com/search`
+const GithubRepoSearchDemo = () => {
+  const githubQueryRepoURL = 'https://api.github.com/search/repositories?q='
+  const githubRepos = useFetch({
+    baseUrl: githubQueryRepoURL,
   })
-  const searchGithub = ({ target: { value: query } }) => {
-    ghRequest.get(`/repositories?q=${query || "''"}`)
-  }
+
+  const searchGithub = e => githubRepos.get(e.target.value || "%27%27")
+
+  const githubRepoItems = (githubRepos.data || {}).items || []
 
   return (
     <>
-      <h1>Github Repo Search Demo</h1>
+      <h3>Github Repo Search Demo</h3>
       <input onChange={searchGithub} />
-      {ghLoading ? (
+      {githubRepos.loading ? (
         <div style={{display: 'flex'}}>
           Loading...
-          <button onClick={() => ghRequest.abort()}>Cancel Request</button>
+          <button onClick={githubRepos.abort}>Cancel Request</button>
         </div>
-      ) : ghData && ghData.items && (
-        ghData.items.map(({ id, name, html_url }) => (
-          <li key={id}><a target="_blank" rel="noreferrer noopener" href={html_url}>{name}</a></li>
-        ))
-      )}
-      <h1>Typeaheads Demo</h1>
-      <input onChange={handleAbortChange} />
-      <div>Successful Requests: {totalApiRequests.current - requestA.abortedCount}</div>
-      <div>Canceled Requests: {requestA.abortedCount}</div>
-      <h1>On Click Demo</h1>
-      <button onClick={() => requestB.post({ no: 'way' })}>Fetch Data</button>
-      {loadingB ? (
+      ) : githubRepoItems.map(({ id, name, html_url }) => (
+        <li key={id}><a target="_blank" rel="noreferrer noopener" href={html_url}>{name}</a></li>
+      ))}
+    </>
+  )
+}
+
+const OnClickAbortDemo = () => {
+  const request = useFetch(delayedUrl)
+  return (
+    <>
+      <h3>On Click Demo</h3>
+      <button onClick={() => request.post({ no: 'way' })}>Fetch Data</button>
+      {request.loading ? (
         <div style={{display: 'flex'}}>
           Loading...
-          <button onClick={() => requestB.abort()}>Cancel Request</button>
+          <button onClick={request.abort}>Cancel Request</button>
         </div>
-      ) : bData && (
+      ) : (
         <code style={{ display: 'block' }}>
-          <pre>{JSON.stringify(bData, null, 2)}</pre>
+          <pre>{JSON.stringify(request.data, null, 2)}</pre>
         </code>
       )}
-      {/* <button onClick={clearAbortCount}>Clear Count</button> */}
-      {/* {Object.entries(data).map(([name, { data, onClick }]) => (
-        <Fragment key={name}>
-          <h2>{name}</h2>
-          <code style={{ display: 'block' }}>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
-          </code>
-          {onClick && <button onClick={onClick}> Click Me</button>}
-        </Fragment>
-      ))} */}
+    </>
+  )
+}
+
+function App() {
+  return (
+    <>
+      <div>If for some reason you aren't getting any responses from these, it's possible you have used your daily limit for api calls to these apis.</div>
+      <h1>Abort Demos</h1>
+      <p>Open the network tab in the devtools to see this in action 😛</p>
+      <GithubRepoSearchDemo />
+      <OnClickAbortDemo />
     </>
   )
 }

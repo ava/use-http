@@ -34,14 +34,8 @@ export function useFetch(arg1, arg2) {
   const [loading, setLoading] = useState(onMount)
   const [error, setError] = useState(null)
   const controller = useRef(null)
-  const abortedCount = useRef(0)
 
   const fetchData = useCallback(method => async (fArg1, fArg2) => {
-      if (controller.current !== null) {
-        controller.current.abort()
-        abortedCount.current++
-      }
-
       if ('AbortController' in window) {
         controller.current = new AbortController()
         options.signal = controller.current.signal
@@ -69,10 +63,10 @@ export function useFetch(arg1, arg2) {
           data = await response.text()
         }
         setData(data)
-        controller.current = null
       } catch (err) {
         if (err.name !== 'AbortError') setError(err)
       } finally {
+        controller.current = null
         setLoading(false)
       }
     },
@@ -89,16 +83,10 @@ export function useFetch(arg1, arg2) {
     controller.current && controller.current.abort()
   }
 
-  const request = { get, post, patch, put, del, delete: del, abort, abortedCount: abortedCount.current }
+  const request = { get, post, patch, put, del, delete: del, abort }
 
   useEffect(() => {
     if (onMount) request[method.toLowerCase()]()
-    // can probably have the user do this with request.abort() if they want it
-    // return () => {
-    //   if (controller.current !== null) {
-    //     controller.current.abort()
-    //   }
-    // }
   }, [])
 
   return Object.assign([data, loading, error, request], { data, loading, error, request, abort, ...request })
