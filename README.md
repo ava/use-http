@@ -93,17 +93,18 @@ patch({
 })
 ```
 
-#### Coming Soon: `abort`
+#### Abort
 
 ```jsx
 const githubRepos = useFetch({
-  baseUrl: `https://api.github.com/search/repositories`
+  baseUrl: `https://api.github.com/search/repositories?q=`
 })
 
-const searchGithub = e => githubRepos.get(`?q=${e.target.value || "''"}`)
+// the line below is not isomorphic, but for simplicity I'm going to use the browsers `encodeURI`
+const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 
 <>
-  <input onChange={searchGithub} />
+  <input onChange={searchGithubRepos} />
   <button onClick={githubRepos.abort}>Abort</button>
   {githubRepos.loading ? 'Loading...' : githubRepos.data.items.map(repo => (
     <div key={repo.id}>{repo.name}</div>
