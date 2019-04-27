@@ -12,7 +12,7 @@
 /coverage
 
 # production
-/build
+/dist
 
 # misc
 .DS_Store
@@ -27,3 +27,12 @@ yarn-error.log*
 
 # Using Yarn
 package-lock.json
+
+# Gitkeep files
+!.gitkeep
+
+# IDE config
+.idea
+*.iml
+/venv
+.vscode

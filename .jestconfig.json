@@ -1,0 +1,7 @@
+{
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/dist/"
+  ],
+  "testRegex": "/__tests__/.*\\.jsx?$"
+}
