@@ -1,5 +1,5 @@
 import 'idempotent-babel-polyfill' // so async await works ;)
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 
 const isObject = obj => Object.prototype.toString.call(obj) === '[object Object]'
 
@@ -33,8 +33,14 @@ export function useFetch(arg1, arg2) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(onMount)
   const [error, setError] = useState(null)
+  const controller = useRef(null)
 
   const fetchData = useCallback(method => async (fArg1, fArg2) => {
+      if ('AbortController' in window) {
+        controller.current = new AbortController()
+        options.signal = controller.current.signal
+      }
+
       let query = ''
       if (isObject(fArg1) && method.toLowerCase() !== 'get') {
         options.body = JSON.stringify(fArg1)
@@ -48,7 +54,7 @@ export function useFetch(arg1, arg2) {
         setLoading(true)
         const response = await fetch(url + query, {
           method,
-          ...options,
+          ...options
         })
         let data = null
         try {
@@ -58,8 +64,9 @@ export function useFetch(arg1, arg2) {
         }
         setData(data)
       } catch (err) {
-        setError(err)
+        if (err.name !== 'AbortError') setError(err)
       } finally {
+        controller.current = null
         setLoading(false)
       }
     },
@@ -72,13 +79,17 @@ export function useFetch(arg1, arg2) {
   const put = useCallback(fetchData('PUT'))
   const del = useCallback(fetchData('DELETE'))
 
-  const request = { get, post, patch, put, del, delete: del }
+  const abort = () => {
+    controller.current && controller.current.abort()
+  }
+
+  const request = { get, post, patch, put, del, delete: del, abort }
 
   useEffect(() => {
     if (onMount) request[method.toLowerCase()]()
   }, [])
 
-  return Object.assign([data, loading, error, request], { data, loading, error, request, ...request })
+  return Object.assign([data, loading, error, request], { data, loading, error, request, abort, ...request })
 }
 
 export default useFetch

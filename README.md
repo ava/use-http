@@ -93,17 +93,21 @@ patch({
 })
 ```
 
-#### Coming Soon: `abort`
+#### Abort
+
+<img src="public/abort-example-1.gif" height="250" />
+
 
 ```jsx
 const githubRepos = useFetch({
-  baseUrl: `https://api.github.com/search/repositories`
+  baseUrl: `https://api.github.com/search/repositories?q=`
 })
 
-const searchGithub = e => githubRepos.get(`?q=${e.target.value || "''"}`)
+// the line below is not isomorphic, but for simplicity we're using the browsers `encodeURI`
+const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 
 <>
-  <input onChange={searchGithub} />
+  <input onChange={searchGithubRepos} />
   <button onClick={githubRepos.abort}>Abort</button>
   {githubRepos.loading ? 'Loading...' : githubRepos.data.items.map(repo => (
     <div key={repo.id}>{repo.name}</div>
@@ -183,6 +187,8 @@ Todos
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
  - [ ] add `timeout`
+ - [ ] add `debounce`
+ - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
  - [ ] error handling if no url is passed
  - [ ] tests
  - [ ] port to typescript
