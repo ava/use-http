@@ -148,6 +148,7 @@ const {
   put,
   delete // don't destructure `delete` though, it's a keyword
   del,   // <- that's why we have this (del). or use `request.delete`
+  abort,
 } = useFetch({
   url: 'https://example.com',
   baseUrl: 'https://example.com',
@@ -169,6 +170,7 @@ const {
   put,
   delete // don't destructure `delete` though, it's a keyword
   del,   // <- that's why we have this (del). or use `request.delete`
+  abort,
 } = request
 ```
 
