@@ -95,6 +95,9 @@ patch({
 
 #### Abort
 
+<img src="public/abort-example-1.gif" height="250" />
+
+
 ```jsx
 const githubRepos = useFetch({
   baseUrl: `https://api.github.com/search/repositories?q=`
