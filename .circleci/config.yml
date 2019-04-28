@@ -1,0 +1,28 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/node:8.10
+    environment:
+      - NODE_ENV: test
+    working_directory: ~/use-http
+    steps:
+      - checkout
+      - restore_cache:
+          key: use-http-yarn-{{ checksum "yarn.lock" }}
+      - run:
+          name: Yarn Install
+          command: |
+            yarn install
+      - save_cache:
+          key: use-http-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/use-http/node_modules
+      - run:
+          name: Run JS Tests
+          command: yarn test
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test

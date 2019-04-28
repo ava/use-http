@@ -4,6 +4,9 @@
     <a href="https://github.com/alex-cory/use-http/pulls">
       <img src="https://camo.githubusercontent.com/d4e0f63e9613ee474a7dfdc23c240b9795712c96/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e2e737667" />
     </a>
+    <a href="https://circleci.com/gh/alex-cory/use-http">
+      <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
+    </a>
 </p>
 
 <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
@@ -12,12 +15,11 @@ Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That m
 ### Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Code Sandbox Example</a>
 
-
 Installation
 ------------
 
 ```shell
-yarn add use-http
+yarn add use-http    or    npm i -S use-http
 ```
 
 Usage
@@ -27,48 +29,46 @@ Usage
 ```jsx 
 import useFetch from 'use-http'
 
-function App() {
+function Todos() {
   const options = { // accepts all `fetch` options
     onMount: true // will fire on componentDidMount
   }
   
-  var [data, loading, error, request] = useFetch('https://example.com', options)
+  const todos = useFetch('https://example.com/todos', options)
   
-  // want to use object destructuring? You can do that too
-  var { data, loading, error, request } = useFetch('https://example.com')
-  
-  const postData = () => {
-    request.post({
-      no: 'way',
+  const addTodo = () => {
+    todos.post({
+      title: 'no way',
     })
   }
 
-  if (error) return 'Error!'
-  if (loading) return 'Loading!'
+  if (todos.error) return 'Error!'
+  if (todos.loading) return 'Loading...'
   
   return (
     <>
-      <button onClick={postData}>Post Some Data</button>
-      <code>
-        <pre>{data}</pre>
-      </code>
+      <button onClick={addTodo}>Add Todo</button>
+      {todos.data.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
     </>
   )
 }
 ```
 #### Destructured methods
 ```jsx
-var [data, loading, error, { post }] = useFetch('https://example.com')
+var [data, loading, error, request] = useFetch('https://example.com')
 
-var { data, loading, error, post } = useFetch('https://example.com')
+// want to use object destructuring? You can do that too
+var { data, loading, error, request } = useFetch('https://example.com')
 
-post({
+request.post({
   no: 'way',
 })
 ```
 #### Relative routes
 ```jsx
-const [data, loading, error, request] = useFetch({
+const request = useFetch({
   baseUrl: 'https://example.com'
 })
 
@@ -93,19 +93,25 @@ patch({
 })
 ```
 
-#### Coming Soon: `abort`
+#### Abort
+
+<img src="public/abort-example-1.gif" height="250" />
+
 
 ```jsx
-const { data, loading, request } = useFetch({
-  baseUrl: `https://api.github.com/search`
+const githubRepos = useFetch({
+  baseUrl: `https://api.github.com/search/repositories?q=`
 })
 
-const searchGithub = e => request.get(`/repositories?q=${e.target.value || "''"}`)
+// the line below is not isomorphic, but for simplicity we're using the browsers `encodeURI`
+const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 
 <>
-  <input onChange={searchGithub} />
-  <button onClick={request.abort}>Abort</button>
-  {loading ? 'Loading...' : <code><pre>{data}</pre></code>}
+  <input onChange={searchGithubRepos} />
+  <button onClick={githubRepos.abort}>Abort</button>
+  {githubRepos.loading ? 'Loading...' : githubRepos.data.items.map(repo => (
+    <div key={repo.id}>{repo.name}</div>
+  ))}
 </>
 ```
 
@@ -140,25 +146,50 @@ const {
   post,
   patch,
   put,
-  del,
-  // delete
+  delete // don't destructure `delete` though, it's a keyword
+  del,   // <- that's why we have this (del). or use `request.delete`
 } = useFetch({
   url: 'https://example.com',
   baseUrl: 'https://example.com',
   onMount: true
 })
 ```
+or
+```jsx
+const [data, loading, error, request] = useFetch({
+  url: 'https://example.com',
+  baseUrl: 'https://example.com',
+  onMount: true
+})
+
+const {
+  get,
+  post,
+  patch,
+  put,
+  delete // don't destructure `delete` though, it's a keyword
+  del,   // <- that's why we have this (del). or use `request.delete`
+} = request
+```
 
 Credits
 --------
-use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios) 
+use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios)
+
+Feature Requests/Ideas
+----------------------
+If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
 
 Todos
 ------
  - [ ] Make abortable (add `abort` to abort the http request)
- - [ ] Make work with React Suspense
+ - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
  - [ ] add `timeout`
+ - [ ] add `debounce`
+ - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
  - [ ] error handling if no url is passed
  - [ ] tests
+ - [ ] port to typescript
+ - [ ] badges, I like the way [these guys do it](https://github.com/GitSquared/edex-ui)

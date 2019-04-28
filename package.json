@@ -1,6 +1,6 @@
 {
   "name": "use-http",
-  "version": "0.1.50",
+  "version": "0.1.57",
   "homepage": "https://codesandbox.io/embed/km04k9k9x5",
   "main": "dist/index.js",
   "keywords": [
@@ -22,15 +22,25 @@
     "react": "^16.8.0"
   },
   "dependencies": {
+    "idempotent-babel-polyfill": "^7.0.0",
     "react": "^16.8.6"
   },
   "devDependencies": {
-    "idempotent-babel-polyfill": "^7.0.0",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/preset-react": "^7.0.0",
+    "babel-jest": "^24.7.1",
+    "jest": "^24.7.1",
     "parcel-bundler": "^1.12.3",
     "react-dom": "^16.8.6"
   },
   "scripts": {
     "dev": "parcel examples/index.html --open",
-    "build": "parcel build --target node ./src/*"
-  }
+    "build": "parcel build --target node ./src/*",
+    "test": "jest",
+    "publish": "yarn build && yarn publish"
+  },
+  "files": [
+    "dist"
+  ]
 }
