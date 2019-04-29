@@ -195,3 +195,5 @@ Todos
  - [ ] port to typescript
  - [ ] badges, I like the way [these guys do it](https://github.com/GitSquared/edex-ui)
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
+ - [ ] github page/website
+ - [ ] get it all working on a codesandbox to test SSR on it, also can have api to call locally
