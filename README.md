@@ -194,3 +194,4 @@ Todos
  - [ ] tests
  - [ ] port to typescript
  - [ ] badges, I like the way [these guys do it](https://github.com/GitSquared/edex-ui)
+ - [ ] if no url is specified, and we're in the browser, use `window.location.href`
