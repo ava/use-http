@@ -200,3 +200,4 @@ Todos
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
  - [ ] get it all working on a codesandbox to test SSR on it, also can have api to call locally
+ - [ ] potentially GraphQL support
