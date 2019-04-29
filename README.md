@@ -7,6 +7,9 @@
     <a href="https://circleci.com/gh/alex-cory/use-http">
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
+    <a href="https://www.npmjs.com/package/use-http">
+      <img src="https://img.shields.io/npm/dt/use-http.svg" />
+    </a>
 </p>
 
 <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
