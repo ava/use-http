@@ -7,6 +7,9 @@
     <a href="https://circleci.com/gh/alex-cory/use-http">
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
+    <a href="https://www.npmjs.com/package/use-http">
+      <img src="https://img.shields.io/npm/dt/use-http.svg" />
+    </a>
 </p>
 
 <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
@@ -148,6 +151,7 @@ const {
   put,
   delete // don't destructure `delete` though, it's a keyword
   del,   // <- that's why we have this (del). or use `request.delete`
+  abort,
 } = useFetch({
   url: 'https://example.com',
   baseUrl: 'https://example.com',
@@ -169,6 +173,7 @@ const {
   put,
   delete // don't destructure `delete` though, it's a keyword
   del,   // <- that's why we have this (del). or use `request.delete`
+  abort,
 } = request
 ```
 
@@ -192,3 +197,7 @@ Todos
  - [ ] tests
  - [ ] port to typescript
  - [ ] badges, I like the way [these guys do it](https://github.com/GitSquared/edex-ui)
+ - [ ] if no url is specified, and we're in the browser, use `window.location.href`
+ - [ ] github page/website
+ - [ ] get it all working on a codesandbox to test SSR on it, also can have api to call locally
+ - [ ] potentially GraphQL support
