@@ -8,6 +8,10 @@ const TestApp = () => {
 };
 
 describe('useFetch', () => {
+  it('should be defined/exist when imported', () => {
+    expect(useFetch).toBeDefined();
+  });
+
   it('can be used without crashing', () => {
     const div = document.createElement("div");
     ReactDOM.render(<TestApp />, div);
