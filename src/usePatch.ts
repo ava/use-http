@@ -1,6 +1,6 @@
-import useFetch from './useFetch'
+import useFetch, { Options } from './useFetch'
 
-export const usePatch = (url, options) => {
+export const usePatch = (url: string, options?: Options) => {
   const { data, loading, error, patch } = useFetch(url, {
     method: 'PATCH',
     ...options
