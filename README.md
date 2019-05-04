@@ -118,6 +118,35 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 </>
 ```
 
+### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
+```jsx
+import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
+
+const WithSuspense = () => {
+  const suspense = useFetch('https://example.com ')
+
+  useEffect(() => {
+    suspense.read()
+  }, [])
+
+  if (!suspense.data) return null
+
+  return (
+    <code>
+      <pre>{suspense.data}</pre>
+    </code>
+  )
+}
+
+const App = () => (
+  <ConcurrentMode>
+    <Suspense fallback="Loading...">
+      <WithSuspense />
+    </Suspense>
+  </ConcurrentMode>
+)
+```
+
 Hooks
 ----
 | Option                | Description                                                                              |
