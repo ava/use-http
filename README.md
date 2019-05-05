@@ -225,7 +225,7 @@ Todos
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
  - [ ] get it all working on a codesandbox to test SSR on it, also can have api to call locally
- - [ ] potentially GraphQL support
+ - [ ] potentially GraphQL support `request.query`, `request.mutate`, `useQuery`, `useMutation`
 
 #### Query <sup>(Not Implemented Yet)</sup>
 ```jsx
