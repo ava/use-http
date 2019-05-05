@@ -131,11 +131,7 @@ const WithSuspense = () => {
 
   if (!suspense.data) return null
 
-  return (
-    <code>
-      <pre>{suspense.data}</pre>
-    </code>
-  )
+  return <pre>{suspense.data}</pre>
 }
 
 const App = () => (
@@ -230,3 +226,54 @@ Todos
  - [ ] github page/website
  - [ ] get it all working on a codesandbox to test SSR on it, also can have api to call locally
  - [ ] potentially GraphQL support
+
+#### Query <sup>(Not Implemented Yet)</sup>
+```jsx
+const App = () => {
+  const request = useFetch('http://example.com')
+
+  const query = gql`
+    query Todos($userID string!) {
+      todos(userID: $userID) {
+        id
+        title
+      }
+    }
+  `
+
+  const getTodosForUser = id => request.query(query, { userID: id })
+
+  return (
+    <>
+      <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
+      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+    </>
+  )
+}
+```
+#### Mutation <sup>(Not Implemented Yet)</sup>
+```jsx
+const App = () => {
+  const [todoTitle, setTodoTitle] = useState('')
+  const request = useFetch('http://example.com')
+
+  const mutation = gql`
+    mutation CreateTodo($todoTitle string) {
+      todo(title: $todoTitle) {
+        id
+        title
+      }
+    }
+  `
+
+  const createtodo = () => request.mutate(mutation, { todoTitle })
+
+  return (
+    <>
+      <input onChange={e => setTodoTitle(e.target.value)} />
+      <button onClick={createTodo}>Create Todo</button>
+      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+    </>
+  )
+}
+```
