@@ -16,11 +16,33 @@
     "useFetch",
     "fetch",
     "request",
-    "axios"
+    "axios",
+    "react-use-fetch",
+    "react-fetch-hook",
+    "use-fetch",
+    "suspense",
+    "fetch data",
+    "usefetch hook",
+    "react-hooks-fetch",
+    "react usefetch",
+    "react hooks tutorial",
+    "react-cache",
+    "react custom hooks",
+    "react-usefetch",
+    "react hooks async",
+    "react suspense",
+    "use hooks",
+    "react usefetch hook",
+    "fetch-suspense",
+    "async hook react",
+    "react-hooks-fetch",
+    "react hooks usefetch",
+    "use fetch hook",
+    "react fetch hook"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/alex-cory/react-usefetch.git"
+    "url": "https://github.com/alex-cory/use-http.git"
   },
   "peerDependencies": {
     "react": "^16.8.0"

@@ -118,6 +118,31 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 </>
 ```
 
+### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
+```jsx
+import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
+
+const WithSuspense = () => {
+  const suspense = useFetch('https://example.com')
+
+  useEffect(() => {
+    suspense.read()
+  }, [])
+
+  if (!suspense.data) return null
+
+  return <pre>{suspense.data}</pre>
+}
+
+const App = () => (
+  <ConcurrentMode>
+    <Suspense fallback="Loading...">
+      <WithSuspense />
+    </Suspense>
+  </ConcurrentMode>
+)
+```
+
 Hooks
 ----
 | Option                | Description                                                                              |
@@ -200,4 +225,55 @@ Todos
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
  - [ ] get it all working on a codesandbox to test SSR on it, also can have api to call locally
- - [ ] potentially GraphQL support
+ - [ ] potentially GraphQL support `request.query`, `request.mutate`, `useQuery`, `useMutation`
+
+#### Query <sup>(Not Implemented Yet)</sup>
+```jsx
+const App = () => {
+  const request = useFetch('http://example.com')
+
+  const query = gql`
+    query Todos($userID string!) {
+      todos(userID: $userID) {
+        id
+        title
+      }
+    }
+  `
+
+  const getTodosForUser = id => request.query(query, { userID: id })
+
+  return (
+    <>
+      <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
+      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+    </>
+  )
+}
+```
+#### Mutation <sup>(Not Implemented Yet)</sup>
+```jsx
+const App = () => {
+  const [todoTitle, setTodoTitle] = useState('')
+  const request = useFetch('http://example.com')
+
+  const mutation = gql`
+    mutation CreateTodo($todoTitle string) {
+      todo(title: $todoTitle) {
+        id
+        title
+      }
+    }
+  `
+
+  const createtodo = () => request.mutate(mutation, { todoTitle })
+
+  return (
+    <>
+      <input onChange={e => setTodoTitle(e.target.value)} />
+      <button onClick={createTodo}>Create Todo</button>
+      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+    </>
+  )
+}
+```
