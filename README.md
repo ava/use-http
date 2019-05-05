@@ -123,7 +123,7 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
 
 const WithSuspense = () => {
-  const suspense = useFetch('https://example.com ')
+  const suspense = useFetch('https://example.com')
 
   useEffect(() => {
     suspense.read()
