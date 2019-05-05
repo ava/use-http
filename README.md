@@ -125,7 +125,7 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 </>
 ```
 
-### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
+#### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
 ```jsx
 import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
 
