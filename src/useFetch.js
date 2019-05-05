@@ -79,9 +79,9 @@ export function useFetch(arg1, arg2) {
   const put = useCallback(fetchData('PUT'))
   const del = useCallback(fetchData('DELETE'))
 
-  const abort = () => {
+  const abort = useCallback(() => {
     controller.current && controller.current.abort()
-  }
+  }, [])
 
   const request = { get, post, patch, put, del, delete: del, abort }
 
