@@ -233,6 +233,7 @@ Todos
  - [x] badges
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
+ - [ ] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
  - [ ] potentially GraphQL support `request.query`, `request.mutate`, `useQuery`, `useMutation`
 
 #### Query <sup>(Not Implemented Yet)</sup>
