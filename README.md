@@ -241,7 +241,7 @@ Todos
 const App = () => {
   const request = useFetch('http://example.com')
 
-  const query = gql`
+  const query = `
     query Todos($userID string!) {
       todos(userID: $userID) {
         id
@@ -266,7 +266,7 @@ const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
   const request = useFetch('http://example.com')
 
-  const mutation = gql`
+  const mutation = `
     mutation CreateTodo($todoTitle string) {
       todo(title: $todoTitle) {
         id
