@@ -285,7 +285,7 @@ const App = () => {
   )
 }
 ```
-#### Mutations with Suspense <sup>(Not Implemented Yet</sup>
+#### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ```jsx
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
