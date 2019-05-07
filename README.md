@@ -285,3 +285,29 @@ const App = () => {
   )
 }
 ```
+#### Mutations with Suspense <sup>(Not Implemented Yet</sup>
+```jsx
+const App = () => {
+  const [todoTitle, setTodoTitle] = useState('')
+  const request = useMutation('http://example.com', `
+    mutation CreateTodo($todoTitle string) {
+      todo(title: $todoTitle) {
+        id
+        title
+      }
+    }
+  `)
+
+  const createtodo = () => request.read({ todoTitle })
+  
+  if (!request.data) return null
+
+  return (
+    <>
+      <input onChange={e => setTodoTitle(e.target.value)} />
+      <button onClick={createTodo}>Create Todo</button>
+      <pre>{request.data}</pre>
+    </>
+  )
+}
+```
