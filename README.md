@@ -290,7 +290,7 @@ const App = () => {
 ```jsx
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
-  const request = useMutation('http://example.com', `
+  const mutation = useMutation('http://example.com', `
     mutation CreateTodo($todoTitle string) {
       todo(title: $todoTitle) {
         id
@@ -299,7 +299,7 @@ const App = () => {
     }
   `)
 
-  const createtodo = () => request.read({ todoTitle })
+  const createtodo = () => mutation.read({ todoTitle })
   
   if (!request.data) return null
 
@@ -307,7 +307,7 @@ const App = () => {
     <>
       <input onChange={e => setTodoTitle(e.target.value)} />
       <button onClick={createTodo}>Create Todo</button>
-      <pre>{request.data}</pre>
+      <pre>{mutation.data}</pre>
     </>
   )
 }
