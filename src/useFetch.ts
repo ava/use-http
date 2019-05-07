@@ -1,21 +1,29 @@
 import 'idempotent-babel-polyfill' // so async await works ;)
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, MutableRefObject } from 'react'
 
-const isObject = obj => Object.prototype.toString.call(obj) === '[object Object]'
+const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
 
-export function useFetch(arg1, arg2) {
-  let url = null
-  let options = {}
+export interface Options {
+  url?: string
+  onMount?: boolean
+  method?: string
+  timeout?: number
+  baseUrl?: string
+}
+
+export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
+  let url: string | null = null
+  let options = {} as { signal?: AbortSignal } & RequestInit
   let onMount = false
   let baseUrl = ''
   let method = 'GET'
 
-  const handleOptions = opts => {
+  const handleOptions = (opts: Options & RequestInit) => {
     if (true) {
       // take out all the things that are not normal `fetch` options
       // need to take this out of scope so can set the variables below correctly
       let { url, onMount, timeout, baseUrl, ...rest } = opts
-      options = rest
+      options = Object.assign(options, { signal: undefined }, rest)
     }
     if (opts.url) url = opts.url
     if (opts.onMount) onMount = opts.onMount
@@ -33,9 +41,10 @@ export function useFetch(arg1, arg2) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(onMount)
   const [error, setError] = useState(null)
-  const controller = useRef(null)
+  const controller = useRef(null) as MutableRefObject<AbortController | null>
 
-  const fetchData = useCallback(method => async (fArg1, fArg2) => {
+  const fetchData = useCallback(
+    (method: string) => async (fArg1?: object | string, fArg2?: object | string) => {
       if ('AbortController' in window) {
         controller.current = new AbortController()
         options.signal = controller.current.signal
@@ -73,11 +82,11 @@ export function useFetch(arg1, arg2) {
     [url]
   )
 
-  const get = useCallback(fetchData('GET'))
-  const post = useCallback(fetchData('POST'))
-  const patch = useCallback(fetchData('PATCH'))
-  const put = useCallback(fetchData('PUT'))
-  const del = useCallback(fetchData('DELETE'))
+  const get = useCallback(fetchData('GET'), [])
+  const post = useCallback(fetchData('POST'), [])
+  const patch = useCallback(fetchData('PATCH'), [])
+  const put = useCallback(fetchData('PUT'), [])
+  const del = useCallback(fetchData('DELETE'), [])
 
   const abort = useCallback(() => {
     controller.current && controller.current.abort()
@@ -86,7 +95,8 @@ export function useFetch(arg1, arg2) {
   const request = { get, post, patch, put, del, delete: del, abort }
 
   useEffect(() => {
-    if (onMount) request[method.toLowerCase()]()
+    const methodName = method.toLowerCase() as keyof typeof request
+    if (onMount) request[methodName]()
   }, [])
 
   return Object.assign([data, loading, error, request], { data, loading, error, request, abort, ...request })

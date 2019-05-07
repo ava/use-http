@@ -37,16 +37,16 @@ Usage
 -----
 #### Basic Usage
 
-```jsx 
+```jsx
 import useFetch from 'use-http'
 
 function Todos() {
   const options = { // accepts all `fetch` options
     onMount: true // will fire on componentDidMount
   }
-  
+
   const todos = useFetch('https://example.com/todos', options)
-  
+
   const addTodo = () => {
     todos.post({
       title: 'no way',
@@ -55,7 +55,7 @@ function Todos() {
 
   if (todos.error) return 'Error!'
   if (todos.loading) return 'Loading...'
-  
+
   return (
     <>
       <button onClick={addTodo}>Add Todo</button>
@@ -228,7 +228,7 @@ Todos
  - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
  - [ ] error handling if no url is passed
  - [ ] tests
- - [ ] port to typescript
+ - [x] port to typescript
  - [ ] badges, I like the way [these guys do it](https://github.com/GitSquared/edex-ui)
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website

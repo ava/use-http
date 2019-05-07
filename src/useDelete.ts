@@ -1,6 +1,6 @@
-import useFetch from './useFetch'
+import useFetch, { Options } from './useFetch'
 
-export const useDelete = (url, options) => {
+export const useDelete = (url: string, options?: Options) => {
   const { data, loading, error, del } = useFetch(url, {
     method: 'DELETE',
     ...options
