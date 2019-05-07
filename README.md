@@ -221,6 +221,7 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 Todos
 ------
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
+ - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] Allow option for callback for response.json() vs response.text()
  - [ ] add `timeout`
@@ -229,10 +230,9 @@ Todos
  - [ ] error handling if no url is passed
  - [ ] tests
  - [x] port to typescript
- - [ ] badges, I like the way [these guys do it](https://github.com/GitSquared/edex-ui)
+ - [x] badges
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
- - [ ] get it all working on a codesandbox to test SSR on it, also can have api to call locally
  - [ ] potentially GraphQL support `request.query`, `request.mutate`, `useQuery`, `useMutation`
 
 #### Query <sup>(Not Implemented Yet)</sup>
