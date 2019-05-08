@@ -1,5 +1,5 @@
 import 'idempotent-babel-polyfill' // so async await works ;)
-import { useEffect, useState, useCallback, useRef, MutableRefObject } from 'react'
+import { useEffect, useState, useCallback, useRef, MutableRefObject, useMemo } from 'react'
 
 const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
 
@@ -100,7 +100,8 @@ export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
     controller.current && controller.current.abort()
   }, [])
 
-  const request = { get, post, patch, put, del, delete: del, abort, query, mutate }
+
+  const request = useMemo(() => ({ get, post, patch, put, del, delete: del, abort, query, mutate }), [])
 
   useEffect(() => {
     const methodName = method.toLowerCase() as keyof typeof request

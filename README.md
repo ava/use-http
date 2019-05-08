@@ -233,6 +233,7 @@ Todos
  - [x] badges
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
+ - [ ] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
  - [ ] potentially GraphQL support `request.query`, `request.mutate`, `useQuery`, `useMutation`
 
 #### Query <sup>(Not Implemented Yet)</sup>
@@ -240,7 +241,7 @@ Todos
 const App = () => {
   const request = useFetch('http://example.com')
 
-  const query = gql`
+  const query = `
     query Todos($userID string!) {
       todos(userID: $userID) {
         id
@@ -265,7 +266,7 @@ const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
   const request = useFetch('http://example.com')
 
-  const mutation = gql`
+  const mutation = `
     mutation CreateTodo($todoTitle string) {
       todo(title: $todoTitle) {
         id
@@ -281,6 +282,32 @@ const App = () => {
       <input onChange={e => setTodoTitle(e.target.value)} />
       <button onClick={createTodo}>Create Todo</button>
       {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+    </>
+  )
+}
+```
+#### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
+```jsx
+const App = () => {
+  const [todoTitle, setTodoTitle] = useState('')
+  const mutation = useMutation('http://example.com', `
+    mutation CreateTodo($todoTitle string) {
+      todo(title: $todoTitle) {
+        id
+        title
+      }
+    }
+  `)
+
+  const createtodo = () => mutation.read({ todoTitle })
+  
+  if (!request.data) return null
+
+  return (
+    <>
+      <input onChange={e => setTodoTitle(e.target.value)} />
+      <button onClick={createTodo}>Create Todo</button>
+      <pre>{mutation.data}</pre>
     </>
   )
 }
