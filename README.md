@@ -126,6 +126,57 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 </>
 ```
 
+#### GraphQL Query
+```jsx
+const App = () => {
+  const request = useFetch('http://example.com')
+
+  const query = `
+    query Todos($userID string!) {
+      todos(userID: $userID) {
+        id
+        title
+      }
+    }
+  `
+
+  const getTodosForUser = id => request.query(query, { userID: id })
+
+  return (
+    <>
+      <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
+      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+    </>
+  )
+}
+```
+#### GraphQL Mutation
+```jsx
+const App = () => {
+  const [todoTitle, setTodoTitle] = useState('')
+  const request = useFetch('http://example.com')
+
+  const mutation = `
+    mutation CreateTodo($todoTitle string) {
+      todo(title: $todoTitle) {
+        id
+        title
+      }
+    }
+  `
+
+  const createtodo = () => request.mutate(mutation, { todoTitle })
+
+  return (
+    <>
+      <input onChange={e => setTodoTitle(e.target.value)} />
+      <button onClick={createTodo}>Create Todo</button>
+      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+    </>
+  )
+}
+```
+
 #### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
 ```jsx
 import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
@@ -182,9 +233,11 @@ const {
   post,
   patch,
   put,
-  delete // don't destructure `delete` though, it's a keyword
-  del,   // <- that's why we have this (del). or use `request.delete`
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
   abort,
+  query,  // GraphQL
+  mutate, // GraphQL
 } = useFetch({
   url: 'https://example.com',
   baseUrl: 'https://example.com',
@@ -204,9 +257,11 @@ const {
   post,
   patch,
   put,
-  delete // don't destructure `delete` though, it's a keyword
-  del,   // <- that's why we have this (del). or use `request.delete`
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
   abort,
+  query,  // GraphQL
+  mutate, // GraphQL
 } = request
 ```
 
@@ -234,58 +289,8 @@ Todos
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
  - [ ] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
- - [ ] potentially GraphQL support `request.query`, `request.mutate`, `useQuery`, `useMutation`
-
-#### Query <sup>(Not Implemented Yet)</sup>
-```jsx
-const App = () => {
-  const request = useFetch('http://example.com')
-
-  const query = `
-    query Todos($userID string!) {
-      todos(userID: $userID) {
-        id
-        title
-      }
-    }
-  `
-
-  const getTodosForUser = id => request.query(query, { userID: id })
-
-  return (
-    <>
-      <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
-      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
-    </>
-  )
-}
-```
-#### Mutation <sup>(Not Implemented Yet)</sup>
-```jsx
-const App = () => {
-  const [todoTitle, setTodoTitle] = useState('')
-  const request = useFetch('http://example.com')
-
-  const mutation = `
-    mutation CreateTodo($todoTitle string) {
-      todo(title: $todoTitle) {
-        id
-        title
-      }
-    }
-  `
-
-  const createtodo = () => request.mutate(mutation, { todoTitle })
-
-  return (
-    <>
-      <input onChange={e => setTodoTitle(e.target.value)} />
-      <button onClick={createTodo}>Create Todo</button>
-      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
-    </>
-  )
-}
-```
+ - [ ] add GraphQL `useQuery`, `useMutation`
+ - [ ] make GraphQL work with React Suspense
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ```jsx
 const App = () => {
