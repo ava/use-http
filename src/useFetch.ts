@@ -23,7 +23,7 @@ export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
       // take out all the things that are not normal `fetch` options
       // need to take this out of scope so can set the variables below correctly
       let { url, onMount, timeout, baseUrl, ...rest } = opts
-      options = Object.assign(options, { signal: undefined }, rest)
+      options = { signal: undefined, ...rest }
     }
     if (opts.url) url = opts.url
     if (opts.onMount) onMount = opts.onMount
