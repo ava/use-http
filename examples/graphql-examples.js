@@ -47,35 +47,14 @@ const GraphQLMutationExample = () => {
 
   return <pre>{JSON.stringify(posts.data, null, 2)}</pre>
 }
-import usePortal from 'react-useportal'
-// console.log('PORTAL: ', usePortal)
-// const Exmaple1 = () => {
-//   const { openPortal, closePortal, isOpen, Portal } = usePortal()
-
-//   return (
-//     <>
-//       <h3>Example 1</h3>
-//       <button onClick={openPortal}>Open Portal</button>
-//       {isOpen && (
-//         <Portal>
-//           <div>
-//             Cool
-//             <button onClick={closePortal}>Close Portal</button>
-//           </div>
-//         </Portal>
-//       )}
-//     </>
-//   )
-// }
 
 const GraphQLExamples = () => (
   <>
     <h1>GraphQL Examples</h1>
     <h4>Query Example</h4>
-    {/* <GraphQLQueryExample />
+    <GraphQLQueryExample />
     <h4>Mutation Example</h4>
-    <GraphQLMutationExample /> */}
-    {/* <Exmaple1 /> */}
+    <GraphQLMutationExample />
   </>
 )
 

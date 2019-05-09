@@ -23,7 +23,7 @@ export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
       // take out all the things that are not normal `fetch` options
       // need to take this out of scope so can set the variables below correctly
       let { url, onMount, timeout, baseUrl, ...rest } = opts
-      options = Object.assign(options, { signal: undefined }, rest)
+      options = { signal: undefined, ...rest }
     }
     if (opts.url) url = opts.url
     if (opts.onMount) onMount = opts.onMount
@@ -51,8 +51,10 @@ export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
       }
 
       let query = ''
+      // post | patch | put | etc.
       if (isObject(fArg1) && method.toLowerCase() !== 'get') {
         options.body = JSON.stringify(fArg1)
+      // relative routes
       } else if (baseUrl && typeof fArg1 === 'string') {
         url = baseUrl + fArg1
         if (isObject(fArg2)) options.body = JSON.stringify(fArg2)
@@ -63,7 +65,11 @@ export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
         setLoading(true)
         const response = await fetch(url + query, {
           method,
-          ...options
+          ...options,
+          headers: {
+            'Content-Type': 'application/json', // default content type
+            ...options.headers
+          }
         })
         let data = null
         try {
@@ -87,12 +93,15 @@ export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
   const patch = useCallback(fetchData('PATCH'), [])
   const put = useCallback(fetchData('PUT'), [])
   const del = useCallback(fetchData('DELETE'), [])
+  const query = useCallback((query?: string, variables?: object) => post({ query, variables }), [])
+  const mutate = useCallback((mutation?: string, variables?: object) => post({ mutation, variables }), [])
 
   const abort = useCallback(() => {
     controller.current && controller.current.abort()
   }, [])
 
-  const request = useMemo(() => ({ get, post, patch, put, del, delete: del, abort }), [])
+
+  const request = useMemo(() => ({ get, post, patch, put, del, delete: del, abort, query, mutate }), [])
 
   useEffect(() => {
     const methodName = method.toLowerCase() as keyof typeof request
