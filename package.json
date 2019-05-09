@@ -52,8 +52,7 @@
   },
   "dependencies": {
     "idempotent-babel-polyfill": "^7.0.0",
-    "react": "^16.8.6",
-    "react-useportal": "^0.1.34"
+    "react": "^16.8.6"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",

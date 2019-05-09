@@ -13,7 +13,7 @@ export interface Options {
 
 export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
   let url: string | null = null
-  let options = {} as { signal?: AbortSignal } & RequestInit
+  let options = {} as { signal?: AbortSignal | null } & RequestInit
   let onMount = false
   let baseUrl = ''
   let method = 'GET'
