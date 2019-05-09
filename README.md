@@ -72,10 +72,6 @@ var [data, loading, error, request] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
 var { data, loading, error, request } = useFetch('https://example.com')
-
-request.post({
-  no: 'way',
-})
 ```
 #### Relative routes
 ```jsx
