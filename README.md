@@ -124,19 +124,20 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 
 #### GraphQL Query
 ```jsx
+
+const QUERY = `
+  query Todos($userID string!) {
+    todos(userID: $userID) {
+      id
+      title
+    }
+  }
+`
+
 const App = () => {
   const request = useFetch('http://example.com')
 
-  const query = `
-    query Todos($userID string!) {
-      todos(userID: $userID) {
-        id
-        title
-      }
-    }
-  `
-
-  const getTodosForUser = id => request.query(query, { userID: id })
+  const getTodosForUser = id => request.query(QUERY, { userID: id })
 
   return (
     <>
@@ -148,20 +149,21 @@ const App = () => {
 ```
 #### GraphQL Mutation
 ```jsx
+
+const MUTATION = `
+  mutation CreateTodo($todoTitle string) {
+    todo(title: $todoTitle) {
+      id
+      title
+    }
+  }
+`
+
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
   const request = useFetch('http://example.com')
 
-  const mutation = `
-    mutation CreateTodo($todoTitle string) {
-      todo(title: $todoTitle) {
-        id
-        title
-      }
-    }
-  `
-
-  const createtodo = () => request.mutate(mutation, { todoTitle })
+  const createtodo = () => request.mutate(MUTATION, { todoTitle })
 
   return (
     <>
