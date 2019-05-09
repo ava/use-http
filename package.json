@@ -45,11 +45,12 @@
     "url": "https://github.com/alex-cory/use-http.git"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.6"
   },
   "dependencies": {
     "idempotent-babel-polyfill": "^7.0.0",
-    "react": "^16.8.6"
+    "react": "^16.8.6",
+    "react-useportal": "^0.1.34"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
