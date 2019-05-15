@@ -23,6 +23,10 @@
 <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
 Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That means it works with SSR (server side rendering).
 
+<br />
+
+A note on the documentation below. Many of these examples could have performance improvements using `useMemo` and `useCallback`, but for the sake of the beginner/ease of reading, they are left out.
+
 ### Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Code Sandbox Example</a>
 
