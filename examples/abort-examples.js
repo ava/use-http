@@ -2,10 +2,6 @@ import React from 'react'
 import useFetch from '../src/index'
 import { delayedUrl } from './urls'
 
-/**
- * Abortable demos
- * - https://github.com/dai-shi/react-hooks-async
- */
 
 const GithubRepoSearchAbortDemo = () => {
   const githubQueryRepoURL = 'https://api.github.com/search/repositories?q='
