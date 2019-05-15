@@ -26,7 +26,7 @@ Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That m
 </p>
 <br />
 <p>
-A note on the documentation below. Many of these examples could have performance improvements using `useMemo` and `useCallback`, but for the sake of the beginner/ease of reading, they are left out.
+A note on the documentation below. Many of these examples could have performance improvements using <code>useMemo</code> and <code>useCallback</code>, but for the sake of the beginner/ease of reading, they are left out.
 </p>
 
 ### Examples
