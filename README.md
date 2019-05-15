@@ -66,7 +66,7 @@ function Todos() {
   )
 }
 ```
-#### Destructured methods
+#### Destructured
 ```jsx
 var [data, loading, error, request] = useFetch('https://example.com')
 
