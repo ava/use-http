@@ -1,5 +1,7 @@
 
-<h1 align="center">useFetch</h1>
+<p align="center">
+    <h1 align="center">useFetch</h1>
+</p>
 <p align="center">🐶 React hook for making isomorphic http requests</p>
 <p align="center">
     <a href="https://github.com/alex-cory/use-http/pulls">
@@ -9,14 +11,16 @@
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
     <a href="https://www.npmjs.com/package/use-http">
-      <img src="https://img.shields.io/npm/dt/use-http.svg" />
+      <img src="https://img.shields.io/npm/dm/use-http.svg" />
     </a>
-    <br />
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
     </a>
     <a href="https://github.com/alex-cory/use-http/releases">
       <img alt="undefined" src="https://img.shields.io/github/release/alex-cory/use-http.svg?style=popout">
+    </a>
+    <a href="https://bundlephobia.com/result?p=use-http">
+      <img alt="undefined" src="https://img.shields.io/bundlephobia/minzip/use-http.svg">
     </a>
 </p>
 
@@ -53,7 +57,7 @@ function Todos() {
 
   const todos = useFetch('https://example.com/todos', options)
 
-  function addTodo () {
+  function addTodo() {
     todos.post({
       title: 'no way',
     })
