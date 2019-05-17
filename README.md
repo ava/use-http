@@ -1,5 +1,7 @@
 
-<h1 align="center">useFetch</h1>
+<p align="center">
+    <h1 align="center">useFetch</h1>
+</p>
 <p align="center">🐶 React hook for making isomorphic http requests</p>
 <p align="center">
     <a href="https://github.com/alex-cory/use-http/pulls">
