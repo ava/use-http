@@ -57,7 +57,7 @@ function Todos() {
 
   const todos = useFetch('https://example.com/todos', options)
 
-  function addTodo () {
+  function addTodo() {
     todos.post({
       title: 'no way',
     })
