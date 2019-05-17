@@ -21,7 +21,13 @@
 </p>
 
 <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
+<p>
 Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That means it works with SSR (server side rendering).
+</p>
+<br />
+<p>
+A note on the documentation below. Many of these examples could have performance improvements using <code>useMemo</code> and <code>useCallback</code>, but for the sake of the beginner/ease of reading, they are left out.
+</p>
 
 ### Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Code Sandbox Example</a>
@@ -47,7 +53,7 @@ function Todos() {
 
   const todos = useFetch('https://example.com/todos', options)
 
-  const addTodo = () => {
+  function addTodo () {
     todos.post({
       title: 'no way',
     })
@@ -66,16 +72,12 @@ function Todos() {
   )
 }
 ```
-#### Destructured methods
+#### Destructured
 ```jsx
 var [data, loading, error, request] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
 var { data, loading, error, request } = useFetch('https://example.com')
-
-request.post({
-  no: 'way',
-})
 ```
 #### Relative routes
 ```jsx
@@ -128,19 +130,20 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 
 #### GraphQL Query
 ```jsx
+
+const QUERY = `
+  query Todos($userID string!) {
+    todos(userID: $userID) {
+      id
+      title
+    }
+  }
+`
+
 const App = () => {
   const request = useFetch('http://example.com')
 
-  const query = `
-    query Todos($userID string!) {
-      todos(userID: $userID) {
-        id
-        title
-      }
-    }
-  `
-
-  const getTodosForUser = id => request.query(query, { userID: id })
+  const getTodosForUser = id => request.query(QUERY, { userID: id })
 
   return (
     <>
@@ -152,20 +155,21 @@ const App = () => {
 ```
 #### GraphQL Mutation
 ```jsx
+
+const MUTATION = `
+  mutation CreateTodo($todoTitle string) {
+    todo(title: $todoTitle) {
+      id
+      title
+    }
+  }
+`
+
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
   const request = useFetch('http://example.com')
 
-  const mutation = `
-    mutation CreateTodo($todoTitle string) {
-      todo(title: $todoTitle) {
-        id
-        title
-      }
-    }
-  `
-
-  const createtodo = () => request.mutate(mutation, { todoTitle })
+  const createtodo = () => request.mutate(MUTATION, { todoTitle })
 
   return (
     <>
