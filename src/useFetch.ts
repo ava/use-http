@@ -1,4 +1,3 @@
-import 'idempotent-babel-polyfill' // so async await works ;)
 import { useEffect, useState, useCallback, useRef, MutableRefObject, useMemo } from 'react'
 
 const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
