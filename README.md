@@ -34,7 +34,8 @@ A note on the documentation below. Many of these examples could have performance
 </p>
 
 ### Examples
-- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Code Sandbox Example</a>
+- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example with Next.js</a>
+- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Other Code Sandbox Examples</a>
 
 Installation
 ------------
