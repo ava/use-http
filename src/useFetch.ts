@@ -99,7 +99,6 @@ export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
     controller.current && controller.current.abort()
   }, [])
 
-
   const request = useMemo(() => ({ get, post, patch, put, del, delete: del, abort, query, mutate }), [])
 
   useEffect(() => {
