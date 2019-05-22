@@ -33,9 +33,16 @@ Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That m
 A note on the documentation below. Many of these examples could have performance improvements using <code>useMemo</code> and <code>useCallback</code>, but for the sake of the beginner/ease of reading, they are left out.
 </p>
 
+Features
+---------
+- SSR (server side rendering) support
+- TypeScript support
+- Zero dependencies (peer deps: react, react-dom)
+- GraphQL support (queries + mutations)
+
 ### Examples
-- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example with Next.js</a>
-- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Other Code Sandbox Examples</a>
+- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example - Next.js</a>
+- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Examples - create-react-app</a>
 
 Installation
 ------------
