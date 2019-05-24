@@ -319,6 +319,7 @@ Todos
  - [ ] github page/website
  - [ ] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
  - [ ] fix code so Maintainability is A
+ - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
  - [ ] add GraphQL `useQuery`, `useMutation`
  - [ ] make GraphQL work with React Suspense
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
