@@ -26,7 +26,7 @@
       <img src="https://snyk.io/test/github/alex-cory/use-http/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
     </a>
     <a href="https://www.npmjs.com/package/use-http">
-      <img src="https://img.shields.io/npm/v/use-http.svg?style=flat-square" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
+      <img src="https://img.shields.io/npm/v/use-http.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
     </a>
     <a href="https://github.com/alex-cory/use-http/blob/master/license.md">
       <img alt="undefined" src="https://img.shields.io/github/license/alex-cory/use-http.svg">
