@@ -44,6 +44,9 @@ A note on the documentation below. Many of these examples could have performance
 
 Features
 ---------
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/alex-cory/use-http.svg)](https://greenkeeper.io/)
+
 - SSR (server side rendering) support
 - TypeScript support
 - Zero dependencies (peer deps: react, react-dom)
