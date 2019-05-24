@@ -31,6 +31,9 @@
     <a href="https://github.com/alex-cory/use-http/blob/master/license.md">
       <img alt="undefined" src="https://img.shields.io/github/license/alex-cory/use-http.svg">
     </a>
+    <a href="https://greenkeeper.io/">
+      <img alt="undefined" src="https://badges.greenkeeper.io/alex-cory/use-http.svg">
+    </a>
 </p>
 
 <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
@@ -44,8 +47,6 @@ A note on the documentation below. Many of these examples could have performance
 
 Features
 ---------
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/alex-cory/use-http.svg)](https://greenkeeper.io/)
 
 - SSR (server side rendering) support
 - TypeScript support
