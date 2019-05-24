@@ -16,11 +16,17 @@
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
     </a>
-    <a href="https://github.com/alex-cory/use-http/releases">
-      <img alt="undefined" src="https://img.shields.io/github/release/alex-cory/use-http.svg?style=popout">
-    </a>
     <a href="https://bundlephobia.com/result?p=use-http">
       <img alt="undefined" src="https://img.shields.io/bundlephobia/minzip/use-http.svg">
+    </a>
+    <a href="https://codeclimate.com/github/alex-cory/use-http/maintainability">
+      <img src="https://api.codeclimate.com/v1/badges/1e6c1ff8921b0f5ff6b3/maintainability" />
+    </a>
+    <a href="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json">
+      <img src="https://snyk.io/test/github/alex-cory/use-http/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
+    </a>
+    <a href="https://www.npmjs.com/package/use-http">
+      <img src="https://img.shields.io/npm/v/use-http.svg?style=flat-square" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
     </a>
 </p>
 
