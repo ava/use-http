@@ -318,6 +318,7 @@ Todos
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
  - [ ] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
+ - [ ] fix code so Maintainability is A
  - [ ] add GraphQL `useQuery`, `useMutation`
  - [ ] make GraphQL work with React Suspense
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
