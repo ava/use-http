@@ -322,6 +322,7 @@ Todos
  - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
  - [ ] add GraphQL `useQuery`, `useMutation`
  - [ ] make GraphQL work with React Suspense
+ - [ ] make GraphQL examples
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ```jsx
 const App = () => {
