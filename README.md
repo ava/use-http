@@ -16,11 +16,23 @@
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
     </a>
-    <a href="https://github.com/alex-cory/use-http/releases">
-      <img alt="undefined" src="https://img.shields.io/github/release/alex-cory/use-http.svg?style=popout">
-    </a>
     <a href="https://bundlephobia.com/result?p=use-http">
       <img alt="undefined" src="https://img.shields.io/bundlephobia/minzip/use-http.svg">
+    </a>
+    <a href="https://codeclimate.com/github/alex-cory/use-http/maintainability">
+      <img src="https://api.codeclimate.com/v1/badges/1e6c1ff8921b0f5ff6b3/maintainability" />
+    </a>
+    <a href="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json">
+      <img src="https://snyk.io/test/github/alex-cory/use-http/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
+    </a>
+    <a href="https://www.npmjs.com/package/use-http">
+      <img src="https://img.shields.io/npm/v/use-http.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
+    </a>
+    <a href="https://github.com/alex-cory/use-http/blob/master/license.md">
+      <img alt="undefined" src="https://img.shields.io/github/license/alex-cory/use-http.svg">
+    </a>
+    <a href="https://greenkeeper.io/">
+      <img alt="undefined" src="https://badges.greenkeeper.io/alex-cory/use-http.svg">
     </a>
 </p>
 
@@ -33,8 +45,17 @@ Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That m
 A note on the documentation below. Many of these examples could have performance improvements using <code>useMemo</code> and <code>useCallback</code>, but for the sake of the beginner/ease of reading, they are left out.
 </p>
 
+Features
+---------
+
+- SSR (server side rendering) support
+- TypeScript support
+- Zero dependencies (peer deps: react, react-dom)
+- GraphQL support (queries + mutations)
+
 ### Examples
-- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Code Sandbox Example</a>
+- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example - Next.js</a>
+- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Examples - create-react-app</a>
 
 Installation
 ------------
@@ -297,8 +318,11 @@ Todos
  - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
  - [ ] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
+ - [ ] fix code so Maintainability is A
+ - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
  - [ ] add GraphQL `useQuery`, `useMutation`
  - [ ] make GraphQL work with React Suspense
+ - [ ] make GraphQL examples
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ```jsx
 const App = () => {
