@@ -166,7 +166,7 @@ const QUERY = `
   }
 `
 
-const App = () => {
+function App() {
   const request = useFetch('http://example.com')
 
   const getTodosForUser = id => request.query(QUERY, { userID: id })
@@ -192,7 +192,7 @@ const MUTATION = `
   }
 `
 
-const App = () => {
+function App() {
   const [todoTitle, setTodoTitle] = useState('')
   const request = useFetch('http://example.com')
 
@@ -216,7 +216,7 @@ The `Provider` allows us to set a default `url`, `options` (such as headers) and
 import { Provider, useQuery, useMutation } from 'use-http'
 
 // Query for todos
-const QueryComponent = () => {
+function QueryComponent() {
   const request = useQuery(`
     query Todos($userID string!) {
       todos(userID: $userID) {
@@ -237,7 +237,7 @@ const QueryComponent = () => {
 }
 
 // Add a new todo
-const MutationComponent = () => {
+function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
   
   const [data, loading, error, mutate] = useMutation(`
@@ -262,7 +262,7 @@ const MutationComponent = () => {
 
 // these are default options and URL used in every request
 // inside the <Provider />. They can be overwritten individually
-const App = () => {
+function App() {
 
   const options = {
     headers: {
@@ -284,7 +284,7 @@ const App = () => {
 ```jsx
 import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
 
-const WithSuspense = () => {
+function WithSuspense() {
   const suspense = useFetch('https://example.com')
 
   useEffect(() => {
@@ -296,7 +296,7 @@ const WithSuspense = () => {
   return <pre>{suspense.data}</pre>
 }
 
-const App = () => (
+function App() (
   <ConcurrentMode>
     <Suspense fallback="Loading...">
       <WithSuspense />
