@@ -393,17 +393,25 @@ Todos
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
- - [ ] Allow option for callback for response.json() vs response.text()
  - [ ] add `timeout`
  - [ ] add `debounce`
- - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
- - [ ] error handling if no url is passed
  - [ ] tests
  - [ ] github page/website
  - [ ] fix code so Maintainability is A
  - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
  - [ ] make GraphQL work with React Suspense
- - [ ] make GraphQL examples
+ - [ ] make GraphQL examples in codesandbox
+ - [ ] maybe add syntax for custom headers like this
+```jsx
+  const user = useFetch()
+  
+  user
+    .headers({
+      auth: jwt
+    })
+    .get()
+
+```
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ```jsx
 const App = () => {
@@ -418,6 +426,7 @@ const App = () => {
     }
   `)
 
+  // ideally, I think it should be mutation.write({ todoTitle }) since mutation ~= POST
   const createtodo = () => mutation.read({ todoTitle })
   
   if (!request.data) return null
