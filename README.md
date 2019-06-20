@@ -212,10 +212,10 @@ function App() {
 
 The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
 
+##### Query for todos
 ```jsx
 import { Provider, useQuery, useMutation } from 'use-http'
 
-// Query for todos
 function QueryComponent() {
   const request = useQuery(`
     query Todos($userID string!) {
@@ -229,14 +229,16 @@ function QueryComponent() {
   const getTodosForUser = id => request.query({ userID: id })
   
   return (
-    <Fragment>
+    <>
       <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
       {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
-    </Fragment>
+    </>
   )
 }
+```
 
-// Add a new todo
+##### Add a new todo
+```jsx
 function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
   
@@ -252,16 +254,19 @@ function MutationComponent() {
   const createtodo = () => mutate({ todoTitle })
 
   return (
-    <Fragment>
+    <>
       <input onChange={e => setTodoTitle(e.target.value)} />
       <button onClick={createTodo}>Create Todo</button>
       {!loading ? 'Loading...' : <pre>{data}</pre>}
-    </Fragment>
+    </>
   )
 }
+```
 
-// these are default options and URL used in every request
-// inside the <Provider />. They can be overwritten individually
+
+##### Adding the Provider
+These props are defaults used in every request inside the `<Provider />`. They can be overwritten individually
+```jsx
 function App() {
 
   const options = {
