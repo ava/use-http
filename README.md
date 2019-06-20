@@ -50,7 +50,7 @@ Features
 
 - SSR (server side rendering) support
 - TypeScript support
-- Zero dependencies (peer deps: react, react-dom)
+- 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
 - Provider to set default a `url` and `options`
 
