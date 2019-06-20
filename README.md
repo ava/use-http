@@ -320,6 +320,8 @@ Hooks
 | `usePut` | Defaults to a PUT request |
 | `usePatch` | Defaults to a PATCH request |
 | `useDelete` | Defaults to a DELETE request |
+| `useQuery` | For making a GraphQL query |
+| `useMutation` | For making a GraphQL mutation |
 
 Options
 -----
