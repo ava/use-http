@@ -77,5 +77,8 @@
     "apollo",
     "useGraphQL",
     "use-graphql"
-  ]
+  ],
+  "dependencies": {
+    "use-ssr": "^1.0.18"
+  }
 }

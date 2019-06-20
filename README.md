@@ -50,8 +50,9 @@ Features
 
 - SSR (server side rendering) support
 - TypeScript support
-- Zero dependencies (peer deps: react, react-dom)
+- 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
+- Provider to set default a `url` and `options`
 
 ### Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example - Next.js</a>
@@ -165,7 +166,7 @@ const QUERY = `
   }
 `
 
-const App = () => {
+function App() {
   const request = useFetch('http://example.com')
 
   const getTodosForUser = id => request.query(QUERY, { userID: id })
@@ -178,6 +179,7 @@ const App = () => {
   )
 }
 ```
+
 #### GraphQL Mutation
 ```jsx
 
@@ -190,7 +192,7 @@ const MUTATION = `
   }
 `
 
-const App = () => {
+function App() {
   const [todoTitle, setTodoTitle] = useState('')
   const request = useFetch('http://example.com')
 
@@ -206,11 +208,88 @@ const App = () => {
 }
 ```
 
+#### `Provider` using the GraphQL `useMutation` and `useQuery`
+
+The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
+
+##### Query for todos
+```jsx
+import { Provider, useQuery, useMutation } from 'use-http'
+
+function QueryComponent() {
+  const request = useQuery(`
+    query Todos($userID string!) {
+      todos(userID: $userID) {
+        id
+        title
+      }
+    }
+  `)
+
+  const getTodosForUser = id => request.query({ userID: id })
+  
+  return (
+    <>
+      <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
+      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+    </>
+  )
+}
+```
+
+##### Add a new todo
+```jsx
+function MutationComponent() {
+  const [todoTitle, setTodoTitle] = useState('')
+  
+  const [data, loading, error, mutate] = useMutation(`
+    mutation CreateTodo($todoTitle string) {
+      todo(title: $todoTitle) {
+        id
+        title
+      }
+    }
+  `)
+  
+  const createtodo = () => mutate({ todoTitle })
+
+  return (
+    <>
+      <input onChange={e => setTodoTitle(e.target.value)} />
+      <button onClick={createTodo}>Create Todo</button>
+      {!loading ? 'Loading...' : <pre>{data}</pre>}
+    </>
+  )
+}
+```
+
+
+##### Adding the Provider
+These props are defaults used in every request inside the `<Provider />`. They can be overwritten individually
+```jsx
+function App() {
+
+  const options = {
+    headers: {
+      Authorization: 'Bearer:asdfasdfasdfasdfasdafd'
+    }
+  }
+  
+  return (
+    <Provider url='http://example.com' options={options}>
+      <QueryComponent />
+      <MutationComponent />
+    <Provider/>
+  )
+}
+
+```
+
 #### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
 ```jsx
 import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
 
-const WithSuspense = () => {
+function WithSuspense() {
   const suspense = useFetch('https://example.com')
 
   useEffect(() => {
@@ -222,7 +301,7 @@ const WithSuspense = () => {
   return <pre>{suspense.data}</pre>
 }
 
-const App = () => (
+function App() (
   <ConcurrentMode>
     <Suspense fallback="Loading...">
       <WithSuspense />
@@ -241,6 +320,8 @@ Hooks
 | `usePut` | Defaults to a PUT request |
 | `usePatch` | Defaults to a PATCH request |
 | `useDelete` | Defaults to a DELETE request |
+| `useQuery` | For making a GraphQL query |
+| `useMutation` | For making a GraphQL mutation |
 
 Options
 -----
@@ -304,6 +385,11 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
+ - [x] port to typescript
+ - [x] badges
+ - [X] if no url is specified, and we're in the browser, use `window.location.origin`
+ - [X] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
+ - [X] add GraphQL `useQuery`, `useMutation`
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
@@ -313,20 +399,16 @@ Todos
  - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
  - [ ] error handling if no url is passed
  - [ ] tests
- - [x] port to typescript
- - [x] badges
- - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
- - [ ] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
  - [ ] fix code so Maintainability is A
  - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
- - [ ] add GraphQL `useQuery`, `useMutation`
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ```jsx
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
+  // if there's no <Provider /> used, useMutation works this way
   const mutation = useMutation('http://example.com', `
     mutation CreateTodo($todoTitle string) {
       todo(title: $todoTitle) {
