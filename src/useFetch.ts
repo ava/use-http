@@ -29,7 +29,7 @@ export function useFetch(arg1: useFetchArg1, arg2?: Options | RequestInit) {
       options = { signal: undefined, ...rest }
     }
     if (context.url) url = context.url
-    if (opts.url) url = opts.url || context.url
+    if (opts.url) url = opts.url || context.url || ''
     if (opts.onMount) onMount = opts.onMount
     if (opts.method) method = opts.method
     if (opts.baseUrl) baseUrl = opts.baseUrl
@@ -72,9 +72,11 @@ export function useFetch(arg1: useFetchArg1, arg2?: Options | RequestInit) {
         setLoading(true)
         const response = await fetch(url + query, {
           method,
+          ...context.options,
           ...options,
           headers: {
             'Content-Type': 'application/json', // default content type
+            ...(context.options || {}).headers,
             ...options.headers
           }
         })
