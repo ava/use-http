@@ -396,7 +396,7 @@ Todos
  - [ ] add `timeout`
  - [ ] add `debounce`
  - [ ] tests
- - [ ] github page/website
+ - [ ] github page/website for docs + show comparison with Apollo
  - [ ] fix code so Maintainability is A
  - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
  - [ ] make GraphQL work with React Suspense
