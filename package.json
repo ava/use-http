@@ -19,7 +19,7 @@
     "@types/react-dom": "^16.8.4",
     "fetch-mock": "^7.3.1",
     "jest": "^24.7.1",
-    "react-hooks-testing-library": "^0.5.0",
+    "react-hooks-testing-library": "^0.6.0",
     "ts-jest": "^24.0.0",
     "typescript": "^3.4.5"
   },
