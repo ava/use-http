@@ -52,7 +52,7 @@ Features
 - TypeScript support
 - 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
-- Provider to set default a `url` and `options`
+- Provider to set default `url` and `options`
 
 ### Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example - Next.js</a>
@@ -174,7 +174,7 @@ function App() {
   return (
     <>
       <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
-      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+      {request.loading ? 'Loading...' : <pre>{request.data}</pre>}
     </>
   )
 }
@@ -202,7 +202,7 @@ function App() {
     <>
       <input onChange={e => setTodoTitle(e.target.value)} />
       <button onClick={createTodo}>Create Todo</button>
-      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+      {request.loading ? 'Loading...' : <pre>{request.data}</pre>}
     </>
   )
 }
@@ -231,7 +231,7 @@ function QueryComponent() {
   return (
     <>
       <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
-      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+      {request.loading ? 'Loading...' : <pre>{request.data}</pre>}
     </>
   )
 }
@@ -257,7 +257,7 @@ function MutationComponent() {
     <>
       <input onChange={e => setTodoTitle(e.target.value)} />
       <button onClick={createTodo}>Create Todo</button>
-      {!loading ? 'Loading...' : <pre>{data}</pre>}
+      {loading ? 'Loading...' : <pre>{data}</pre>}
     </>
   )
 }
