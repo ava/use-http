@@ -52,6 +52,7 @@ Features
 - TypeScript support
 - Zero dependencies (peer deps: react, react-dom)
 - GraphQL support (queries + mutations)
+- Provider to set default a `url` and `options`
 
 ### Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example - Next.js</a>
@@ -178,6 +179,7 @@ const App = () => {
   )
 }
 ```
+
 #### GraphQL Mutation
 ```jsx
 
@@ -204,6 +206,78 @@ const App = () => {
     </>
   )
 }
+```
+
+#### `Provider` using the GraphQL `useMutation` and `useQuery`
+
+The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
+
+```jsx
+import { Provider, useQuery, useMutation } from 'use-http'
+
+// Query for todos
+const QueryComponent = () => {
+  const request = useQuery(`
+    query Todos($userID string!) {
+      todos(userID: $userID) {
+        id
+        title
+      }
+    }
+  `)
+
+  const getTodosForUser = id => request.query({ userID: id })
+  
+  return (
+    <Fragment>
+      <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
+      {!request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+    </Fragment>
+  )
+}
+
+// Add a new todo
+const MutationComponent = () => {
+  const [todoTitle, setTodoTitle] = useState('')
+  
+  const [data, loading, error, mutate] = useMutation(`
+    mutation CreateTodo($todoTitle string) {
+      todo(title: $todoTitle) {
+        id
+        title
+      }
+    }
+  `)
+  
+  const createtodo = () => mutate({ todoTitle })
+
+  return (
+    <Fragment>
+      <input onChange={e => setTodoTitle(e.target.value)} />
+      <button onClick={createTodo}>Create Todo</button>
+      {!loading ? 'Loading...' : <pre>{data}</pre>}
+    </Fragment>
+  )
+}
+
+// these are default options and URL used in every request
+// inside the <Provider />. They can be overwritten individually
+const App = () => {
+
+  const options = {
+    headers: {
+      Authorization: 'Bearer:asdfasdfasdfasdfasdafd'
+    }
+  }
+  
+  return (
+    <Provider url='http://example.com' options={options}>
+      <QueryComponent />
+      <MutationComponent />
+    <Provider/>
+  )
+}
+
 ```
 
 #### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
@@ -304,6 +378,11 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
+ - [x] port to typescript
+ - [x] badges
+ - [X] if no url is specified, and we're in the browser, use `window.location.origin`
+ - [X] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
+ - [X] add GraphQL `useQuery`, `useMutation`
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
@@ -313,20 +392,16 @@ Todos
  - [ ] if 2nd param of `post` or one of the methods is a `string` treat it as query params
  - [ ] error handling if no url is passed
  - [ ] tests
- - [x] port to typescript
- - [x] badges
- - [ ] if no url is specified, and we're in the browser, use `window.location.href`
  - [ ] github page/website
- - [ ] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
  - [ ] fix code so Maintainability is A
  - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
- - [ ] add GraphQL `useQuery`, `useMutation`
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ```jsx
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
+  // if there's no <Provider /> used, useMutation works this way
   const mutation = useMutation('http://example.com', `
     mutation CreateTodo($todoTitle string) {
       todo(title: $todoTitle) {
