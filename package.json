@@ -1,6 +1,6 @@
 {
   "name": "use-http",
-  "version": "0.1.66",
+  "version": "0.1.67",
   "homepage": "https://codesandbox.io/embed/km04k9k9x5",
   "main": "dist/index.js",
   "license": "MIT",
@@ -15,7 +15,7 @@
   "devDependencies": {
     "@types/fetch-mock": "^7.2.3",
     "@types/jest": "^24.0.12",
-    "@types/react": "^16.8.8",
+    "@types/react": "^16.8.19",
     "@types/react-dom": "^16.8.4",
     "fetch-mock": "^7.3.1",
     "jest": "^24.7.1",
@@ -26,7 +26,8 @@
   "scripts": {
     "prepublish": "yarn build # runs before publish",
     "build": "rm -rf dist && ./node_modules/.bin/tsc --module CommonJS",
-    "test": "tsc -p . --noEmit && tsc -p ./src/__tests__ && jest"
+    "test": "tsc -p . --noEmit && tsc -p ./src/__tests__ && jest",
+    "clean": "npm prune; yarn cache clean; rm -rf ./node_modules package-lock.json yarn.lock; yarn"
   },
   "files": [
     "dist"

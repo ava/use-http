@@ -52,7 +52,7 @@ Features
 - TypeScript support
 - 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
-- Provider to set default a `url` and `options`
+- Provider to set default `url` and `options`
 
 ### Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example - Next.js</a>
