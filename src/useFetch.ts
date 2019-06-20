@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback, useRef, MutableRefObject, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef, useContext, MutableRefObject, useMemo } from 'react'
+import URLContext from './URLContext'
 
 const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
 
@@ -10,8 +11,11 @@ export interface Options {
   baseUrl?: string
 }
 
-export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
-  let url: string | null = null
+type useFetchArg1 = string | Options & RequestInit
+
+export function useFetch(arg1: useFetchArg1, arg2?: Options | RequestInit) {
+  const context = useContext(URLContext)
+  let url: string | null = context.url || null
   let options = {} as { signal?: AbortSignal | null } & RequestInit
   let onMount = false
   let baseUrl = ''
@@ -24,15 +28,19 @@ export function useFetch(arg1: string | Options & RequestInit, arg2: Options) {
       let { url, onMount, timeout, baseUrl, ...rest } = opts
       options = { signal: undefined, ...rest }
     }
-    if (opts.url) url = opts.url
+    if (context.url) url = context.url
+    if (opts.url) url = opts.url || context.url
     if (opts.onMount) onMount = opts.onMount
     if (opts.method) method = opts.method
     if (opts.baseUrl) baseUrl = opts.baseUrl
   }
 
   if (typeof arg1 === 'string') {
-    url = arg1
-    if (isObject(arg2)) handleOptions(arg2)
+    // if we have a default url from context, and
+    // arg1 is a string, we treat it as a relative route
+    url = context.url ? context.url + arg1 : arg1
+
+    if (arg2 && isObject(arg2)) handleOptions(arg2)
   } else if (isObject(arg1)) {
     handleOptions(arg1)
   }
