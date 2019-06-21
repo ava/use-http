@@ -75,7 +75,7 @@ export function useFetch(arg1: useFetchArg1, arg2?: Options | RequestInit) {
           ...context.options,
           ...options,
           headers: {
-            'Content-Type': 'application/json', // default content type
+            'Accept': 'application/json', // default content type http://bit.ly/2N2ovOZ
             ...(context.options || {}).headers,
             ...options.headers
           }
