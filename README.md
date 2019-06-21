@@ -123,7 +123,7 @@ import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
 const [data, loading, error, patch] = usePatch({
   url: 'https://example.com',
   headers: {
-    'Content-type': 'application/json; charset=UTF-8'
+    'Accept': 'application/json; charset=UTF-8'
   }
 })
 
