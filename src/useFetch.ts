@@ -116,7 +116,7 @@ export function useFetch(arg1: useFetchArg1, arg2?: Options | RequestInit) {
     if (onMount) request[methodName]()
   }, [])
 
-  return Object.assign([data, loading, error, request], { data, loading, error, request, abort, ...request })
+  return Object.assign([data, loading, error, request], { data, loading, error, request, ...request })
 }
 
 export default useFetch
