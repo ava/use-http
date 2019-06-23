@@ -77,13 +77,13 @@ describe('use-http', () => {
     expect(typeof useMutation).toBe("function");
   });
 
-  // it('can be used without crashing', async () => {
-  //   const div = document.createElement("div");
+  it('can be used without crashing', async () => {
+    const div = document.createElement("div");
     
-  //   act(() => {
-  //     ReactDOM.render(<TestApp />, div);
-  //   });
-  // });
+    act(() => {
+      ReactDOM.render(<TestApp />, div);
+    });
+  });
 
   describe("useFetch", () => {
     afterEach(() => {

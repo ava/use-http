@@ -121,7 +121,7 @@ export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | Reque
         if (err.name !== 'AbortError') setError(err)
       } finally {
         controller.current = null
-        //setLoading(false)
+        setLoading(false)
       }
     },
     [url]
