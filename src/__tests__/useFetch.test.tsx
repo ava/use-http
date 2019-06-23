@@ -87,6 +87,7 @@ describe('use-http', () => {
 
   describe("useFetch", () => {
     afterEach(() => {
+      cleanup();
       fetch.resetMocks();
     });
 

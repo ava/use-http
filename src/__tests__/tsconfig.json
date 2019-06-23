@@ -1,8 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "noEmit": true,
-    "noUnusedLocals": false
+    "noEmit": true
   },
   "include": [
     "./**/*.ts",

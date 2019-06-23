@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
 import URLContext from './URLContext'
 import { HTTPMethod } from "./types";
-import { any } from "prop-types";
 
 const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
 
