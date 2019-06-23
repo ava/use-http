@@ -2,7 +2,7 @@ import useFetch, { URLContext } from '.'
 import { useContext, useCallback } from 'react';
 
 
-export const useMutation = (arg1: string, arg2: string) => {
+export const useMutation = <TData = any>(arg1: string, arg2: string) => {
   const context = useContext(URLContext)
 
   let url = arg1
@@ -13,7 +13,7 @@ export const useMutation = (arg1: string, arg2: string) => {
     MUTATION = arg1
   }
 
-  const request = useFetch(url)
+  const request = useFetch<TData>(url)
 
   const mutate = useCallback(inputs => request.mutate(MUTATION, inputs), [])
 

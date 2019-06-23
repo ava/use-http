@@ -1,14 +1,22 @@
 {
   "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": [
+      "es5",
+      "es2015",
+      "es2016",
+      "dom",
+      "esnext"
+    ],
     "module": "es2015",
     "moduleResolution": "node",
-    "target": "es6",
-    "strict": true,
+    "noImplicitAny": true,
     "outDir": "dist",
-    "declaration": true,
     "sourceMap": true,
-    "jsx": "react",
-    "esModuleInterop": true
+    "strict": true,
+    "target": "es6"
   },
   "include": [
     "src/*.ts",

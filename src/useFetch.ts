@@ -1,5 +1,7 @@
-import { useEffect, useState, useCallback, useRef, useContext, MutableRefObject, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
 import URLContext from './URLContext'
+import { HTTPMethod } from "./types";
+import { any } from "prop-types";
 
 const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
 
@@ -11,15 +13,43 @@ export interface Options {
   baseUrl?: string
 }
 
+export type FetchData = (fArg1?: string | object | undefined, fArg2?: string | object | undefined) => Promise<void>
+
+export type UseFetch<TData> = {
+  data?: TData,
+  loading: boolean,
+  error?: any,
+  get: FetchData,
+  post: FetchData,
+  patch: FetchData,
+  put: FetchData,
+  del: FetchData,
+  delete: FetchData,
+  query: (query?: string | undefined, variables?: object | undefined) => Promise<void>,
+  mutate: (mutation?: string | undefined, variables?: object | undefined) => Promise<void>,
+  abort: () => void,
+  request: {
+    get: FetchData,
+    post: FetchData,
+    patch: FetchData,
+    put: FetchData,
+    del: FetchData,
+    delete: FetchData,
+    query: (query?: string | undefined, variables?: object | undefined) => Promise<void>,
+    mutate: (mutation?: string | undefined, variables?: object | undefined) => Promise<void>,
+    abort: () => void,
+  },
+}
+
 type useFetchArg1 = string | Options & RequestInit
 
-export function useFetch(arg1: useFetchArg1, arg2?: Options | RequestInit) {
+export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | RequestInit): UseFetch<TData> {
   const context = useContext(URLContext)
   let url: string | null = context.url || null
   let options = {} as { signal?: AbortSignal | null } & RequestInit
   let onMount = false
   let baseUrl = ''
-  let method = 'GET'
+  let method: string = HTTPMethod.GET
 
   const handleOptions = (opts: Options & RequestInit) => {
     if (true) {
@@ -45,10 +75,10 @@ export function useFetch(arg1: useFetchArg1, arg2?: Options | RequestInit) {
     handleOptions(arg1)
   }
 
-  const [data, setData] = useState(null)
+  const [data, setData] = useState<TData>()
   const [loading, setLoading] = useState(onMount)
-  const [error, setError] = useState(null)
-  const controller = useRef(null) as MutableRefObject<AbortController | null>
+  const [error, setError] = useState<any>()
+  const controller = useRef<AbortController | null>()
 
   const fetchData = useCallback(
     (method: string) => async (fArg1?: object | string, fArg2?: object | string) => {
@@ -61,7 +91,7 @@ export function useFetch(arg1: useFetchArg1, arg2?: Options | RequestInit) {
       // post | patch | put | etc.
       if (isObject(fArg1) && method.toLowerCase() !== 'get') {
         options.body = JSON.stringify(fArg1)
-      // relative routes
+        // relative routes
       } else if (baseUrl && typeof fArg1 === 'string') {
         url = baseUrl + fArg1
         if (isObject(fArg2)) options.body = JSON.stringify(fArg2)
@@ -91,17 +121,17 @@ export function useFetch(arg1: useFetchArg1, arg2?: Options | RequestInit) {
         if (err.name !== 'AbortError') setError(err)
       } finally {
         controller.current = null
-        setLoading(false)
+        //setLoading(false)
       }
     },
     [url]
   )
 
-  const get = useCallback(fetchData('GET'), [])
-  const post = useCallback(fetchData('POST'), [])
-  const patch = useCallback(fetchData('PATCH'), [])
-  const put = useCallback(fetchData('PUT'), [])
-  const del = useCallback(fetchData('DELETE'), [])
+  const get = useCallback(fetchData(HTTPMethod.GET), [])
+  const post = useCallback(fetchData(HTTPMethod.POST), [])
+  const patch = useCallback(fetchData(HTTPMethod.PATCH), [])
+  const put = useCallback(fetchData(HTTPMethod.PUT), [])
+  const del = useCallback(fetchData(HTTPMethod.DELETE), [])
   const query = useCallback((query?: string, variables?: object) => post({ query, variables }), [])
   const mutate = useCallback((mutation?: string, variables?: object) => post({ mutation, variables }), [])
 
