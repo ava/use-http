@@ -16,7 +16,7 @@ import {
   waitForElement
 } from '@testing-library/react'
 
-import {FetchMock} from "jest-fetch-mock";
+import { FetchMock } from "jest-fetch-mock";
 
 const fetch = global.fetch as FetchMock;
 
@@ -34,7 +34,7 @@ const TestApp = () => {
     <>
       {loading && <div data-testid="loading">loading...</div>}
       {error && <div data-testid="error">{error.message}</div>}
-      {data && 
+      {data &&
         <div>
           <div data-testid="person-name">{data.name}</div>
           <div data-testid="person-age">{data.age}</div>
@@ -79,7 +79,7 @@ describe('use-http', () => {
 
   it('can be used without crashing', async () => {
     const div = document.createElement("div");
-    
+
     act(() => {
       ReactDOM.render(<TestApp />, div);
     });
@@ -96,8 +96,8 @@ describe('use-http', () => {
         name: "Joe Bloggs",
         age: 48
       }));
-      
-      const { getAllByTestId } = render(<TestApp/>)
+
+      const { getAllByTestId } = render(<TestApp />)
 
       const els = await waitForElement(() => getAllByTestId(/^person-/));
 

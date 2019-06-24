@@ -1,44 +1,8 @@
 import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
 import URLContext from './URLContext'
-import { HTTPMethod } from "./types";
+import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult } from "./types";
 
 const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
-
-export interface Options {
-  url?: string
-  onMount?: boolean
-  method?: string
-  timeout?: number
-  baseUrl?: string
-}
-
-export type FetchData = (fArg1?: string | object | undefined, fArg2?: string | object | undefined) => Promise<void>
-
-export type UseFetch<TData> = {
-  data?: TData,
-  loading: boolean,
-  error?: any,
-  get: FetchData,
-  post: FetchData,
-  patch: FetchData,
-  put: FetchData,
-  del: FetchData,
-  delete: FetchData,
-  query: (query?: string | undefined, variables?: object | undefined) => Promise<void>,
-  mutate: (mutation?: string | undefined, variables?: object | undefined) => Promise<void>,
-  abort: () => void,
-  request: {
-    get: FetchData,
-    post: FetchData,
-    patch: FetchData,
-    put: FetchData,
-    del: FetchData,
-    delete: FetchData,
-    query: (query?: string | undefined, variables?: object | undefined) => Promise<void>,
-    mutate: (mutation?: string | undefined, variables?: object | undefined) => Promise<void>,
-    abort: () => void,
-  },
-}
 
 type useFetchArg1 = string | Options & RequestInit
 
@@ -138,14 +102,17 @@ export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | Reque
     controller.current && controller.current.abort()
   }, [])
 
-  const request = useMemo(() => ({ get, post, patch, put, del, delete: del, abort, query, mutate }), [])
+  const request: FetchCommands = useMemo(() => ({ get, post, patch, put, del, delete: del, abort, query, mutate }), [])
 
   useEffect(() => {
     const methodName = method.toLowerCase() as keyof typeof request
     if (onMount) request[methodName]()
   }, [])
 
-  return Object.assign([data, loading, error, request], { data, loading, error, request, ...request })
+  return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(
+    [data, loading, error, request],
+    { data, loading, error, request, ...request }
+  );
 }
 
 export default useFetch
