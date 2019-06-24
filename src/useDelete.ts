@@ -1,5 +1,5 @@
-import useFetch, { Options } from './useFetch'
-import { HTTPMethod } from "./types";
+import useFetch from './useFetch'
+import { HTTPMethod, Options } from './types'
 
 export const useDelete = <TData = any>(url: string, options?: Options) => {
   const { data, loading, error, del } = useFetch<TData>(url, {
