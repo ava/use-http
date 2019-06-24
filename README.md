@@ -396,6 +396,8 @@ Todos
  - [ ] add `timeout`
  - [ ] add `debounce`
  - [ ] tests
+ - [ ] change URLContext -> FetchContext or something along those lines
+ - [ ] add array destructuring return types
  - [ ] github page/website for docs + show comparison with Apollo
  - [ ] fix code so Maintainability is A
  - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
