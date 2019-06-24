@@ -396,6 +396,7 @@ Todos
  - [ ] add `timeout`
  - [ ] add `debounce`
  - [ ] tests
+ - [ ] ERROR handling: if doing `useQuery('my query')` without specifiying a URL in the Provider, throw error
  - [ ] change URLContext -> FetchContext or something along those lines
  - [ ] add array destructuring return types
  - [ ] github page/website for docs + show comparison with Apollo
