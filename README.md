@@ -251,7 +251,7 @@ function MutationComponent() {
     }
   `)
   
-  const createtodo = () => mutate({ todoTitle })
+  const createTodo = () => mutate({ todoTitle })
 
   return (
     <>
@@ -427,7 +427,7 @@ const App = () => {
   `)
 
   // ideally, I think it should be mutation.write({ todoTitle }) since mutation ~= POST
-  const createtodo = () => mutation.read({ todoTitle })
+  const createTodo = () => mutation.read({ todoTitle })
   
   if (!request.data) return null
 
