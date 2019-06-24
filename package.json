@@ -13,12 +13,14 @@
     "react-dom": "^16.8.6"
   },
   "devDependencies": {
+    "@testing-library/react": "^8.0.1",
     "@types/fetch-mock": "^7.2.3",
     "@types/jest": "^24.0.12",
+    "@types/node": "^12.0.10",
     "@types/react": "^16.8.19",
     "@types/react-dom": "^16.8.4",
-    "fetch-mock": "^7.3.1",
     "jest": "^24.7.1",
+    "jest-fetch-mock": "^2.1.2",
     "react-hooks-testing-library": "^0.6.0",
     "ts-jest": "^24.0.0",
     "typescript": "^3.4.5"
@@ -26,7 +28,8 @@
   "scripts": {
     "prepublish": "yarn build # runs before publish",
     "build": "rm -rf dist && ./node_modules/.bin/tsc --module CommonJS",
-    "test": "tsc -p . --noEmit && tsc -p ./src/__tests__ && jest",
+    "test": "tsc -p . --noEmit && tsc -p ./src/__tests__ && jest -c ./config/jest.config.js --env=jsdom",
+    "test:watch": "jest -c ./config/jest.config.js --env=jsdom --watch",
     "clean": "npm prune; yarn cache clean; rm -rf ./node_modules package-lock.json yarn.lock; yarn"
   },
   "files": [
