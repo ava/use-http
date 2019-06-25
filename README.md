@@ -406,6 +406,7 @@ Todos
  - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
+ - [ ] make cool logo 😜 I kinda want it to move [like this one](https://camo.githubusercontent.com/4f6ca9438a3e45f9b409158503f3deebc86a793d/68747470733a2f2f7265626173736a732e6f72672f6c6f676f2e737667)
  - [ ] maybe add syntax for custom headers like this
 ```jsx
   const user = useFetch()
