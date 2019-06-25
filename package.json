@@ -8,6 +8,9 @@
     "type": "git",
     "url": "https://github.com/alex-cory/use-http.git"
   },
+  "dependencies": {
+    "use-ssr": "^1.0.18"
+  },
   "peerDependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
@@ -28,7 +31,7 @@
     "typescript": "^3.4.5"
   },
   "scripts": {
-    "prepublish": "yarn build # runs before publish",
+    "prepublishOnly": "yarn build # runs before publish",
     "build": "rm -rf dist && ./node_modules/.bin/tsc --module CommonJS",
     "test": "tsc -p . --noEmit && tsc -p ./src/__tests__ && jest -c ./config/jest.config.js --env=jsdom",
     "test:watch": "jest -c ./config/jest.config.js --env=jsdom --watch",
@@ -83,8 +86,5 @@
     "apollo",
     "useGraphQL",
     "use-graphql"
-  ],
-  "dependencies": {
-    "use-ssr": "^1.0.18"
-  }
+  ]
 }

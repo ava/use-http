@@ -1,8 +1,8 @@
-import { GlobalWithFetchMock } from "jest-fetch-mock";
+import { GlobalWithFetchMock } from "jest-fetch-mock"
 
-const customGlobal: GlobalWithFetchMock = global as GlobalWithFetchMock;
-customGlobal.fetch = require('jest-fetch-mock');
-customGlobal.fetchMock = customGlobal.fetch;
+const customGlobal: GlobalWithFetchMock = global as GlobalWithFetchMock
+customGlobal.fetch = require('jest-fetch-mock')
+customGlobal.fetchMock = customGlobal.fetch
 
 // this is just a little hack to silence a warning that we'll get until react
 // fixes this: https://github.com/facebook/react/pull/14853

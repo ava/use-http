@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, ReactElement } from 'react'
 import useSSR from 'use-ssr'
-import URLContext from './URLContext'
+import FetchContext from './FetchContext'
 
 interface FetchProviderProps {
 	url?: string,
@@ -27,8 +27,8 @@ export const Provider = ({ url, options, graphql = false, children }: FetchProvi
   )
 
 	return (
-		<URLContext.Provider value={defaults}>
+		<FetchContext.Provider value={defaults}>
 			{children}
-		</URLContext.Provider>
+		</FetchContext.Provider>
 	)
 }

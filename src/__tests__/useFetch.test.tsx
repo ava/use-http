@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 import {
   useFetch,
   useGet,
@@ -8,27 +8,27 @@ import {
   usePatch,
   useQuery,
   useMutation
-} from '../index';
-import ReactDOM from 'react-dom';
+} from '../index'
+import ReactDOM from 'react-dom'
 import {
   render,
   cleanup,
   waitForElement
 } from '@testing-library/react'
 
-import { FetchMock } from "jest-fetch-mock";
+import { FetchMock } from "jest-fetch-mock"
 
-const fetch = global.fetch as FetchMock;
+const fetch = global.fetch as FetchMock
 
 import { act } from "react-dom/test-utils"
 
 interface Person {
-  name: string;
-  age: number;
+  name: string
+  age: number
 }
 
 const TestApp = () => {
-  const { loading, data, error } = useFetch<Person>('https://example.com', { onMount: true });
+  const { loading, data, error } = useFetch<Person>('https://example.com', { onMount: true })
 
   return (
     <>
@@ -41,68 +41,68 @@ const TestApp = () => {
         </div>
       }
     </>
-  );
-};
+  )
+}
 
 describe('use-http', () => {
   it('should be defined/exist when imported', () => {
-    expect(typeof useFetch).toBe("function");
-  });
+    expect(typeof useFetch).toBe("function")
+  })
 
   it('should define useGet', () => {
-    expect(typeof useGet).toBe("function");
-  });
+    expect(typeof useGet).toBe("function")
+  })
 
   it('should define usePost', () => {
-    expect(typeof usePost).toBe("function");
-  });
+    expect(typeof usePost).toBe("function")
+  })
 
   it('should define usePut', () => {
-    expect(typeof usePut).toBe("function");
-  });
+    expect(typeof usePut).toBe("function")
+  })
 
   it('should define useDelete', () => {
-    expect(typeof useDelete).toBe("function");
-  });
+    expect(typeof useDelete).toBe("function")
+  })
 
   it('should define usePatch', () => {
-    expect(typeof usePatch).toBe("function");
-  });
+    expect(typeof usePatch).toBe("function")
+  })
 
   it('should define useQuery', () => {
-    expect(typeof useQuery).toBe("function");
-  });
+    expect(typeof useQuery).toBe("function")
+  })
 
   it('should define useMutation', () => {
-    expect(typeof useMutation).toBe("function");
-  });
+    expect(typeof useMutation).toBe("function")
+  })
 
   it('can be used without crashing', async () => {
-    const div = document.createElement("div");
+    const div = document.createElement("div")
 
     act(() => {
-      ReactDOM.render(<TestApp />, div);
-    });
-  });
+      ReactDOM.render(<TestApp />, div)
+    })
+  })
 
   describe("useFetch", () => {
     afterEach(() => {
-      cleanup();
-      fetch.resetMocks();
-    });
+      cleanup()
+      fetch.resetMocks()
+    })
 
     it('should execute GET command', async () => {
       fetch.mockResponseOnce(JSON.stringify({
         name: "Joe Bloggs",
         age: 48
-      }));
+      }))
 
       const { getAllByTestId } = render(<TestApp />)
 
-      const els = await waitForElement(() => getAllByTestId(/^person-/));
+      const els = await waitForElement(() => getAllByTestId(/^person-/))
 
-      expect(els[0].innerHTML).toBe("Joe Bloggs");
-      expect(els[1].innerHTML).toBe("48");
+      expect(els[0].innerHTML).toBe("Joe Bloggs")
+      expect(els[1].innerHTML).toBe("48")
     })
-  });
-});
+  })
+})

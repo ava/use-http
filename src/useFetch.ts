@@ -1,20 +1,20 @@
 import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
-import URLContext from './URLContext'
-import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult } from "./types";
+import FetchContext from './FetchContext'
+import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult } from "./types"
 
 const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
 
 type useFetchArg1 = string | Options & RequestInit
 
 export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | RequestInit): UseFetch<TData> {
-  const context = useContext(URLContext)
+  const context = useContext(FetchContext)
   let url: string | null = context.url || null
   let options = {} as { signal?: AbortSignal | null } & RequestInit
   let onMount = false
   let baseUrl = ''
   let method: string = HTTPMethod.GET
 
-  const handleOptions = (opts: Options & RequestInit) => {
+  const handleOptions = useCallback((opts: Options & RequestInit) => {
     if (true) {
       // take out all the things that are not normal `fetch` options
       // need to take this out of scope so can set the variables below correctly
@@ -26,7 +26,7 @@ export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | Reque
     if (opts.onMount) onMount = opts.onMount
     if (opts.method) method = opts.method
     if (opts.baseUrl) baseUrl = opts.baseUrl
-  }
+  }, [])
 
   if (typeof arg1 === 'string') {
     // if we have a default url from context, and
@@ -112,7 +112,7 @@ export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | Reque
   return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(
     [data, loading, error, request],
     { data, loading, error, request, ...request }
-  );
+  )
 }
 
 export default useFetch

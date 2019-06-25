@@ -1,9 +1,9 @@
-import useFetch, { URLContext } from '.'
-import { useContext, useCallback } from 'react';
+import useFetch, { FetchContext } from '.'
+import { useContext, useCallback } from 'react'
 
 
 export const useQuery = <TData = any>(arg1: string, arg2: string) => {
-  const context = useContext(URLContext)
+  const context = useContext(FetchContext)
 
   let url = arg1
   let QUERY = arg2
