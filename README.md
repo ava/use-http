@@ -391,6 +391,7 @@ Todos
  - [X] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
  - [X] add GraphQL `useQuery`, `useMutation`
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
+ - [ ] make work with FormData
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] add `timeout`
