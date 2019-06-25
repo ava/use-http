@@ -395,6 +395,7 @@ Todos
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] add `timeout`
  - [ ] add `debounce`
+ - [ ] maybe add a `retries: 3` which would specify the amount of times it should retry before erroring out
  - [ ] tests
  - [ ] ERROR handling:
    - [ ] if doing `useQuery('my query')` without specifiying a URL in the Provider, throw error
