@@ -1,9 +1,12 @@
 import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
-import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, useFetchArg1 } from "./types"
+import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, useFetchArg1, UseFetchOptions } from "./types"
 import { invariant, isObject } from './utils'
 
-
+export function useFetch<TData = any>(route?: string, options?: Options): UseFetch<TData>;
+export function useFetch<TData = any>(route?: string, requestInit?: RequestInit): UseFetch<TData>;
+export function useFetch<TData = any>(useFetchOptions?: UseFetchOptions, options?: Options): UseFetch<TData>;
+export function useFetch<TData = any>(useFetchOptions?: UseFetchOptions, requestInit?: RequestInit): UseFetch<TData>;
 export function useFetch<TData = any>(arg1?: useFetchArg1, arg2?: Options | RequestInit): UseFetch<TData> {
   const context = useContext(FetchContext)
 
@@ -15,7 +18,7 @@ export function useFetch<TData = any>(arg1?: useFetchArg1, arg2?: Options | Requ
   let baseUrl = ''
   let method: string = HTTPMethod.GET
 
-  const handleOptions = useCallback((opts: Options & RequestInit) => {
+  const handleOptions = useCallback((opts: UseFetchOptions) => {
     if (true) {
       // take out all the things that are not normal `fetch` options
       // need to take this out of scope so can set the variables below correctly
@@ -58,7 +61,7 @@ export function useFetch<TData = any>(arg1?: useFetchArg1, arg2?: Options | Requ
       if (isObject(fetchArg1) && method.toLowerCase() !== 'get') {
         options.body = JSON.stringify(fetchArg1)
 
-      // relative routes
+        // relative routes
       } else if (baseUrl && typeof fetchArg1 === 'string') {
         url = baseUrl + fetchArg1
         if (isObject(fetchArg2)) options.body = JSON.stringify(fetchArg2)
@@ -73,7 +76,7 @@ export function useFetch<TData = any>(arg1?: useFetchArg1, arg2?: Options | Requ
           ...options,
           headers: {
             // default content types http://bit.ly/2N2ovOZ
-            Accept: 'application/json', 
+            Accept: 'application/json',
             'Content-Type': 'application/json',
             ...(context.options || {}).headers,
             ...options.headers

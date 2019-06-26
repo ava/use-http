@@ -27,22 +27,40 @@ interface Person {
   age: number
 }
 
-const TestApp = () => {
+interface PersonViewProps {
+  person?: Person;
+  loading: boolean;
+  error: any;
+}
+
+const PersonView: React.FunctionComponent<PersonViewProps> = ({ person, loading, error }) =>
+  <>
+    {loading && <div data-testid="loading">loading...</div>}
+    {error && <div data-testid="error">{error.message}</div>}
+    {person &&
+      <div>
+        <div data-testid="person-name">{person.name}</div>
+        <div data-testid="person-age">{person.age}</div>
+      </div>
+    }
+  </>
+
+const ObjectDestructuringApp = () => {
   const { loading, data, error } = useFetch<Person>('https://example.com', { onMount: true })
 
   return (
-    <>
-      {loading && <div data-testid="loading">loading...</div>}
-      {error && <div data-testid="error">{error.message}</div>}
-      {data &&
-        <div>
-          <div data-testid="person-name">{data.name}</div>
-          <div data-testid="person-age">{data.age}</div>
-        </div>
-      }
-    </>
+    <PersonView person={data} loading={loading} error={error} />
   )
 }
+
+const ArrayDestructuringApp = () => {
+  const [person, isLoading, anError] = useFetch<Person>('https://example.com', { onMount: true })
+
+  return (
+    <PersonView person={person} loading={isLoading} error={anError} />
+  )
+}
+
 
 describe('use-http', () => {
   it('should be defined/exist when imported', () => {
@@ -81,7 +99,7 @@ describe('use-http', () => {
     const div = document.createElement("div")
 
     act(() => {
-      ReactDOM.render(<TestApp />, div)
+      ReactDOM.render(<ObjectDestructuringApp />, div)
     })
   })
 
@@ -91,13 +109,34 @@ describe('use-http', () => {
       fetch.resetMocks()
     })
 
-    it('should execute GET command', async () => {
+    beforeEach(() => {
+      fetch.mockResponseOnce(JSON.stringify({
+        name: "Joe Bloggs",
+        age: 48
+      }))
+    })
+
+    it('should execute GET command with object destructuring', async () => {
       fetch.mockResponseOnce(JSON.stringify({
         name: "Joe Bloggs",
         age: 48
       }))
 
-      const { getAllByTestId } = render(<TestApp />)
+      const { getAllByTestId } = render(<ObjectDestructuringApp />)
+
+      const els = await waitForElement(() => getAllByTestId(/^person-/))
+
+      expect(els[0].innerHTML).toBe("Joe Bloggs")
+      expect(els[1].innerHTML).toBe("48")
+    })
+
+    it('should execute GET command with arrray destructuring', async () => {
+      fetch.mockResponseOnce(JSON.stringify({
+        name: "Joe Bloggs",
+        age: 48
+      }))
+
+      const { getAllByTestId } = render(<ArrayDestructuringApp />)
 
       const els = await waitForElement(() => getAllByTestId(/^person-/))
 
