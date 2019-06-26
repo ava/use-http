@@ -141,7 +141,7 @@ patch({
 Abort
 -----
 
-<img src="/public/abort-example-1.gif" height="250" />
+<img src="https://raw.githubusercontent.com/alex-cory/use-http/master/public/abort-example-1.gif" height="250" />
 
 
 ```js
