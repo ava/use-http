@@ -217,14 +217,14 @@ The `Provider` allows us to set a default `url`, `options` (such as headers) and
 import { Provider, useQuery, useMutation } from 'use-http'
 
 function QueryComponent() {
-  const request = useQuery(`
+  const request = useQuery`
     query Todos($userID string!) {
       todos(userID: $userID) {
         id
         title
       }
     }
-  `)
+  `
 
   const getTodosForUser = id => request.query({ userID: id })
   
@@ -242,14 +242,14 @@ function QueryComponent() {
 function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
   
-  const [data, loading, error, mutate] = useMutation(`
+  const [data, loading, error, mutate] = useMutation`
     mutation CreateTodo($todoTitle string) {
       todo(title: $todoTitle) {
         id
         title
       }
     }
-  `)
+  `
   
   const createTodo = () => mutate({ todoTitle })
 
