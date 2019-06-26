@@ -1,6 +1,6 @@
 {
-  "name": "use-http",
-  "version": "0.1.68",
+  "name": "use-invariant",
+  "version": "0.1.69",
   "homepage": "https://codesandbox.io/embed/km04k9k9x5",
   "main": "dist/index.js",
   "license": "MIT",
@@ -33,6 +33,7 @@
   "scripts": {
     "prepublishOnly": "yarn build # runs before publish",
     "build": "rm -rf dist && ./node_modules/.bin/tsc --module CommonJS",
+    "build:watch": "rm -rf dist && ./node_modules/.bin/tsc -w --module CommonJS",
     "test": "tsc -p . --noEmit && tsc -p ./src/__tests__ && jest -c ./config/jest.config.js --env=jsdom",
     "test:watch": "jest -c ./config/jest.config.js --env=jsdom --watch",
     "clean": "npm prune; yarn cache clean; rm -rf ./node_modules package-lock.json yarn.lock; yarn"
