@@ -28,9 +28,9 @@ interface Person {
 }
 
 interface PersonViewProps {
-  person?: Person;
-  loading: boolean;
-  error: any;
+  person?: Person
+  loading: boolean
+  error: any
 }
 
 const PersonView: React.FunctionComponent<PersonViewProps> = ({ person, loading, error }) =>

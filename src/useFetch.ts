@@ -3,14 +3,14 @@ import FetchContext from './FetchContext'
 import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, useFetchArg1, UseFetchOptions } from "./types"
 import { invariant, isObject } from './utils'
 
-export function useFetch<TData = any>(route?: string, options?: Options): UseFetch<TData>;
-export function useFetch<TData = any>(route?: string, requestInit?: RequestInit): UseFetch<TData>;
-export function useFetch<TData = any>(useFetchOptions?: UseFetchOptions, options?: Options): UseFetch<TData>;
-export function useFetch<TData = any>(useFetchOptions?: UseFetchOptions, requestInit?: RequestInit): UseFetch<TData>;
-export function useFetch<TData = any>(arg1?: useFetchArg1, arg2?: Options | RequestInit): UseFetch<TData> {
+export function useFetch<TData = any>(route?: string, options?: Options): UseFetch<TData>
+export function useFetch<TData = any>(route?: string, requestInit?: RequestInit): UseFetch<TData>
+export function useFetch<TData = any>(useFetchOptions?: UseFetchOptions, options?: Options): UseFetch<TData>
+export function useFetch<TData = any>(useFetchOptions?: UseFetchOptions, requestInit?: RequestInit): UseFetch<TData>
+export function useFetch<TData = any>(routeOrOptions?: useFetchArg1, optionsOrRequestInit?: Options | RequestInit): UseFetch<TData> {
   const context = useContext(FetchContext)
 
-  invariant(!!arg1 && !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+  invariant(!!routeOrOptions && !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
 
   let url: string | null = context.url || null
   let options = {} as { signal?: AbortSignal | null } & RequestInit
@@ -32,16 +32,16 @@ export function useFetch<TData = any>(arg1?: useFetchArg1, arg2?: Options | Requ
     if (opts.baseUrl) baseUrl = opts.baseUrl
   }, [])
 
-  if (typeof arg1 === 'string') {
+  if (typeof routeOrOptions === 'string') {
     // if we have a default url from context, and
-    // arg1 is a string, and we're not using graphql
-    // we treat arg1 as a relative route
-    url = context.url && !context.graphql ? context.url + arg1 : arg1
+    // routeOrOptions is a string, and we're not using graphql
+    // we treat routeOrOptions as a relative route
+    url = context.url && !context.graphql ? context.url + routeOrOptions : routeOrOptions
 
-    if (arg2 && isObject(arg2)) handleOptions(arg2)
+    if (optionsOrRequestInit && isObject(optionsOrRequestInit)) handleOptions(optionsOrRequestInit)
 
-  } else if (isObject(arg1)) {
-    handleOptions(arg1 || {})
+  } else if (isObject(routeOrOptions)) {
+    handleOptions(routeOrOptions || {})
   }
 
   const [data, setData] = useState<TData>()
