@@ -1,7 +1,13 @@
-import useFetch from './useFetch'
+import { useContext } from 'react'
+import useFetch, { FetchContext } from '.'
 import { HTTPMethod, Options } from './types'
+import { useURLRequiredInvariant } from './utils'
 
-export const usePost = <TData = any>(url: string, options?: Options) => {
+export const usePost = <TData = any>(url?: string, options?: Options) => {
+  const context = useContext(FetchContext)
+
+  useURLRequiredInvariant(!!url && !!context.url, 'usePost')
+
   const { data, loading, error, post } = useFetch<TData>(url, {
     method: HTTPMethod.POST,
     ...options
