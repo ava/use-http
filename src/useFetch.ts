@@ -1,13 +1,14 @@
 import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
-import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult } from "./types"
+import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, useFetchArg1 } from "./types"
+import { invariant, isObject } from './utils'
 
-const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
 
-type useFetchArg1 = string | Options & RequestInit
-
-export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | RequestInit): UseFetch<TData> {
+export function useFetch<TData = any>(arg1?: useFetchArg1, arg2?: Options | RequestInit): UseFetch<TData> {
   const context = useContext(FetchContext)
+
+  invariant(!!arg1 && !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+
   let url: string | null = context.url || null
   let options = {} as { signal?: AbortSignal | null } & RequestInit
   let onMount = false
@@ -30,12 +31,14 @@ export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | Reque
 
   if (typeof arg1 === 'string') {
     // if we have a default url from context, and
-    // arg1 is a string, we treat it as a relative route
-    url = context.url ? context.url + arg1 : arg1
+    // arg1 is a string, and we're not using graphql
+    // we treat arg1 as a relative route
+    url = context.url && !context.graphql ? context.url + arg1 : arg1
 
     if (arg2 && isObject(arg2)) handleOptions(arg2)
+
   } else if (isObject(arg1)) {
-    handleOptions(arg1)
+    handleOptions(arg1 || {})
   }
 
   const [data, setData] = useState<TData>()
@@ -44,7 +47,7 @@ export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | Reque
   const controller = useRef<AbortController | null>()
 
   const fetchData = useCallback(
-    (method: string) => async (fArg1?: object | string, fArg2?: object | string) => {
+    (method: string) => async (fetchArg1?: object | string, fetchArg2?: object | string) => {
       if ('AbortController' in window) {
         controller.current = new AbortController()
         options.signal = controller.current.signal
@@ -52,14 +55,15 @@ export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | Reque
 
       let query = ''
       // post | patch | put | etc.
-      if (isObject(fArg1) && method.toLowerCase() !== 'get') {
-        options.body = JSON.stringify(fArg1)
-        // relative routes
-      } else if (baseUrl && typeof fArg1 === 'string') {
-        url = baseUrl + fArg1
-        if (isObject(fArg2)) options.body = JSON.stringify(fArg2)
+      if (isObject(fetchArg1) && method.toLowerCase() !== 'get') {
+        options.body = JSON.stringify(fetchArg1)
+
+      // relative routes
+      } else if (baseUrl && typeof fetchArg1 === 'string') {
+        url = baseUrl + fetchArg1
+        if (isObject(fetchArg2)) options.body = JSON.stringify(fetchArg2)
       }
-      if (typeof fArg1 === 'string' && typeof fArg2 === 'string') query = fArg2
+      if (typeof fetchArg1 === 'string' && typeof fetchArg2 === 'string') query = fetchArg2
 
       try {
         setLoading(true)
@@ -68,7 +72,9 @@ export function useFetch<TData = any>(arg1: useFetchArg1, arg2?: Options | Reque
           ...context.options,
           ...options,
           headers: {
-            'Accept': 'application/json', // default content type http://bit.ly/2N2ovOZ
+            // default content types http://bit.ly/2N2ovOZ
+            Accept: 'application/json', 
+            'Content-Type': 'application/json',
             ...(context.options || {}).headers,
             ...options.headers
           }
