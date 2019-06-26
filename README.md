@@ -349,6 +349,7 @@ const {
   query,  // GraphQL
   mutate, // GraphQL
 } = useFetch({
+  // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com',
   baseUrl: 'https://example.com',
   onMount: true
@@ -357,6 +358,7 @@ const {
 or
 ```jsx
 const [data, loading, error, request] = useFetch({
+  // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com',
   baseUrl: 'https://example.com',
   onMount: true
