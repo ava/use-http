@@ -217,14 +217,14 @@ The `Provider` allows us to set a default `url`, `options` (such as headers) and
 import { Provider, useQuery, useMutation } from 'use-http'
 
 function QueryComponent() {
-  const request = useQuery(`
+  const request = useQuery`
     query Todos($userID string!) {
       todos(userID: $userID) {
         id
         title
       }
     }
-  `)
+  `
 
   const getTodosForUser = id => request.query({ userID: id })
   
@@ -242,14 +242,14 @@ function QueryComponent() {
 function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
   
-  const [data, loading, error, mutate] = useMutation(`
+  const [data, loading, error, mutate] = useMutation`
     mutation CreateTodo($todoTitle string) {
       todo(title: $todoTitle) {
         id
         title
       }
     }
-  `)
+  `
   
   const createTodo = () => mutate({ todoTitle })
 
@@ -349,6 +349,7 @@ const {
   query,  // GraphQL
   mutate, // GraphQL
 } = useFetch({
+  // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com',
   baseUrl: 'https://example.com',
   onMount: true
@@ -357,6 +358,7 @@ const {
 or
 ```jsx
 const [data, loading, error, request] = useFetch({
+  // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com',
   baseUrl: 'https://example.com',
   onMount: true
@@ -391,6 +393,7 @@ Todos
  - [X] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
  - [X] add GraphQL `useQuery`, `useMutation`
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
+ - [ ] make work with FormData
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] add `timeout`
@@ -406,6 +409,7 @@ Todos
  - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
+ - [ ] make cool logo 😜 I kinda want it to move [like this one](https://camo.githubusercontent.com/4f6ca9438a3e45f9b409158503f3deebc86a793d/68747470733a2f2f7265626173736a732e6f72672f6c6f676f2e737667)
  - [ ] maybe add syntax for custom headers like this
 ```jsx
   const user = useFetch()
