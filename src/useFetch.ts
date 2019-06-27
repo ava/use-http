@@ -1,40 +1,26 @@
 import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
-import { HTTPMethod, /* Options, */ UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, useFetchArg1 } from "./types"
+import { HTTPMethod, /* Options, */ UseFetch, FetchCommands, DestructuringCommands, UseFetchResult } from "./types"
 import { invariant, isObject, isString, pullOutRequestInit } from './utils'
 
-type OptionsNoURLs = {
+type UseFetchBaseOptions = {
   onMount?: boolean,
   timeout?: number
-} & RequestInit
+}
+
+type OptionsNoURLs = UseFetchBaseOptions & RequestInit
 
 // No Provider
-type URLRequiredOptions = {
-  url: string,
-  onMount?: boolean,
-  timeout?: number,
-} & RequestInit
+type URLRequiredOptions = { url: string } & UseFetchBaseOptions & RequestInit
 
-type BaseURLRequiredOptions = {
-  baseUrl: string
-  onMount?: boolean,
-  timeout?: number,
-} & RequestInit
+type BaseURLRequiredOptions = { baseUrl: string } & UseFetchBaseOptions & RequestInit
 
 type OptionsAsFirstParam = URLRequiredOptions | BaseURLRequiredOptions
 
 // With Provider
-type MaybeURLOptions = {
-  url?: string,
-  onMount?: boolean,
-  timeout?: number,
-} & RequestInit
+type MaybeURLOptions = { url?: string } & UseFetchBaseOptions & RequestInit
 
-type MaybeBaseURLOptions = {
-  baseUrl?: string
-  onMount?: boolean,
-  timeout?: number,
-} & RequestInit
+type MaybeBaseURLOptions = { baseUrl?: string } & UseFetchBaseOptions & RequestInit
 
 type MaybeOptions = MaybeURLOptions | MaybeBaseURLOptions
 
@@ -46,7 +32,8 @@ type OptionsAsFirstParamWithContext = MaybeOptions | OptionsOverwriteWithContext
 // Putting it all together
 type URLOrOptions = string | OptionsAsFirstParam | OptionsAsFirstParamWithContext
 
-type Options = OptionsAsFirstParam | OptionsAsFirstParamWithContext | OptionsNoURLs
+type UseFetchOptions = OptionsAsFirstParam | MaybeOptions
+// type Options = OptionsAsFirstParam | OptionsAsFirstParamWithContext | OptionsNoURLs
 
 // No <Provider url='example.com' />
 export function useFetch<TData = any>(url: string, options?: OptionsNoURLs): UseFetch<TData>
@@ -57,23 +44,24 @@ export function useFetch<TData = any>(options: OptionsAsFirstParam): UseFetch<TD
 export function useFetch<TData = any>(url?: string, options?: OptionsNoURLs): UseFetch<TData>
 export function useFetch<TData = any>(options?: OptionsAsFirstParamWithContext): UseFetch<TData>
 
+// TODO: handle context.graphql
 export function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs?: OptionsNoURLs): UseFetch<TData> {
   const context = useContext(FetchContext)
 
   // TODO: this needs to be per initial setup below since we need to check urlOrOptions.url OR  urlOrOptions.baseUrl
   invariant(!!urlOrOptions && !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
 
-  let url: string = ''
+  let url: string = context.url || ''
   let options: RequestInit = {}
   let onMount: boolean = false
-  let timeout: number = 10 // TODO: not implemented
+  // let timeout: number = 10 // TODO: not implemented
   let baseUrl: string = ''
   let method: HTTPMethod = HTTPMethod.GET
 
   const handleUseFetchOptions = useCallback((useFetchOptions?: UseFetchOptions): void => {
     const opts = useFetchOptions || {}
     if (opts.onMount) onMount = opts.onMount
-    if (opts.timeout) timeout = opts.timeout
+    // if (opts.timeout) timeout = opts.timeout
     if (opts.baseURL) baseUrl = opts.baseURL
     if (opts.url) url = opts.url
   }, [])
@@ -84,9 +72,11 @@ export function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs
     options = pullOutRequestInit(optionsNoURLs)
     // currenlty this should only set onMount or timeout
     handleUseFetchOptions(optionsNoURLs)
+
   // arg1 = url AND arg2 = undefined
   } else if (isString(urlOrOptions) && optionsNoURLs === undefined) {
     url = urlOrOptions as string
+
   // arg1 = options with baseURL and no URL
   // arg1 = options with URL and no baseURL
   } else if (isObject(urlOrOptions)) {
@@ -96,39 +86,56 @@ export function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs
     // note on these^ could check with an invariant for both cases in `handleUseFetchOptions`
     options = pullOutRequestInit(urlOrOptions)
     handleUseFetchOptions(urlOrOptions)
-  }
+  
   // Provider: arg1 = undefined
+  } else if (urlOrOptions === undefined) {
+    invariant(!!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+    url = context.url as string
+
   // Provider: arg1 = url (overwrites global url) AND arg2 = options (extend global options)
+  } else if (isString(urlOrOptions) && isObject(optionsNoURLs)) {
+    url = urlOrOptions as string
+    options = pullOutRequestInit(optionsNoURLs)
+    handleUseFetchOptions(optionsNoURLs)
+
   // Provider: arg1 = url (overwrites global url) AND arg2 = undefined
+  } else if (isObject(urlOrOptions) && optionsNoURLs === undefined) {
+    url = urlOrOptions as string
+
   // Provider: arg1 = options (updates global options) - overwrites URL and no baseURL
   // Provider: arg1 = options (updates global options) - overwrites baseURL and no URL
   // Provider: arg1 = options (updates global options) - overwrites any other field
-  // TODO - Provider: arg1 = oldGlobalOptions => ({ my: 'new local options'}) (overwrite all global options for this instance of useFetch)
-  const handleOptions = useCallback((opts: Options & RequestInit) => {
-    if (true) {
-      // take out all the things that are not normal `fetch` options
-      // need to take this out of scope so can set the variables below correctly
-      let { url, onMount, timeout, baseUrl, ...rest } = opts
-      options = { signal: undefined, ...rest }
-    }
-    if (context.url) url = context.url
-    if (opts.url) url = opts.url || context.url || ''
-    if (opts.onMount) onMount = opts.onMount
-    if (opts.method) method = opts.method
-    if (opts.baseUrl) baseUrl = opts.baseUrl
-  }, [])
-
-  if (typeof arg1 === 'string') {
-    // if we have a default url from context, and
-    // arg1 is a string, and we're not using graphql
-    // we treat arg1 as a relative route
-    url = context.url && !context.graphql ? context.url + arg1 : arg1
-
-    if (arg2 && isObject(arg2)) handleOptions(arg2)
-
-  } else if (isObject(arg1)) {
-    handleOptions(arg1 || {})
+  } else if (isObject(urlOrOptions)) {
+    options = pullOutRequestInit(urlOrOptions)
+    handleUseFetchOptions(optionsNoURLs)
   }
+  // TODO - Provider: arg1 = oldGlobalOptions => ({ my: 'new local options'}) (overwrite all global options for this instance of useFetch)
+
+  // const handleOptions = useCallback((opts: Options & RequestInit) => {
+  //   if (true) {
+  //     // take out all the things that are not normal `fetch` options
+  //     // need to take this out of scope so can set the variables below correctly
+  //     let { url, onMount, timeout, baseUrl, ...rest } = opts
+  //     options = { signal: undefined, ...rest }
+  //   }
+  //   if (context.url) url = context.url
+  //   if (opts.url) url = opts.url || context.url || ''
+  //   if (opts.onMount) onMount = opts.onMount
+  //   if (opts.method) method = opts.method
+  //   if (opts.baseUrl) baseUrl = opts.baseUrl
+  // }, [])
+
+  // if (typeof arg1 === 'string') {
+  //   // if we have a default url from context, and
+  //   // arg1 is a string, and we're not using graphql
+  //   // we treat arg1 as a relative route
+  //   url = context.url && !context.graphql ? context.url + arg1 : arg1
+
+  //   if (arg2 && isObject(arg2)) handleOptions(arg2)
+
+  // } else if (isObject(arg1)) {
+  //   handleOptions(arg1 || {})
+  // }
 
   const [data, setData] = useState<TData>()
   const [loading, setLoading] = useState(onMount)
