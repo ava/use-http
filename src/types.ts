@@ -42,5 +42,3 @@ export type UseFetchResult<TData = any> = FetchCommands & {
 export type useFetchArg1 = string | Options & RequestInit
 
 export type UseFetch<TData> = DestructuringCommands<TData> & UseFetchResult<TData>
-
-export type UseFetchOptions = Options & RequestInit;
