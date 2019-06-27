@@ -13,14 +13,14 @@ type OptionsNoURLs = UseFetchBaseOptions & RequestInit
 // No Provider
 type URLRequiredOptions = { url: string } & UseFetchBaseOptions & RequestInit
 
-type BaseURLRequiredOptions = { baseUrl: string } & UseFetchBaseOptions & RequestInit
+type BaseURLRequiredOptions = { baseURL: string } & UseFetchBaseOptions & RequestInit
 
 type OptionsAsFirstParam = URLRequiredOptions | BaseURLRequiredOptions
 
 // With Provider
 type MaybeURLOptions = { url?: string } & UseFetchBaseOptions & RequestInit
 
-type MaybeBaseURLOptions = { baseUrl?: string } & UseFetchBaseOptions & RequestInit
+type MaybeBaseURLOptions = { baseURL?: string } & UseFetchBaseOptions & RequestInit
 
 type MaybeOptions = MaybeURLOptions | MaybeBaseURLOptions
 
@@ -55,15 +55,15 @@ export function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs
   let options: RequestInit = {}
   let onMount: boolean = false
   // let timeout: number = 10 // TODO: not implemented
-  let baseUrl: string = ''
+  let baseURL: string = ''
   let method: HTTPMethod = HTTPMethod.GET
 
   const handleUseFetchOptions = useCallback((useFetchOptions?: UseFetchOptions): void => {
-    const opts = useFetchOptions || {}
-    if (opts.onMount) onMount = opts.onMount
+    const opts = useFetchOptions || {} as UseFetchOptions
+    if ('onMount' in opts) onMount = opts.onMount as boolean
     // if (opts.timeout) timeout = opts.timeout
-    if (opts.baseURL) baseUrl = opts.baseURL
-    if (opts.url) url = opts.url
+    if ('baseURL' in opts) baseURL = opts.baseURL as string
+    if ('url' in opts) url = opts.url as string
   }, [])
 
   // arg1 = url AND arg2 = options
@@ -85,7 +85,7 @@ export function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs
     // I also think it should handle if a `url` and a `baseURL` are both not set. TODO: make test for this
     // note on these^ could check with an invariant for both cases in `handleUseFetchOptions`
     options = pullOutRequestInit(urlOrOptions)
-    handleUseFetchOptions(urlOrOptions)
+    handleUseFetchOptions(urlOrOptions as OptionsAsFirstParam)
   
   // Provider: arg1 = undefined
   } else if (urlOrOptions === undefined) {
@@ -115,14 +115,14 @@ export function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs
   //   if (true) {
   //     // take out all the things that are not normal `fetch` options
   //     // need to take this out of scope so can set the variables below correctly
-  //     let { url, onMount, timeout, baseUrl, ...rest } = opts
+  //     let { url, onMount, timeout, baseURL, ...rest } = opts
   //     options = { signal: undefined, ...rest }
   //   }
   //   if (context.url) url = context.url
   //   if (opts.url) url = opts.url || context.url || ''
   //   if (opts.onMount) onMount = opts.onMount
   //   if (opts.method) method = opts.method
-  //   if (opts.baseUrl) baseUrl = opts.baseUrl
+  //   if (opts.baseURL) baseURL = opts.baseURL
   // }, [])
 
   // if (typeof arg1 === 'string') {
@@ -136,6 +136,32 @@ export function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs
   // } else if (isObject(arg1)) {
   //   handleOptions(arg1 || {})
   // }
+
+  // TODO:
+  // Mutation: arg1 = url AND arg2 = mutationString
+  // Query
+  const makeFetch = useCallback((method: HTTPMethod) => {
+    if ('AbortController' in window) {
+      controller.current = new AbortController()
+      options.signal = controller.current.signal
+    }
+    // Get
+    async function doFetch(route?: string): Promise<void>
+    // Post, Patch, Put, Delete
+    async function doFetch(route?: string, body?: object): Promise<void>
+    async function doFetch(body?: object): Promise<void>
+    async function doFetch(routeOrBody?: string | object, bodh?: object): Promise<void> {
+      // Post, Patch, Put, Delete
+      if (method !== HTTPMethod.GET) {
+      
+      } else if (isObject(routeOrBody)) {
+      }
+      // arg1 = route AND arg2 = body
+      // arg1 = string AND arg2 = optinos
+
+    }
+    return doFetch
+  }, [url])
 
   const [data, setData] = useState<TData>()
   const [loading, setLoading] = useState(onMount)
@@ -155,8 +181,8 @@ export function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs
         options.body = JSON.stringify(fetchArg1)
 
       // relative routes
-      } else if (baseUrl && typeof fetchArg1 === 'string') {
-        url = baseUrl + fetchArg1
+      } else if (baseURL && typeof fetchArg1 === 'string') {
+        url = baseURL + fetchArg1
         if (isObject(fetchArg2)) options.body = JSON.stringify(fetchArg2)
       }
       if (typeof fetchArg1 === 'string' && typeof fetchArg2 === 'string') query = fetchArg2
