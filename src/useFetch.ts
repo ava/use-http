@@ -91,8 +91,8 @@ export function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs
   // arg1 = options with URL and no baseURL
   } else if (isObject(urlOrOptions)) {
     invariant(!optionsNoURLs, 'You cannot have a 2nd parameter of useFetch when your first argument is a object config.')
-    // I think the types should handle if a `url` and a `baseURL` are not set, TODO: make test for this
-    // I also think it should handle if no `url` and no `baseURL` are set. TODO: make test for this
+    // I think the types should handle if a `url` and a `baseURL` are both set, TODO: make test for this
+    // I also think it should handle if a `url` and a `baseURL` are both not set. TODO: make test for this
     // note on these^ could check with an invariant for both cases in `handleUseFetchOptions`
     options = pullOutRequestInit(urlOrOptions)
     handleUseFetchOptions(urlOrOptions)
