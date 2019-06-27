@@ -1,16 +1,13 @@
 import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
-import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, useFetchArg1, UseFetchOptions } from "./types"
+import { HTTPMethod, Options, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, useFetchArg1 } from "./types"
 import { invariant, isObject } from './utils'
 
-export function useFetch<TData = any>(route?: string, options?: Options): UseFetch<TData>
-export function useFetch<TData = any>(route?: string, requestInit?: RequestInit): UseFetch<TData>
-export function useFetch<TData = any>(useFetchOptions?: UseFetchOptions, options?: Options): UseFetch<TData>
-export function useFetch<TData = any>(useFetchOptions?: UseFetchOptions, requestInit?: RequestInit): UseFetch<TData>
-export function useFetch<TData = any>(routeOrOptions?: useFetchArg1, optionsOrRequestInit?: Options | RequestInit): UseFetch<TData> {
+
+export function useFetch<TData = any>(arg1?: useFetchArg1, arg2?: Options | RequestInit): UseFetch<TData> {
   const context = useContext(FetchContext)
 
-  invariant(!!routeOrOptions && !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+  invariant(!!arg1 && !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
 
   let url: string | null = context.url || null
   let options = {} as { signal?: AbortSignal | null } & RequestInit
@@ -18,7 +15,7 @@ export function useFetch<TData = any>(routeOrOptions?: useFetchArg1, optionsOrRe
   let baseUrl = ''
   let method: string = HTTPMethod.GET
 
-  const handleOptions = useCallback((opts: UseFetchOptions) => {
+  const handleOptions = useCallback((opts: Options & RequestInit) => {
     if (true) {
       // take out all the things that are not normal `fetch` options
       // need to take this out of scope so can set the variables below correctly
@@ -32,16 +29,16 @@ export function useFetch<TData = any>(routeOrOptions?: useFetchArg1, optionsOrRe
     if (opts.baseUrl) baseUrl = opts.baseUrl
   }, [])
 
-  if (typeof routeOrOptions === 'string') {
+  if (typeof arg1 === 'string') {
     // if we have a default url from context, and
-    // routeOrOptions is a string, and we're not using graphql
-    // we treat routeOrOptions as a relative route
-    url = context.url && !context.graphql ? context.url + routeOrOptions : routeOrOptions
+    // arg1 is a string, and we're not using graphql
+    // we treat arg1 as a relative route
+    url = context.url && !context.graphql ? context.url + arg1 : arg1
 
-    if (optionsOrRequestInit && isObject(optionsOrRequestInit)) handleOptions(optionsOrRequestInit)
+    if (arg2 && isObject(arg2)) handleOptions(arg2)
 
-  } else if (isObject(routeOrOptions)) {
-    handleOptions(routeOrOptions || {})
+  } else if (isObject(arg1)) {
+    handleOptions(arg1 || {})
   }
 
   const [data, setData] = useState<TData>()
@@ -61,7 +58,7 @@ export function useFetch<TData = any>(routeOrOptions?: useFetchArg1, optionsOrRe
       if (isObject(fetchArg1) && method.toLowerCase() !== 'get') {
         options.body = JSON.stringify(fetchArg1)
 
-        // relative routes
+      // relative routes
       } else if (baseUrl && typeof fetchArg1 === 'string') {
         url = baseUrl + fetchArg1
         if (isObject(fetchArg2)) options.body = JSON.stringify(fetchArg2)
@@ -76,7 +73,7 @@ export function useFetch<TData = any>(routeOrOptions?: useFetchArg1, optionsOrRe
           ...options,
           headers: {
             // default content types http://bit.ly/2N2ovOZ
-            Accept: 'application/json',
+            Accept: 'application/json', 
             'Content-Type': 'application/json',
             ...(context.options || {}).headers,
             ...options.headers
