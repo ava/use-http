@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
-import { HTTPMethod, /* Options, */ UseFetch, FetchCommands, DestructuringCommands, UseFetchResult } from './types'
+import { HTTPMethod, /* Options, */ UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, NoArgs } from './types'
 import { OptionsNoURLs, OptionsAsFirstParam, OptionsAsFirstParamWithContext, URLOrOptions, UseFetchOptions } from './types'
+import { BodyOnly, RouteAndBodyOnly, RouteOnly } from './types'
 import { invariant, isObject, isString, pullOutRequestInit } from './utils'
 
 // type Options = OptionsAsFirstParam | OptionsAsFirstParamWithContext | OptionsNoURLs
@@ -168,16 +169,20 @@ function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs?: Opti
 
   const request: FetchCommands = useMemo(() => ({ get, post, patch, put, del, delete: del, abort, query, mutate }), [])
 
+  // handling onMount
   useEffect(() => {
-    const methodName = ((options.method || '').toUpperCase() || HTTPMethod.GET)
-    const req = request[methodName.toLowerCase() as keyof typeof request]
-    if (!!url && onMount && methodName !== HTTPMethod.GET) {
-      req(url, options.body)
-    } else if (!url && onMount && methodName !== HTTPMethod.GET) {
-      req(options.body)
+    const methodName = ((options.method || '') || HTTPMethod.GET).toUpperCase() as keyof FetchCommands
+    if (!!url && onMount && methodName !== HTTPMethod.GET as string) {
+      const req = request[methodName.toLowerCase() as keyof FetchCommands] as RouteAndBodyOnly
+      req(url, options.body as BodyInit)
+    } else if (!url && onMount && methodName !== HTTPMethod.GET as string) {
+      const req = request[methodName.toLowerCase() as keyof FetchCommands] as BodyOnly
+      req(options.body as BodyInit)
     } else if (!!url && onMount) {
+      const req = request[methodName.toLowerCase() as keyof FetchCommands] as RouteOnly
       req(url)
     } else if (onMount) {
+      const req = request[methodName.toLowerCase() as keyof FetchCommands] as NoArgs
       req()
     }
   }, [])

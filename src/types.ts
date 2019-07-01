@@ -16,10 +16,12 @@ export interface Options {
   baseUrl?: string
 }
 
-type BodyOnly = (body?: object) => Promise<void>
-type RouteOnly = (route?: string) => Promise<void>
-type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
-type FetchData = BodyOnly | RouteOnly | RouteAndBody
+export type BodyOnly = (body: BodyInit) => Promise<void>
+export type RouteOnly = (route: string) => Promise<void>
+export type RouteAndBodyOnly = (route: string, body: BodyInit) => Promise<void>
+export type NoArgs = () => Promise<void>
+// type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
+type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
 
 export type FetchCommands = {
   get: RouteOnly,

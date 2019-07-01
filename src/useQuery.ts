@@ -15,7 +15,7 @@ export const useQuery = <TData = any>(arg1: string | TemplateStringsArray, arg2?
 
   // regular no context: useQuery('https://example.com', `graphql QUERY`)
   let url = arg1
-  let QUERY = arg2
+  let QUERY = arg2 as string
 
   // tagged template literal with context: useQuery`graphql QUERY`
   if (Array.isArray(arg1) && context.url) {

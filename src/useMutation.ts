@@ -15,7 +15,7 @@ export const useMutation = <TData = any>(arg1: string | TemplateStringsArray, ar
 
   // regular no context: useMutation('https://example.com', `graphql MUTATION`)
   let url = arg1
-  let MUTATION = arg2
+  let MUTATION = arg2 as string
 
   // tagged template literal with context: useMutation`graphql MUTATION`
   if (Array.isArray(arg1) && context.url) {
