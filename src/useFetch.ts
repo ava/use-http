@@ -173,7 +173,7 @@ function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs?: Opti
     const req = request[methodName.toLowerCase() as keyof typeof request]
     if (!!url && onMount && methodName !== HTTPMethod.GET) {
       req(url, options.body)
-    } else if (!url && onMount) {
+    } else if (!url && onMount && methodName !== HTTPMethod.GET) {
       req(options.body)
     } else if (!!url && onMount) {
       req(url)
