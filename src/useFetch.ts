@@ -21,7 +21,7 @@ function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs?: Opti
   const context = useContext(FetchContext)
 
   // TODO: this needs to be per initial setup below since we need to check urlOrOptions.url OR  urlOrOptions.baseUrl
-  invariant(!!urlOrOptions && !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+  invariant(!!urlOrOptions || !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
 
   let url: string = context.url || ''
   let options: RequestInit = {}
