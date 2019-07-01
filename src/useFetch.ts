@@ -27,7 +27,7 @@ function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs?: Opti
   let onMount: boolean = false
   // let timeout: number = 10 // TODO: not implemented
   // let baseURL: string = ''
-  let method: HTTPMethod = HTTPMethod.GET
+  // let method: HTTPMethod = HTTPMethod.GET
 
   const handleUseFetchOptions = useCallback((useFetchOptions?: UseFetchOptions): void => {
     const opts = useFetchOptions || {} as UseFetchOptions
@@ -159,8 +159,8 @@ function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs?: Opti
   const patch = useCallback(makeFetch(HTTPMethod.PATCH), [])
   const put = useCallback(makeFetch(HTTPMethod.PUT), [])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [])
-  const query = useCallback((query?: string, variables?: object) => post({ query, variables }), [])
-  const mutate = useCallback((mutation?: string, variables?: object) => post({ mutation, variables }), [])
+  const query = useCallback((query: string, variables?: object) => post({ query, variables }), [])
+  const mutate = useCallback((mutation: string, variables?: object) => post({ mutation, variables }), [])
 
   const abort = useCallback(() => {
     controller.current && controller.current.abort()
@@ -169,8 +169,17 @@ function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs?: Opti
   const request: FetchCommands = useMemo(() => ({ get, post, patch, put, del, delete: del, abort, query, mutate }), [])
 
   useEffect(() => {
-    const methodName = method.toLowerCase() as keyof typeof request
-    if (onMount) request[methodName]()
+    const methodName = ((options.method || '').toUpperCase() || HTTPMethod.GET)
+    const req = request[methodName.toLowerCase() as keyof typeof request]
+    if (!!url && onMount && methodName !== HTTPMethod.GET) {
+      req(url, options.body)
+    } else if (!url && onMount) {
+      req(options.body)
+    } else if (!!url && onMount) {
+      req(url)
+    } else if (onMount) {
+      req()
+    }
   }, [])
 
   return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(

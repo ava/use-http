@@ -16,18 +16,20 @@ export interface Options {
   baseUrl?: string
 }
 
-export type FetchData = (routeOrBody?: string | object, body?: object) => Promise<void>
-type GetData = (route?: string) => Promise<void>
+type BodyOnly = (body?: object) => Promise<void>
+type RouteOnly = (route?: string) => Promise<void>
+type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
+type FetchData = BodyOnly | RouteOnly | RouteAndBody
 
 export type FetchCommands = {
-  get: GetData,
+  get: RouteOnly,
   post: FetchData,
   patch: FetchData,
   put: FetchData,
   del: FetchData,
   delete: FetchData,
-  query: (query?: string | undefined, variables?: object | undefined) => Promise<void>,
-  mutate: (mutation?: string | undefined, variables?: object | undefined) => Promise<void>,
+  query: (query: string, variables?: object) => Promise<void>,
+  mutate: (mutation: string, variables?: object) => Promise<void>,
   abort: () => void
 }
 
