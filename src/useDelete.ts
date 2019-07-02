@@ -6,7 +6,7 @@ import { useURLRequiredInvariant } from './utils'
 export const useDelete = <TData = any>(url?: string, options?: Options) => {
   const context = useContext(FetchContext)
 
-  useURLRequiredInvariant(!!url && !!context.url, 'useDelete')
+  useURLRequiredInvariant(!!url || !!context.url, 'useDelete')
 
   const { data, loading, error, del } = useFetch<TData>(url, {
     method: HTTPMethod.DELETE,

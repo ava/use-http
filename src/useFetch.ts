@@ -7,7 +7,7 @@ import { invariant, isObject } from './utils'
 export function useFetch<TData = any>(arg1?: useFetchArg1, arg2?: Options | RequestInit): UseFetch<TData> {
   const context = useContext(FetchContext)
 
-  invariant(!!arg1 && !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+  invariant(!!arg1 || !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
 
   let url: string | null = context.url || null
   let options = {} as { signal?: AbortSignal | null } & RequestInit
