@@ -387,7 +387,7 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
- - [x] port to typescript
+ - [x] typescript support
  - [x] badges
  - [X] if no url is specified, and we're in the browser, use `window.location.origin`
  - [X] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
@@ -404,12 +404,16 @@ Todos
    - [ ] if doing `useQuery('my query')` without specifiying a URL in the Provider, throw error
    - [ ] make sure `options` (as 2nd param) to all hooks is an object, if not `invariant`/throw error
  - [ ] add array destructuring return types
- - [ ] github page/website for docs + show comparison with Apollo
  - [ ] fix code so Maintainability is A
  - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
- - [ ] make cool logo 😜 I kinda want it to move [like this one](https://camo.githubusercontent.com/4f6ca9438a3e45f9b409158503f3deebc86a793d/68747470733a2f2f7265626173736a732e6f72672f6c6f676f2e737667)
+ - [ ] Documentation:
+     - [ ] make cool logo 😜 I kinda want it to move [like this one](https://camo.githubusercontent.com/4f6ca9438a3e45f9b409158503f3deebc86a793d/68747470733a2f2f7265626173736a732e6f72672f6c6f676f2e737667)
+     - [ ] add preview image
+     - [ ] add google analytics
+     - [ ] add meta tags for better searchability + open graph
+     - [ ] show comparison with Apollo
  - [ ] maybe add syntax for custom headers like this
 ```jsx
   const user = useFetch()
@@ -421,6 +425,7 @@ Todos
     .get()
 
 ```
+
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ```jsx
 const App = () => {
