@@ -1,6 +1,6 @@
 import useFetch, { FetchContext } from '.'
 import { useContext, useCallback, useEffect } from 'react'
-import { invariant } from './utils'
+import { invariant, isString } from './utils'
 
 
 export const useQuery = <TData = any>(arg1: string | TemplateStringsArray, arg2?: string) => {
@@ -8,9 +8,9 @@ export const useQuery = <TData = any>(arg1: string | TemplateStringsArray, arg2?
 
   // we should only need to check this on 1st render
   useEffect(() => {
-    if (Array.isArray(arg1)) {
-      invariant(!!context.url, 'You need to wrap your application with <Provider url="https://your-site.com"></Provider>')
-    }
+    const case1 = !!context.url && Array.isArray(arg1)
+    const case2 = !!context.url && isString(arg1) && !arg2
+    invariant(case1 || case2, 'You need to wrap your application with <Provider url="https://your-site.com"></Provider>')
   }, [])
 
   // regular no context: useQuery('https://example.com', `graphql QUERY`)

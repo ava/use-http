@@ -152,8 +152,9 @@ describe("useFetch - basic functionality", () => {
  * C. const [data, loading, error, request] = useFetch('http://url.com')
  * D. const [data, loading, error, request] = useFetch('http://url.com', { onMount: true })
  * E. const [data, loading, error, request] = useFetch({ onMount: true })
- * F. const [data, loading, error, request] = useFetch(oldOptions => ({ ...newOptions }))
- * G. const [data, loading, error, request] = useFetch('http://url.com', oldOptions => ({ ...newOptions }))
+ * F. const [data, loading, error, request] = useFetch({ url: 'http://url.com' })
+ * G. const [data, loading, error, request] = useFetch(oldOptions => ({ ...newOptions }))
+ * H. const [data, loading, error, request] = useFetch('http://url.com', oldOptions => ({ ...newOptions }))
  */
 const NoURLOnMountTest = () => {
   const [person, loading, error] = useFetch({ onMount: true })
