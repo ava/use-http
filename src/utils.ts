@@ -1,18 +1,18 @@
 import { useMemo, useEffect } from 'react'
 import useSSR from 'use-ssr'
 
-export function useURLRequiredInvariant(condition: boolean, method: string): void {
+export function useURLRequiredInvariant(condition: boolean, method: string, optionalMessage?: string): void {
   const exampleURL = useExampleURL()
   useEffect(() => {
     invariant(
       condition,
       `${method} requires a URL to be set as the 1st argument,\n
       unless you wrap your app like:\n
-      <Provider url="${exampleURL}"><App /></Provider>`
+      <Provider url="${exampleURL}"><App /></Provider>\n
+      ${optionalMessage}`
     )
   }, [])
 }
-
 
 export const useExampleURL = (): string => {
   const { isBrowser } = useSSR()

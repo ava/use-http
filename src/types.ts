@@ -8,14 +8,6 @@ export enum HTTPMethod {
   PUT = 'PUT',
 }
 
-export interface Options {
-  url?: string
-  onMount?: boolean
-  method?: string
-  timeout?: number
-  baseUrl?: string
-}
-
 export type BodyOnly = (body: BodyInit) => Promise<void>
 export type RouteOnly = (route: string) => Promise<void>
 export type RouteAndBodyOnly = (route: string, body: BodyInit) => Promise<void>
@@ -44,39 +36,15 @@ export type UseFetchResult<TData = any> = FetchCommands & {
   request: FetchCommands,
 }
 
-export type useFetchArg1 = string | Options & RequestInit
-
 export type UseFetch<TData> = DestructuringCommands<TData> & UseFetchResult<TData>
 
-// useFetch argument types
-
-export type UseFetchBaseOptions = {
+export type Options = {
   onMount?: boolean,
-  timeout?: number
-}
+  timeout?: number,
+  url: string,
+} & RequestInit
 
-export type OptionsNoURLs = UseFetchBaseOptions & RequestInit
-
-// No Provider
-export type URLRequiredOptions = { url: string } & UseFetchBaseOptions & RequestInit
-
-// type BaseURLRequiredOptions = { baseURL: string } & UseFetchBaseOptions & RequestInit
-
-export type OptionsAsFirstParam = URLRequiredOptions// | BaseURLRequiredOptions
-
-// With Provider
-export type MaybeURLOptions = { url?: string } & UseFetchBaseOptions & RequestInit
-
-// type MaybeBaseURLOptions = { baseURL?: string } & UseFetchBaseOptions & RequestInit
-
-export type MaybeOptions = MaybeURLOptions //| MaybeBaseURLOptions
+export type OptionsMaybeURL = Omit<Options, 'url'> & { url?: string }
 
 // TODO: this is still yet to be implemented
-export type OptionsOverwriteWithContext = (options: MaybeOptions) => MaybeOptions
-
-export type OptionsAsFirstParamWithContext = MaybeOptions | OptionsOverwriteWithContext
-
-// Putting it all together
-export type URLOrOptions = string | OptionsAsFirstParam | OptionsAsFirstParamWithContext
-
-export type UseFetchOptions = OptionsAsFirstParam | MaybeOptions
+export type OptionsOverwriteWithContext = (options: Options) => Options

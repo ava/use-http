@@ -1,17 +1,17 @@
 import useFetch, { FetchContext } from '.'
-import { useContext, useCallback, useEffect } from 'react'
-import { invariant, isString } from './utils'
+import { useContext, useCallback } from 'react'
+import { invariant, isString, useURLRequiredInvariant } from './utils'
 
 
 export const useMutation = <TData = any>(arg1: string | TemplateStringsArray, arg2?: string) => {
   const context = useContext(FetchContext)
 
-  // we should only need to check this on 1st render
-  useEffect(() => {
-    const case1 = !!context.url && Array.isArray(arg1)
-    const case2 = !!context.url && isString(arg1) && !arg2
-    invariant(case1 || case2, 'You need to wrap your application with <Provider url="https://your-site.com"></Provider>')
-  }, [])
+  useURLRequiredInvariant(!!context.url && Array.isArray(arg1), 'useMutation')
+  useURLRequiredInvariant(
+    !!context.url && isString(arg1) && !arg2,
+    'useMutation',
+    'OR you need to do useMutation("https://example.com", `your graphql mutation`)'
+  )
 
   // regular no context: useMutation('https://example.com', `graphql MUTATION`)
   let url = arg1
