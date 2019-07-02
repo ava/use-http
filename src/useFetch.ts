@@ -193,4 +193,5 @@ function useFetch<TData = any>(urlOrOptions?: URLOrOptions, optionsNoURLs?: Opti
   )
 }
 
+export { useFetch }
 export default useFetch
