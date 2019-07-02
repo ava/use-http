@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useMemo, ReactElement } from 'react'
+import React, { useState, useEffect, useMemo, ReactNode } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
 
 interface FetchProviderProps {
 	url?: string,
 	options?: RequestInit,
-	children: ReactElement,
+	children: ReactNode,
 	graphql?: boolean,
 }
 
-export const Provider = ({ url, options, graphql = false, children }: FetchProviderProps): ReactElement => {
+export const Provider = ({ url, options, graphql = false, children }: FetchProviderProps) => {
 	const { isBrowser } = useSSR()
 	const [defaultURL, setURL] = useState(url || '')
 
@@ -27,8 +27,10 @@ export const Provider = ({ url, options, graphql = false, children }: FetchProvi
   )
 
 	return (
-		<FetchContext.Provider value={defaults}>
-			{children}
-		</FetchContext.Provider>
+		<div>
+			<FetchContext.Provider value={defaults}>
+				{children}
+			</FetchContext.Provider>
+		</div>
 	)
 }

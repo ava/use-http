@@ -24,7 +24,7 @@ export type NoArgs = () => Promise<void>
 type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
 
 export type FetchCommands = {
-  get: RouteOnly,
+  get: RouteOnly & NoArgs,
   post: FetchData,
   patch: FetchData,
   put: FetchData,
