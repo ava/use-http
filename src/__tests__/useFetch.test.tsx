@@ -1,14 +1,5 @@
 import React, { useEffect } from "react"
-import {
-  useFetch,
-  useDelete,
-  usePost,
-  usePut,
-  usePatch,
-  useQuery,
-  useMutation,
-  Provider
-} from '../index'
+import { useFetch, Provider } from '../index'
 import ReactDOM from 'react-dom'
 import {
   render,
@@ -62,33 +53,9 @@ const ArrayDestructuringApp = () => {
   )
 }
 
-describe('use-http', () => {
+describe('useFetch - general', () => {
   it('should be defined/exist when imported', () => {
     expect(typeof useFetch).toBe("function")
-  })
-
-  it('should define usePost', () => {
-    expect(typeof usePost).toBe("function")
-  })
-
-  it('should define usePut', () => {
-    expect(typeof usePut).toBe("function")
-  })
-
-  it('should define useDelete', () => {
-    expect(typeof useDelete).toBe("function")
-  })
-
-  it('should define usePatch', () => {
-    expect(typeof usePatch).toBe("function")
-  })
-
-  it('should define useQuery', () => {
-    expect(typeof useQuery).toBe("function")
-  })
-
-  it('should define useMutation', () => {
-    expect(typeof useMutation).toBe("function")
   })
 
   it('can be used without crashing', async () => {

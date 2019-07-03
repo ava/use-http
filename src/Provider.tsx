@@ -27,10 +27,8 @@ export const Provider = ({ url, options, graphql = false, children }: FetchProvi
   )
 
   return (
-    <div>
-      <FetchContext.Provider value={defaults}>
-        {children}
-      </FetchContext.Provider>
-    </div>
+    <FetchContext.Provider value={defaults}>
+      {children}
+    </FetchContext.Provider>
   )
 }
