@@ -8,25 +8,22 @@ export enum HTTPMethod {
   PUT = 'PUT',
 }
 
-export interface Options {
-  url?: string
-  onMount?: boolean
-  method?: string
-  timeout?: number
-  baseUrl?: string
-}
-
-export type FetchData = (fArg1?: string | object | undefined, fArg2?: string | object | undefined) => Promise<void>
+export type BodyOnly = (body: BodyInit) => Promise<void>
+export type RouteOnly = (route: string) => Promise<void>
+export type RouteAndBodyOnly = (route: string, body: BodyInit) => Promise<void>
+export type NoArgs = () => Promise<void>
+// type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
+type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
 
 export type FetchCommands = {
-  get: FetchData,
+  get: RouteOnly & NoArgs,
   post: FetchData,
   patch: FetchData,
   put: FetchData,
   del: FetchData,
   delete: FetchData,
-  query: (query?: string | undefined, variables?: object | undefined) => Promise<void>,
-  mutate: (mutation?: string | undefined, variables?: object | undefined) => Promise<void>,
+  query: (query: string, variables?: object) => Promise<void>,
+  mutate: (mutation: string, variables?: object) => Promise<void>,
   abort: () => void
 }
 
@@ -39,6 +36,15 @@ export type UseFetchResult<TData = any> = FetchCommands & {
   request: FetchCommands,
 }
 
-export type useFetchArg1 = string | Options & RequestInit
-
 export type UseFetch<TData> = DestructuringCommands<TData> & UseFetchResult<TData>
+
+export type Options = {
+  onMount?: boolean,
+  timeout?: number,
+  url: string,
+} & RequestInit
+
+export type OptionsMaybeURL = Omit<Options, 'url'> & { url?: string }
+
+// TODO: this is still yet to be implemented
+export type OptionsOverwriteWithContext = (options: Options) => Options

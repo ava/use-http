@@ -1,21 +1,21 @@
 import useFetch, { FetchContext } from '.'
-import { useContext, useCallback, useEffect } from 'react'
-import { invariant } from './utils'
+import { useContext, useCallback } from 'react'
+import { invariant, isString, useURLRequiredInvariant } from './utils'
 
 
 export const useQuery = <TData = any>(arg1: string | TemplateStringsArray, arg2?: string) => {
   const context = useContext(FetchContext)
 
-  // we should only need to check this on 1st render
-  useEffect(() => {
-    if (Array.isArray(arg1)) {
-      invariant(!!context.url, 'You need to wrap your application with <Provider url="https://your-site.com"></Provider>')
-    }
-  }, [])
+  useURLRequiredInvariant(!!context.url && Array.isArray(arg1), 'useQuery')
+  useURLRequiredInvariant(
+    !!context.url && isString(arg1) && !arg2,
+    'useQuery',
+    'OR you need to do useQuery("https://example.com", `your graphql query`)'
+  )
 
   // regular no context: useQuery('https://example.com', `graphql QUERY`)
   let url = arg1
-  let QUERY = arg2
+  let QUERY = arg2 as string
 
   // tagged template literal with context: useQuery`graphql QUERY`
   if (Array.isArray(arg1) && context.url) {

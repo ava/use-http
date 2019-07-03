@@ -112,9 +112,9 @@ var { data, loading, error, request } = useFetch('https://example.com')
 Relative routes
 ---------------
 ```js
-const request = useFetch({
-  baseUrl: 'https://example.com'
-})
+var request = useFetch({ url: 'https://example.com' })
+// OR
+var request = useFetch('https://example.com')
 
 request.post('/todos', {
   no: 'way'
@@ -146,7 +146,7 @@ Abort
 
 ```js
 const githubRepos = useFetch({
-  baseUrl: `https://api.github.com/search/repositories?q=`
+  url: `https://api.github.com/search/repositories?q=`
 })
 
 // the line below is not isomorphic, but for simplicity we're using the browsers `encodeURI`
@@ -284,7 +284,7 @@ function App() {
 
   const options = {
     headers: {
-      Authorization: 'Bearer:asdfasdfasdfasdfasdafd'
+      Authorization: 'Bearer jwt-asdfasdfasdf'
     }
   }
   
@@ -345,7 +345,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `onMount` | Once the component mounts, the http request will run immediately | false |
-| `baseUrl` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
+| `url` | Allows you to set a base url so relative paths can be used for each request. You can also just set this as the 1st argument like `useFetch('url')`      | empty string |
 
 ```js
 const {
@@ -363,16 +363,14 @@ const {
   query,  // GraphQL
   mutate, // GraphQL
 } = useFetch({
-  url: 'https://example.com',
-  baseUrl: 'https://example.com',
+  url: 'https://example.com', // replaced baseUrl
   onMount: true
 })
 ```
 or
 ```js
 const [data, loading, error, request] = useFetch({
-  url: 'https://example.com',
-  baseUrl: 'https://example.com',
+  url: 'https://example.com', // replaced baseUrl
   onMount: true
 })
 
