@@ -10,7 +10,7 @@
     <a href="https://circleci.com/gh/alex-cory/use-http">
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
-    <a href="https://www.npmjs.com/package/use-http">
+    <a href="https://www.npmtrends.com/use-http">
       <img src="https://img.shields.io/npm/dm/use-http.svg" />
     </a>
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
@@ -18,9 +18,6 @@
     </a>
     <a href="https://bundlephobia.com/result?p=use-http">
       <img alt="undefined" src="https://img.shields.io/bundlephobia/minzip/use-http.svg">
-    </a>
-    <a href="https://codeclimate.com/github/alex-cory/use-http/maintainability">
-      <img src="https://api.codeclimate.com/v1/badges/1e6c1ff8921b0f5ff6b3/maintainability" />
     </a>
     <a href="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json">
       <img src="https://snyk.io/test/github/alex-cory/use-http/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
