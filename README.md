@@ -103,6 +103,7 @@ var [data, loading, error, request] = useFetch('https://example.com')
 var { data, loading, error, request } = useFetch('https://example.com')
 ```
 #### Relative routes
+⚠️ `baseUrl` is no longer supported, it is now only `url`
 ```jsx
 var request = useFetch({ url: 'https://example.com' })
 // OR
