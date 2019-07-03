@@ -28,7 +28,6 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
     const opts = useFetchOptions || {} as Options
     if ('onMount' in opts) onMount = opts.onMount as boolean
     // if (opts.timeout) timeout = opts.timeout
-    if ('url' in context) url = context.url as string
     if ('url' in opts) url = opts.url as string
   }, [])
 
