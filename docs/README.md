@@ -10,7 +10,7 @@
     <a href="https://circleci.com/gh/alex-cory/use-http">
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
-    <a href="https://www.npmjs.com/package/use-http">
+    <a href="https://www.npmtrends.com/use-http">
       <img src="https://img.shields.io/npm/dm/use-http.svg" />
     </a>
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
@@ -18,9 +18,6 @@
     </a>
     <a href="https://bundlephobia.com/result?p=use-http">
       <img alt="undefined" src="https://img.shields.io/bundlephobia/minzip/use-http.svg">
-    </a>
-    <a href="https://codeclimate.com/github/alex-cory/use-http/maintainability">
-      <img src="https://api.codeclimate.com/v1/badges/1e6c1ff8921b0f5ff6b3/maintainability" />
     </a>
     <a href="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json">
       <img src="https://snyk.io/test/github/alex-cory/use-http/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
@@ -111,6 +108,7 @@ var { data, loading, error, request } = useFetch('https://example.com')
 
 Relative routes
 ---------------
+⚠️ `baseUrl` is no longer supported, it is now only `url`
 ```js
 var request = useFetch({ url: 'https://example.com' })
 // OR
@@ -298,32 +296,6 @@ function App() {
 
 ```
 
-The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
-==================
-```js
-import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
-
-function WithSuspense() {
-  const suspense = useFetch('https://example.com')
-
-  useEffect(() => {
-    suspense.read()
-  }, [])
-
-  if (!suspense.data) return null
-
-  return <pre>{suspense.data}</pre>
-}
-
-function App() (
-  <ConcurrentMode>
-    <Suspense fallback="Loading...">
-      <WithSuspense />
-    </Suspense>
-  </ConcurrentMode>
-)
-```
-
 Hooks
 =======
 | Option                | Description                                                                              |
@@ -391,41 +363,35 @@ Feature Requests/Ideas
 ======================
 If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
 
-Todos
-=====
- - [x] port to typescript
- - [x] badges
- - [X] if no url is specified, and we're in the browser, use `window.location.origin`
- - [X] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
- - [X] add GraphQL `useQuery`, `useMutation`
- - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
- - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
- - [ ] Allow option to fetch on server instead of just having `loading` state
- - [ ] add `timeout`
- - [ ] add `debounce`
- - [ ] maybe add a `retries: 3` which would specify the amount of times it should retry before erroring out
- - [ ] tests
- - [ ] ERROR handling:
-   - [ ] if doing `useQuery('my query')` without specifiying a URL in the Provider, throw error
-   - [ ] make sure `options` (as 2nd param) to all hooks is an object, if not `invariant`/throw error
- - [ ] add array destructuring return types
- - [ ] github page/website for docs + show comparison with Apollo
- - [ ] fix code so Maintainability is A
- - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
- - [ ] make GraphQL work with React Suspense
- - [ ] make GraphQL examples in codesandbox
- - [ ] maybe add syntax for custom headers like this
-```js
-  const user = useFetch()
-  
-  user
-    .headers({
-      auth: jwt
-    })
-    .get()
 
+The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
+==================
+```js
+import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
+
+function WithSuspense() {
+  const suspense = useFetch('https://example.com')
+
+  useEffect(() => {
+    suspense.read()
+  }, [])
+
+  if (!suspense.data) return null
+
+  return <pre>{suspense.data}</pre>
+}
+
+function App() (
+  <ConcurrentMode>
+    <Suspense fallback="Loading...">
+      <WithSuspense />
+    </Suspense>
+  </ConcurrentMode>
+)
 ```
-#### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
+
+Mutations with Suspense <sup>(Not Implemented Yet)</sup>
+==================
 ```js
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
