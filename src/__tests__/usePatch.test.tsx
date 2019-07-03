@@ -1,6 +1,6 @@
 import { usePatch } from '..'
 
-describe('use-http', () => {
+describe('usePatch - general', () => {
   it('should be defined/exist when imported', () => {
     expect(typeof usePatch).toBe("function")
   })

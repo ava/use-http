@@ -30,7 +30,7 @@ import { useQuery } from '..'
  * C. const [data, loading, error, request] = useQuery(`grqphql query`)
  * D. const [data, loading, error, request] = useQuery`graphql query`
  */
-describe('useQuery - initial', () => {
+describe('useQuery - general', () => {
   it('should be defined/exist when imported', () => {
     expect(typeof useQuery).toBe("function")
   })

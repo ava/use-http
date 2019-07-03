@@ -1,6 +1,6 @@
 import { usePut } from '..'
 
-describe('use-http', () => {
+describe('usePut - general', () => {
   it('should be defined/exist when imported', () => {
     expect(typeof usePut).toBe("function")
   })

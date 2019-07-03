@@ -1,6 +1,6 @@
 import { useDelete } from '..'
 
-describe('use-http', () => {
+describe('useDelete - general', () => {
   it('should be defined/exist when imported', () => {
     expect(typeof useDelete).toBe("function")
   })

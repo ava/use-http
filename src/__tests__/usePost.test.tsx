@@ -1,6 +1,6 @@
 import { usePost } from '..'
 
-describe('use-http', () => {
+describe('usePost - general', () => {
   it('should be defined/exist when imported', () => {
     expect(typeof usePost).toBe("function")
   })
