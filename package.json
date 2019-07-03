@@ -1,6 +1,6 @@
 {
   "name": "use-http",
-  "version": "0.1.67",
+  "version": "0.1.73",
   "homepage": "https://codesandbox.io/embed/km04k9k9x5",
   "main": "dist/index.js",
   "license": "MIT",
@@ -8,25 +8,33 @@
     "type": "git",
     "url": "https://github.com/alex-cory/use-http.git"
   },
+  "dependencies": {
+    "use-ssr": "^1.0.18"
+  },
   "peerDependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },
   "devDependencies": {
+    "@testing-library/react": "^8.0.1",
     "@types/fetch-mock": "^7.2.3",
     "@types/jest": "^24.0.12",
     "@types/react": "16.8.21",
     "@types/react-dom": "^16.8.4",
-    "fetch-mock": "^7.3.1",
     "jest": "^24.7.1",
+    "jest-fetch-mock": "^2.1.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "react-hooks-testing-library": "^0.6.0",
     "ts-jest": "^24.0.0",
     "typescript": "^3.4.5"
   },
   "scripts": {
-    "prepublish": "yarn build # runs before publish",
+    "prepublishOnly": "yarn build # runs before publish",
     "build": "rm -rf dist && ./node_modules/.bin/tsc --module CommonJS",
-    "test": "tsc -p . --noEmit && tsc -p ./src/__tests__ && jest",
+    "build:watch": "rm -rf dist && ./node_modules/.bin/tsc -w --module CommonJS",
+    "test": "tsc -p . --noEmit && tsc -p ./src/__tests__ && jest -c ./config/jest.config.js --env=jsdom",
+    "test:watch": "jest -c ./config/jest.config.js --env=jsdom --watch",
     "clean": "npm prune; yarn cache clean; rm -rf ./node_modules package-lock.json yarn.lock; yarn"
   },
   "files": [
@@ -78,8 +86,5 @@
     "apollo",
     "useGraphQL",
     "use-graphql"
-  ],
-  "dependencies": {
-    "use-ssr": "^1.0.18"
-  }
+  ]
 }

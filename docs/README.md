@@ -44,7 +44,7 @@ A note on the documentation below. Many of these examples could have performance
 </p>
 
 Features
----------
+=========
 
 - SSR (server side rendering) support
 - TypeScript support
@@ -52,22 +52,24 @@ Features
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
 
-### Examples
+Examples
+=========
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example - Next.js</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Examples - create-react-app</a>
 
 Installation
-------------
+=============
 
 ```shell
 yarn add use-http    or    npm i -S use-http
 ```
 
 Usage
------
-#### Basic Usage
+=============
+Basic Usage
+------------
 
-```jsx
+```js
 import useFetch from 'use-http'
 
 function Todos() {
@@ -96,16 +98,19 @@ function Todos() {
   )
 }
 ```
-#### Destructured
-```jsx
+Destructured
+-------------
+```js
 var [data, loading, error, request] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
 var { data, loading, error, request } = useFetch('https://example.com')
 ```
-#### Relative routes
+
+Relative routes
+---------------
 ⚠️ `baseUrl` is no longer supported, it is now only `url`
-```jsx
+```js
 var request = useFetch({ url: 'https://example.com' })
 // OR
 var request = useFetch('https://example.com')
@@ -114,9 +119,10 @@ request.post('/todos', {
   no: 'way'
 })
 ```
-#### Helper hooks
+Helper hooks (**usePost, usePut, useGet, etc.**)
+--------------------------------------------------
 
-```jsx
+```js
 import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
 
 const [data, loading, error, patch] = usePatch({
@@ -131,12 +137,13 @@ patch({
 })
 ```
 
-#### Abort
+Abort
+-----
 
-<img src="public/abort-example-1.gif" height="250" />
+<img src="https://raw.githubusercontent.com/alex-cory/use-http/master/public/abort-example-1.gif" height="250" />
 
 
-```jsx
+```js
 const githubRepos = useFetch({
   url: `https://api.github.com/search/repositories?q=`
 })
@@ -153,8 +160,9 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 </>
 ```
 
-#### GraphQL Query
-```jsx
+GraphQL Query
+---------------
+```js
 
 const QUERY = `
   query Todos($userID string!) {
@@ -179,8 +187,9 @@ function App() {
 }
 ```
 
-#### GraphQL Mutation
-```jsx
+GraphQL Mutation
+-----------------
+```js
 
 const MUTATION = `
   mutation CreateTodo($todoTitle string) {
@@ -207,12 +216,14 @@ function App() {
 }
 ```
 
-#### `Provider` using the GraphQL `useMutation` and `useQuery`
+`Provider` + `useMutation` and `useQuery`
+=========================================
 
 The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
 
-##### Query for todos
-```jsx
+useQuery (query for todos)
+-------------------
+```js
 import { Provider, useQuery, useMutation } from 'use-http'
 
 function QueryComponent() {
@@ -236,8 +247,9 @@ function QueryComponent() {
 }
 ```
 
-##### Add a new todo
-```jsx
+useMutation (add a new todo)
+-------------------
+```js
 function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
   
@@ -263,14 +275,15 @@ function MutationComponent() {
 ```
 
 
-##### Adding the Provider
+Adding the Provider
+-------------------
 These props are defaults used in every request inside the `<Provider />`. They can be overwritten individually
-```jsx
+```js
 function App() {
 
   const options = {
     headers: {
-      Authorization: 'Bearer:asdfasdfasdfasdfasdafd'
+      Authorization: 'Bearer jwt-asdfasdfasdf'
     }
   }
   
@@ -284,8 +297,77 @@ function App() {
 
 ```
 
-#### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
-```jsx
+Hooks
+=======
+| Option                | Description                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| `useFetch` | The base hook |
+| `useGet` | Defaults to a GET request |
+| `usePost` | Defaults to a POST request |
+| `usePut` | Defaults to a PUT request |
+| `usePatch` | Defaults to a PATCH request |
+| `useDelete` | Defaults to a DELETE request |
+| `useQuery` | For making a GraphQL query |
+| `useMutation` | For making a GraphQL mutation |
+
+Options
+========
+
+This is exactly what you would pass to the normal js `fetch`, with a little extra.
+
+| Option                | Description                                                               |  Default     |
+| --------------------- | --------------------------------------------------------------------------|------------- |
+| `onMount` | Once the component mounts, the http request will run immediately | false |
+| `url` | Allows you to set a base url so relative paths can be used for each request. You can also just set this as the 1st argument like `useFetch('url')`      | empty string |
+
+```js
+const {
+  data,
+  loading,
+  error,
+  request,
+  get,
+  post,
+  patch,
+  put,
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
+  abort,
+  query,  // GraphQL
+  mutate, // GraphQL
+} = useFetch({
+  url: 'https://example.com', // replaced baseUrl
+  onMount: true
+})
+```
+or
+```js
+const [data, loading, error, request] = useFetch({
+  url: 'https://example.com', // replaced baseUrl
+  onMount: true
+})
+
+const {
+  get,
+  post,
+  patch,
+  put,
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
+  abort,
+  query,  // GraphQL
+  mutate, // GraphQL
+} = request
+```
+
+Feature Requests/Ideas
+======================
+If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
+
+
+The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
+==================
+```js
 import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
 
 function WithSuspense() {
@@ -309,122 +391,9 @@ function App() (
 )
 ```
 
-Hooks
-----
-| Option                | Description                                                                              |
-| --------------------- | ---------------------------------------------------------------------------------------- |
-| `useFetch` | The base hook |
-| `useGet` | Defaults to a GET request |
-| `usePost` | Defaults to a POST request |
-| `usePut` | Defaults to a PUT request |
-| `usePatch` | Defaults to a PATCH request |
-| `useDelete` | Defaults to a DELETE request |
-| `useQuery` | For making a GraphQL query |
-| `useMutation` | For making a GraphQL mutation |
-
-Options
------
-
-This is exactly what you would pass to the normal js `fetch`, with a little extra.
-
-| Option                | Description                                                               |  Default     |
-| --------------------- | --------------------------------------------------------------------------|------------- |
-| `onMount` | Once the component mounts, the http request will run immediately | false |
-| `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
-
-```jsx
-const {
-  data,
-  loading,
-  error,
-  request,
-  get,
-  post,
-  patch,
-  put,
-  delete  // don't destructure `delete` though, it's a keyword
-  del,    // <- that's why we have this (del). or use `request.delete`
-  abort,
-  query,  // GraphQL
-  mutate, // GraphQL
-} = useFetch({
-  // accepts all `fetch` options such as headers, method, etc.
-  url: 'https://example.com', // used to be `baseUrl`
-  onMount: true
-})
-```
-or
-```jsx
-const [data, loading, error, request] = useFetch({
-  // accepts all `fetch` options such as headers, method, etc.
-  url: 'https://example.com', // used to be `baseUrl`
-  onMount: true
-})
-
-const {
-  get,
-  post,
-  patch,
-  put,
-  delete  // don't destructure `delete` though, it's a keyword
-  del,    // <- that's why we have this (del). or use `request.delete`
-  abort,
-  query,  // GraphQL
-  mutate, // GraphQL
-} = request
-```
-
-Credits
---------
-use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios)
-
-Feature Requests/Ideas
-----------------------
-If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
-
-Todos
-------
- - [x] typescript support
- - [x] badges
- - [X] if no url is specified, and we're in the browser, use `window.location.origin`
- - [X] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
- - [X] add GraphQL `useQuery`, `useMutation`
- - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
- - [ ] make work with FormData
- - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
- - [ ] Allow option to fetch on server instead of just having `loading` state
- - [ ] add `timeout`
- - [ ] add `debounce`
- - [ ] maybe add a `retries: 3` which would specify the amount of times it should retry before erroring out
- - [ ] tests
- - [ ] ERROR handling:
-   - [ ] if doing `useQuery('my query')` without specifiying a URL in the Provider, throw error
-   - [ ] make sure `options` (as 2nd param) to all hooks is an object, if not `invariant`/throw error
- - [ ] add array destructuring return types
- - [ ] fix code so Maintainability is A
- - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
- - [ ] make GraphQL work with React Suspense
- - [ ] make GraphQL examples in codesandbox
- - [ ] Documentation:
-     - [ ] make cool logo 😜 I kinda want it to move [like this one](https://camo.githubusercontent.com/4f6ca9438a3e45f9b409158503f3deebc86a793d/68747470733a2f2f7265626173736a732e6f72672f6c6f676f2e737667)
-     - [ ] add preview image
-     - [ ] add google analytics
-     - [ ] add meta tags for better searchability + open graph
-     - [ ] show comparison with Apollo
- - [ ] maybe add syntax for custom headers like this
-```jsx
-  const user = useFetch()
-  
-  user
-    .headers({
-      auth: jwt
-    })
-    .get()
-
-```
-
-#### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
-```jsx
+Mutations with Suspense <sup>(Not Implemented Yet)</sup>
+==================
+```js
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
   // if there's no <Provider /> used, useMutation works this way
