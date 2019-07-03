@@ -1,3 +1,4 @@
+<img src="https://github.com/alex-cory/use-http/raw/master/public/dog.png" />
 
 <p align="center">
     <h1 align="center">useFetch</h1>
