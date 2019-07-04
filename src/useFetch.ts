@@ -65,12 +65,12 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
     let route = ''
 
     // POST, PATCH, PUT, DELETE
-    async function doFetch(route?: string, body?: object): Promise<void>
-    async function doFetch(body?: object): Promise<void>
+    async function doFetch(route?: string, body?: object): Promise<any>
+    async function doFetch(body?: object): Promise<any>
     // GET
-    async function doFetch(route?: string): Promise<void>
+    async function doFetch(route?: string): Promise<any>
 
-    async function doFetch(routeOrBody?: string | object, body?: object): Promise<void> {
+    async function doFetch(routeOrBody?: string | object, body?: object): Promise<any> {
       // TODO: do the ts types handle if routeOrBody AND body are both objects it will error?
       // if not, an invariant(!isObject(routeOrBody) && !isObject(body), 'both arguments cannot be an object')
 
@@ -120,6 +120,7 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
         controller.current = null
         setLoading(false)
       }
+      return data
     }
 
     return doFetch
