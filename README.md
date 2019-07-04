@@ -80,35 +80,43 @@ Usage
 </details>
 
 #### Basic Usage
-
-```jsx
+```js
 import useFetch from 'use-http'
 
 function Todos() {
-  const options = { // accepts all `fetch` options
-    onMount: true // will fire on componentDidMount
+  const [todos, setTodos] = useState([])
+
+  const request = useFetch('https://example.com')
+  
+  useEffect(() => {
+    initializeTodos()
+  }, [])
+  
+  async function initializeTodos() {
+    const initialTodos = await request.get('/todos')
+    setTodos(initialTodos)
   }
 
-  const todos = useFetch('https://example.com/todos', options)
-
-  function addTodo() {
-    todos.post({
+  async function addTodo() {
+    const newTodo = await request.post('/todos', {
       title: 'no way',
     })
+    setTodos(oldTodos => [...oldTodos, newTodo])
   }
 
   return (
     <>
       <button onClick={addTodo}>Add Todo</button>
-      {todos.error && 'Error!'}
-      {todos.loading && 'Loading...'}
-      {(todos.data || []).map(todo => (
+      {request.error && 'Error!'}
+      {request.loading && 'Loading...'}
+      {todos.length > 0 && todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
   )
 }
 ```
+
 #### Destructured
 ```jsx
 var [data, loading, error, request] = useFetch('https://example.com')
