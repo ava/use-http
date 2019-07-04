@@ -97,12 +97,11 @@ function Todos() {
     })
   }
 
-  if (todos.error) return 'Error!'
-  if (todos.loading) return 'Loading...'
-
   return (
     <>
       <button onClick={addTodo}>Add Todo</button>
+      {todos.error && 'Error!'}
+      {todos.loading && 'Loading...'}
       {(todos.data || []).map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
