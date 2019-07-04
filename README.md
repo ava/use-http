@@ -36,7 +36,10 @@
     </a>
 </p>
 
-<img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
+<a href="https://github.com/alex-cory/use-http">
+    <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
+</a>
+
 <p>
 Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That means it works with SSR (server side rendering).
 </p>
