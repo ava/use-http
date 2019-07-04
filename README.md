@@ -50,6 +50,7 @@ A note on the documentation below. Many of these examples could have performance
 
 **⚠️ Please view the [Main Documentation](http://use-http.com)**
 
+
 Features
 ---------
 
@@ -58,15 +59,6 @@ Features
 - 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
-
-<details>
-    <summary><b>⚠️ Examples <sup>click me</sup></b></summary>
-  <ul>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/useget-with-provider-c78w2'>useGet + < Provider /></a></li>
-  </ul>
-</details>
 
 Installation
 ------------
@@ -77,6 +69,16 @@ yarn add use-http    or    npm i -S use-http
 
 Usage
 -----
+
+<details>
+    <summary><b>⚠️ Examples <sup>click me</sup></b></summary>
+  <ul>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/useget-with-provider-c78w2'>useGet + < Provider /></a></li>
+  </ul>
+</details>
+
 #### Basic Usage
 
 ```jsx
