@@ -1,4 +1,6 @@
-<img src="https://github.com/alex-cory/use-http/raw/master/public/dog.png" />
+<a href="http://use-http.com">
+    <img src="https://github.com/alex-cory/use-http/raw/master/public/dog.png" />
+</a>
 
 <p align="center">
     <h1 align="center">useFetch</h1>
