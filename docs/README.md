@@ -67,39 +67,8 @@ yarn add use-http    or    npm i -S use-http
 
 Usage
 =============
+
 Basic Usage
-------------
-
-```js
-import useFetch from 'use-http'
-
-function Todos() {
-  const options = { // accepts all `fetch` options
-    onMount: true // will fire on componentDidMount
-  }
-
-  const todos = useFetch('https://example.com/todos', options)
-
-  function addTodo() {
-    todos.post({
-      title: 'no way',
-    })
-  }
-
-  return (
-    <>
-      <button onClick={addTodo}>Add Todo</button>
-      {todos.error && 'Error!'}
-      {todos.loading && 'Loading...'}
-      {(todos.data || []).map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
-    </>
-  )
-}
-```
-
-Managed State Todos
 -------------------
 ```js
 import useFetch from 'use-http'
@@ -137,6 +106,7 @@ function Todos() {
   )
 }
 ```
+
 Destructured
 -------------
 ```js
