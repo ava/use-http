@@ -48,6 +48,8 @@ Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That m
 A note on the documentation below. Many of these examples could have performance improvements using <code>useMemo</code> and <code>useCallback</code>, but for the sake of the beginner/ease of reading, they are left out.
 </p>
 
+**⚠️ Please view the [Main Documentation](http://use-http.com)**
+
 Features
 ---------
 
