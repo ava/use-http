@@ -99,6 +99,46 @@ function Todos() {
   )
 }
 ```
+
+Managed State Todos
+-------------------
+```js
+import useFetch from 'use-http'
+
+function Todos() {
+  const [todos, setTodos] = useState([])
+
+  const request = useFetch('https://example.com/todos')
+  
+  useEffect(() => {
+    initializeTodos()
+  }, [])
+  
+  async function initializeTodos() {
+    const initialTodos = await request.get()
+    setTodos(initialTodos)
+  }
+
+  async function addTodo() {
+    const newTodo = await request.post({
+      title: 'no way',
+    })
+    setTodos(oldTodos => [...oldTodos, newTodo])
+  }
+
+  if (todos.error) return 'Error!'
+  if (todos.loading) return 'Loading...'
+
+  return (
+    <>
+      <button onClick={addTodo}>Add Todo</button>
+      {todos && todos.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+    </>
+  )
+}
+```
 Destructured
 -------------
 ```js
