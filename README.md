@@ -80,29 +80,20 @@ Usage
 </details>
 
 #### Basic Usage
-⚠️ This usage is under development. It's working [here](https://codesandbox.io/s/react-typescript-template-usefetch-debug-ddfzi), but not fully tested
 ```js
 import useFetch from 'use-http'
 
 function Todos() {
-  const [todos, setTodos] = useState([])
-
-  const request = useFetch('https://example.com')
-  
-  useEffect(() => {
-    initializeTodos()
-  }, [])
-  
-  async function initializeTodos() {
-    const initialTodos = await request.get('/todos')
-    setTodos(initialTodos)
+  const options = { // accepts all `fetch` options
+    onMount: true // will fire on componentDidMount
   }
 
-  async function addTodo() {
-    const newTodo = await request.post('/todos', {
+  const todos = useFetch('https://example.com/todos', options)
+
+  function addTodo() {
+    todos.post({
       title: 'no way',
     })
-    setTodos(oldTodos => [...oldTodos, newTodo])
   }
 
   return (
