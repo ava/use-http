@@ -103,7 +103,7 @@ function Todos() {
   return (
     <>
       <button onClick={addTodo}>Add Todo</button>
-      {todos.data.map(todo => (
+      {(todos.data || []).map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
