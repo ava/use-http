@@ -1,4 +1,6 @@
-<img src="https://github.com/alex-cory/use-http/raw/master/public/dog.png" />
+<a href="http://use-http.com">
+    <img src="https://github.com/alex-cory/use-http/raw/master/public/dog.png" />
+</a>
 
 <p align="center">
     <h1 align="center">useFetch</h1>
@@ -34,7 +36,10 @@
     </a>
 </p>
 
-<img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
+<a href="https://github.com/alex-cory/use-http">
+    <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
+</a>
+
 <p>
 Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That means it works with SSR (server side rendering).
 </p>
@@ -42,6 +47,9 @@ Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That m
 <p>
 A note on the documentation below. Many of these examples could have performance improvements using <code>useMemo</code> and <code>useCallback</code>, but for the sake of the beginner/ease of reading, they are left out.
 </p>
+
+**⚠️ Please view the [Main Documentation](http://use-http.com)**
+
 
 Features
 ---------
@@ -52,10 +60,6 @@ Features
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
 
-### Examples
-- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>Example - Next.js</a>
-- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>Examples - create-react-app</a>
-
 Installation
 ------------
 
@@ -65,37 +69,54 @@ yarn add use-http    or    npm i -S use-http
 
 Usage
 -----
-#### Basic Usage
 
-```jsx
+<details>
+    <summary><b>⚠️ Examples <sup>click me</sup></b></summary>
+  <ul>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/useget-with-provider-c78w2'>useGet + < Provider /></a></li>
+  </ul>
+</details>
+
+#### Basic Usage
+```js
 import useFetch from 'use-http'
 
 function Todos() {
-  const options = { // accepts all `fetch` options
-    onMount: true // will fire on componentDidMount
+  const [todos, setTodos] = useState([])
+
+  const request = useFetch('https://example.com')
+  
+  useEffect(() => {
+    initializeTodos()
+  }, [])
+  
+  async function initializeTodos() {
+    const initialTodos = await request.get('/todos')
+    setTodos(initialTodos)
   }
 
-  const todos = useFetch('https://example.com/todos', options)
-
-  function addTodo() {
-    todos.post({
+  async function addTodo() {
+    const newTodo = await request.post('/todos', {
       title: 'no way',
     })
+    setTodos(oldTodos => [...oldTodos, newTodo])
   }
-
-  if (todos.error) return 'Error!'
-  if (todos.loading) return 'Loading...'
 
   return (
     <>
       <button onClick={addTodo}>Add Todo</button>
-      {todos.data.map(todo => (
+      {request.error && 'Error!'}
+      {request.loading && 'Loading...'}
+      {todos.length > 0 && todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
   )
 }
 ```
+
 #### Destructured
 ```jsx
 var [data, loading, error, request] = useFetch('https://example.com')
