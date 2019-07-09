@@ -84,24 +84,16 @@ Usage
 import useFetch from 'use-http'
 
 function Todos() {
-  const [todos, setTodos] = useState([])
-
-  const request = useFetch('https://example.com')
-  
-  useEffect(() => {
-    initializeTodos()
-  }, [])
-  
-  async function initializeTodos() {
-    const initialTodos = await request.get('/todos')
-    setTodos(initialTodos)
+  const options = { // accepts all `fetch` options
+    onMount: true // will fire on componentDidMount
   }
 
-  async function addTodo() {
-    const newTodo = await request.post('/todos', {
+  const todos = useFetch('https://example.com/todos', options)
+
+  function addTodo() {
+    todos.post({
       title: 'no way',
     })
-    setTodos(oldTodos => [...oldTodos, newTodo])
   }
 
   return (
@@ -109,7 +101,7 @@ function Todos() {
       <button onClick={addTodo}>Add Todo</button>
       {request.error && 'Error!'}
       {request.loading && 'Loading...'}
-      {todos.length > 0 && todos.map(todo => (
+      {(todos.data || []).length > 0 && todos.data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
