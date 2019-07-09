@@ -397,34 +397,27 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
- - [x] typescript support
- - [x] badges
- - [X] if no url is specified, and we're in the browser, use `window.location.origin`
- - [X] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
- - [X] add GraphQL `useQuery`, `useMutation`
- - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
+ - [ ] tests
+   - [ ] tests for SSR
+   - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
+   - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
  - [ ] make work with FormData
+ - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] add `timeout`
  - [ ] add `debounce`
- - [ ] maybe add a `retries: 3` which would specify the amount of times it should retry before erroring out
- - [ ] tests
+ - [ ] maybe add a `retry: 3` which would specify the amount of times it should retry before erroring out
  - [ ] ERROR handling:
-   - [ ] if doing `useQuery('my query')` without specifiying a URL in the Provider, throw error
-   - [ ] make sure `options` (as 2nd param) to all hooks is an object, if not `invariant`/throw error
- - [ ] add array destructuring return types
- - [ ] fix code so Maintainability is A
- - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
+   - [ ] make sure `options` (as 2nd param) to all hooks except `useMutation` and `useQuery` is an object, if not `invariant`/throw error
+ - [ ] add array destructuring return types for helper hooks
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
-     - [ ] make cool logo 😜 I kinda want it to move [like this one](https://camo.githubusercontent.com/4f6ca9438a3e45f9b409158503f3deebc86a793d/68747470733a2f2f7265626173736a732e6f72672f6c6f676f2e737667)
      - [ ] add preview image
      - [ ] add google analytics
-     - [ ] add meta tags for better searchability + open graph
      - [ ] show comparison with Apollo
- - [ ] maybe add syntax for custom headers like this
+ - [ ] maybe add syntax for inline headers like this
 ```jsx
   const user = useFetch()
   
