@@ -297,31 +297,6 @@ function App() {
 
 ```
 
-#### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
-```jsx
-import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
-
-function WithSuspense() {
-  const suspense = useFetch('https://example.com')
-
-  useEffect(() => {
-    suspense.read()
-  }, [])
-
-  if (!suspense.data) return null
-
-  return <pre>{suspense.data}</pre>
-}
-
-function App() (
-  <ConcurrentMode>
-    <Suspense fallback="Loading...">
-      <WithSuspense />
-    </Suspense>
-  </ConcurrentMode>
-)
-```
-
 Hooks
 ----
 | Option                | Description                                                                              |
@@ -427,6 +402,32 @@ Todos
     })
     .get()
 
+```
+
+
+#### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
+```jsx
+import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
+
+function WithSuspense() {
+  const suspense = useFetch('https://example.com')
+
+  useEffect(() => {
+    suspense.read()
+  }, [])
+
+  if (!suspense.data) return null
+
+  return <pre>{suspense.data}</pre>
+}
+
+function App() (
+  <ConcurrentMode>
+    <Suspense fallback="Loading...">
+      <WithSuspense />
+    </Suspense>
+  </ConcurrentMode>
+)
 ```
 
 #### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
