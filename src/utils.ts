@@ -1,5 +1,6 @@
 import { useMemo, useEffect } from 'react'
 import useSSR from 'use-ssr'
+import { RequestInitJSON } from './types'
 
 export function useURLRequiredInvariant(condition: boolean, method: string, optionalMessage?: string): void {
   const exampleURL = useExampleURL()
@@ -26,7 +27,7 @@ export const isString = (x: any) => typeof x === 'string'
  * Makes an object that will match the standards of a normal fetch's options
  * aka: pulls out all useFetch's special options like "onMount"
  */
-export const pullOutRequestInit = (options?: {}): RequestInit => {
+export const pullOutRequestInit = (options?: {}): RequestInitJSON => {
   let opts: any = {}
   if (options) opts = options
   const requestInitFields = [

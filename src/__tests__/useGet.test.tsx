@@ -79,6 +79,7 @@ describe("useGet", () => {
 
     const els = await waitForElement(() => getAllByTestId(/^person-/))
 
+    // console.log('ELS: ', els)
     expect(els[0].innerHTML).toBe("Joe Bloggs")
     expect(els[1].innerHTML).toBe("48")
   })

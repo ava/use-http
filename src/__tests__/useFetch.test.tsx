@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState, Fragment } from "react"
 import { useFetch, Provider } from '../index'
 import ReactDOM from 'react-dom'
 import {
@@ -122,6 +122,8 @@ describe("useFetch - basic functionality", () => {
  * F. const [data, loading, error, request] = useFetch({ url: 'http://url.com' })
  * G. const [data, loading, error, request] = useFetch(oldOptions => ({ ...newOptions }))
  * H. const [data, loading, error, request] = useFetch('http://url.com', oldOptions => ({ ...newOptions }))
+ * Errors:
+ * SSR Tests:
  */
 const NoURLOnMountTest = () => {
   const [person, loading, error] = useFetch({ onMount: true })
@@ -155,6 +157,46 @@ const ProviderTest3 = () => (
   <Provider url='https://example.com'><NoURLGetUseEffectRelativeRoute /></Provider>
 )
 
+
+const ManagedStateTest = () => {
+  const [todos, setTodos] = useState<Array<{title: string}>>([])
+
+  // const [data, loading, error, request, setData] = useFetch()
+  const request = useFetch('http:example.com', {
+    // initial data, probably just an empty default as this will get overwritten
+    // each time `request.method()` is called
+    // data: []
+  })
+
+  useEffect(() => {
+    initializeTodos()
+  }, [])
+
+  async function initializeTodos() {
+    const initialTodos = await request.get('/todos')
+    setTodos(() => initialTodos || [])
+  }
+
+  async function addTodo() {
+    const newTodo = await request.post('/todos', {
+      title: 'No way...'
+    })
+    setTodos(oldTodos => [...oldTodos, newTodo])
+    // request.loading = false
+  }
+
+  return (
+    <Fragment>
+      <button onClick={addTodo}>Add Todo</button>
+      {request.error && <div>Error!</div>}
+      {request.loading && <div>Loading...</div>}
+      <div>
+        {todos.map(t => <div key={t}>{t.title}</div>)}
+        {/* {todos.length > 0 && todos.map((todo, i) => <div key={i}>{todo.title}</div>} */}
+      </div>
+    </Fragment>
+  )
+}
 
 describe('useFetch - with <Provider />', () => {
   afterEach(() => {

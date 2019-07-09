@@ -8,22 +8,29 @@ export enum HTTPMethod {
   PUT = 'PUT',
 }
 
-export type BodyOnly = (body: BodyInit) => Promise<void>
-export type RouteOnly = (route: string) => Promise<void>
-export type RouteAndBodyOnly = (route: string, body: BodyInit) => Promise<void>
-export type NoArgs = () => Promise<void>
+export type BodyOnly = (body: object) => Promise<any>
+export type RouteOnly = (route: string) => Promise<any>
+export type RouteAndBodyOnly = (route: string, body: object) => Promise<any>
+export type NoArgs = () => Promise<any>
 // type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
-type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
+// type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
+type FetchData = (routeOrBody?: string | object, body?: object) => Promise<any>
+
+export interface RequestInitJSON extends RequestInit {
+  headers?: RequestInit['headers'] & {
+    'Content-Type': string
+  }
+}
 
 export type FetchCommands = {
-  get: RouteOnly & NoArgs,
+  get: RouteOnly | NoArgs,
   post: FetchData,
   patch: FetchData,
   put: FetchData,
   del: FetchData,
   delete: FetchData,
-  query: (query: string, variables?: object) => Promise<void>,
-  mutate: (mutation: string, variables?: object) => Promise<void>,
+  query: (query: string, variables?: object) => Promise<any>,
+  mutate: (mutation: string, variables?: object) => Promise<any>,
   abort: () => void
 }
 
