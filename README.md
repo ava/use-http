@@ -2,10 +2,16 @@
     <img src="https://github.com/alex-cory/use-http/raw/master/public/dog.png" />
 </a>
 
+<br/>
+
 <p align="center">
     <h1 align="center">useFetch</h1>
 </p>
-<p align="center">🐶 React hook for making isomorphic http requests</p>
+
+<br/>
+<br/>
+<br/>
+
 <p align="center">
     <a href="https://github.com/alex-cory/use-http/pulls">
       <img src="https://camo.githubusercontent.com/d4e0f63e9613ee474a7dfdc23c240b9795712c96/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e2e737667" />
@@ -13,43 +19,56 @@
     <a href="https://circleci.com/gh/alex-cory/use-http">
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
-    <a href="https://www.npmtrends.com/use-http">
+    <a href="https://www.npmjs.com/package/use-http">
       <img src="https://img.shields.io/npm/dm/use-http.svg" />
     </a>
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
     </a>
-    <a href="https://bundlephobia.com/result?p=use-http">
+<!--     <a href="https://bundlephobia.com/result?p=use-http">
       <img alt="undefined" src="https://img.shields.io/bundlephobia/minzip/use-http.svg">
-    </a>
-    <a href="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json">
+    </a> -->
+<!--     <a href="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json">
       <img src="https://snyk.io/test/github/alex-cory/use-http/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
-    </a>
-    <a href="https://www.npmjs.com/package/use-http">
+    </a> -->
+<!--     <a href="https://www.npmjs.com/package/use-http">
       <img src="https://img.shields.io/npm/v/use-http.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
-    </a>
-    <a href="https://github.com/alex-cory/use-http/blob/master/license.md">
+    </a> -->
+<!--     <a href="https://github.com/alex-cory/use-http/blob/master/license.md">
       <img alt="undefined" src="https://img.shields.io/github/license/alex-cory/use-http.svg">
-    </a>
-    <a href="https://greenkeeper.io/">
+    </a> -->
+<!--     <a href="https://greenkeeper.io/">
       <img alt="undefined" src="https://badges.greenkeeper.io/alex-cory/use-http.svg">
-    </a>
+    </a> -->
 </p>
 
+<div align="center"><sup>🐶 React hook for making isomorphic http requests</sup></div>
+<div align="center"><a href="http://use-http.com"><b><sup>Main Documentation</sup></b></a></div>
+
+<br/>
+<br/>
+
+
+<div align="center">
+  <pre>npm i <a href="http://use-http.com">use-http</a></pre>
+</div>
+
+<br/>
+<br/>
+
 <a href="https://github.com/alex-cory/use-http">
-    <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
+  <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
 </a>
 
 <p>
 Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That means it works with SSR (server side rendering).
 </p>
+
 <br />
+
 <p>
 A note on the documentation below. Many of these examples could have performance improvements using <code>useMemo</code> and <code>useCallback</code>, but for the sake of the beginner/ease of reading, they are left out.
 </p>
-
-**⚠️ Please view the [Main Documentation](http://use-http.com)**
-
 
 Features
 ---------
@@ -59,20 +78,6 @@ Features
 - 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
-
-Installation
-------------
-
-
-<div align="center">
-  <pre>npm i <a href="https://www.npmjs.com/package/use-http">use-http</a></pre>
-</div>
-
-<!--
-```shell
-yarn add use-http    or    npm i -S use-http
-```
--->
 
 Usage
 -----
