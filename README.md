@@ -2,10 +2,14 @@
     <img src="https://github.com/alex-cory/use-http/raw/master/public/dog.png" />
 </a>
 
+<br/>
+
 <p align="center">
     <h1 align="center">useFetch</h1>
 </p>
-<p align="center">🐶 React hook for making isomorphic http requests</p>
+
+<br />
+
 <p align="center">
     <a href="https://github.com/alex-cory/use-http/pulls">
       <img src="https://camo.githubusercontent.com/d4e0f63e9613ee474a7dfdc23c240b9795712c96/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e2e737667" />
@@ -13,43 +17,47 @@
     <a href="https://circleci.com/gh/alex-cory/use-http">
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
-    <a href="https://www.npmtrends.com/use-http">
+    <a href="https://www.npmjs.com/package/use-http">
       <img src="https://img.shields.io/npm/dm/use-http.svg" />
     </a>
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
     </a>
-    <a href="https://bundlephobia.com/result?p=use-http">
+<!--     <a href="https://bundlephobia.com/result?p=use-http">
       <img alt="undefined" src="https://img.shields.io/bundlephobia/minzip/use-http.svg">
-    </a>
-    <a href="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json">
+    </a> -->
+<!--     <a href="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json">
       <img src="https://snyk.io/test/github/alex-cory/use-http/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
-    </a>
-    <a href="https://www.npmjs.com/package/use-http">
+    </a> -->
+<!--     <a href="https://www.npmjs.com/package/use-http">
       <img src="https://img.shields.io/npm/v/use-http.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
-    </a>
-    <a href="https://github.com/alex-cory/use-http/blob/master/license.md">
+    </a> -->
+<!--     <a href="https://github.com/alex-cory/use-http/blob/master/license.md">
       <img alt="undefined" src="https://img.shields.io/github/license/alex-cory/use-http.svg">
-    </a>
-    <a href="https://greenkeeper.io/">
+    </a> -->
+<!--     <a href="https://greenkeeper.io/">
       <img alt="undefined" src="https://badges.greenkeeper.io/alex-cory/use-http.svg">
-    </a>
+    </a> -->
 </p>
 
-<a href="https://github.com/alex-cory/use-http">
-    <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
-</a>
+<div align="center">
+  <sup>
+    🐶 React hook for making isomorphic http requests
+    <br/>
+      <a href="http://use-http.com"><b>Main Documentation</b></a>
+  </sup>
+</div>
 
-<p>
-Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That means it works with SSR (server side rendering).
-</p>
-<br />
-<p>
-A note on the documentation below. Many of these examples could have performance improvements using <code>useMemo</code> and <code>useCallback</code>, but for the sake of the beginner/ease of reading, they are left out.
-</p>
+<br/>
+<br/>
 
-**⚠️ Please view the [Main Documentation](http://use-http.com)**
 
+<div align="center">
+  <pre>npm i <a href="http://use-http.com">use-http</a></pre>
+</div>
+
+<br/>
+<br/>
 
 Features
 ---------
@@ -60,18 +68,10 @@ Features
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
 
-Installation
-------------
-
-```shell
-yarn add use-http    or    npm i -S use-http
-```
-
 Usage
 -----
 
-<details>
-    <summary><b>⚠️ Examples <sup>click me</sup></b></summary>
+<details><summary><b>⚠️ Examples <sup>click me</sup></b></summary>
   <ul>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a></li>
@@ -79,7 +79,8 @@ Usage
   </ul>
 </details>
 
-#### Basic Usage
+<details><summary><b>Basic Usage <code>useFetch</code></b></summary>
+    
 ```js
 import useFetch from 'use-http'
 
@@ -108,15 +109,22 @@ function Todos() {
   )
 }
 ```
+</details>
 
-#### Destructured
-```jsx
+
+<details><summary><b>Destructured <code>useFetch</code></b></summary>
+
+```js
 var [data, loading, error, request] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
 var { data, loading, error, request } = useFetch('https://example.com')
 ```
-#### Relative routes
+</details>
+
+
+<details><summary><b>Relative routes <code>useFetch</code></b></summary>
+
 ⚠️ `baseUrl` is no longer supported, it is now only `url`
 ```jsx
 var request = useFetch({ url: 'https://example.com' })
@@ -127,7 +135,10 @@ request.post('/todos', {
   no: 'way'
 })
 ```
-#### Helper hooks
+</details>
+
+
+<details><summary><b><code>useGet</code>, <code>usePost</code>, <code>usePatch</code>, <code>usePut</code>, <code>useDelete</code></b></summary>
 
 ```jsx
 import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
@@ -143,8 +154,10 @@ patch({
   yes: 'way',
 })
 ```
+</details>
 
-#### Abort
+
+<details><summary><b>Abort <code>useFetch</code></b></summary>
 
 <img src="public/abort-example-1.gif" height="250" />
 
@@ -165,8 +178,11 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
   ))}
 </>
 ```
+</details>
 
-#### GraphQL Query
+
+<details><summary><b>GraphQL Query <code>useFetch</code></b></summary>
+
 ```jsx
 
 const QUERY = `
@@ -191,8 +207,13 @@ function App() {
   )
 }
 ```
+</details>
 
-#### GraphQL Mutation
+
+<details><summary><b>GraphQL Mutation <code>useFetch</code></b></summary>
+
+The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
+
 ```jsx
 
 const MUTATION = `
@@ -219,16 +240,21 @@ function App() {
   )
 }
 ```
+</details>
 
-#### `Provider` using the GraphQL `useMutation` and `useQuery`
 
-The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
+<details><summary><b><code>Provider</code> using the GraphQL <code>useMutation</code> and <code>useQuery</code></b></summary>
 
 ##### Query for todos
 ```jsx
-import { Provider, useQuery, useMutation } from 'use-http'
+import { useQuery } from 'use-http'
 
-function QueryComponent() {
+export default function QueryComponent() {
+  
+  // can also do it this way:
+  // const [data, loading, error, query] = useQuery`
+  // or this way:
+  // const { data, loading, error, query } = useQuery`
   const request = useQuery`
     query Todos($userID string!) {
       todos(userID: $userID) {
@@ -251,9 +277,15 @@ function QueryComponent() {
 
 ##### Add a new todo
 ```jsx
-function MutationComponent() {
+import { useMutation } from 'use-http'
+
+export default function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
   
+  // can also do it this way:
+  // const request = useMutation`
+  // or this way:
+  // const { data, loading, error, mutate } = useMutation`
   const [data, loading, error, mutate] = useMutation`
     mutation CreateTodo($todoTitle string) {
       todo(title: $todoTitle) {
@@ -279,6 +311,10 @@ function MutationComponent() {
 ##### Adding the Provider
 These props are defaults used in every request inside the `<Provider />`. They can be overwritten individually
 ```jsx
+import { Provider } from 'use-http'
+import QueryComponent from './QueryComponent'
+import MutationComponent from './MutationComponent'
+
 function App() {
 
   const options = {
@@ -296,35 +332,15 @@ function App() {
 }
 
 ```
+</details>
 
-#### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
-```jsx
-import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
 
-function WithSuspense() {
-  const suspense = useFetch('https://example.com')
+Overview
+--------
 
-  useEffect(() => {
-    suspense.read()
-  }, [])
+<details><summary><b>Hooks</b></summary>
 
-  if (!suspense.data) return null
-
-  return <pre>{suspense.data}</pre>
-}
-
-function App() (
-  <ConcurrentMode>
-    <Suspense fallback="Loading...">
-      <WithSuspense />
-    </Suspense>
-  </ConcurrentMode>
-)
-```
-
-Hooks
-----
-| Option                | Description                                                                              |
+| Hook                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `useFetch` | The base hook |
 | `useGet` | Defaults to a GET request |
@@ -334,10 +350,12 @@ Hooks
 | `useDelete` | Defaults to a DELETE request |
 | `useQuery` | For making a GraphQL query |
 | `useMutation` | For making a GraphQL mutation |
+    
+</details>
 
-Options
------
 
+<details><summary><b>Options</b></summary>
+    
 This is exactly what you would pass to the normal js `fetch`, with a little extra.
 
 | Option                | Description                                                               |  Default     |
@@ -386,10 +404,8 @@ const {
   mutate, // GraphQL
 } = request
 ```
+</details>
 
-Credits
---------
-use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios)
 
 Feature Requests/Ideas
 ----------------------
@@ -397,34 +413,27 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
- - [x] typescript support
- - [x] badges
- - [X] if no url is specified, and we're in the browser, use `window.location.origin`
- - [X] support for a global context config where you can set base url's (like Apollo's `client`) but better 😉
- - [X] add GraphQL `useQuery`, `useMutation`
- - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
+ - [ ] tests
+   - [ ] tests for SSR
+   - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
+   - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
  - [ ] make work with FormData
+ - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] add `timeout`
  - [ ] add `debounce`
- - [ ] maybe add a `retries: 3` which would specify the amount of times it should retry before erroring out
- - [ ] tests
+ - [ ] maybe add a `retry: 3` which would specify the amount of times it should retry before erroring out
  - [ ] ERROR handling:
-   - [ ] if doing `useQuery('my query')` without specifiying a URL in the Provider, throw error
-   - [ ] make sure `options` (as 2nd param) to all hooks is an object, if not `invariant`/throw error
- - [ ] add array destructuring return types
- - [ ] fix code so Maintainability is A
- - [ ] optimize badges [see awesome badge list](https://github.com/boennemann/badges)
+   - [ ] make sure `options` (as 2nd param) to all hooks except `useMutation` and `useQuery` is an object, if not `invariant`/throw error
+ - [ ] add array destructuring return types for helper hooks
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
-     - [ ] make cool logo 😜 I kinda want it to move [like this one](https://camo.githubusercontent.com/4f6ca9438a3e45f9b409158503f3deebc86a793d/68747470733a2f2f7265626173736a732e6f72672f6c6f676f2e737667)
      - [ ] add preview image
      - [ ] add google analytics
-     - [ ] add meta tags for better searchability + open graph
      - [ ] show comparison with Apollo
- - [ ] maybe add syntax for custom headers like this
+ - [ ] maybe add syntax for inline headers like this
 ```jsx
   const user = useFetch()
   
@@ -436,7 +445,35 @@ Todos
 
 ```
 
-#### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
+<details><summary><b>The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
+    
+```jsx
+import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
+
+function WithSuspense() {
+  const suspense = useFetch('https://example.com')
+
+  useEffect(() => {
+    suspense.read()
+  }, [])
+
+  if (!suspense.data) return null
+
+  return <pre>{suspense.data}</pre>
+}
+
+function App() (
+  <ConcurrentMode>
+    <Suspense fallback="Loading...">
+      <WithSuspense />
+    </Suspense>
+  </ConcurrentMode>
+)
+``` 
+</details>
+
+<details><summary><b>GraphQL with Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
+    
 ```jsx
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
@@ -464,3 +501,6 @@ const App = () => {
   )
 }
 ```
+</details>
+
+
