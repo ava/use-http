@@ -335,9 +335,12 @@ function App() {
 </details>
 
 
-Hooks
-----
-| Option                | Description                                                                              |
+Overview
+--------
+
+<details><summary><b>Hooks</b></summary>
+
+| Hook                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `useFetch` | The base hook |
 | `useGet` | Defaults to a GET request |
@@ -347,10 +350,12 @@ Hooks
 | `useDelete` | Defaults to a DELETE request |
 | `useQuery` | For making a GraphQL query |
 | `useMutation` | For making a GraphQL mutation |
+    
+</details>
 
-Options
------
 
+<details><summary><b>Options</b></summary>
+    
 This is exactly what you would pass to the normal js `fetch`, with a little extra.
 
 | Option                | Description                                                               |  Default     |
@@ -399,10 +404,8 @@ const {
   mutate, // GraphQL
 } = request
 ```
+</details>
 
-Credits
---------
-use-http is heavily inspired by the popular http client [axios](https://github.com/axios/axios)
 
 Feature Requests/Ideas
 ----------------------
@@ -442,8 +445,8 @@ Todos
 
 ```
 
-
-#### The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
+<details><summary><b>The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
+    
 ```jsx
 import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
 
@@ -466,9 +469,11 @@ function App() (
     </Suspense>
   </ConcurrentMode>
 )
-```
+``` 
+</details>
 
-#### Mutations with Suspense <sup>(Not Implemented Yet)</sup>
+<details><summary><b>GraphQL with Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
+    
 ```jsx
 const App = () => {
   const [todoTitle, setTodoTitle] = useState('')
@@ -496,3 +501,6 @@ const App = () => {
   )
 }
 ```
+</details>
+
+
