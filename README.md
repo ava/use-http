@@ -40,8 +40,13 @@
     </a> -->
 </p>
 
-<div align="center"><sup>🐶 React hook for making isomorphic http requests</sup></div>
-<div align="center"><a href="http://use-http.com"><b><sup>Main Documentation</sup></b></a></div>
+<div align="center">
+  <sup>
+    🐶 React hook for making isomorphic http requests
+    <br/>
+      <a href="http://use-http.com"><b>Main Documentation</b></a>
+  </sup>
+</div>
 
 <br/>
 <br/>
@@ -53,20 +58,6 @@
 
 <br/>
 <br/>
-
-<a href="https://github.com/alex-cory/use-http">
-  <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />
-</a>
-
-<p>
-Need to fetch some data? Try this one out. It's an isomorphic fetch hook. That means it works with SSR (server side rendering).
-</p>
-
-<br />
-
-<p>
-A note on the documentation below. Many of these examples could have performance improvements using <code>useMemo</code> and <code>useCallback</code>, but for the sake of the beginner/ease of reading, they are left out.
-</p>
 
 Features
 ---------
@@ -89,6 +80,45 @@ Usage
   </ul>
 </details>
 
+<details>
+<summary>Basic Usage</summary>
+<ul>
+<pre>
+    
+<code>
+import useFetch from 'use-http'
+
+function Todos() {
+  const options = { // accepts all `fetch` options
+    onMount: true // will fire on componentDidMount
+  }
+
+  const todos = useFetch('https://example.com/todos', options)
+
+  function addTodo() {
+    todos.post({
+      title: 'no way',
+    })
+  }
+
+  return (
+    <>
+      <button onClick={addTodo}>Add Todo</button>
+      {request.error && 'Error!'}
+      {request.loading && 'Loading...'}
+      {(todos.data || []).length > 0 && todos.data.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+    </>
+  )
+}
+</code>
+</pre>
+
+</ul>
+</details>
+
+<!--
 #### Basic Usage
 ```js
 import useFetch from 'use-http'
@@ -118,6 +148,7 @@ function Todos() {
   )
 }
 ```
+-->
 
 #### Destructured
 ```jsx
