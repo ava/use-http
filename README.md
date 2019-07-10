@@ -71,8 +71,7 @@ Features
 Usage
 -----
 
-<details>
-    <summary><b>⚠️ Examples <sup>click me</sup></b></summary>
+<details><summary><b>⚠️ Examples <sup>click me</sup></b></summary>
   <ul>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a></li>
@@ -80,46 +79,8 @@ Usage
   </ul>
 </details>
 
-<details>
-<summary>Basic Usage</summary>
-<ul>
-<pre>
+<details><summary><b>Basic Usage <code>useFetch</code></b></summary>
     
-<code>
-import useFetch from 'use-http'
-
-function Todos() {
-  const options = { // accepts all `fetch` options
-    onMount: true // will fire on componentDidMount
-  }
-
-  const todos = useFetch('https://example.com/todos', options)
-
-  function addTodo() {
-    todos.post({
-      title: 'no way',
-    })
-  }
-
-  return (
-    <>
-      <button onClick={addTodo}>Add Todo</button>
-      {request.error && 'Error!'}
-      {request.loading && 'Loading...'}
-      {(todos.data || []).length > 0 && todos.data.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
-    </>
-  )
-}
-</code>
-</pre>
-
-</ul>
-</details>
-
-<!--
-#### Basic Usage
 ```js
 import useFetch from 'use-http'
 
@@ -148,16 +109,22 @@ function Todos() {
   )
 }
 ```
--->
+</details>
 
-#### Destructured
-```jsx
+
+<details><summary><b>Destructured <code>useFetch</code></b></summary>
+
+```js
 var [data, loading, error, request] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
 var { data, loading, error, request } = useFetch('https://example.com')
 ```
-#### Relative routes
+</details>
+
+
+<details><summary><b>Relative routes <code>useFetch</code></b></summary>
+
 ⚠️ `baseUrl` is no longer supported, it is now only `url`
 ```jsx
 var request = useFetch({ url: 'https://example.com' })
@@ -168,7 +135,10 @@ request.post('/todos', {
   no: 'way'
 })
 ```
-#### Helper hooks
+</details>
+
+
+<details><summary><b><code>useGet</code>, <code>usePost</code>, <code>usePatch</code>, <code>usePut</code>, <code>useDelete</code></b></summary>
 
 ```jsx
 import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
@@ -184,8 +154,10 @@ patch({
   yes: 'way',
 })
 ```
+</details>
 
-#### Abort
+
+<details><summary><b>Abort <code>useFetch</code></b></summary>
 
 <img src="public/abort-example-1.gif" height="250" />
 
@@ -206,8 +178,11 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
   ))}
 </>
 ```
+</details>
 
-#### GraphQL Query
+
+<details><summary><b>GraphQL Query <code>useFetch</code></b></summary>
+
 ```jsx
 
 const QUERY = `
@@ -232,8 +207,13 @@ function App() {
   )
 }
 ```
+</details>
 
-#### GraphQL Mutation
+
+<details><summary><b>GraphQL Mutation <code>useFetch</code></b></summary>
+
+The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
+
 ```jsx
 
 const MUTATION = `
@@ -260,16 +240,21 @@ function App() {
   )
 }
 ```
+</details>
 
-#### `Provider` using the GraphQL `useMutation` and `useQuery`
 
-The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
+<details><summary><b><code>Provider</code> using the GraphQL <code>useMutation</code> and <code>useQuery</code></b></summary>
 
 ##### Query for todos
 ```jsx
-import { Provider, useQuery, useMutation } from 'use-http'
+import { useQuery } from 'use-http'
 
-function QueryComponent() {
+export default function QueryComponent() {
+  
+  // can also do it this way:
+  // const [data, loading, error, query] = useQuery`
+  // or this way:
+  // const { data, loading, error, query } = useQuery`
   const request = useQuery`
     query Todos($userID string!) {
       todos(userID: $userID) {
@@ -292,9 +277,15 @@ function QueryComponent() {
 
 ##### Add a new todo
 ```jsx
-function MutationComponent() {
+import { useMutation } from 'use-http'
+
+export default function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
   
+  // can also do it this way:
+  // const request = useMutation`
+  // or this way:
+  // const { data, loading, error, mutate } = useMutation`
   const [data, loading, error, mutate] = useMutation`
     mutation CreateTodo($todoTitle string) {
       todo(title: $todoTitle) {
@@ -320,6 +311,10 @@ function MutationComponent() {
 ##### Adding the Provider
 These props are defaults used in every request inside the `<Provider />`. They can be overwritten individually
 ```jsx
+import { Provider } from 'use-http'
+import QueryComponent from './QueryComponent'
+import MutationComponent from './MutationComponent'
+
 function App() {
 
   const options = {
@@ -337,6 +332,8 @@ function App() {
 }
 
 ```
+</details>
+
 
 Hooks
 ----
