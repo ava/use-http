@@ -63,9 +63,24 @@ Features
 Installation
 ------------
 
+<!--
 ```shell
 yarn add use-http    or    npm i -S use-http
 ```
+-->
+
+<div align="center">
+  <br />
+  <br />
+  <br />
+  <br />
+  <pre>npm i <a href="https://www.npmjs.com/package/use-http">use-http</a></pre>
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+</div>
 
 Usage
 -----
