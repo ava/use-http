@@ -23,7 +23,7 @@ export interface RequestInitJSON extends RequestInit {
 }
 
 export type FetchCommands = {
-  get: RouteOnly | NoArgs,
+  get: (route?: string) => Promise<any>,
   post: FetchData,
   patch: FetchData,
   put: FetchData,

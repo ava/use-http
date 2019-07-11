@@ -48,7 +48,7 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
     invariant(!optionsNoURLs, 'You cannot have a 2nd parameter of useFetch when your first argument is a object config.')
     let optsWithURL = urlOrOptions as Options
     invariant(!!context.url || !!optsWithURL.url, 'You have to either set a URL in your options config or set a global URL in your <Provider url="https://url.com"></Provider>')
-    options = pullOutRequestInit(urlOrOptions)
+    options = pullOutRequestInit(urlOrOptions as OptionsMaybeURL)
     handleUseFetchOptions(urlOrOptions as OptionsMaybeURL)
   }
   // Provider ex: useFetch({ url: 'https://url.com' }) -- (overwrites global url)

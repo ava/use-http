@@ -1,7 +1,7 @@
 import { usePut } from '..'
 
-describe('usePut - general', () => {
-  it('should be defined/exist when imported', () => {
+describe('usePut - general', (): void => {
+  it('should be defined/exist when imported', (): void => {
     expect(typeof usePut).toBe("function")
   })
 })

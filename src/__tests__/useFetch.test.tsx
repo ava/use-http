@@ -1,10 +1,11 @@
-import React, { useEffect, useState, Fragment } from "react"
+import React, { useEffect, useState, useCallback, ReactElement } from 'react'
 import { useFetch, Provider } from '../index'
 import ReactDOM from 'react-dom'
 import {
   render,
   cleanup,
-  waitForElement
+  waitForElement,
+  RenderResult
 } from '@testing-library/react'
 
 import { FetchMock } from "jest-fetch-mock"
@@ -19,13 +20,13 @@ interface Person {
 }
 
 interface PersonViewProps {
-  id?: string,
+  id?: string
   person?: Person
   loading: boolean
-  error: any
+  error: Error
 }
 
-const PersonView: React.FunctionComponent<PersonViewProps> = ({ id = 'person', person, loading, error }) =>
+const PersonView = ({ id = 'person', person, loading, error }: PersonViewProps): ReactElement =>
   <>
     {loading && <div data-testid="loading">loading...</div>}
     {error && <div data-testid="error">{error.message}</div>}
@@ -37,7 +38,7 @@ const PersonView: React.FunctionComponent<PersonViewProps> = ({ id = 'person', p
     }
   </>
 
-const ObjectDestructuringApp = () => {
+const ObjectDestructuringApp = (): ReactElement => {
   const { loading, data, error } = useFetch<Person>('https://example.com', { onMount: true })
 
   return (
@@ -45,7 +46,7 @@ const ObjectDestructuringApp = () => {
   )
 }
 
-const ArrayDestructuringApp = () => {
+const ArrayDestructuringApp = (): ReactElement => {
   const [person, isLoading, anError] = useFetch<Person>('https://example.com', { onMount: true })
 
   return (
@@ -53,47 +54,47 @@ const ArrayDestructuringApp = () => {
   )
 }
 
-describe('useFetch - general', () => {
-  it('should be defined/exist when imported', () => {
+describe('useFetch - general', (): void => {
+  it('should be defined/exist when imported', (): void => {
     expect(typeof useFetch).toBe("function")
   })
 
-  it('can be used without crashing', async () => {
+  it('can be used without crashing', async (): Promise<void> => {
     const div = document.createElement("div")
 
-    act(() => {
+    act((): void => {
       ReactDOM.render(<ObjectDestructuringApp />, div)
     })
   })
 
 })
 
-describe("useFetch - basic functionality", () => {
-  afterEach(() => {
+describe("useFetch - basic functionality", (): void => {
+  afterEach((): void => {
     cleanup()
     fetch.resetMocks()
   })
 
-  beforeEach(() => {
+  beforeEach((): void => {
     fetch.mockResponseOnce(JSON.stringify({
       name: "Joe Bloggs",
       age: 48
     }))
   })
 
-  it('should execute GET command with object destructuring', async () => {
+  it('should execute GET command with object destructuring', async (): Promise<void> => {
     const { getAllByTestId } = render(<ObjectDestructuringApp />)
 
-    const els = await waitForElement(() => getAllByTestId(/^person-/))
+    const els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-/))
 
     expect(els[0].innerHTML).toBe("Joe Bloggs")
     expect(els[1].innerHTML).toBe("48")
   })
 
-  it('should execute GET command with arrray destructuring', async () => {
+  it('should execute GET command with arrray destructuring', async (): Promise<void> => {
     const { getAllByTestId } = render(<ArrayDestructuringApp />)
 
-    const els = await waitForElement(() => getAllByTestId(/^person-/))
+    const els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-/))
 
     expect(els[0].innerHTML).toBe("Joe Bloggs")
     expect(els[1].innerHTML).toBe("48")
@@ -125,41 +126,30 @@ describe("useFetch - basic functionality", () => {
  * Errors:
  * SSR Tests:
  */
-const NoURLOnMountTest = () => {
+const NoURLOnMountTest = (): ReactElement => {
   const [person, loading, error] = useFetch({ onMount: true })
   return <PersonView id='person-1' person={person} loading={loading} error={error} />
 }
-const ProviderTest1 = () => (
-  <Provider url='https://example.com'><NoURLOnMountTest /></Provider>
-)
 
-
-const NoURLGetUseEffect = () => {
+const NoURLGetUseEffect = (): ReactElement => {
   const [person, loading, error, request] = useFetch()
-  useEffect(() => {
+  useEffect((): void => {
     request.get()
-  }, [])
+  }, [request])
   return <PersonView id='person-2' person={person} loading={loading} error={error} />
 }
-const ProviderTest2 = () => (
-  <Provider url='https://example.com'><NoURLGetUseEffect /></Provider>
-)
 
-
-const NoURLGetUseEffectRelativeRoute = () => {
+const NoURLGetUseEffectRelativeRoute = (): ReactElement => {
   const [person, loading, error, request] = useFetch()
-  useEffect(() => {
+  useEffect((): void => {
     request.get('/people')
-  }, [])
+  }, [request])
   return <PersonView id='person-3' person={person} loading={loading} error={error} />
 }
-const ProviderTest3 = () => (
-  <Provider url='https://example.com'><NoURLGetUseEffectRelativeRoute /></Provider>
-)
 
 
-const ManagedStateTest = () => {
-  const [todos, setTodos] = useState<Array<{title: string}>>([])
+const ManagedStateTest = (): ReactElement => {
+  const [todos, setTodos] = useState<{title: string}[]>([])
 
   // const [data, loading, error, request, setData] = useFetch()
   const request = useFetch('http:example.com', {
@@ -168,72 +158,91 @@ const ManagedStateTest = () => {
     // data: []
   })
 
-  useEffect(() => {
-    initializeTodos()
-  }, [])
-
-  async function initializeTodos() {
+  const initializeTodos = useCallback(async (): Promise<void> => {
     const initialTodos = await request.get('/todos')
-    setTodos(() => initialTodos || [])
-  }
+    setTodos((): {title: string}[] => initialTodos || [])
+  }, [request, setTodos])
 
-  async function addTodo() {
+  useEffect((): void => {
+    initializeTodos()
+  }, [initializeTodos])
+
+  async function addTodo(): Promise<void> {
     const newTodo = await request.post('/todos', {
       title: 'No way...'
     })
-    setTodos(oldTodos => [...oldTodos, newTodo])
+    setTodos((oldTodos): {title: string}[] => [...oldTodos, newTodo])
     // request.loading = false
   }
 
   return (
-    <Fragment>
+    <>
       <button onClick={addTodo}>Add Todo</button>
       {request.error && <div>Error!</div>}
       {request.loading && <div>Loading...</div>}
-      <div>
-        {todos.map(t => <div key={t}>{t.title}</div>)}
-        {/* {todos.length > 0 && todos.map((todo, i) => <div key={i}>{todo.title}</div>} */}
+      <div data-testid='todos-1'>
+        {todos.length > 0 && todos.map(({ title }): ReactElement => <div key={title}>{title}</div>)}
+        {/* {todos.length > 0 && todos.map((todo, i): ReactElement => <div key={i}>{todo.title}</div>} */}
       </div>
-    </Fragment>
+    </>
   )
 }
 
-describe('useFetch - with <Provider />', () => {
-  afterEach(() => {
+const renderWithProvider = (comp: ReactElement): RenderResult => render(
+  <Provider url='https://example.com'>{comp}</Provider>
+)
+
+describe('useFetch - with <Provider />', (): void => {
+  afterEach((): void => {
     cleanup()
     fetch.resetMocks()
   })
 
-  beforeEach(() => {
+  beforeEach((): void => {
     fetch.mockResponseOnce(JSON.stringify({
       name: "Joe Bloggs",
       age: 48
     }))
   })
 
-  it('should execute GET using Provider url: useFetch({ onMount: true })', async () => {
-    const { getAllByTestId } = render(<ProviderTest1 />)
+  it('should execute GET using Provider url: useFetch({ onMount: true })', async (): Promise<void> => {
+    const { getAllByTestId } = renderWithProvider(<NoURLOnMountTest />)
 
-    let els = await waitForElement(() => getAllByTestId(/^person-1-/))
+    let els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-1-/))
 
     expect(els[0].innerHTML).toBe("Joe Bloggs")
     expect(els[1].innerHTML).toBe("48")
   })
 
-  it ('should execute GET using Provider url: request = useFetch(), request.get()', async () => {
-    const { getAllByTestId } = render(<ProviderTest2 />)
+  it ('should execute GET using Provider url: request = useFetch(), request.get()', async (): Promise<void> => {
+    const { getAllByTestId } = renderWithProvider(<NoURLGetUseEffect />)
 
-    let els = await waitForElement(() => getAllByTestId(/^person-2-/))
+    let els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-2-/))
 
     expect(els[0].innerHTML).toBe("Joe Bloggs")
     expect(els[1].innerHTML).toBe("48")
 
   })
 
-  it ('should execute GET using Provider url: request = useFetch(), request.get("/people")', async () => {
-    const { getAllByTestId } = render(<ProviderTest3 />)
+  it ('should execute GET using Provider url: request = useFetch(), request.get("/people")', async (): Promise<void> => {
+    const { getAllByTestId } = renderWithProvider(<NoURLGetUseEffectRelativeRoute />)
 
-    let els = await waitForElement(() => getAllByTestId(/^person-3-/))
+    let els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-3-/))
+
+    expect(els[0].innerHTML).toBe("Joe Bloggs")
+    expect(els[1].innerHTML).toBe("48")
+  })
+
+  it ('should execute GET using Provider url: request = useFetch(), request.get("/people")', async (): Promise<void> => {
+    fetch.mockResponseOnce(JSON.stringify([{
+      todo: 1
+    },{
+      todo: 2
+    }]))
+    const { getAllByTestId } = renderWithProvider(<ManagedStateTest />)
+
+    let els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-4-/))
+    console.log('ELS: ', els)
 
     expect(els[0].innerHTML).toBe("Joe Bloggs")
     expect(els[1].innerHTML).toBe("48")
