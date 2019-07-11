@@ -66,7 +66,7 @@ export const isString = (x: any): boolean => typeof x === 'string' // eslint-dis
  * aka: pulls out all useFetch's special options like "onMount"
  */
 export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInitJSON => {
-  if (!options) return {} as RequestInitJSON
+  if (!options) return {}
   const requestInitFields = [
     'body',
     'cache',

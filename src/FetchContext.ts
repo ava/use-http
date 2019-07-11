@@ -1,10 +1,10 @@
 import { createContext } from 'react'
 
 
-type FetchContextTypes = {
-  url?: string,
-  options?: RequestInit | undefined,
-  graphql?: boolean,
+interface FetchContextTypes {
+  url?: string
+  options?: RequestInit | undefined
+  graphql?: boolean
 }
 
 export const FetchContext = createContext<FetchContextTypes>({

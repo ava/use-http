@@ -1,4 +1,4 @@
-import React, { ReactElement, FunctionComponent } from "react"
+import React, { ReactElement } from "react"
 import { useGet } from '../index'
 // import ReactDOM from 'react-dom'
 import {
@@ -24,7 +24,7 @@ interface PersonViewProps {
   error: Error
 }
 
-const PersonView: FunctionComponent<PersonViewProps> = ({ person, loading, error }): ReactElement =>
+const PersonView = ({ person, loading, error }: PersonViewProps): ReactElement =>
   <>
     {loading && <div data-testid="loading">loading...</div>}
     {error && <div data-testid="error">{error.message}</div>}
@@ -36,7 +36,7 @@ const PersonView: FunctionComponent<PersonViewProps> = ({ person, loading, error
     }
   </>
 
-const ObjectDestructuringApp = () => {
+const ObjectDestructuringApp = (): ReactElement => {
   const { loading, data, error } = useGet<Person>('https://example.com', { onMount: true })
 
   return (
@@ -44,13 +44,13 @@ const ObjectDestructuringApp = () => {
   )
 }
 
-// const ArrayDestructuringApp = () => {
-//   const [ data, loading, error ] = useGet<Person>('https://example.com', { onMount: true })
+const ArrayDestructuringApp = (): ReactElement => {
+  const [ data, loading, error ] = useGet<Person>('https://example.com', { onMount: true })
 
-//   return (
-//     <PersonView person={data} loading={loading} error={error} />
-//   )
-// }
+  return (
+    <PersonView person={data} loading={loading} error={error} />
+  )
+}
 
 describe("useGet", (): void => {
   it('should define useGet', (): void => {
@@ -83,17 +83,17 @@ describe("useGet", (): void => {
     expect(els[1].innerHTML).toBe("48")
   })
 
-  // it('should execute GET command with arrray destructuring', async (): Promise<void> => {
-  //   fetch.mockResponseOnce(JSON.stringify({
-  //     name: "Joe Bloggs",
-  //     age: 48
-  //   }))
+  it('should execute GET command with arrray destructuring', async (): Promise<void> => {
+    fetch.mockResponseOnce(JSON.stringify({
+      name: "Joe Bloggs",
+      age: 48
+    }))
 
-  //   const { getAllByTestId } = render(<ArrayDestructuringApp />)
+    const { getAllByTestId } = render(<ArrayDestructuringApp />)
 
-  //   const els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-/))
+    const els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-/))
 
-  //   expect(els[0].innerHTML).toBe("Joe Bloggs")
-  //   expect(els[1].innerHTML).toBe("48")
-  // })
+    expect(els[0].innerHTML).toBe("Joe Bloggs")
+    expect(els[1].innerHTML).toBe("48")
+  })
 })

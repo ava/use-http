@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export enum HTTPMethod {
   DELETE = 'DELETE',
   GET = 'GET',
@@ -14,7 +15,7 @@ export type RouteAndBodyOnly = (route: string, body: object) => Promise<any>
 export type NoArgs = () => Promise<any>
 // type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
 // type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
-type FetchData = (routeOrBody?: string | object, body?: object) => Promise<any>
+export type FetchData = (routeOrBody?: string | object, body?: object) => Promise<any>
 
 export interface RequestInitJSON extends RequestInit {
   headers?: RequestInit['headers'] & {
@@ -22,33 +23,36 @@ export interface RequestInitJSON extends RequestInit {
   }
 }
 
-export type FetchCommands = {
-  get: (route?: string) => Promise<any>,
-  post: FetchData,
-  patch: FetchData,
-  put: FetchData,
-  del: FetchData,
-  delete: FetchData,
-  query: (query: string, variables?: object) => Promise<any>,
-  mutate: (mutation: string, variables?: object) => Promise<any>,
+export interface FetchCommands {
+  get: (route?: string) => Promise<any>
+  post: FetchData
+  patch: FetchData
+  put: FetchData
+  del: FetchData
+  delete: FetchData
+  query: (query: string, variables?: object) => Promise<any>
+  mutate: (mutation: string, variables?: object) => Promise<any>
   abort: () => void
 }
 
 export type DestructuringCommands<TData = any> = [TData | undefined, boolean, any, FetchCommands]
 
-export type UseFetchResult<TData = any> = FetchCommands & {
-  data?: TData,
-  loading: boolean,
-  error?: any,
-  request: FetchCommands,
+export interface UseFetchBaseResult<TData = any> {
+  data: TData | undefined
+  loading: boolean
+  error: Error
+}
+
+export type UseFetchResult<TData = any> = UseFetchBaseResult<TData> & FetchCommands & {
+  request: FetchCommands
 }
 
 export type UseFetch<TData> = DestructuringCommands<TData> & UseFetchResult<TData>
 
 export type Options = {
-  onMount?: boolean,
-  timeout?: number,
-  url: string,
+  onMount?: boolean
+  timeout?: number
+  url: string
 } & RequestInit
 
 export type OptionsMaybeURL = Omit<Options, 'url'> & { url?: string }
