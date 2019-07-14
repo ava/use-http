@@ -44,7 +44,9 @@ export type Options = {
   url: string,
 } & RequestInit
 
-export type OptionsMaybeURL = Omit<Options, 'url'> & { url?: string }
+export type NoUrlOptions = Omit<Options, 'url'>
+
+export type OptionsMaybeURL = NoUrlOptions & Partial<Pick<Options, 'url'>> & { url?: string }
 
 // TODO: this is still yet to be implemented
 export type OptionsOverwriteWithContext = (options: Options) => Options
