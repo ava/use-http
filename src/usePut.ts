@@ -1,9 +1,9 @@
 import { useContext } from 'react'
 import useFetch, { FetchContext } from '.'
-import { HTTPMethod, Options } from './types'
+import { HTTPMethod, NoUrlOptions } from './types'
 import { useURLRequiredInvariant } from './utils'
 
-export const usePut = <TData = any>(url?: string, options?: Omit<Options, 'url'>) => {
+export const usePut = <TData = any>(url?: string, options?: NoUrlOptions) => {
   const context = useContext(FetchContext)
 
   useURLRequiredInvariant(!!url || !!context.url, 'usePut')
