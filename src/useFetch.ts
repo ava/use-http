@@ -2,11 +2,12 @@ import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'r
 import FetchContext from './FetchContext'
 import { HTTPMethod, Options, OptionsMaybeURL, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, NoArgs, NoUrlOptions } from './types'
 import { BodyOnly, RouteAndBodyOnly, RouteOnly } from './types'
-import { invariant, isObject, isString, pullOutRequestInit } from './utils'
+import { invariant, isObject, isString } from './utils'
+import { makeConfig } from "./makeConfig";
 
 export const useFetchDefaults: Partial<Options> = {
   onMount: false,
-  
+
 }
 
 // No <Provider url='example.com' />
@@ -24,41 +25,16 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
 
   invariant(!!urlOrOptions || !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
 
-  let url = context.url || ''
-  let options: RequestInit = {}
-  let onMount = false
-  // let timeout: number = 10 // TODO: not implemented
+  const options = makeConfig(context, urlOrOptions, optionsNoURLs)
 
-  const handleUseFetchOptions = useCallback((useFetchOptions?: OptionsMaybeURL): void => {
-    const opts = useFetchOptions || {} as Options
-    if ('onMount' in opts) onMount = opts.onMount as boolean
-    // if (opts.timeout) timeout = opts.timeout
-    if ('url' in opts) url = opts.url as string
-  }, [])
+  const { onMount, url } = options
 
-  // ex: useFetch('https://url.com', { onMount: true })
-  if (isString(urlOrOptions) && isObject(optionsNoURLs)) {
-    url = urlOrOptions as string
-    options = pullOutRequestInit(optionsNoURLs)
-    handleUseFetchOptions(optionsNoURLs)
-
-    // ex: useFetch('https://url.com')
-  } else if (isString(urlOrOptions) && optionsNoURLs === undefined) {
-    url = urlOrOptions as string
-
-    // ex: useFetch({ onMount: true }) OR useFetch({ url: 'https://url.com' })
-  } else if (isObject(urlOrOptions)) {
-    invariant(!optionsNoURLs, 'You cannot have a 2nd parameter of useFetch when your first argument is a object config.')
-    let optsWithURL = urlOrOptions as Options
-    invariant(!!context.url || !!optsWithURL.url, 'You have to either set a URL in your options config or set a global URL in your <Provider url="https://url.com"></Provider>')
-    options = pullOutRequestInit(urlOrOptions)
-    handleUseFetchOptions(urlOrOptions as OptionsMaybeURL)
-  }
   // Provider ex: useFetch({ url: 'https://url.com' }) -- (overwrites global url)
   // TODO - Provider: arg1 = oldGlobalOptions => ({ my: 'new local options'}) (overwrite all global options for this instance of useFetch)
 
   const [data, setData] = useState<TData>()
-  const [loading, setLoading] = useState(onMount)
+  // TODO: default config object should handle this
+  const [loading, setLoading] = useState(onMount || false)
   const [error, setError] = useState<any>()
   const controller = useRef<AbortController | null>()
 

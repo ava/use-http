@@ -15,6 +15,13 @@ export type NoArgs = () => Promise<void>
 // type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
 type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
 
+export type FetchContextTypes = {
+  url?: string,
+  options?: RequestInit | undefined,
+  graphql?: boolean,
+}
+
+
 export type FetchCommands = {
   get: RouteOnly & NoArgs,
   post: FetchData,
@@ -42,6 +49,7 @@ export type Options = {
   onMount?: boolean,
   timeout?: number,
   url: string,
+  signal?: AbortSignal
 } & RequestInit
 
 export type NoUrlOptions = Omit<Options, 'url'>
