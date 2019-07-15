@@ -19,7 +19,7 @@ export const useExampleURL = (): string => {
   return useMemo(() => isBrowser ? window.location.origin : 'https://example.com', [isBrowser])
 }
 
-export const isString = (x: any) => typeof x === 'string'
+export const isString = (x: any): x is string => typeof x === 'string'
 
 // TODO: come back and fix the "anys" in this http://bit.ly/2Lm3OLi
 /**
@@ -54,7 +54,7 @@ export const pullOutRequestInit = (options?: {}): RequestInit => {
  * Determines if the given param is an object. {}
  * @param obj
  */
-export const isObject = (obj: any) => Object.prototype.toString.call(obj) === '[object Object]'
+export const isObject = (obj: any): obj is object => Object.prototype.toString.call(obj) === '[object Object]'
 
 /**
  * Used for error checking. If the condition is false, throw an error

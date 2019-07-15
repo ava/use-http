@@ -1,48 +1,58 @@
-import { useCallback } from "react"
 import { Options, FetchContextTypes, OptionsMaybeURL, NoUrlOptions } from './types'
-import { isString, isObject, invariant, pullOutRequestInit } from "./utils"
+import { isString, isObject, pullOutRequestInit } from "./utils"
 
 export const DefaultOptions: NoUrlOptions = {
   onMount: false
 }
 
 function makeConfig(context: FetchContextTypes, urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): Options {
-  let onMount = false
-  let url = context.url || ''
   let options: Partial<Options> = {}
-  let requestInit: RequestInit = {};
+  let requestInit: RequestInit = {}
 
-  const handleUseFetchOptions = useCallback((useFetchOptions?: OptionsMaybeURL): void => {
-    const opts = useFetchOptions as Options
-    if ('onMount' in opts) onMount = opts.onMount as boolean
-    if ('url' in opts) url = opts.url as string
-  }, [])
-
-  // ex: useFetch('https://url.com', { onMount: true })
-  if (isString(urlOrOptions) && isObject(optionsNoURLs)) {
-    url = urlOrOptions as string
-    requestInit = pullOutRequestInit(optionsNoURLs)
-    handleUseFetchOptions(optionsNoURLs)
-
-    // ex: useFetch('https://url.com')
-  } else if (isString(urlOrOptions) && optionsNoURLs === undefined) {
-    url = urlOrOptions as string
-
-    // ex: useFetch({ onMount: true }) OR useFetch({ url: 'https://url.com' })
-  } else if (isObject(urlOrOptions)) {
-    invariant(!optionsNoURLs, 'You cannot have a 2nd parameter of useFetch when your first argument is a object config.')
-    let optsWithURL = urlOrOptions as Options
-    invariant(!!context.url || !!optsWithURL.url, 'You have to either set a URL in your options config or set a global URL in your <Provider url="https://url.com"></Provider>')
-    requestInit = pullOutRequestInit(urlOrOptions)
-    handleUseFetchOptions(urlOrOptions as OptionsMaybeURL)
+  if (isObject(urlOrOptions) && isObject(optionsNoURLs)) {
+    // TODO: I could not get the utils/invariant to work with the condition isObject(urlOrOptions) && isObject(optionsNoURLs)
+    throw new Error('You cannot have a 2nd parameter of useFetch when your first argument is a object config.')
   }
 
-  options.url = url
-  options.onMount = onMount
+  const getUrl = (): string => {
+    if (isString(urlOrOptions)) {
+      return urlOrOptions
+    }
+
+    if (isObject(urlOrOptions) && !!urlOrOptions.url) {
+      return urlOrOptions.url;
+    }
+
+    if (isObject(urlOrOptions) && !!urlOrOptions.url) {
+      return urlOrOptions.url;
+    }
+
+    if (!!context.url) {
+      return context.url;
+    }
+
+    // we need to throw rather than using invariant so getUrl does not return a value and casts to never
+    throw new Error('You have to either set a URL in your options config or set a global URL in your <Provider url="https://url.com"></Provider>')
+  }
+
+  const getOnMount = (): boolean => {
+    if (isObject(urlOrOptions)) {
+      return !!urlOrOptions.onMount
+    }
+
+    if (isObject(optionsNoURLs)) {
+      return !!optionsNoURLs.onMount
+    }
+
+    return false;
+  }
+
+  const requestInitOptions = isObject(urlOrOptions) ? urlOrOptions : isObject(optionsNoURLs) ? optionsNoURLs : {}
+  requestInit = pullOutRequestInit(requestInitOptions)
 
   return {
-    url,
-    onMount,
+    url: getUrl(),
+    onMount: getOnMount(),
     headers: {
       // default content types http://bit.ly/2N2ovOZ
       // Accept: 'application/json', 
@@ -52,7 +62,7 @@ function makeConfig(context: FetchContextTypes, urlOrOptions?: string | OptionsM
     },
     ...options,
     ...requestInit,
-  } as Options;
+  } as Options
 }
 
 export { makeConfig }
