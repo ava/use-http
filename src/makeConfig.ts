@@ -20,10 +20,6 @@ function makeConfig(context: FetchContextTypes, urlOrOptions?: string | OptionsM
       return urlOrOptions.url;
     }
 
-    if (isObject(urlOrOptions) && !!urlOrOptions.url) {
-      return urlOrOptions.url;
-    }
-
     if (!!context.url) {
       return context.url;
     }
