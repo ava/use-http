@@ -1,59 +1,40 @@
 import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
-import { HTTPMethod, Options, OptionsMaybeURL, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, NoArgs } from './types'
+import { HTTPMethod, Options, OptionsMaybeURL, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, NoArgs, NoUrlOptions } from './types'
 import { BodyOnly, RouteAndBodyOnly, RouteOnly } from './types'
-import { invariant, isObject, isString, pullOutRequestInit } from './utils'
+import { invariant, isObject, isString } from './utils'
+import { makeConfig } from "./makeConfig";
+
+export const useFetchDefaults: Partial<Options> = {
+  onMount: false,
+
+}
 
 // No <Provider url='example.com' />
-function useFetch<TData = any>(url: string, options?: Omit<Options, 'url'>): UseFetch<TData>
+function useFetch<TData = any>(url: string, options?: NoUrlOptions): UseFetch<TData>
 function useFetch<TData = any>(options: Options): UseFetch<TData>
 // With <Provider url='example.com' />
 // options should be extended. In future maybe have options callback to completely overwrite options
 // i.e. useFetch('ex.com', oldOptions => ({ ...newOptions })) to overwrite
-function useFetch<TData = any>(url?: string, options?: Omit<Options, 'url'>): UseFetch<TData>
+function useFetch<TData = any>(url?: string, options?: NoUrlOptions): UseFetch<TData>
 function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 // TODO: handle context.graphql
-function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: Omit<Options, 'url'>): UseFetch<TData> {
+function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): UseFetch<TData> {
   const context = useContext(FetchContext)
 
   invariant(!!urlOrOptions || !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
 
-  let url: string = context.url || ''
-  let options: RequestInit = {}
-  let onMount: boolean = false
-  // let timeout: number = 10 // TODO: not implemented
+  const options = makeConfig(context, urlOrOptions, optionsNoURLs)
 
-  const handleUseFetchOptions = useCallback((useFetchOptions?: OptionsMaybeURL): void => {
-    const opts = useFetchOptions || {} as Options
-    if ('onMount' in opts) onMount = opts.onMount as boolean
-    // if (opts.timeout) timeout = opts.timeout
-    if ('url' in opts) url = opts.url as string
-  }, [])
+  const { onMount, url } = options
 
-  // ex: useFetch('https://url.com', { onMount: true })
-  if (isString(urlOrOptions) && isObject(optionsNoURLs)) {
-    url = urlOrOptions as string
-    options = pullOutRequestInit(optionsNoURLs)
-    handleUseFetchOptions(optionsNoURLs)
-
-  // ex: useFetch('https://url.com')
-  } else if (isString(urlOrOptions) && optionsNoURLs === undefined) {
-    url = urlOrOptions as string
-
-  // ex: useFetch({ onMount: true }) OR useFetch({ url: 'https://url.com' })
-  } else if (isObject(urlOrOptions)) {
-    invariant(!optionsNoURLs, 'You cannot have a 2nd parameter of useFetch when your first argument is a object config.')
-    let optsWithURL = urlOrOptions as Options
-    invariant(!!context.url || !!optsWithURL.url, 'You have to either set a URL in your options config or set a global URL in your <Provider url="https://url.com"></Provider>')
-    options = pullOutRequestInit(urlOrOptions)
-    handleUseFetchOptions(urlOrOptions as OptionsMaybeURL)
-  }
   // Provider ex: useFetch({ url: 'https://url.com' }) -- (overwrites global url)
   // TODO - Provider: arg1 = oldGlobalOptions => ({ my: 'new local options'}) (overwrite all global options for this instance of useFetch)
 
   const [data, setData] = useState<TData>()
-  const [loading, setLoading] = useState(onMount)
+  // TODO: default config object should handle this
+  const [loading, setLoading] = useState(onMount || false)
   const [error, setError] = useState<any>()
   const controller = useRef<AbortController | null>()
 
@@ -81,31 +62,24 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
         if (isString(routeOrBody)) {
           route = routeOrBody as string;
           options.body = JSON.stringify(body || {})
-        // ex: request.post({ no: 'way' })
+          // ex: request.post({ no: 'way' })
         } else if (isObject(routeOrBody)) {
           invariant(!body, `If first argument of ${method.toLowerCase()}() is an object, you cannot have a 2nd argument. 😜`)
           options.body = JSON.stringify(routeOrBody || {})
         }
-      // GET
+        // GET
       } else {
-          invariant(!isObject(routeOrBody), 'Cannot pass a request body in a GET request')
-          // ex: request.get('/no?freaking=way')
-          if (isString(routeOrBody)) route = routeOrBody as string
+        invariant(!isObject(routeOrBody), 'Cannot pass a request body in a GET request')
+        // ex: request.get('/no?freaking=way')
+        if (isString(routeOrBody)) route = routeOrBody as string
       }
 
       try {
         setLoading(true)
-        const response = await fetch(url + route, {
+        const response = await fetch(`${url}${route}`, {
           method,
           ...context.options,
           ...options,
-          headers: {
-            // default content types http://bit.ly/2N2ovOZ
-            // Accept: 'application/json', 
-            'Content-Type': 'application/json',
-            ...(context.options || {}).headers,
-            ...options.headers
-          }
         })
         let data = null
         try {
@@ -142,17 +116,21 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
 
   // handling onMount
   useEffect(() => {
-    const methodName = ((options.method || '') || HTTPMethod.GET).toUpperCase() as keyof FetchCommands
-    if (!!url && onMount && methodName !== HTTPMethod.GET as string) {
+    if (!onMount) {
+      return;
+    }
+    const methodName = options.method || HTTPMethod.GET;
+    // const methodName = ((options.method || '') || HTTPMethod.GET).toUpperCase() as keyof FetchCommands
+    if (!!url && methodName !== HTTPMethod.GET) {
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as RouteAndBodyOnly
       req(url, options.body as BodyInit)
-    } else if (!url && onMount && methodName !== HTTPMethod.GET as string) {
+    } else if (!url && methodName !== HTTPMethod.GET as string) {
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as BodyOnly
       req(options.body as BodyInit)
-    } else if (!!url && onMount) {
+    } else if (!!url) {
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as RouteOnly
       req(url)
-    } else if (onMount) {
+    } else {
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as NoArgs
       req()
     }
