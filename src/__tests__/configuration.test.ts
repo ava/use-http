@@ -1,6 +1,5 @@
 import { makeConfig } from "../makeConfig";
 
-
 describe.only('use-http configuration', () => {
   it('should create config from a single url argument', () => {
     const config = makeConfig({}, "http://blah.com")

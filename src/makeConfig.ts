@@ -1,5 +1,5 @@
 import { Options, FetchContextTypes, OptionsMaybeURL, NoUrlOptions } from './types'
-import { isString, isObject, pullOutRequestInit } from "./utils"
+import { isString, isObject, pullOutRequestInit, invariant } from "./utils"
 
 export const DefaultOptions: NoUrlOptions = {
   onMount: false
@@ -9,10 +9,7 @@ function makeConfig(context: FetchContextTypes, urlOrOptions?: string | OptionsM
   let options: Partial<Options> = {}
   let requestInit: RequestInit = {}
 
-  if (isObject(urlOrOptions) && isObject(optionsNoURLs)) {
-    // TODO: I could not get the utils/invariant to work with the condition isObject(urlOrOptions) && isObject(optionsNoURLs)
-    throw new Error('You cannot have a 2nd parameter of useFetch when your first argument is a object config.')
-  }
+  invariant(!(isObject(urlOrOptions) && isObject(optionsNoURLs)), 'You cannot have a 2nd parameter of useFetch when your first argument is an object config.')
 
   const getUrl = (): string => {
     if (isString(urlOrOptions)) {
