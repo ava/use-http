@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useCallback, ReactElement } from 'react'
-import { useFetch, Provider } from '../index'
-import ReactDOM from 'react-dom'
+// import { renderHook } from '@testing-library/react-hooks'
+// import React, { useEffect, useState, ReactElement } from 'react'
 import {
-  render,
-  cleanup,
-  waitForElement,
-  RenderResult
-} from '@testing-library/react'
+  useFetch,
+  Provider
+} from '../index'
+import ReactDOM from 'react-dom'
+import { render, cleanup, waitForElement, RenderResult, fireEvent } from '@testing-library/react'
+// import * as reactTest from '@testing-library/react'
+// console.log('REACT TEST: ', reactTest)
 
 import { FetchMock } from "jest-fetch-mock"
 
@@ -148,46 +150,6 @@ const NoURLGetUseEffectRelativeRoute = (): ReactElement => {
 }
 
 
-const ManagedStateTest = (): ReactElement => {
-  const [todos, setTodos] = useState<{title: string}[]>([])
-
-  // const [data, loading, error, request, setData] = useFetch()
-  const request = useFetch('http:example.com', {
-    // initial data, probably just an empty default as this will get overwritten
-    // each time `request.method()` is called
-    // data: []
-  })
-
-  const initializeTodos = useCallback(async (): Promise<void> => {
-    const initialTodos = await request.get('/todos')
-    setTodos((): {title: string}[] => initialTodos || [])
-  }, [request, setTodos])
-
-  useEffect((): void => {
-    initializeTodos()
-  }, [initializeTodos])
-
-  async function addTodo(): Promise<void> {
-    const newTodo = await request.post('/todos', {
-      title: 'No way...'
-    })
-    setTodos((oldTodos): {title: string}[] => [...oldTodos, newTodo])
-    // request.loading = false
-  }
-
-  return (
-    <>
-      <button onClick={addTodo}>Add Todo</button>
-      {request.error && <div>Error!</div>}
-      {request.loading && <div>Loading...</div>}
-      <div data-testid='todos-1'>
-        {todos.length > 0 && todos.map(({ title }): ReactElement => <div key={title}>{title}</div>)}
-        {/* {todos.length > 0 && todos.map((todo, i): ReactElement => <div key={i}>{todo.title}</div>} */}
-      </div>
-    </>
-  )
-}
-
 const renderWithProvider = (comp: ReactElement): RenderResult => render(
   <Provider url='https://example.com'>{comp}</Provider>
 )
@@ -233,18 +195,105 @@ describe('useFetch - with <Provider />', (): void => {
     expect(els[1].innerHTML).toBe("48")
   })
 
-  it ('should execute GET using Provider url: request = useFetch(), request.get("/people")', async (): Promise<void> => {
-    fetch.mockResponseOnce(JSON.stringify([{
-      todo: 1
-    },{
-      todo: 2
-    }]))
-    const { getAllByTestId } = renderWithProvider(<ManagedStateTest />)
+})
 
-    let els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-4-/))
-    console.log('ELS: ', els)
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs")
-    expect(els[1].innerHTML).toBe("48")
+const ManagedStateTest = (): ReactElement => {
+  const [todos, setTodos] = useState<{title: string}[]>([{title: 'test'}])
+
+  // const [data, loading, error, request, setData] = useFetch()
+  const request = useFetch('http:example.com', {
+    // initial data, probably just an empty default as this will get overwritten
+    // each time `request.method()` is called
+    // data: []
   })
+
+  const initializeTodos = useCallback(async (): Promise<void> => {
+    const initialTodos = await request.get('/todos')
+    console.log('INITIAL TODOS: ', initialTodos)
+    setTodos((): {title: string}[] => [...todos, ...(initialTodos || [])])
+  }, [request.get, setTodos])
+
+  useEffect((): () => void => {
+    initializeTodos()
+    return () => {
+      request.abort()
+    }
+  }, [initializeTodos])
+
+  const addTodo = useCallback(async (): Promise<void> => {
+    const data = {
+      title: 'No way...'
+    }
+    /* const newTodo = */ await request.post('/todos', data)
+    setTodos((oldTodos): {title: string}[] => [...oldTodos, /* newTodo */ data])
+    // request.loading = false
+  }, [request.post, setTodos])
+
+  console.log('TODOS: ', todos)
+  return (
+    <>
+      <button data-testid='todos-1-add-todo' onClick={addTodo}>Add Todo</button>
+      {request.error && <div>Error!</div>}
+      <div data-testid='todos-1-loading'>{request.loading ? 'Loading...' : ''}</div>
+      <div >
+        {todos.length > 0 && todos.map(({ title }, i): ReactElement => (
+          // console.log(`TITLE-${i}: `, title),
+          <div data-testid='todos-1' key={i}>{title}</div>
+        ))}
+        {/* {todos.length > 0 && todos.map((todo, i): ReactElement => <div key={i}>{todo.title}</div>} */}
+      </div>
+    </>
+  )
+} 
+
+
+describe('useFetch - with <Provider /> - Managed State', (): void => {
+  afterEach((): void => {
+    fetch.resetMocks()
+    cleanup()
+  })
+
+  beforeEach((): void => {
+    fetch.mockResponseOnce(JSON.stringify([{
+      title: 1
+    },{
+      title: 2
+    }]))
+  })
+
+  it ('should execute GET using Provider url: request = useFetch(), request.get("/todos")', async (): Promise<void> => {
+    const { getAllByTestId, getByTestId } = renderWithProvider(<ManagedStateTest />)
+
+    let loading = getByTestId('todos-1-loading')
+    expect(loading.innerHTML).toBe('Loading...')
+    // TODO:
+    // below breaks. Put `console.log('TODOS: ', todos)` just before the `return` in `ManagedStateTest`
+    // component. Then comment out the 2 lines below and re-run test. The output of TODOS != ELS. I'm probably writing my test wrong or something. Help please :)
+    let els = await waitForElement((): HTMLElement[] => getAllByTestId(/^todos-1/))
+    console.log('ELS: ', els.map(el => el.innerHTML))
+    expect(els[2].innerHTML).toBe('test')
+    // expect(els[2].innerHTML).toBe(1)
+    // expect(els[3].innerHTML).toBe(2)
+
+    const button = getByTestId('todos-1-add-todo')
+    act(() => {
+      fireEvent.click(button)
+    })
+    console.log('LOADING: ', loading.innerHTML)
+    els = await waitForElement((): HTMLElement[] => getAllByTestId(/^todos-1/))
+    // why does TODOS show the correct data, but `ELS 2` not?
+    console.log('ELS 2: ', els.map(el => el.innerHTML))
+  })
+
+  // it ('should execute GET using Provider url: request = useFetch(), request.get("/todos")', async (): Promise<void> => {
+  //   const { result: request, waitForNextUpdate } = renderHook(() => useFetch('https://example.com'))
+
+  //   act(() => {
+  //     request.current.get('/todos')
+  //   })
+  //   await waitForNextUpdate()
+  //   // expect(request.current.data).toBe([{ todo: 1 }, { todo: 2 }])
+  //   // console.log('REQ: ', request.current)
+  // })
 })
