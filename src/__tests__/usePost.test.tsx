@@ -1,7 +1,7 @@
-import { usePost } from '..'
+import { usePost } from "..";
 
-describe('usePost - general', () => {
-  it('should be defined/exist when imported', () => {
-    expect(typeof usePost).toBe("function")
-  })
-})
+describe("usePost - general", () => {
+  it("should be defined/exist when imported", () => {
+    expect(typeof usePost).toBe("function");
+  });
+});
