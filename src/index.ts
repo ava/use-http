@@ -1,11 +1,11 @@
-export { default } from "./useFetch";
-export * from "./useFetch";
-export * from "./useGet";
-export * from "./usePost";
-export * from "./usePut";
-export * from "./usePatch";
-export * from "./useDelete";
-export * from "./useMutation";
-export * from "./useQuery";
-export * from "./Provider";
-export * from "./FetchContext";
+export { default } from './useFetch'
+export * from './useFetch'
+export * from './useGet'
+export * from './usePost'
+export * from './usePut'
+export * from './usePatch'
+export * from './useDelete'
+export * from './useMutation'
+export * from './useQuery'
+export * from './Provider'
+export * from './FetchContext'

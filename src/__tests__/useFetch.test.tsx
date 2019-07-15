@@ -1,31 +1,31 @@
-import React, { useEffect } from "react";
-import { useFetch, Provider } from "../index";
-import ReactDOM from "react-dom";
-import { render, cleanup, waitForElement } from "@testing-library/react";
+import React, { useEffect } from 'react'
+import { useFetch, Provider } from '../index'
+import ReactDOM from 'react-dom'
+import { render, cleanup, waitForElement } from '@testing-library/react'
 
-import { FetchMock } from "jest-fetch-mock";
+import { FetchMock } from 'jest-fetch-mock'
 
-const fetch = global.fetch as FetchMock;
+const fetch = global.fetch as FetchMock
 
-import { act } from "react-dom/test-utils";
+import { act } from 'react-dom/test-utils'
 
 interface Person {
-  name: string;
-  age: number;
+  name: string
+  age: number
 }
 
 interface PersonViewProps {
-  id?: string;
-  person?: Person;
-  loading: boolean;
-  error: any;
+  id?: string
+  person?: Person
+  loading: boolean
+  error: any
 }
 
 const PersonView: React.FunctionComponent<PersonViewProps> = ({
-  id = "person",
+  id = 'person',
   person,
   loading,
-  error
+  error,
 }) => (
   <>
     {loading && <div data-testid="loading">loading...</div>}
@@ -37,71 +37,71 @@ const PersonView: React.FunctionComponent<PersonViewProps> = ({
       </div>
     )}
   </>
-);
+)
 
 const ObjectDestructuringApp = () => {
-  const { loading, data, error } = useFetch<Person>("https://example.com", {
-    onMount: true
-  });
+  const { loading, data, error } = useFetch<Person>('https://example.com', {
+    onMount: true,
+  })
 
-  return <PersonView person={data} loading={loading} error={error} />;
-};
+  return <PersonView person={data} loading={loading} error={error} />
+}
 
 const ArrayDestructuringApp = () => {
-  const [person, isLoading, anError] = useFetch<Person>("https://example.com", {
-    onMount: true
-  });
+  const [person, isLoading, anError] = useFetch<Person>('https://example.com', {
+    onMount: true,
+  })
 
-  return <PersonView person={person} loading={isLoading} error={anError} />;
-};
+  return <PersonView person={person} loading={isLoading} error={anError} />
+}
 
-describe("useFetch - general", () => {
-  it("should be defined/exist when imported", () => {
-    expect(typeof useFetch).toBe("function");
-  });
+describe('useFetch - general', () => {
+  it('should be defined/exist when imported', () => {
+    expect(typeof useFetch).toBe('function')
+  })
 
-  it("can be used without crashing", async () => {
-    const div = document.createElement("div");
+  it('can be used without crashing', async () => {
+    const div = document.createElement('div')
 
     act(() => {
-      ReactDOM.render(<ObjectDestructuringApp />, div);
-    });
-  });
-});
+      ReactDOM.render(<ObjectDestructuringApp />, div)
+    })
+  })
+})
 
-describe("useFetch - basic functionality", () => {
+describe('useFetch - basic functionality', () => {
   afterEach(() => {
-    cleanup();
-    fetch.resetMocks();
-  });
+    cleanup()
+    fetch.resetMocks()
+  })
 
   beforeEach(() => {
     fetch.mockResponseOnce(
       JSON.stringify({
-        name: "Joe Bloggs",
-        age: 48
-      })
-    );
-  });
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
+  })
 
-  it("should execute GET command with object destructuring", async () => {
-    const { getAllByTestId } = render(<ObjectDestructuringApp />);
+  it('should execute GET command with object destructuring', async () => {
+    const { getAllByTestId } = render(<ObjectDestructuringApp />)
 
-    const els = await waitForElement(() => getAllByTestId(/^person-/));
+    const els = await waitForElement(() => getAllByTestId(/^person-/))
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs");
-    expect(els[1].innerHTML).toBe("48");
-  });
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
+  })
 
-  it("should execute GET command with arrray destructuring", async () => {
-    const { getAllByTestId } = render(<ArrayDestructuringApp />);
+  it('should execute GET command with arrray destructuring', async () => {
+    const { getAllByTestId } = render(<ArrayDestructuringApp />)
 
-    const els = await waitForElement(() => getAllByTestId(/^person-/));
+    const els = await waitForElement(() => getAllByTestId(/^person-/))
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs");
-    expect(els[1].innerHTML).toBe("48");
-  });
-});
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
+  })
+})
 
 // Provider Tests =================================================
 /**
@@ -125,86 +125,86 @@ describe("useFetch - basic functionality", () => {
  * H. const [data, loading, error, request] = useFetch('http://url.com', oldOptions => ({ ...newOptions }))
  */
 const NoURLOnMountTest = () => {
-  const [person, loading, error] = useFetch({ onMount: true });
+  const [person, loading, error] = useFetch({ onMount: true })
   return (
     <PersonView id="person-1" person={person} loading={loading} error={error} />
-  );
-};
+  )
+}
 const ProviderTest1 = () => (
   <Provider url="https://example.com">
     <NoURLOnMountTest />
   </Provider>
-);
+)
 
 const NoURLGetUseEffect = () => {
-  const [person, loading, error, request] = useFetch();
+  const [person, loading, error, request] = useFetch()
   useEffect(() => {
-    request.get();
-  }, [request]);
+    request.get()
+  }, [request])
   return (
     <PersonView id="person-2" person={person} loading={loading} error={error} />
-  );
-};
+  )
+}
 const ProviderTest2 = () => (
   <Provider url="https://example.com">
     <NoURLGetUseEffect />
   </Provider>
-);
+)
 
 const NoURLGetUseEffectRelativeRoute = () => {
-  const [person, loading, error, request] = useFetch();
+  const [person, loading, error, request] = useFetch()
   useEffect(() => {
-    request.get("/people");
-  }, [request]);
+    request.get('/people')
+  }, [request])
   return (
     <PersonView id="person-3" person={person} loading={loading} error={error} />
-  );
-};
+  )
+}
 const ProviderTest3 = () => (
   <Provider url="https://example.com">
     <NoURLGetUseEffectRelativeRoute />
   </Provider>
-);
+)
 
-describe("useFetch - with <Provider />", () => {
+describe('useFetch - with <Provider />', () => {
   afterEach(() => {
-    cleanup();
-    fetch.resetMocks();
-  });
+    cleanup()
+    fetch.resetMocks()
+  })
 
   beforeEach(() => {
     fetch.mockResponseOnce(
       JSON.stringify({
-        name: "Joe Bloggs",
-        age: 48
-      })
-    );
-  });
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
+  })
 
-  it("should execute GET using Provider url: useFetch({ onMount: true })", async () => {
-    const { getAllByTestId } = render(<ProviderTest1 />);
+  it('should execute GET using Provider url: useFetch({ onMount: true })', async () => {
+    const { getAllByTestId } = render(<ProviderTest1 />)
 
-    const els = await waitForElement(() => getAllByTestId(/^person-1-/));
+    const els = await waitForElement(() => getAllByTestId(/^person-1-/))
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs");
-    expect(els[1].innerHTML).toBe("48");
-  });
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
+  })
 
-  it("should execute GET using Provider url: request = useFetch(), request.get()", async () => {
-    const { getAllByTestId } = render(<ProviderTest2 />);
+  it('should execute GET using Provider url: request = useFetch(), request.get()', async () => {
+    const { getAllByTestId } = render(<ProviderTest2 />)
 
-    const els = await waitForElement(() => getAllByTestId(/^person-2-/));
+    const els = await waitForElement(() => getAllByTestId(/^person-2-/))
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs");
-    expect(els[1].innerHTML).toBe("48");
-  });
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
+  })
 
   it('should execute GET using Provider url: request = useFetch(), request.get("/people")', async () => {
-    const { getAllByTestId } = render(<ProviderTest3 />);
+    const { getAllByTestId } = render(<ProviderTest3 />)
 
-    const els = await waitForElement(() => getAllByTestId(/^person-3-/));
+    const els = await waitForElement(() => getAllByTestId(/^person-3-/))
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs");
-    expect(els[1].innerHTML).toBe("48");
-  });
-});
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
+  })
+})
