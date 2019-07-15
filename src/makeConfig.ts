@@ -2,6 +2,10 @@ import { useCallback } from "react"
 import { Options, FetchContextTypes, OptionsMaybeURL, NoUrlOptions } from './types'
 import { isString, isObject, invariant, pullOutRequestInit } from "./utils"
 
+export const DefaultOptions: NoUrlOptions = {
+  onMount: false
+}
+
 function makeConfig(context: FetchContextTypes, urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): Options {
   let onMount = false
   let url = context.url || ''
@@ -9,7 +13,7 @@ function makeConfig(context: FetchContextTypes, urlOrOptions?: string | OptionsM
   let requestInit: RequestInit = {};
 
   const handleUseFetchOptions = useCallback((useFetchOptions?: OptionsMaybeURL): void => {
-    const opts = useFetchOptions || {} as Options
+    const opts = useFetchOptions as Options
     if ('onMount' in opts) onMount = opts.onMount as boolean
     if ('url' in opts) url = opts.url as string
   }, [])
@@ -39,8 +43,15 @@ function makeConfig(context: FetchContextTypes, urlOrOptions?: string | OptionsM
   return {
     url,
     onMount,
+    headers: {
+      // default content types http://bit.ly/2N2ovOZ
+      // Accept: 'application/json', 
+      'Content-Type': 'application/json',
+      ...(context.options || {}).headers,
+      ...options.headers
+    },
     ...options,
-    ...requestInit
+    ...requestInit,
   } as Options;
 }
 

@@ -80,13 +80,6 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
           method,
           ...context.options,
           ...options,
-          headers: {
-            // default content types http://bit.ly/2N2ovOZ
-            // Accept: 'application/json', 
-            'Content-Type': 'application/json',
-            ...(context.options || {}).headers,
-            ...options.headers
-          }
         })
         let data = null
         try {
