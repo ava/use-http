@@ -17,23 +17,24 @@ import FetchContext from './FetchContext';
  */
 export default function useCustomOptions(urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): CustomOptions {
   const context = useContext(FetchContext)
-  invariant(!!urlOrOptions || !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
   invariant(!(isObject(urlOrOptions) && isObject(optionsNoURLs)), 'You cannot have a 2nd parameter of useFetch when your first argument is an object config.')
 
+  console.log('URL OR OPTIONS: ', urlOrOptions)
+  console.log('CONTEXT.URL: ', context.url)
   const url = useMemo((): string => {
-    if (isString(urlOrOptions)) return urlOrOptions as string
+    if (isString(urlOrOptions) && urlOrOptions) return urlOrOptions as string
     if (isObject(urlOrOptions) && !!urlOrOptions.url) return urlOrOptions.url
-    if (!!context.url) return context.url
-    // we need to throw rather than using invariant so getUrl does not return a value and casts to never
-    // TODO: test to see if this will actually throw. It might not since it's in a callback 😅
-    throw new Error('You have to either set a URL in your options config or set a global URL in your <Provider url="https://url.com"></Provider>')
-  }, [])
+    if (context.url) return context.url
+    return ''
+  }, [context.url, urlOrOptions])
+
+  invariant(!!url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
 
   const onMount = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.onMount
     if (isObject(optionsNoURLs)) return !!optionsNoURLs.onMount
     return false;
-  }, [])
+  }, [urlOrOptions, optionsNoURLs])
 
   return { url, onMount }
 }

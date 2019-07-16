@@ -59,13 +59,13 @@ export function useURLRequiredInvariant(condition: boolean, method: string, opti
   }, [condition, exampleURL, method, optionalMessage])
 }
 
-export const isString = (x: any): x is string => typeof x === 'string'
+export const isString = (x: any): x is string => typeof x === 'string' // eslint-disable-line
 
 /**
  * Determines if the given param is an object. {}
  * @param obj
  */
-export const isObject = (obj: any): obj is object => Object.prototype.toString.call(obj) === '[object Object]'
+export const isObject = (obj: any): obj is object => Object.prototype.toString.call(obj) === '[object Object]' // eslint-disable-line
 
 // TODO: come back and fix the "anys" in this http://bit.ly/2Lm3OLi
 /**
