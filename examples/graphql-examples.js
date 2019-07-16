@@ -10,12 +10,12 @@ const GraphQLQueryExample = () => {
       }
     }
   `
-  
+
   const posts = useFetch('http://localhost:3000')
 
   useEffect(() => {
     posts.query(query)
-  }, [])
+  }, [posts, query])
 
   if (posts.loading) return <div>⏱Loading...</div>
 
@@ -36,12 +36,12 @@ const GraphQLMutationExample = () => {
       }
     }
   `
-  
+
   const posts = useFetch('http://localhost:3000')
 
   useEffect(() => {
     posts.mutate(mutation)
-  }, [])
+  }, [mutation, posts])
 
   if (posts.loading) return <div>⏱Loading...</div>
 

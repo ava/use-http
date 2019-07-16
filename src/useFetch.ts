@@ -1,14 +1,11 @@
-import { useEffect, useState, useCallback, useRef, useContext, useMemo } from 'react'
-import FetchContext from './FetchContext'
-import { HTTPMethod, Options, OptionsMaybeURL, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult, NoArgs, NoUrlOptions } from './types'
-import { BodyOnly, RouteAndBodyOnly, RouteOnly } from './types'
-import { invariant, isObject, isString } from './utils'
-import { makeConfig } from "./makeConfig";
-
-export const useFetchDefaults: Partial<Options> = {
-  onMount: false,
-
-}
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { HTTPMethod, Options, OptionsMaybeURL, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult } from './types'
+import { BodyOnly, RouteAndBodyOnly, RouteOnly, FetchData, NoArgs, NoUrlOptions } from './types'
+import useCustomOptions from './useCustomOptions'
+import useRequestInit from './useRequestInit'
+import useSSR from 'use-ssr'
+import makeRouteAndOptions from './makeRouteAndOptions';
 
 // No <Provider url='example.com' />
 function useFetch<TData = any>(url: string, options?: NoUrlOptions): UseFetch<TData>
@@ -21,112 +18,64 @@ function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 // TODO: handle context.graphql
 function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): UseFetch<TData> {
-  const context = useContext(FetchContext)
+  const { isBrowser } = useSSR()
+  const { onMount, url } = useCustomOptions(urlOrOptions, optionsNoURLs)
+  let requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
-  invariant(!!urlOrOptions || !!context.url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+  let controller = useRef<AbortController | null>()
+  let data = useRef<TData>()
 
-  const options = makeConfig(context, urlOrOptions, optionsNoURLs)
-
-  const { onMount, url } = options
-
-  // Provider ex: useFetch({ url: 'https://url.com' }) -- (overwrites global url)
-  // TODO - Provider: arg1 = oldGlobalOptions => ({ my: 'new local options'}) (overwrite all global options for this instance of useFetch)
-
-  const [data, setData] = useState<TData>()
   // TODO: default config object should handle this
   const [loading, setLoading] = useState(onMount || false)
   const [error, setError] = useState<any>()
-  const controller = useRef<AbortController | null>()
 
-  const makeFetch = useCallback((method: HTTPMethod) => {
-    if ('AbortController' in window) {
-      controller.current = new AbortController()
-      options.signal = controller.current.signal
-    }
-    let route = ''
-
-    // POST, PATCH, PUT, DELETE
-    async function doFetch(route?: string, body?: object): Promise<any>
-    async function doFetch(body?: object): Promise<any>
-    // GET
-    async function doFetch(route?: string): Promise<any>
-
-    async function doFetch(routeOrBody?: string | object, body?: object): Promise<any> {
-      // TODO: do the ts types handle if routeOrBody AND body are both objects it will error?
-      // if not, an invariant(!isObject(routeOrBody) && !isObject(body), 'both arguments cannot be an object')
-
-      // POST, PATCH, PUT, DELETE
-      if (method !== HTTPMethod.GET) { // TODO: add OPTIONS later
-        // ex: request.post('/no', { freaking: 'way' })
-        // ex: reqeust.post('/yes-way')
-        if (isString(routeOrBody)) {
-          route = routeOrBody as string;
-          options.body = JSON.stringify(body || {})
-          // ex: request.post({ no: 'way' })
-        } else if (isObject(routeOrBody)) {
-          invariant(!body, `If first argument of ${method.toLowerCase()}() is an object, you cannot have a 2nd argument. 😜`)
-          options.body = JSON.stringify(routeOrBody || {})
-        }
-        // GET
-      } else {
-        invariant(!isObject(routeOrBody), 'Cannot pass a request body in a GET request')
-        // ex: request.get('/no?freaking=way')
-        if (isString(routeOrBody)) route = routeOrBody as string
-      }
-
+  const makeFetch = useCallback((method: HTTPMethod): FetchData => {
+    return async (routeOrBody?: string | BodyInit | object, body?: BodyInit | object): Promise<any> => {
+      controller.current = isBrowser ? new AbortController() : null
+      const { route, options } = makeRouteAndOptions(requestInit, method, controller, routeOrBody, body)
       try {
         setLoading(true)
-        const response = await fetch(`${url}${route}`, {
-          method,
-          ...context.options,
-          ...options,
-        })
-        let data = null
+        const response = await fetch(`${url}${route}`, options)
         try {
-          data = await response.json()
+          data.current = await response.json()
         } catch (err) {
-          data = await response.text()
+          data.current = await response.text() as any // FIXME: should not be `any` type
         }
-        setData(data)
       } catch (err) {
         if (err.name !== 'AbortError') setError(err)
       } finally {
         controller.current = null
         setLoading(false)
       }
-      return data
+      return data.current
     }
-
-    return doFetch
-  }, [url])
+  }, [url, isBrowser, requestInit])
 
   const get = useCallback(makeFetch(HTTPMethod.GET), [])
   const post = useCallback(makeFetch(HTTPMethod.POST), [])
   const patch = useCallback(makeFetch(HTTPMethod.PATCH), [])
   const put = useCallback(makeFetch(HTTPMethod.PUT), [])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [])
-  const query = useCallback((query: string, variables?: object) => post({ query, variables }), [])
-  const mutate = useCallback((mutation: string, variables?: object) => post({ mutation, variables }), [])
+  const query = useCallback((query: string, variables?: BodyInit | object): Promise<any> => post({ query, variables }), [post])
+  const mutate = useCallback((mutation: string, variables?: BodyInit | object): Promise<any> => post({ mutation, variables }), [post])
 
-  const abort = useCallback(() => {
-    controller.current && controller.current.abort()
-  }, [])
+  const abort = useCallback((): void => { controller.current && controller.current.abort() }, [])
 
-  const request: FetchCommands = useMemo(() => ({ get, post, patch, put, del, delete: del, abort, query, mutate }), [])
+  const request = useMemo(
+    (): FetchCommands => ({ get, post, patch, put, del, delete: del, abort, query, mutate }),
+    [/*get, post, patch, put, del, abort, query, mutate*/]
+  )
 
   // handling onMount
   useEffect(() => {
-    if (!onMount) {
-      return;
-    }
-    const methodName = options.method || HTTPMethod.GET;
-    // const methodName = ((options.method || '') || HTTPMethod.GET).toUpperCase() as keyof FetchCommands
+    if (!onMount) return
+    const methodName = requestInit.method || HTTPMethod.GET;
     if (!!url && methodName !== HTTPMethod.GET) {
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as RouteAndBodyOnly
-      req(url, options.body as BodyInit)
+      req(url, requestInit.body as BodyInit)
     } else if (!url && methodName !== HTTPMethod.GET as string) {
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as BodyOnly
-      req(options.body as BodyInit)
+      req(requestInit.body as BodyInit)
     } else if (!!url) {
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as RouteOnly
       req(url)
@@ -134,11 +83,11 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as NoArgs
       req()
     }
-  }, [])
+  }, [/*onMount, requestInit.body, requestInit.method, request, url*/])
 
   return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(
-    [data, loading, error, request],
-    { data, loading, error, request, ...request }
+    [data.current, loading, error, request],
+    { data: data.current, loading, error, request, ...request }
   )
 }
 
