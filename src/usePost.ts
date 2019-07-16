@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext } from 'react'
 import useFetch, { FetchContext } from '.'
-import { HTTPMethod, Options, UseFetchBaseResult } from './types'
+import { HTTPMethod, NoUrlOptions, UseFetchBaseResult } from './types'
 import { useURLRequiredInvariant } from './utils'
 
-type ArrayDestructure<TData = any> = [TData | undefined, boolean, Error, (variables?: object) => Promise<any>]
+type ArrayDestructure<TData = any> = [TData | undefined, boolean, Error, (variables?: BodyInit) => Promise<any>]
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
-  post: (variables?: object) => Promise<any>
+  post: (variables?: BodyInit) => Promise<any>
 }
 type UsePost = ArrayDestructure & ObjectDestructure
 
-export const usePost = <TData = any>(url?: string, options?: Omit<Options, 'url'>): UsePost => {
+export const usePost = <TData = any>(url?: string, options?: NoUrlOptions): UsePost => {
   const context = useContext(FetchContext)
 
   useURLRequiredInvariant(!!url || !!context.url, 'usePost')

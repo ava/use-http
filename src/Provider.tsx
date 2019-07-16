@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useMemo, ReactElement } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
+import { FetchContextTypes } from './types'
 
-interface ProviderDefaults {
-  url?: string
-  options?: RequestInit
-  graphql?: boolean
-}
-
-interface FetchProviderProps extends ProviderDefaults {
+interface FetchProviderProps extends FetchContextTypes {
   children: ReactElement
 }
 
@@ -21,7 +16,7 @@ export const Provider = ({ url, options, graphql = false, children }: FetchProvi
   }, [url, isBrowser])
 
   const defaults = useMemo(
-    (): ProviderDefaults => ({
+    (): FetchContextTypes => ({
       url: defaultURL,
       options: options || {},
       graphql, // TODO: this will make it so useFetch(QUERY || MUTATION) will work

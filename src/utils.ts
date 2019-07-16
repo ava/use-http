@@ -59,13 +59,20 @@ export function useURLRequiredInvariant(condition: boolean, method: string, opti
   }, [condition, exampleURL, method, optionalMessage])
 }
 
-export const isString = (x: any): boolean => typeof x === 'string' // eslint-disable-line
+export const isString = (x: any): x is string => typeof x === 'string'
 
+/**
+ * Determines if the given param is an object. {}
+ * @param obj
+ */
+export const isObject = (obj: any): obj is object => Object.prototype.toString.call(obj) === '[object Object]'
+
+// TODO: come back and fix the "anys" in this http://bit.ly/2Lm3OLi
 /**
  * Makes an object that will match the standards of a normal fetch's options
  * aka: pulls out all useFetch's special options like "onMount"
  */
-export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInitJSON => {
+export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInit => {
   if (!options) return {}
   const requestInitFields = [
     'body',
@@ -82,14 +89,8 @@ export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInitJSON =
     'signal',
     'window',
   ] as (keyof RequestInitJSON)[]
-  return requestInitFields.reduce((acc: RequestInitJSON, key: keyof RequestInitJSON): RequestInitJSON => {
+  return requestInitFields.reduce((acc: RequestInit, key: keyof RequestInit): RequestInit => {
     if (key in options) acc[key] = options[key]
     return acc
   }, {})
 }
-
-/**
- * Determines if the given param is an object. {}
- * @param obj
- */
-export const isObject = (obj: any): boolean => Object.prototype.toString.call(obj) === '[object Object]' // eslint-disable-line

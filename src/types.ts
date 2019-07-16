@@ -9,19 +9,30 @@ export enum HTTPMethod {
   PUT = 'PUT',
 }
 
-export type BodyOnly = (body: object) => Promise<any>
+export type FetchContextTypes = {
+  url?: string,
+  options?: RequestInit | undefined,
+  graphql?: boolean,
+}
+
+export type BodyOnly = (body: BodyInit | object) => Promise<any>
 export type RouteOnly = (route: string) => Promise<any>
-export type RouteAndBodyOnly = (route: string, body: object) => Promise<any>
+export type RouteAndBodyOnly = (route: string, body: BodyInit | object) => Promise<any>
 export type NoArgs = () => Promise<any>
 // type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
 // type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
-export type FetchData = (routeOrBody?: string | object, body?: object) => Promise<any>
+export type FetchData = (routeOrBody?: string | BodyInit | object, body?: BodyInit | object) => Promise<any>
 
-export interface RequestInitJSON extends RequestInit {
-  headers?: RequestInit['headers'] & {
-    'Content-Type': string
-  }
+export type RequestInitJSON = RequestInit & {
+  headers: {
+    'Content-Type': string,
+  },
 }
+// export interface RequestInitJSON extends RequestInit {
+//   headers: RequestInit['headers'] | {
+//     'Content-Type': string
+//   }
+// }
 
 export interface FetchCommands {
   get: (route?: string) => Promise<any>
@@ -30,8 +41,8 @@ export interface FetchCommands {
   put: FetchData
   del: FetchData
   delete: FetchData
-  query: (query: string, variables?: object) => Promise<any>
-  mutate: (mutation: string, variables?: object) => Promise<any>
+  query: (query: string, variables?: BodyInit | object) => Promise<any>
+  mutate: (mutation: string, variables?: BodyInit | object) => Promise<any>
   abort: () => void
 }
 
@@ -49,13 +60,17 @@ export type UseFetchResult<TData = any> = UseFetchBaseResult<TData> & FetchComma
 
 export type UseFetch<TData> = DestructuringCommands<TData> & UseFetchResult<TData>
 
-export type Options = {
+export type CustomOptions = {
   onMount?: boolean
   timeout?: number
   url: string
-} & RequestInit
+}
 
-export type OptionsMaybeURL = Omit<Options, 'url'> & { url?: string }
+export type Options = CustomOptions & RequestInit
+
+export type NoUrlOptions = Omit<Options, 'url'>
+
+export type OptionsMaybeURL = NoUrlOptions & Partial<Pick<Options, 'url'>> & { url?: string }
 
 // TODO: this is still yet to be implemented
 export type OptionsOverwriteWithContext = (options: Options) => Options

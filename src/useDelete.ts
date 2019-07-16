@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext } from 'react'
 import useFetch, { FetchContext } from '.'
-import { HTTPMethod, Options, UseFetchBaseResult } from './types'
+import { HTTPMethod, NoUrlOptions, UseFetchBaseResult } from './types'
 import { useURLRequiredInvariant } from './utils'
 
-type ArrayDestructure<TData = any> = [TData | undefined, boolean, Error, (variables?: object) => Promise<any>]
+type ArrayDestructure<TData = any> = [TData | undefined, boolean, Error, (variables?: BodyInit) => Promise<any>]
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
-  delete: (variables?: object) => Promise<any>
-  del: (variables?: object) => Promise<any>
+  delete: (variables?: BodyInit) => Promise<any>
+  del: (variables?: BodyInit) => Promise<any>
 }
 type UseDelete = ArrayDestructure & ObjectDestructure
 
-export const useDelete = <TData = any>(url?: string, options?: Omit<Options, 'url'>): UseDelete => {
+export const useDelete = <TData = any>(url?: string, options?: NoUrlOptions): UseDelete => {
   const context = useContext(FetchContext)
 
   useURLRequiredInvariant(!!url || !!context.url, 'useDelete')

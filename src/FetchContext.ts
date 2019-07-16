@@ -1,11 +1,5 @@
 import { createContext } from 'react'
-
-
-interface FetchContextTypes {
-  url?: string
-  options?: RequestInit | undefined
-  graphql?: boolean
-}
+import { FetchContextTypes } from "./types";
 
 export const FetchContext = createContext<FetchContextTypes>({
   url: typeof window !== 'undefined' ? window.location.origin : '',
