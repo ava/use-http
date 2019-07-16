@@ -1,29 +1,27 @@
-import React, { useState, useEffect, useMemo, ReactNode } from 'react'
+import React, { useState, useEffect, useMemo, ReactElement } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
+import { FetchContextTypes } from './types'
 
-interface FetchProviderProps {
-  url?: string,
-  options?: RequestInit,
-  children: ReactNode,
-  graphql?: boolean,
+interface FetchProviderProps extends FetchContextTypes {
+  children: ReactElement
 }
 
-export const Provider = ({ url, options, graphql = false, children }: FetchProviderProps) => {
+export const Provider = ({ url, options, graphql = false, children }: FetchProviderProps): ReactElement => {
   const { isBrowser } = useSSR()
   const [defaultURL, setURL] = useState(url || '')
 
-  useEffect(() => {
+  useEffect((): void => {
     if (isBrowser && !url) setURL(window.location.origin)
   }, [url, isBrowser])
 
   const defaults = useMemo(
-    () => ({
+    (): FetchContextTypes => ({
       url: defaultURL,
       options: options || {},
       graphql, // TODO: this will make it so useFetch(QUERY || MUTATION) will work
     }),
-    [url, options, graphql],
+    [options, graphql, defaultURL],
   )
 
   return (

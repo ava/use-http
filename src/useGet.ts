@@ -1,9 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext } from 'react'
 import useFetch, { FetchContext } from '.'
-import { HTTPMethod, Options } from './types'
+import { HTTPMethod, NoUrlOptions, UseFetchBaseResult } from './types'
 import { useURLRequiredInvariant } from './utils'
 
-export const useGet = <TData = any>(url?: string, options?: Omit<Options, 'url'>) => {
+type ArrayDestructure<TData = any> = [TData | undefined, boolean, Error, (route?: string) => Promise<any>]
+interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
+  get: (route?: string) => Promise<any>
+}
+type UseGet = ArrayDestructure & ObjectDestructure
+
+export const useGet = <TData = any>(url?: string, options?: NoUrlOptions): UseGet => {
   const context = useContext(FetchContext)
 
   useURLRequiredInvariant(!!url || !!context.url, 'useGet')
@@ -12,5 +19,8 @@ export const useGet = <TData = any>(url?: string, options?: Omit<Options, 'url'>
     method: HTTPMethod.GET,
     ...options
   })
-  return Object.assign([data, loading, error, get], { data, loading, error, get })
+  return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
+    [data, loading, error, get],
+    { data, loading, error, get }
+  )
 }
