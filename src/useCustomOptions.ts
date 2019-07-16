@@ -19,8 +19,6 @@ export default function useCustomOptions(urlOrOptions?: string | OptionsMaybeURL
   const context = useContext(FetchContext)
   invariant(!(isObject(urlOrOptions) && isObject(optionsNoURLs)), 'You cannot have a 2nd parameter of useFetch when your first argument is an object config.')
 
-  console.log('URL OR OPTIONS: ', urlOrOptions)
-  console.log('CONTEXT.URL: ', context.url)
   const url = useMemo((): string => {
     if (isString(urlOrOptions) && urlOrOptions) return urlOrOptions as string
     if (isObject(urlOrOptions) && !!urlOrOptions.url) return urlOrOptions.url

@@ -20,7 +20,6 @@ describe('useCustomOptions: general usages', (): void => {
   })
 
   it('should create custom options handling Provider/Context properly', (): void => {
-    // see: https://react-hooks-testing-library.com/usage/advanced-hooks
     const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
       <Provider url='https://example.com'>{children as ReactElement}</Provider>
     )
