@@ -1,8 +1,9 @@
+// import React, { ReactElement, FunctionComponent, PropsWithChildren } from 'react'
 import { renderHook } from '@testing-library/react-hooks'
 import useCustomOptions from '../useCustomOptions'
-// import { makeConfig } from "../makeConfig";
+// import { Provider } from '..'
 
-describe.only('use-http useCustomOptions', () => {
+describe('use-http useCustomOptions', () => {
   // should ERROR
   // useCustomOptions('https://example.com', 'https://example.com') // 1st + 2nd arg string
   // it('should not allow 1st + 2nd arg to be a string', () => {
@@ -21,7 +22,7 @@ describe.only('use-http useCustomOptions', () => {
   // useCustomOptions({}) // no url is set in request init object
 
   // should PASS
-  it('should create custom options: onMount: true', () => {
+  it('should create custom options', () => {
     var { result } = renderHook(() => useCustomOptions(''))
     expect(result.current).toEqual({ url: '', onMount: false })
     var { result } = renderHook(() => useCustomOptions('http://example.com'))
@@ -31,6 +32,14 @@ describe.only('use-http useCustomOptions', () => {
       onMount: true
     }))
     expect(result.current).toEqual({ url: 'http://example.com', onMount: true })
+  })
+
+  it('should create custom options handling Provider/Context properly', () => {
+    // see: https://react-hooks-testing-library.com/usage/advanced-hooks
+    // const wrapper: FunctionComponent<PropsWithChildren> = ({ children }): ReactElement => (
+    //   <Provider url='https://example.com'>{children}</Provider>
+    // ) as 
+    // var { result } = renderHook(() => useCustomOptions(), { wrapper })
   })
   // it('should create config from a single url argument', () => {
   //   const config = makeConfig({}, "http://blah.com")
