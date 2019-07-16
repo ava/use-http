@@ -63,7 +63,7 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
 
   const request = useMemo(
     (): FetchCommands => ({ get, post, patch, put, del, delete: del, abort, query, mutate }),
-    [/*get, post, patch, put, del, abort, query, mutate*/]
+    [get, post, patch, put, del, abort, query, mutate]
   )
 
   // handling onMount
@@ -83,7 +83,7 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as NoArgs
       req()
     }
-  }, [/*onMount, requestInit.body, requestInit.method, request, url*/])
+  }, [onMount, requestInit.body, requestInit.method, request, url])
 
   return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(
     [data.current, loading, error, request],
