@@ -1,75 +1,75 @@
-// import React, { ReactElement, FunctionComponent, PropsWithChildren } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook } from '@testing-library/react-hooks'
 import useCustomOptions from '../useCustomOptions'
-// import { Provider } from '..'
+import { ReactElement, ReactNode } from 'react'
+import { Provider } from '..'
+import React from 'react'
 
-describe('use-http useCustomOptions', () => {
-  // should ERROR
-  // useCustomOptions('https://example.com', 'https://example.com') // 1st + 2nd arg string
-  // it('should not allow 1st + 2nd arg to be a string', () => {
-  //   let result
-  //   try {
-  //     let res = renderHook(() => useCustomOptions('https://example.com', 'https://example.com'))
-  //     result = res.result
-  //   } catch(err) {
-  //     console.log('ERR: ', err)
-  //   }
-  //   console.log('RES: ', result)
-  // })
-  // useCustomOptions({}, 'https://example.com') // 2nd arg is string
-  // useCustomOptions() // no url string is set and no Provider
-  // useCustomOptions({}, {}) // both should not be objects
-  // useCustomOptions({}) // no url is set in request init object
-
-  // should PASS
-  it('should create custom options', () => {
-    var { result } = renderHook(() => useCustomOptions(''))
-    expect(result.current).toEqual({ url: '', onMount: false })
-    var { result } = renderHook(() => useCustomOptions('http://example.com'))
+describe('useCustomOptions: general usages', (): void => {
+  it('should create custom options with `onMount: false` by default', (): void => {
+    var { result } = renderHook((): any => useCustomOptions('http://example.com'))
     expect(result.current).toEqual({ url: 'http://example.com', onMount: false })
-    var { result } = renderHook(() => useCustomOptions({
+  })
+
+  it('should create custom options with 1st arg as config object with `onMount: true`', (): void => {
+    var { result } = renderHook((): any => useCustomOptions({
       url: 'http://example.com',
       onMount: true
     }))
     expect(result.current).toEqual({ url: 'http://example.com', onMount: true })
   })
 
-  it('should create custom options handling Provider/Context properly', () => {
-    // see: https://react-hooks-testing-library.com/usage/advanced-hooks
-    // const wrapper: FunctionComponent<PropsWithChildren> = ({ children }): ReactElement => (
-    //   <Provider url='https://example.com'>{children}</Provider>
-    // ) as 
-    // var { result } = renderHook(() => useCustomOptions(), { wrapper })
+  it('should create custom options handling Provider/Context properly', (): void => {
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+      <Provider url='https://example.com'>{children as ReactElement}</Provider>
+    )
+    const { result } = renderHook((): any => useCustomOptions(), { wrapper })
+    expect(result.current).toStrictEqual({ url: 'https://example.com', onMount: false })
   })
-  // it('should create config from a single url argument', () => {
-  //   const config = makeConfig({}, "http://blah.com")
 
-  //   expect(config).toEqual({ onMount: false, url: "http://blah.com", headers: { 'Content-Type': 'application/json' } })
-  // });
+  it('should overwrite `url` that is set in Provider/Context properly', (): void => {
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+      <Provider url='https://example.com'>{children as ReactElement}</Provider>
+    )
+    const { result } = renderHook((): any => useCustomOptions('https://cool.com', { onMount: true }), { wrapper })
+    expect(result.current).toStrictEqual({ url: 'https://cool.com', onMount: true })
+  })
+})
 
-  // it('should create a config object from an options object', () => {
-  //   const config = makeConfig({}, { url: "http://blah.com" })
+describe('useCustomOptions: Errors', (): void => {
+  it('should error if no url string is set and no Provider is in place', (): void => {
+    const { result } = renderHook((): any => useCustomOptions())
+    expect(result.error.name).toBe('Invariant Violation')
+    expect(result.error.message).toBe('The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+  })
 
-  //   expect(config).toEqual({ onMount: false, url: "http://blah.com", headers: { 'Content-Type': 'application/json' } })
-  // })
+  it('should error if 1st arg is object and no URL field is set in it', (): void => {
+    const { result } = renderHook((): any => useCustomOptions({}))
+    expect(result.error.name).toBe('Invariant Violation')
+    expect(result.error.message).toBe('The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+  })
 
-  // it('should set onMount true', () => {
-  //   const config1 = makeConfig({}, "http://blah.com", { onMount: true })
+  it('should error if no URL is specified', (): void => {
+    const { result } = renderHook((): any => useCustomOptions(''))
+    expect(result.error.name).toBe('Invariant Violation')
+    expect(result.error.message).toBe('The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+  })
 
-  //   expect(config1).toEqual({ onMount: true, url: "http://blah.com", headers: { 'Content-Type': 'application/json' } })
+  it('should error if 1st and 2nd arg are both objects', (): void => {
+    const { result } = renderHook((): any => useCustomOptions({}, {}))
+    expect(result.error.name).toBe('Invariant Violation')
+    expect(result.error.message).toBe('You cannot have a 2nd parameter of useFetch when your first argument is an object config.')
+  })
 
-  //   const config2 = makeConfig({}, { url: "http://blah.com", onMount: true })
+  it('should error if 1st and 2nd arg are both strings', (): void => {
+    // const { result } = renderHook((): any => useCustomOptions('http://example.com', '?cool=sweet'))
+    // expect(result.error.name).toBe('Invariant Violation')
+    // expect(result.error.message).toBe('You cannot have a 2nd parameter of useFetch when your first argument is an object config.')
+  })
 
-  //   expect(config2).toEqual({ onMount: true, url: "http://blah.com", headers: { 'Content-Type': 'application/json' } })
-  // })
-
-  // it('should set headers', () => {
-  //   const config1 = makeConfig({}, "http://blah.com", { headers: { 'Content-Type': 'multipart/form-data' } })
-
-  //   expect(config1).toEqual({ onMount: false, url: "http://blah.com", headers: { 'Content-Type': 'multipart/form-data' } })
-
-  //   const config2 = makeConfig({}, { url: "http://blah.com", onMount: false, headers: { 'Content-Type': 'multipart/form-data' } })
-
-  //   expect(config2).toEqual({ onMount: false, url: "http://blah.com", headers: { 'Content-Type': 'multipart/form-data' } })
-  // });
+  it('should error if 1st arg is object and 2nd arg is string', (): void => {
+    // const { result } = renderHook((): any => useCustomOptions({}, '?cool=sweet'))
+    // expect(result.error.name).toBe('Invariant Violation')
+    // expect(result.error.message).toBe('You cannot have a 2nd parameter of useFetch when your first argument is an object config.')
+  })
 });
