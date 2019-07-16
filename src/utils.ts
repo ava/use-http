@@ -1,56 +1,7 @@
 import { useMemo, useEffect } from 'react'
 import useSSR from 'use-ssr'
 
-export const useExampleURL = (): string => {
-  const { isBrowser } = useSSR()
-  return useMemo(
-    () => (isBrowser ? window.location.origin : 'https://example.com'),
-    [isBrowser],
-  )
-}
-
-/**
- * Used for error checking. If the condition is false, throw an error
- */
-export function invariant(
-  condition: boolean,
-  format: string,
-  a: string = '',
-  b: string = '',
-  c: string = '',
-  d: string = '',
-  e: string = '',
-  f: string = '',
-): void {
-  if (process.env.NODE_ENV !== 'production') {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument')
-    }
-  }
-
-  if (!condition) {
-    let error
-    if (format === undefined) {
-      error = new Error(
-        'Minified exception occurred; use the non-minified dev environment ' +
-          'for the full error message and additional helpful warnings.',
-      )
-    } else {
-      const args = [a, b, c, d, e, f]
-      let argIndex = 0
-      error = new Error(format.replace(/%s/g, () => args[argIndex++]))
-      error.name = 'Invariant Violation'
-    }
-
-    throw error
-  }
-}
-
-export function useURLRequiredInvariant(
-  condition: boolean,
-  method: string,
-  optionalMessage?: string,
-): void {
+export function useURLRequiredInvariant(condition: boolean, method: string, optionalMessage?: string): void {
   const exampleURL = useExampleURL()
   useEffect(() => {
     invariant(
@@ -58,12 +9,17 @@ export function useURLRequiredInvariant(
       `${method} requires a URL to be set as the 1st argument,\n
       unless you wrap your app like:\n
       <Provider url="${exampleURL}"><App /></Provider>\n
-      ${optionalMessage}`,
+      ${optionalMessage}`
     )
-  }, [condition, exampleURL, method, optionalMessage])
+  }, [])
 }
 
-export const isString = (x: any) => typeof x === 'string'
+export const useExampleURL = (): string => {
+  const { isBrowser } = useSSR()
+  return useMemo(() => isBrowser ? window.location.origin : 'https://example.com', [isBrowser])
+}
+
+export const isString = (x: any): x is string => typeof x === 'string'
 
 // TODO: come back and fix the "anys" in this http://bit.ly/2Lm3OLi
 /**
@@ -98,5 +54,43 @@ export const pullOutRequestInit = (options?: {}): RequestInit => {
  * Determines if the given param is an object. {}
  * @param obj
  */
-export const isObject = (obj: any) =>
-  Object.prototype.toString.call(obj) === '[object Object]'
+export const isObject = (obj: any): obj is object => Object.prototype.toString.call(obj) === '[object Object]'
+
+/**
+ * Used for error checking. If the condition is false, throw an error
+ */
+export function invariant(
+  condition: boolean,
+  format: string,
+  a: string = '',
+  b: string = '',
+  c: string = '',
+  d: string = '',
+  e: string = '',
+  f: string = '',
+): void {
+  if (process.env.NODE_ENV !== 'production') {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument')
+    }
+  }
+
+  if (!condition) {
+    var error
+    if (format === undefined) {
+      error = new Error(
+        'Minified exception occurred; use the non-minified dev environment ' +
+        'for the full error message and additional helpful warnings.'
+      )
+    } else {
+      var args = [a, b, c, d, e, f]
+      var argIndex = 0
+      error = new Error(
+        format.replace(/%s/g, () => args[argIndex++])
+      )
+      error.name = 'Invariant Violation'
+    }
+
+    throw error
+  }
+}
