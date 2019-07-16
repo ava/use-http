@@ -1,15 +1,15 @@
-import { HTTPMethod, RequestInitJSON } from './types'
+import { HTTPMethod } from './types'
 import { isObject, invariant } from "./utils"
 import { MutableRefObject } from 'react'
 import { isString } from 'util';
 
-type RouteAndOptions = {
-  route: string,
-  options: RequestInit,
+interface RouteAndOptions {
+  route: string
+  options: RequestInit
 }
 
 export default function makeRouteAndOptions(
-  initialOptions: RequestInitJSON,
+  initialOptions: RequestInit,
   method: HTTPMethod,
   controller: MutableRefObject<AbortController | null | undefined>,
   routeOrBody?: string | BodyInit | object,
@@ -19,24 +19,30 @@ export default function makeRouteAndOptions(
   invariant(!(method === HTTPMethod.GET && isObject(routeOrBody)), `You can only have query params as 1st argument of request.get()`)
   invariant(!(method === HTTPMethod.GET && bodyAs2ndParam !== undefined), `You can only have query params as 1st argument of request.get()`)
 
-  const route = (() => {
+  const route = ((): string => {
     if (routeOrBody instanceof URLSearchParams) return `?${routeOrBody}`
     if (isString(routeOrBody)) return routeOrBody as string
     return ''
   })()
 
-  const body = (() => {
+  const body = ((): string => {
     if (isObject(routeOrBody)) return JSON.stringify(routeOrBody)
     if (isObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
     return JSON.stringify({})
   })()
 
   const options = ((): RequestInit => {
-    const opts: RequestInitJSON = {
+    const opts = {
       ...initialOptions,
       body,
       method,
       signal: controller.current ? controller.current.signal : null,
+      headers: {
+        // default content types http://bit.ly/2N2ovOZ
+        // Accept: 'application/json', 
+        'Content-Type': 'application/json',
+        ...initialOptions.headers,
+      }
     }
     if (
       routeOrBody instanceof URLSearchParams ||

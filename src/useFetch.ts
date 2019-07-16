@@ -67,7 +67,7 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
   )
 
   // handling onMount
-  useEffect(() => {
+  useEffect((): void => {
     if (!onMount) return
     const methodName = requestInit.method || HTTPMethod.GET;
     if (!!url && methodName !== HTTPMethod.GET) {
@@ -76,7 +76,7 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
     } else if (!url && methodName !== HTTPMethod.GET as string) {
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as BodyOnly
       req(requestInit.body as BodyInit)
-    } else if (!!url) {
+    } else if (url) {
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as RouteOnly
       req(url)
     } else {

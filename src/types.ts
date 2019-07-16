@@ -9,10 +9,10 @@ export enum HTTPMethod {
   PUT = 'PUT',
 }
 
-export type FetchContextTypes = {
-  url?: string,
-  options?: RequestInit | undefined,
-  graphql?: boolean,
+export interface FetchContextTypes {
+  url?: string
+  options?: RequestInit | undefined
+  graphql?: boolean
 }
 
 export type BodyOnly = (body: BodyInit | object) => Promise<any>
@@ -25,14 +25,9 @@ export type FetchData = (routeOrBody?: string | BodyInit | object, body?: BodyIn
 
 export type RequestInitJSON = RequestInit & {
   headers: {
-    'Content-Type': string,
-  },
+    'Content-Type': string
+  }
 }
-// export interface RequestInitJSON extends RequestInit {
-//   headers: RequestInit['headers'] | {
-//     'Content-Type': string
-//   }
-// }
 
 export interface FetchCommands {
   get: (route?: string) => Promise<any>
@@ -60,7 +55,7 @@ export type UseFetchResult<TData = any> = UseFetchBaseResult<TData> & FetchComma
 
 export type UseFetch<TData> = DestructuringCommands<TData> & UseFetchResult<TData>
 
-export type CustomOptions = {
+export interface CustomOptions {
   onMount?: boolean
   timeout?: number
   url: string
