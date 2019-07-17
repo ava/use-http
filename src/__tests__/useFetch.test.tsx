@@ -310,16 +310,14 @@ describe('useFetch - SERVER & BROWSER - basic usage', (): void => {
     }]))
     const { result: request, waitForNextUpdate } = renderHook(() => useFetch('https://example.com'))
 
-    let todos: {title: number}[] = []
+    // let todos: {title: number}[] = []
     const getTodos = async () => {
-      todos = await request.current.get('/todos')
+      /* todos = */ await request.current.get('/todos')
     }
     act(() => {
       getTodos()
     })
     await waitForNextUpdate()
-    console.log('TODOS: ', todos)
-    // expect(request.current.data).toBe([{ todo: 1 }, { todo: 2 }])
-    // console.log('REQ: ', request.current)
+    // console.log('TODOS: ', todos)
   })
 })
