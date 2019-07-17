@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import makeRouteAndOptions from '../makeRouteAndOptions'
-import { HTTPMethod } from '../types';
-import { useRef } from 'react';
+import { HTTPMethod } from '../types'
+import { useRef } from 'react'
 
 describe('makeRouteAndOptions: general usages', (): void => {
   it('should be defined', (): void => {
@@ -18,4 +18,4 @@ describe('makeRouteAndOptions: Errors', (): void => {
       makeRouteAndOptions({}, HTTPMethod.GET, controller, {}, {})
     }).toThrow(Error)
   })
-});
+})

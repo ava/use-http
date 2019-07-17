@@ -12,14 +12,20 @@ export interface PersonViewProps {
   error: Error
 }
 
-export const PersonView = ({ id = 'person', person, loading, error }: PersonViewProps): ReactElement =>
+export const PersonView = ({
+  id = 'person',
+  person,
+  loading,
+  error,
+}: PersonViewProps): ReactElement => (
   <>
     {loading && <div data-testid="loading">loading...</div>}
     {error && <div data-testid="error">{error.message}</div>}
-    {person &&
+    {person && (
       <div>
         <div data-testid={`${id}-name`}>{person.name}</div>
         <div data-testid={`${id}-age`}>{person.age}</div>
       </div>
-    }
+    )}
   </>
+)

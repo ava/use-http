@@ -17,11 +17,17 @@ export interface FetchContextTypes {
 
 export type BodyOnly = (body: BodyInit | object) => Promise<any>
 export type RouteOnly = (route: string) => Promise<any>
-export type RouteAndBodyOnly = (route: string, body: BodyInit | object) => Promise<any>
+export type RouteAndBodyOnly = (
+  route: string,
+  body: BodyInit | object,
+) => Promise<any>
 export type NoArgs = () => Promise<any>
 // type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
 // type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
-export type FetchData = (routeOrBody?: string | BodyInit | object, body?: BodyInit | object) => Promise<any>
+export type FetchData = (
+  routeOrBody?: string | BodyInit | object,
+  body?: BodyInit | object,
+) => Promise<any>
 
 export type RequestInitJSON = RequestInit & {
   headers: {
@@ -41,7 +47,12 @@ export interface FetchCommands {
   abort: () => void
 }
 
-export type DestructuringCommands<TData = any> = [TData | undefined, boolean, any, FetchCommands]
+export type DestructuringCommands<TData = any> = [
+  TData | undefined,
+  boolean,
+  any,
+  FetchCommands,
+]
 
 export interface UseFetchBaseResult<TData = any> {
   data: TData | undefined
@@ -49,11 +60,13 @@ export interface UseFetchBaseResult<TData = any> {
   error: Error
 }
 
-export type UseFetchResult<TData = any> = UseFetchBaseResult<TData> & FetchCommands & {
-  request: FetchCommands
-}
+export type UseFetchResult<TData = any> = UseFetchBaseResult<TData> &
+  FetchCommands & {
+    request: FetchCommands
+  }
 
-export type UseFetch<TData> = DestructuringCommands<TData> & UseFetchResult<TData>
+export type UseFetch<TData> = DestructuringCommands<TData> &
+  UseFetchResult<TData>
 
 export interface CustomOptions {
   onMount?: boolean
@@ -66,7 +79,8 @@ export type Options = CustomOptions & Omit<RequestInit, 'body'> & { body?: BodyI
 
 export type NoUrlOptions = Omit<Options, 'url'>
 
-export type OptionsMaybeURL = NoUrlOptions & Partial<Pick<Options, 'url'>> & { url?: string }
+export type OptionsMaybeURL = NoUrlOptions &
+  Partial<Pick<Options, 'url'>> & { url?: string }
 
 // TODO: this is still yet to be implemented
 export type OptionsOverwriteWithContext = (options: Options) => Options

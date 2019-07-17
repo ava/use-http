@@ -7,7 +7,7 @@ import {
   // waitForElement
 } from '@testing-library/react'
 
-import { FetchMock } from "jest-fetch-mock"
+import { FetchMock } from 'jest-fetch-mock'
 
 const fetch = global.fetch as FetchMock
 
@@ -52,9 +52,9 @@ const fetch = global.fetch as FetchMock
 //   )
 // }
 
-describe("useGet", (): void => {
+describe('useGet', (): void => {
   it('should define useGet', (): void => {
-    expect(typeof useGet).toBe("function")
+    expect(typeof useGet).toBe('function')
   })
 
   afterEach((): void => {
@@ -63,17 +63,23 @@ describe("useGet", (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(JSON.stringify({
-      name: "Joe Bloggs",
-      age: 48
-    }))
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
   })
 
-  it('should execute GET command with object destructuring', async (): Promise<void> => {
-    fetch.mockResponseOnce(JSON.stringify({
-      name: "Joe Bloggs",
-      age: 48
-    }))
+  it('should execute GET command with object destructuring', async (): Promise<
+    void
+  > => {
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
 
     // const { getAllByTestId } = render(<ObjectDestructuringApp />)
 
@@ -83,11 +89,15 @@ describe("useGet", (): void => {
     // expect(els[1].innerHTML).toBe("48")
   })
 
-  it('should execute GET command with arrray destructuring', async (): Promise<void> => {
-    fetch.mockResponseOnce(JSON.stringify({
-      name: "Joe Bloggs",
-      age: 48
-    }))
+  it('should execute GET command with arrray destructuring', async (): Promise<
+    void
+  > => {
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
 
     // const { getAllByTestId } = render(<ArrayDestructuringApp />)
 

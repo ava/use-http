@@ -32,7 +32,7 @@ import { useQuery } from '..'
  */
 describe('useQuery - general', (): void => {
   it('should be defined/exist when imported', (): void => {
-    expect(typeof useQuery).toBe("function")
+    expect(typeof useQuery).toBe('function')
   })
   console.log('TODO: useQuery')
 })

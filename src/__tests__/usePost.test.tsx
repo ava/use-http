@@ -26,7 +26,7 @@ const ObjectDestructuringApp = (): ReactElement => {
 
 describe('usePost - general', (): void => {
   it('should be defined/exist when imported', (): void => {
-    expect(typeof usePost).toBe("function")
+    expect(typeof usePost).toBe('function')
   })
 
   it('BROWSER: can be used without crashing', async (): Promise<void> => {

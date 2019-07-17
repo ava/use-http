@@ -4,13 +4,21 @@ import { HTTPMethod, NoUrlOptions, UseFetchBaseResult, OptionsMaybeURL } from '.
 import useCustomOptions from './useCustomOptions';
 import useRequestInit from './useRequestInit';
 
-type ArrayDestructure<TData = any> = [TData | undefined, boolean, Error, (variables?: BodyInit) => Promise<any>]
+type ArrayDestructure<TData = any> = [
+  TData | undefined,
+  boolean,
+  Error,
+  (variables?: BodyInit | object) => Promise<any>,
+]
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
-  patch: (variables?: BodyInit) => Promise<any>
+  patch: (variables?: BodyInit | object) => Promise<any>
 }
 type UsePatch = ArrayDestructure & ObjectDestructure
 
-export const usePatch = <TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): UsePatch => {
+export const usePatch = <TData = any>(
+  urlOrOptions?: string | OptionsMaybeURL,
+  optionsNoURLs?: NoUrlOptions
+): UsePatch => {
   const customOptions = useCustomOptions(urlOrOptions, optionsNoURLs)
   const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
@@ -21,6 +29,6 @@ export const usePatch = <TData = any>(urlOrOptions?: string | OptionsMaybeURL, o
   })
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
     [data, loading, error, patch],
-    { data, loading, error, patch }
+    { data, loading, error, patch },
   )
 }

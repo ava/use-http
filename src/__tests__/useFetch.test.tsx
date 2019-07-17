@@ -2,53 +2,56 @@
 import React, { useEffect, useState, useCallback, ReactElement } from 'react'
 import { useFetch, Provider } from '..'
 import ReactDOM from 'react-dom'
-import { render, cleanup, waitForElement, RenderResult, fireEvent } from '@testing-library/react'
+import {
+  render,
+  cleanup,
+  waitForElement,
+  RenderResult,
+  fireEvent,
+} from '@testing-library/react'
 import { isServer, isBrowser } from '../utils'
 import { PersonView, Person } from './test-utils'
 // import * as reactTest from '@testing-library/react'
 // console.log('REACT TEST: ', reactTest)
 
-import { FetchMock } from "jest-fetch-mock"
+import { FetchMock } from 'jest-fetch-mock'
 
 const fetch = global.fetch as FetchMock
 
-import * as testUtilsDOM from "react-dom/test-utils"
+import * as testUtilsDOM from 'react-dom/test-utils'
 // import { act, renderHook } from '@testing-library/react-hooks';
 
 const ObjectDestructuringApp = (): ReactElement => {
-  const { loading, data, error } = useFetch<Person>('https://example.com', { onMount: true })
+  const { loading, data, error } = useFetch<Person>('https://example.com', {
+    onMount: true,
+  })
 
-  return (
-    <PersonView person={data} loading={loading} error={error} />
-  )
+  return <PersonView person={data} loading={loading} error={error} />
 }
 
 const ArrayDestructuringApp = (): ReactElement => {
-  const [person, isLoading, anError] = useFetch<Person>('https://example.com', { onMount: true })
+  const [person, isLoading, anError] = useFetch<Person>('https://example.com', {
+    onMount: true,
+  })
 
-  return (
-    <PersonView person={person} loading={isLoading} error={anError} />
-  )
+  return <PersonView person={person} loading={isLoading} error={anError} />
 }
 
 describe('useFetch - general', (): void => {
-  it('should be defined/exist when imported', (): void => {
-    expect(typeof useFetch).toBe("function")
-  })
+  it('should be defined/exist when imported', (): void => {})
 
   it('BROWSER: can be used without crashing', async (): Promise<void> => {
     if (isServer) return
 
-    const div = document.createElement("div")
+    const div = document.createElement('div')
 
     testUtilsDOM.act((): void => {
       ReactDOM.render(<ObjectDestructuringApp />, div)
     })
   })
-
 })
 
-describe("useFetch - BROWSER - basic functionality", (): void => {
+describe('useFetch - BROWSER - basic functionality', (): void => {
   if (isServer) return
 
   afterEach((): void => {
@@ -57,31 +60,40 @@ describe("useFetch - BROWSER - basic functionality", (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(JSON.stringify({
-      name: "Joe Bloggs",
-      age: 48
-    }))
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
   })
 
-  it('should execute GET command with object destructuring', async (): Promise<void> => {
+  it('should execute GET command with object destructuring', async (): Promise<
+    void
+  > => {
     const { getAllByTestId } = render(<ObjectDestructuringApp />)
 
-    const els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-/))
+    const els = await waitForElement((): HTMLElement[] =>
+      getAllByTestId(/^person-/),
+    )
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs")
-    expect(els[1].innerHTML).toBe("48")
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
   })
 
-  it('should execute GET command with arrray destructuring', async (): Promise<void> => {
+  it('should execute GET command with arrray destructuring', async (): Promise<
+    void
+  > => {
     const { getAllByTestId } = render(<ArrayDestructuringApp />)
 
-    const els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-/))
+    const els = await waitForElement((): HTMLElement[] =>
+      getAllByTestId(/^person-/),
+    )
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs")
-    expect(els[1].innerHTML).toBe("48")
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
   })
 })
-
 
 // Provider Tests =================================================
 /**
@@ -108,7 +120,9 @@ describe("useFetch - BROWSER - basic functionality", (): void => {
  */
 const NoURLOnMountTest = (): ReactElement => {
   const [person, loading, error] = useFetch({ onMount: true })
-  return <PersonView id='person-1' person={person} loading={loading} error={error} />
+  return (
+    <PersonView id="person-1" person={person} loading={loading} error={error} />
+  )
 }
 
 const NoURLGetUseEffect = (): ReactElement => {
@@ -116,7 +130,9 @@ const NoURLGetUseEffect = (): ReactElement => {
   useEffect((): void => {
     request.get()
   }, [request])
-  return <PersonView id='person-2' person={person} loading={loading} error={error} />
+  return (
+    <PersonView id="person-2" person={person} loading={loading} error={error} />
+  )
 }
 
 const NoURLGetUseEffectRelativeRoute = (): ReactElement => {
@@ -124,13 +140,13 @@ const NoURLGetUseEffectRelativeRoute = (): ReactElement => {
   useEffect((): void => {
     request.get('/people')
   }, [request])
-  return <PersonView id='person-3' person={person} loading={loading} error={error} />
+  return (
+    <PersonView id="person-3" person={person} loading={loading} error={error} />
+  )
 }
 
-
-const renderWithProvider = (comp: ReactElement): RenderResult => render(
-  <Provider url='https://example.com'>{comp}</Provider>
-)
+const renderWithProvider = (comp: ReactElement): RenderResult =>
+  render(<Provider url="https://example.com">{comp}</Provider>)
 
 describe('useFetch - BROWSER - with <Provider />', (): void => {
   if (isServer) return
@@ -141,80 +157,102 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(JSON.stringify({
-      name: "Joe Bloggs",
-      age: 48
-    }))
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
   })
 
-  it('should execute GET using Provider url: useFetch({ onMount: true })', async (): Promise<void> => {
+  it('should execute GET using Provider url: useFetch({ onMount: true })', async (): Promise<
+    void
+  > => {
     const { getAllByTestId } = renderWithProvider(<NoURLOnMountTest />)
 
-    let els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-1-/))
+    const els = await waitForElement((): HTMLElement[] =>
+      getAllByTestId(/^person-1-/),
+    )
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs")
-    expect(els[1].innerHTML).toBe("48")
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
   })
 
-  it ('should execute GET using Provider url: request = useFetch(), request.get()', async (): Promise<void> => {
+  it('should execute GET using Provider url: request = useFetch(), request.get()', async (): Promise<
+    void
+  > => {
     const { getAllByTestId } = renderWithProvider(<NoURLGetUseEffect />)
 
-    let els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-2-/))
+    const els = await waitForElement((): HTMLElement[] =>
+      getAllByTestId(/^person-2-/),
+    )
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs")
-    expect(els[1].innerHTML).toBe("48")
-
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
   })
 
-  it ('should execute GET using Provider url: request = useFetch(), request.get("/people")', async (): Promise<void> => {
-    const { getAllByTestId } = renderWithProvider(<NoURLGetUseEffectRelativeRoute />)
+  it('should execute GET using Provider url: request = useFetch(), request.get("/people")', async (): Promise<
+    void
+  > => {
+    const { getAllByTestId } = renderWithProvider(
+      <NoURLGetUseEffectRelativeRoute />,
+    )
 
-    let els = await waitForElement((): HTMLElement[] => getAllByTestId(/^person-3-/))
+    const els = await waitForElement((): HTMLElement[] =>
+      getAllByTestId(/^person-3-/),
+    )
 
-    expect(els[0].innerHTML).toBe("Joe Bloggs")
-    expect(els[1].innerHTML).toBe("48")
+    expect(els[0].innerHTML).toBe('Joe Bloggs')
+    expect(els[1].innerHTML).toBe('48')
   })
-
 })
 
-
 const ManagedStateTest = (): ReactElement => {
-  const [todos, setTodos] = useState<{title: string}[]>([{title: 'test'}])
+  const [todos, setTodos] = useState<{ title: string }[]>([{ title: 'test' }])
 
   const { get, post, abort, error, loading } = useFetch('http:example.com')
 
   const initializeTodos = useCallback(async (): Promise<void> => {
     const initialTodos = await get('/todos')
-    setTodos((todos: {title: string}[]): {title: string}[] => [...todos, ...(initialTodos || [])])
+    setTodos((todos: { title: string }[]): { title: string }[] => [
+      ...todos,
+      ...(initialTodos || []),
+    ])
   }, [get, setTodos])
 
-  useEffect((): () => void => {
+  useEffect((): (() => void) => {
     initializeTodos()
     return abort
   }, [initializeTodos, abort])
 
   const addTodo = useCallback(async (): Promise<void> => {
     const data = {
-      title: 'No way...'
+      title: 'No way...',
     }
     const newTodo = await post('/todos', data)
-    setTodos((oldTodos): {title: string}[] => [...oldTodos, newTodo])
+    setTodos((oldTodos): { title: string }[] => [...oldTodos, newTodo])
   }, [post, setTodos])
 
   return (
     <>
-      <button data-testid='todos-1-add-todo' onClick={addTodo}>Add Todo</button>
+      <button data-testid="todos-1-add-todo" onClick={addTodo}>
+        Add Todo
+      </button>
       {error && <div>Error!</div>}
-      <div data-testid='todos-1-loading'>{loading ? 'Loading...' : ''}</div>
-      <div >
-        {todos.length > 0 && todos.map(({ title }, i): ReactElement => (
-          <div data-testid='todos-1' key={i}>{title}</div>
-        ))}
+      <div data-testid="todos-1-loading">{loading ? 'Loading...' : ''}</div>
+      <div>
+        {todos.length > 0 &&
+          todos.map(
+            ({ title }, i): ReactElement => (
+              <div data-testid="todos-1" key={i}>
+                {title}
+              </div>
+            ),
+          )}
       </div>
     </>
   )
-} 
-
+}
 
 describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   if (isServer) return
@@ -225,16 +263,24 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(JSON.stringify([{
-      title: 1
-    },{
-      title: 2
-    }]))
+    fetch.mockResponseOnce(
+      JSON.stringify([
+        {
+          title: 1,
+        },
+        {
+          title: 2,
+        },
+      ]),
+    )
   })
 
-  it ('should execute GET using Provider url: request = useFetch(), request.get("/todos")', async (): Promise<void> => {
-
-    const { getAllByTestId, getByTestId } = renderWithProvider(<ManagedStateTest />)
+  it('should execute GET using Provider url: request = useFetch(), request.get("/todos")', async (): Promise<
+    void
+  > => {
+    const { getAllByTestId, getByTestId } = renderWithProvider(
+      <ManagedStateTest />,
+    )
     let loading = getByTestId('todos-1-loading')
     expect(loading.innerHTML).toBe('Loading...')
 
@@ -250,15 +296,18 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   })
 
   it('should add a todo to the list', async (): Promise<void> => {
-
-    const { getAllByTestId, getByTestId } = renderWithProvider(<ManagedStateTest />)
+    const { getAllByTestId, getByTestId } = renderWithProvider(
+      <ManagedStateTest />,
+    )
 
     let loading = getByTestId('todos-1-loading')
     expect(loading.innerHTML).toBe('Loading...')
 
-    fetch.mockResponseOnce(JSON.stringify({
-      title: 'No way...'
-    }))
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        title: 'No way...',
+      }),
+    )
 
     const button = getByTestId('todos-1-add-todo')
     testUtilsDOM.act((): void => {
@@ -281,18 +330,19 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
 describe('useFetch - SERVER - basic usage', (): void => {
   if (isBrowser) return
 
-  it ('(for now) should just have `loading = true` when on server', async (): Promise<void> => {
-  //   const { result, waitForNextUpdate } = renderHook(() => useFetch('https://example.com'))
-  //   console.log('RES: ', result.current)
-
-  //   // let todos: {title: number}[] = []
-  //   const getTodos = async () => {
-  //     /* todos = */ await request.current.get('/todos')
-  //   }
-  //   act(() => {
-  //     getTodos()
-  //   })
-  //   await waitForNextUpdate()
-  //   // console.log('TODOS: ', todos)
+  it('(for now) should just have `loading = true` when on server', async (): Promise<
+    void
+  > => {
+    //   const { result, waitForNextUpdate } = renderHook(() => useFetch('https://example.com'))
+    //   console.log('RES: ', result.current)
+    //   // let todos: {title: number}[] = []
+    //   const getTodos = async () => {
+    //     /* todos = */ await request.current.get('/todos')
+    //   }
+    //   act(() => {
+    //     getTodos()
+    //   })
+    //   await waitForNextUpdate()
+    //   // console.log('TODOS: ', todos)
   })
 })
