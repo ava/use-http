@@ -10,7 +10,12 @@ export const usePost = <TData = any>(url?: string, options?: NoUrlOptions) => {
 
   const { data, loading, error, post } = useFetch<TData>(url, {
     method: HTTPMethod.POST,
-    ...options
+    ...options,
   })
-  return Object.assign([data, loading, error, post], { data, loading, error, post })
+  return Object.assign([data, loading, error, post], {
+    data,
+    loading,
+    error,
+    post,
+  })
 }
