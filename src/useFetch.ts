@@ -18,7 +18,7 @@ function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 // TODO: handle context.graphql
 function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): UseFetch<TData> {
-  const { isBrowser } = useSSR()
+  const { isBrowser, isServer } = useSSR()
   const { onMount, url } = useCustomOptions(urlOrOptions, optionsNoURLs)
   let requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
@@ -33,8 +33,11 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
     return async (routeOrBody?: string | BodyInit | object, body?: BodyInit | object): Promise<any> => {
       controller.current = isBrowser ? new AbortController() : null
       const { route, options } = makeRouteAndOptions(requestInit, method, controller, routeOrBody, body)
+
       try {
         setLoading(true)
+        if (isServer) return // TODO: for now, we don't do anything on the server
+
         const response = await fetch(`${url}${route}`, options)
         try {
           data.current = await response.json()
