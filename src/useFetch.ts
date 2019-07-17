@@ -6,7 +6,7 @@ import {
   UseFetch,
   FetchCommands,
   DestructuringCommands,
-  UseFetchResult
+  UseFetchResult,
 } from './types'
 import {
   BodyOnly,
@@ -14,7 +14,7 @@ import {
   RouteOnly,
   FetchData,
   NoArgs,
-  NoUrlOptions
+  NoUrlOptions,
 } from './types'
 import useCustomOptions from './useCustomOptions'
 import useRequestInit from './useRequestInit'
@@ -79,7 +79,11 @@ function useFetch<TData = any>(
         }
         return data.current
       }
-  }, [/* url, isBrowser, requestInit, isServer */])
+    },
+    [
+      /* url, isBrowser, requestInit, isServer */
+    ],
+  )
 
   const get = useCallback(makeFetch(HTTPMethod.GET), [])
   const post = useCallback(makeFetch(HTTPMethod.POST), [])
@@ -141,7 +145,9 @@ function useFetch<TData = any>(
       ] as NoArgs
       req()
     }
-  }, [/*onMount, requestInit.body, requestInit.method, request, url*/])
+  }, [
+    /*onMount, requestInit.body, requestInit.method, request, url*/
+  ])
 
   return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(
     [data.current, loading, error, request],

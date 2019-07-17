@@ -74,8 +74,8 @@ export interface CustomOptions {
   url: string
 }
 
-export type Options = CustomOptions & Omit<RequestInit, 'body'> & { body?: BodyInit | object | null }
-
+export type Options = CustomOptions &
+  Omit<RequestInit, 'body'> & { body?: BodyInit | object | null }
 
 export type NoUrlOptions = Omit<Options, 'url'>
 
