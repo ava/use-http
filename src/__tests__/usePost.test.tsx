@@ -120,7 +120,7 @@ describe('usePost - BROWSER - general usage', (): void => {
       },
     )
 
-    result.current.post(data)
+    result.current.post()
     expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
     expect(result.current.loading).toBe(false)

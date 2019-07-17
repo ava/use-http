@@ -41,7 +41,6 @@ function useFetch<TData = any>(
   const controller = useRef<AbortController | null>()
   const data = useRef<TData>()
 
-  // TODO: default config object should handle this
   const [loading, setLoading] = useState(onMount || false)
   const [error, setError] = useState<any>()
 
