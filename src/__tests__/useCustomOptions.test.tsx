@@ -4,6 +4,7 @@ import useCustomOptions from '../useCustomOptions'
 import { ReactElement, ReactNode } from 'react'
 import { Provider } from '..'
 import React from 'react'
+import { isServer } from '../utils';
 
 describe('useCustomOptions: general usages', (): void => {
   it('should create custom options with `onMount: false` by default', (): void => {
@@ -33,6 +34,16 @@ describe('useCustomOptions: general usages', (): void => {
     )
     const { result } = renderHook((): any => useCustomOptions('https://cool.com', { onMount: true }), { wrapper })
     expect(result.current).toStrictEqual({ url: 'https://cool.com', onMount: true })
+  })
+
+  it('should have a default `url` if no URL is set in Provider', (): void => {
+    if (isServer) return
+
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+      <Provider>{children as ReactElement}</Provider>
+    )
+    const { result } = renderHook((): any => useCustomOptions(), { wrapper })
+    expect(result.current).toStrictEqual({ url: 'http://localhost', onMount: false })
   })
 })
 
