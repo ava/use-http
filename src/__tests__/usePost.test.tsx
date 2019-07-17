@@ -127,6 +127,31 @@ describe('usePost - BROWSER - general usage', (): void => {
     expect(result.current.data).toStrictEqual(data)
   })
 
+  it('no URL as 1st arg - should overwrite body - <Provider url={url} /> - request.post()', async (): Promise<
+    void
+  > => {
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+      <Provider url="https://example.com">{children as ReactElement}</Provider>
+    )
+    const { result, waitForNextUpdate } = renderHook(
+      () =>
+        usePost({
+          body: {
+            name: 'cool',
+          },
+        }),
+      {
+        wrapper,
+      },
+    )
+
+    result.current.post(data)
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toStrictEqual(data)
+  })
+
   it('should work with relative routes', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(() =>
       usePost('https://example.com'),
