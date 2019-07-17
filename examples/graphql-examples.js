@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import useFetch from '../src'
 
-
 const GraphQLQueryExample = () => {
   const query = `
     {
@@ -21,7 +20,6 @@ const GraphQLQueryExample = () => {
 
   return <pre>{JSON.stringify(posts.data, null, 2)}</pre>
 }
-
 
 const GraphQLMutationExample = () => {
   // TODO: this works, but this example doesn't. Need to finish

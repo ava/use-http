@@ -8,7 +8,7 @@ import React from 'react'
 describe('useRequestInit: general usages', (): void => {
   it('should create custom options with `Content-Type: application/text`', (): void => {
     const options = { headers: { 'Content-Type': 'application/text' } }
-    var { result } = renderHook((): any => useRequestInit(options))
+    const { result } = renderHook((): any => useRequestInit(options))
     expect(result.current).toEqual(options)
   })
 
@@ -24,18 +24,21 @@ describe('useRequestInit: general usages', (): void => {
   it('should overwrite `Content-Type` that is set in Provider', (): void => {
     const options = {
       headers: {
-        'Content-Type': 'application/text'
-      }
+        'Content-Type': 'application/text',
+      },
     }
     const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
       <Provider options={options}>{children as ReactElement}</Provider>
     )
     const overwriteProviderOptions = {
       headers: {
-        'Content-Type': 'multipart/form-data; boundary=something'
-      }
+        'Content-Type': 'multipart/form-data; boundary=something',
+      },
     }
-    const { result } = renderHook((): any => useRequestInit(overwriteProviderOptions), { wrapper })
+    const { result } = renderHook(
+      (): any => useRequestInit(overwriteProviderOptions),
+      { wrapper },
+    )
     expect(result.current).toStrictEqual(overwriteProviderOptions)
   })
 })

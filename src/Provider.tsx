@@ -7,7 +7,12 @@ interface FetchProviderProps extends FetchContextTypes {
   children: ReactElement
 }
 
-export const Provider = ({ url, options, graphql = false, children }: FetchProviderProps): ReactElement => {
+export const Provider = ({
+  url,
+  options,
+  graphql = false,
+  children,
+}: FetchProviderProps): ReactElement => {
   const { isBrowser } = useSSR()
 
   const defaults = useMemo(
@@ -20,8 +25,6 @@ export const Provider = ({ url, options, graphql = false, children }: FetchProvi
   )
 
   return (
-    <FetchContext.Provider value={defaults}>
-      {children}
-    </FetchContext.Provider>
+    <FetchContext.Provider value={defaults}>{children}</FetchContext.Provider>
   )
 }

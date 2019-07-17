@@ -22,6 +22,19 @@
         "plugin:prettier/recommended"
     ],
     "rules": {
+        "@typescript-eslint/member-delimiter-style": [
+            "error",
+            {
+                "multiline": {
+                    "delimiter": "none",
+                    "requireLast": false
+                },
+                "singleline": {
+                    "delimiter": "comma",
+                    "requireLast": false
+                }
+            }
+        ],
         "@typescript-eslint/explicit-member-accessibility": [
             "off"
         ],
@@ -60,4 +73,4 @@
             "version": "detect"
         }
     }
-}
+} 
