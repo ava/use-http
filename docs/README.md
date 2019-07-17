@@ -101,7 +101,7 @@ function Todos() {
 
 Managed State Usage ⚠️
 -------------------
-⚠️ This usage is under development. It's working [here](https://codesandbox.io/s/react-typescript-template-usefetch-debug-ddfzi), but not fully tested
+
 ```js
 import useFetch from 'use-http'
 
