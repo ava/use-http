@@ -94,3 +94,10 @@ export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInit => {
     return acc
   }, {})
 }
+
+export const isBrowser: boolean = !!(
+  typeof window !== 'undefined' &&
+  window.document &&
+  window.document.createElement
+)
+export const isServer = !isBrowser

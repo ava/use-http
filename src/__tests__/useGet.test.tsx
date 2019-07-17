@@ -1,5 +1,5 @@
 // import React, { ReactElement } from "react"
-import { useGet } from '../index'
+import { useGet } from '..'
 // import ReactDOM from 'react-dom'
 import {
   // render,

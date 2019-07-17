@@ -1,7 +1,6 @@
 import { HTTPMethod } from './types'
-import { isObject, invariant } from "./utils"
+import { isObject, invariant, isBrowser, isString } from "./utils"
 import { MutableRefObject } from 'react'
-import { isString } from 'util';
 
 interface RouteAndOptions {
   route: string
@@ -45,9 +44,11 @@ export default function makeRouteAndOptions(
       }
     }
     if (
-      routeOrBody instanceof URLSearchParams ||
-      routeOrBody instanceof FormData ||
-      bodyAs2ndParam instanceof FormData
+      isBrowser && (
+        routeOrBody instanceof URLSearchParams ||
+        routeOrBody instanceof FormData ||
+        bodyAs2ndParam instanceof FormData
+      )
     ) {
       delete opts.headers['Content-Type']
     }
