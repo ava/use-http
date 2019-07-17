@@ -1,4 +1,3 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
 import { usePost, Provider } from '..'
 import { isServer } from '../utils'
 import * as testUtilsDOM from 'react-dom/test-utils'

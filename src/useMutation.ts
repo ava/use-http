@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import useFetch, { FetchContext } from '.'
 import { useContext, useCallback } from 'react'
 import { UseFetchBaseResult } from './types'

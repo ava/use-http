@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import useFetch from '.'
 import {
   HTTPMethod,
@@ -13,10 +12,10 @@ type ArrayDestructure<TData = any> = [
   TData | undefined,
   boolean,
   Error,
-  (variables?: BodyInit) => Promise<any>,
+  (variables?: BodyInit | object) => Promise<any>,
 ]
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
-  put: (variables?: BodyInit) => Promise<any>
+  put: (variables?: BodyInit | object) => Promise<any>
 }
 type UsePut = ArrayDestructure & ObjectDestructure
 

@@ -12,29 +12,7 @@ import { FetchMock } from 'jest-fetch-mock'
 const fetch = global.fetch as FetchMock
 
 // import { act } from "react-dom/test-utils"
-
-// interface Person {
-//   name: string
-//   age: number
-// }
-
-// interface PersonViewProps {
-//   person?: Person
-//   loading: boolean
-//   error: Error
-// }
-
-// const PersonView = ({ person, loading, error }: PersonViewProps): ReactElement =>
-//   <>
-//     {loading && <div data-testid="loading">loading...</div>}
-//     {error && <div data-testid="error">{error.message}</div>}
-//     {person &&
-//       <div>
-//         <div data-testid="person-name">{person.name}</div>
-//         <div data-testid="person-age">{person.age}</div>
-//       </div>
-//     }
-//   </>
+// import { PersonView } from './test-utils'
 
 // const ObjectDestructuringApp = (): ReactElement => {
 //   const { loading, data, error } = useGet<Person>('https://example.com', { onMount: true })

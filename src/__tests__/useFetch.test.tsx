@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState, useCallback, ReactElement } from 'react'
 import { useFetch, Provider } from '..'
 import ReactDOM from 'react-dom'
