@@ -126,4 +126,53 @@ describe('usePost - BROWSER - general usage', (): void => {
     expect(result.current.loading).toBe(false)
     expect(result.current.data).toStrictEqual(data)
   })
+
+  it('should work with relative routes', async (): Promise<void> => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      usePost('https://example.com'),
+    )
+
+    result.current.post('/todos', data)
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toStrictEqual(data)
+  })
+
+  it('should work with relative routes + Provider URL', async (): Promise<
+    void
+  > => {
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+      <Provider url="https://example.com">{children as ReactElement}</Provider>
+    )
+    const { result, waitForNextUpdate } = renderHook(() => usePost(), {
+      wrapper,
+    })
+
+    result.current.post('/todos', data)
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toStrictEqual(data)
+  })
+
+  it('should work with relative routes + overwrite Provider URL', async (): Promise<
+    void
+  > => {
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+      <Provider url="https://example.com">{children as ReactElement}</Provider>
+    )
+    const { result, waitForNextUpdate } = renderHook(
+      () => usePost('https://cool.com'),
+      {
+        wrapper,
+      },
+    )
+
+    result.current.post('/todos', data)
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toStrictEqual(data)
+  })
 })

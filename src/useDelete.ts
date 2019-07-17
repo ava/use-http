@@ -4,6 +4,7 @@ import {
   NoUrlOptions,
   UseFetchBaseResult,
   OptionsMaybeURL,
+  FetchData,
 } from './types'
 import useCustomOptions from './useCustomOptions'
 import useRequestInit from './useRequestInit'
@@ -15,8 +16,8 @@ type ArrayDestructure<TData = any> = [
   (variables?: BodyInit | object) => Promise<any>,
 ]
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
-  delete: (variables?: BodyInit | object) => Promise<any>
-  del: (variables?: BodyInit | object) => Promise<any>
+  delete: FetchData
+  del: FetchData
 }
 type UseDelete = ArrayDestructure & ObjectDestructure
 
