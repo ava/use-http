@@ -6,13 +6,13 @@ import { Provider } from '..'
 import React from 'react'
 
 describe('useRequestInit: general usages', (): void => {
-  it('should create custom options with `onMount: false` by default', (): void => {
+  it('should create custom options with `Content-Type: application/text`', (): void => {
     const options = { headers: { 'Content-Type': 'application/text' } }
     var { result } = renderHook((): any => useRequestInit(options))
     expect(result.current).toEqual(options)
   })
 
-  it('should create custom options handling Provider/Context properly', (): void => {
+  it('should create custom options and use the global options instead of defaults', (): void => {
     const options = { headers: { 'Content-Type': 'application/text' } }
     const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
       <Provider options={options}>{children as ReactElement}</Provider>
