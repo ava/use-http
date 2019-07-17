@@ -52,7 +52,7 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
       }
       return data.current
     }
-  }, [url, isBrowser, requestInit])
+  }, [url, isBrowser, requestInit, isServer])
 
   const get = useCallback(makeFetch(HTTPMethod.GET), [])
   const post = useCallback(makeFetch(HTTPMethod.POST), [])

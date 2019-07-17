@@ -16,7 +16,7 @@ export const Provider = ({ url, options, graphql = false, children }: FetchProvi
       options: options || {},
       graphql, // TODO: this will make it so useFetch(QUERY || MUTATION) will work
     }),
-    [options, graphql],
+    [options, graphql, isBrowser, url],
   )
 
   return (

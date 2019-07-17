@@ -95,7 +95,7 @@ export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInit => {
   }, {})
 }
 
-export const isBrowser: boolean = !!(
+export const isBrowser = !!(
   typeof window !== 'undefined' &&
   window.document &&
   window.document.createElement
