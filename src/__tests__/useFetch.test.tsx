@@ -4,6 +4,7 @@ import { useFetch, Provider } from '..'
 import ReactDOM from 'react-dom'
 import { render, cleanup, waitForElement, RenderResult, fireEvent } from '@testing-library/react'
 import { isServer, isBrowser } from '../utils'
+import { PersonView, Person } from './test-utils'
 // import * as reactTest from '@testing-library/react'
 // console.log('REACT TEST: ', reactTest)
 
@@ -13,30 +14,6 @@ const fetch = global.fetch as FetchMock
 
 import * as testUtilsDOM from "react-dom/test-utils"
 // import { act, renderHook } from '@testing-library/react-hooks';
-
-interface Person {
-  name: string
-  age: number
-}
-
-interface PersonViewProps {
-  id?: string
-  person?: Person
-  loading: boolean
-  error: Error
-}
-
-const PersonView = ({ id = 'person', person, loading, error }: PersonViewProps): ReactElement =>
-  <>
-    {loading && <div data-testid="loading">loading...</div>}
-    {error && <div data-testid="error">{error.message}</div>}
-    {person &&
-      <div>
-        <div data-testid={`${id}-name`}>{person.name}</div>
-        <div data-testid={`${id}-age`}>{person.age}</div>
-      </div>
-    }
-  </>
 
 const ObjectDestructuringApp = (): ReactElement => {
   const { loading, data, error } = useFetch<Person>('https://example.com', { onMount: true })

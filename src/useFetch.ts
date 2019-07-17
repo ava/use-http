@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
-import { HTTPMethod, Options, OptionsMaybeURL, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult } from './types'
+import { HTTPMethod, OptionsMaybeURL, UseFetch, FetchCommands, DestructuringCommands, UseFetchResult } from './types'
 import { BodyOnly, RouteAndBodyOnly, RouteOnly, FetchData, NoArgs, NoUrlOptions } from './types'
 import useCustomOptions from './useCustomOptions'
 import useRequestInit from './useRequestInit'
@@ -8,22 +8,22 @@ import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions';
 
 // No <Provider url='example.com' />
-function useFetch<TData = any>(url: string, options?: NoUrlOptions): UseFetch<TData>
-function useFetch<TData = any>(options: Options): UseFetch<TData>
+// function useFetch<TData = any>(url: string, options?: NoUrlOptions): UseFetch<TData>
+// function useFetch<TData = any>(options: Options): UseFetch<TData>
 // With <Provider url='example.com' />
 // options should be extended. In future maybe have options callback to completely overwrite options
 // i.e. useFetch('ex.com', oldOptions => ({ ...newOptions })) to overwrite
-function useFetch<TData = any>(url?: string, options?: NoUrlOptions): UseFetch<TData>
-function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
+// function useFetch<TData = any>(url?: string, options?: NoUrlOptions): UseFetch<TData>
+// function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 // TODO: handle context.graphql
 function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): UseFetch<TData> {
   const { isBrowser, isServer } = useSSR()
   const { onMount, url } = useCustomOptions(urlOrOptions, optionsNoURLs)
-  let requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
+  const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
-  let controller = useRef<AbortController | null>()
-  let data = useRef<TData>()
+  const controller = useRef<AbortController | null>()
+  const data = useRef<TData>()
 
   // TODO: default config object should handle this
   const [loading, setLoading] = useState(onMount || false)
@@ -52,7 +52,7 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
       }
       return data.current
     }
-  }, [url, isBrowser, requestInit, isServer])
+  }, [/* url, isBrowser, requestInit, isServer */])
 
   const get = useCallback(makeFetch(HTTPMethod.GET), [])
   const post = useCallback(makeFetch(HTTPMethod.POST), [])
@@ -86,7 +86,7 @@ function useFetch<TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsN
       const req = request[methodName.toLowerCase() as keyof FetchCommands] as NoArgs
       req()
     }
-  }, [onMount, requestInit.body, requestInit.method, request, url])
+  }, [/*onMount, requestInit.body, requestInit.method, request, url*/])
 
   return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(
     [data.current, loading, error, request],

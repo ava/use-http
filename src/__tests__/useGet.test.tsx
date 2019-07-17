@@ -96,4 +96,5 @@ describe("useGet", (): void => {
     // expect(els[0].innerHTML).toBe("Joe Bloggs")
     // expect(els[1].innerHTML).toBe("48")
   })
+  console.log('TODO: useGet')
 })

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext } from 'react'
-import useFetch, { FetchContext } from '.'
-import { HTTPMethod, NoUrlOptions, UseFetchBaseResult } from './types'
-import { useURLRequiredInvariant } from './utils'
+import useFetch from '.'
+import { HTTPMethod, NoUrlOptions, UseFetchBaseResult, OptionsMaybeURL } from './types'
+import useCustomOptions from './useCustomOptions';
+import useRequestInit from './useRequestInit';
 
 type ArrayDestructure<TData = any> = [TData | undefined, boolean, Error, (variables?: BodyInit) => Promise<any>]
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
@@ -10,14 +10,14 @@ interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
 }
 type UsePut = ArrayDestructure & ObjectDestructure
 
-export const usePut = <TData = any>(url?: string, options?: NoUrlOptions): UsePut => {
-  const context = useContext(FetchContext)
+export const usePut = <TData = any>(urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): UsePut => {
+  const customOptions = useCustomOptions(urlOrOptions, optionsNoURLs)
+  const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
-  useURLRequiredInvariant(!!url || !!context.url, 'usePut')
-
-  const { data, loading, error, put } = useFetch<TData>(url, {
+  const { data, loading, error, put } = useFetch<TData>({
+    ...customOptions,
+    ...requestInit,
     method: HTTPMethod.PUT,
-    ...options
   })
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
     [data, loading, error, put],

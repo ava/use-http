@@ -7,6 +7,7 @@ describe('makeRouteAndOptions: general usages', (): void => {
   it('should be defined', (): void => {
     expect(makeRouteAndOptions).toBeDefined()
   })
+  console.log('TODO: makeRouteAndOptions')
 })
 
 describe('makeRouteAndOptions: Errors', (): void => {
