@@ -19,7 +19,7 @@ export default function makeRouteAndOptions(
   invariant(!(method === HTTPMethod.GET && bodyAs2ndParam !== undefined), `You can only have query params as 1st argument of request.get()`)
 
   const route = ((): string => {
-    if (routeOrBody instanceof URLSearchParams) return `?${routeOrBody}`
+    if (isBrowser && routeOrBody instanceof URLSearchParams) return `?${routeOrBody}`
     if (isString(routeOrBody)) return routeOrBody as string
     return ''
   })()
