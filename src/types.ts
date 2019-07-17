@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export enum HTTPMethod {
   DELETE = 'DELETE',
   GET = 'GET',
@@ -74,7 +73,8 @@ export interface CustomOptions {
   url: string
 }
 
-export type Options = CustomOptions & RequestInit
+export type Options = CustomOptions &
+  Omit<RequestInit, 'body'> & { body?: BodyInit | object | null }
 
 export type NoUrlOptions = Omit<Options, 'url'>
 

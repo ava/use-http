@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import {
   HTTPMethod,
-  Options,
   OptionsMaybeURL,
   UseFetch,
   FetchCommands,
@@ -23,19 +21,13 @@ import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions'
 
 // No <Provider url='example.com' />
-function useFetch<TData = any>(
-  url: string,
-  options?: NoUrlOptions,
-): UseFetch<TData>
-function useFetch<TData = any>(options: Options): UseFetch<TData>
+// function useFetch<TData = any>(url: string, options?: NoUrlOptions): UseFetch<TData>
+// function useFetch<TData = any>(options: Options): UseFetch<TData>
 // With <Provider url='example.com' />
 // options should be extended. In future maybe have options callback to completely overwrite options
 // i.e. useFetch('ex.com', oldOptions => ({ ...newOptions })) to overwrite
-function useFetch<TData = any>(
-  url?: string,
-  options?: NoUrlOptions,
-): UseFetch<TData>
-function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
+// function useFetch<TData = any>(url?: string, options?: NoUrlOptions): UseFetch<TData>
+// function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 // TODO: handle context.graphql
 function useFetch<TData = any>(
@@ -49,7 +41,6 @@ function useFetch<TData = any>(
   const controller = useRef<AbortController | null>()
   const data = useRef<TData>()
 
-  // TODO: default config object should handle this
   const [loading, setLoading] = useState(onMount || false)
   const [error, setError] = useState<any>()
 
@@ -87,7 +78,9 @@ function useFetch<TData = any>(
         return data.current
       }
     },
-    [url, isBrowser, requestInit, isServer],
+    [
+      /* url, isBrowser, requestInit, isServer */
+    ],
   )
 
   const get = useCallback(makeFetch(HTTPMethod.GET), [])
@@ -150,7 +143,9 @@ function useFetch<TData = any>(
       ] as NoArgs
       req()
     }
-  }, [onMount, requestInit.body, requestInit.method, request, url])
+  }, [
+    /*onMount, requestInit.body, requestInit.method, request, url*/
+  ])
 
   return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(
     [data.current, loading, error, request],

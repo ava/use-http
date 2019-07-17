@@ -24,6 +24,7 @@ module.exports = {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
   transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$'],
+  testPathIgnorePatterns: ['<rootDir>/src/__tests__/test-utils.tsx'],
   moduleNameMapper: {
     '^react-native$': 'react-native-web',
   },

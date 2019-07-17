@@ -1,32 +1,37 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext } from 'react'
-import useFetch, { FetchContext } from '.'
-import { HTTPMethod, NoUrlOptions, UseFetchBaseResult } from './types'
-import { useURLRequiredInvariant } from './utils'
+import useFetch from '.'
+import {
+  HTTPMethod,
+  NoUrlOptions,
+  UseFetchBaseResult,
+  OptionsMaybeURL,
+  FetchData,
+} from './types'
+import useCustomOptions from './useCustomOptions'
+import useRequestInit from './useRequestInit'
 
 type ArrayDestructure<TData = any> = [
   TData | undefined,
   boolean,
   Error,
-  (variables?: BodyInit) => Promise<any>,
+  (variables?: BodyInit | object) => Promise<any>,
 ]
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
-  delete: (variables?: BodyInit) => Promise<any>
-  del: (variables?: BodyInit) => Promise<any>
+  delete: FetchData
+  del: FetchData
 }
 type UseDelete = ArrayDestructure & ObjectDestructure
 
 export const useDelete = <TData = any>(
-  url?: string,
-  options?: NoUrlOptions,
+  urlOrOptions?: string | OptionsMaybeURL,
+  optionsNoURLs?: NoUrlOptions,
 ): UseDelete => {
-  const context = useContext(FetchContext)
+  const customOptions = useCustomOptions(urlOrOptions, optionsNoURLs)
+  const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
-  useURLRequiredInvariant(!!url || !!context.url, 'useDelete')
-
-  const { data, loading, error, del } = useFetch<TData>(url, {
+  const { data, loading, error, del } = useFetch<TData>({
+    ...customOptions,
+    ...requestInit,
     method: HTTPMethod.DELETE,
-    ...options,
   })
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
     [data, loading, error, del],
