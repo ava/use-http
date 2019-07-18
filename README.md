@@ -428,14 +428,9 @@ Todos
  - [ ] add `timeout`
  - [ ] add `debounce`
  - [ ] maybe add a `retry: 3` which would specify the amount of times it should retry before erroring out
- - [ ] ERROR handling:
-   - [ ] make sure `options` (as 2nd param) to all hooks except `useMutation` and `useQuery` is an object, if not `invariant`/throw error
- - [ ] add array destructuring return types for helper hooks
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
-     - [ ] add preview image
-     - [ ] add google analytics
      - [ ] show comparison with Apollo
  - [ ] maybe add syntax for inline headers like this
 ```jsx
