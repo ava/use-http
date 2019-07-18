@@ -9,8 +9,6 @@ import {
 } from './types'
 import {
   BodyOnly,
-  RouteAndBodyOnly,
-  RouteOnly,
   FetchData,
   NoArgs,
   NoUrlOptions,
@@ -122,25 +120,12 @@ function useFetch<TData = any>(
   useEffect((): void => {
     if (!onMount) return
     const methodName = requestInit.method || HTTPMethod.GET
-    if (!!url && methodName !== HTTPMethod.GET) {
-      const req = request[
-        methodName.toLowerCase() as keyof FetchCommands
-      ] as RouteAndBodyOnly
-      req(url, requestInit.body as BodyInit)
-    } else if (!url && methodName !== (HTTPMethod.GET as string)) {
-      const req = request[
-        methodName.toLowerCase() as keyof FetchCommands
-      ] as BodyOnly
+    const methodLower = methodName.toLowerCase() as keyof FetchCommands
+    if (methodName !== HTTPMethod.GET) {
+      const req = request[methodLower] as BodyOnly
       req(requestInit.body as BodyInit)
-    } else if (url) {
-      const req = request[
-        methodName.toLowerCase() as keyof FetchCommands
-      ] as RouteOnly
-      req(url)
     } else {
-      const req = request[
-        methodName.toLowerCase() as keyof FetchCommands
-      ] as NoArgs
+      const req = request[methodLower] as NoArgs
       req()
     }
   }, [
