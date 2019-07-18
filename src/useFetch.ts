@@ -9,8 +9,6 @@ import {
 } from './types'
 import {
   BodyOnly,
-  RouteAndBodyOnly,
-  RouteOnly,
   FetchData,
   NoArgs,
   NoUrlOptions,
