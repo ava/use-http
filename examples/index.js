@@ -3,7 +3,6 @@ import { render } from 'react-dom'
 import AbortExamples from './abort-examples'
 import GraphQLExamples from './graphql-examples'
 
-
 function App() {
   return (
     <>

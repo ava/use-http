@@ -1,7 +1,7 @@
 import { OptionsMaybeURL, NoUrlOptions, CustomOptions } from './types'
-import { isString, isObject, invariant } from "./utils"
-import { useContext, useMemo } from 'react';
-import FetchContext from './FetchContext';
+import { isString, isObject, invariant } from './utils'
+import { useContext, useMemo } from 'react'
+import FetchContext from './FetchContext'
 
 // Provider ex: useFetch({ url: 'https://url.com' }) -- (overwrites global url)
 // TODO - Provider: arg1 = oldGlobalOptions => ({ my: 'new local options'}) (overwrite all global options for this instance of useFetch)
@@ -15,9 +15,15 @@ import FetchContext from './FetchContext';
  * + retry - amount of times it will retry
  * + retryDuration - interval at which each retry is done
  */
-export default function useCustomOptions(urlOrOptions?: string | OptionsMaybeURL, optionsNoURLs?: NoUrlOptions): CustomOptions {
+export default function useCustomOptions(
+  urlOrOptions?: string | OptionsMaybeURL,
+  optionsNoURLs?: NoUrlOptions,
+): CustomOptions {
   const context = useContext(FetchContext)
-  invariant(!(isObject(urlOrOptions) && isObject(optionsNoURLs)), 'You cannot have a 2nd parameter of useFetch when your first argument is an object config.')
+  invariant(
+    !(isObject(urlOrOptions) && isObject(optionsNoURLs)),
+    'You cannot have a 2nd parameter of useFetch when your first argument is an object config.',
+  )
 
   const url = useMemo((): string => {
     if (isString(urlOrOptions) && urlOrOptions) return urlOrOptions as string
@@ -26,12 +32,15 @@ export default function useCustomOptions(urlOrOptions?: string | OptionsMaybeURL
     return ''
   }, [context.url, urlOrOptions])
 
-  invariant(!!url, 'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>')
+  invariant(
+    !!url,
+    'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>',
+  )
 
   const onMount = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.onMount
     if (isObject(optionsNoURLs)) return !!optionsNoURLs.onMount
-    return false;
+    return false
   }, [urlOrOptions, optionsNoURLs])
 
   return { url, onMount }

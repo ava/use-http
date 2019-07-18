@@ -22,18 +22,16 @@ export function invariant(
   }
 
   if (!condition) {
-    var error
+    let error
     if (format === undefined) {
       error = new Error(
         'Minified exception occurred; use the non-minified dev environment ' +
-        'for the full error message and additional helpful warnings.'
+          'for the full error message and additional helpful warnings.',
       )
     } else {
-      var args = [a, b, c, d, e, f]
-      var argIndex = 0
-      error = new Error(
-        format.replace(/%s/g, (): string => args[argIndex++])
-      )
+      const args = [a, b, c, d, e, f]
+      let argIndex = 0
+      error = new Error(format.replace(/%s/g, (): string => args[argIndex++]))
       error.name = 'Invariant Violation'
     }
 
@@ -43,10 +41,18 @@ export function invariant(
 
 export const useExampleURL = (): string => {
   const { isBrowser } = useSSR()
-  return useMemo((): string => isBrowser ? window.location.origin as string : 'https://example.com', [isBrowser])
+  return useMemo(
+    (): string =>
+      isBrowser ? (window.location.origin as string) : 'https://example.com',
+    [isBrowser],
+  )
 }
 
-export function useURLRequiredInvariant(condition: boolean, method: string, optionalMessage?: string): void {
+export function useURLRequiredInvariant(
+  condition: boolean,
+  method: string,
+  optionalMessage?: string,
+): void {
   const exampleURL = useExampleURL()
   useEffect((): void => {
     invariant(
@@ -54,7 +60,7 @@ export function useURLRequiredInvariant(condition: boolean, method: string, opti
       `${method} requires a URL to be set as the 1st argument,\n
       unless you wrap your app like:\n
       <Provider url="${exampleURL}"><App /></Provider>\n
-      ${optionalMessage}`
+      ${optionalMessage}`,
     )
   }, [condition, exampleURL, method, optionalMessage])
 }
@@ -89,10 +95,13 @@ export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInit => {
     'signal',
     'window',
   ] as (keyof RequestInitJSON)[]
-  return requestInitFields.reduce((acc: RequestInit, key: keyof RequestInit): RequestInit => {
-    if (key in options) acc[key] = options[key]
-    return acc
-  }, {})
+  return requestInitFields.reduce(
+    (acc: RequestInit, key: keyof RequestInit): RequestInit => {
+      if (key in options) acc[key] = options[key]
+      return acc
+    },
+    {},
+  )
 }
 
 export const isBrowser = !!(

@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { FetchContextTypes } from "./types";
+import { FetchContextTypes } from './types'
 
 export const FetchContext = createContext<FetchContextTypes>({
   url: '',

@@ -1,26 +1,39 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext } from 'react'
-import useFetch, { FetchContext } from '.'
-import { HTTPMethod, NoUrlOptions, UseFetchBaseResult } from './types'
-import { useURLRequiredInvariant } from './utils'
+import useFetch from '.'
+import {
+  HTTPMethod,
+  NoUrlOptions,
+  UseFetchBaseResult,
+  OptionsMaybeURL,
+  FetchData,
+} from './types'
+import useCustomOptions from './useCustomOptions'
+import useRequestInit from './useRequestInit'
 
-type ArrayDestructure<TData = any> = [TData | undefined, boolean, Error, (variables?: BodyInit) => Promise<any>]
+type ArrayDestructure<TData = any> = [
+  TData | undefined,
+  boolean,
+  Error,
+  FetchData,
+]
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
-  patch: (variables?: BodyInit) => Promise<any>
+  patch: FetchData
 }
 type UsePatch = ArrayDestructure & ObjectDestructure
 
-export const usePatch = <TData = any>(url?: string, options?: NoUrlOptions): UsePatch => {
-  const context = useContext(FetchContext)
+export const usePatch = <TData = any>(
+  urlOrOptions?: string | OptionsMaybeURL,
+  optionsNoURLs?: NoUrlOptions,
+): UsePatch => {
+  const customOptions = useCustomOptions(urlOrOptions, optionsNoURLs)
+  const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
-  useURLRequiredInvariant(!!url || !!context.url, 'usePatch')
-
-  const { data, loading, error, patch } = useFetch<TData>(url, {
+  const { data, loading, error, patch } = useFetch<TData>({
+    ...customOptions,
+    ...requestInit,
     method: HTTPMethod.PATCH,
-    ...options
   })
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
     [data, loading, error, patch],
-    { data, loading, error, patch }
+    { data, loading, error, patch },
   )
 }

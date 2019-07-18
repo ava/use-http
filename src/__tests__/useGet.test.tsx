@@ -7,34 +7,12 @@ import {
   // waitForElement
 } from '@testing-library/react'
 
-import { FetchMock } from "jest-fetch-mock"
+import { FetchMock } from 'jest-fetch-mock'
 
 const fetch = global.fetch as FetchMock
 
 // import { act } from "react-dom/test-utils"
-
-// interface Person {
-//   name: string
-//   age: number
-// }
-
-// interface PersonViewProps {
-//   person?: Person
-//   loading: boolean
-//   error: Error
-// }
-
-// const PersonView = ({ person, loading, error }: PersonViewProps): ReactElement =>
-//   <>
-//     {loading && <div data-testid="loading">loading...</div>}
-//     {error && <div data-testid="error">{error.message}</div>}
-//     {person &&
-//       <div>
-//         <div data-testid="person-name">{person.name}</div>
-//         <div data-testid="person-age">{person.age}</div>
-//       </div>
-//     }
-//   </>
+// import { PersonView } from './test-utils'
 
 // const ObjectDestructuringApp = (): ReactElement => {
 //   const { loading, data, error } = useGet<Person>('https://example.com', { onMount: true })
@@ -52,9 +30,9 @@ const fetch = global.fetch as FetchMock
 //   )
 // }
 
-describe("useGet", (): void => {
+describe('useGet', (): void => {
   it('should define useGet', (): void => {
-    expect(typeof useGet).toBe("function")
+    expect(typeof useGet).toBe('function')
   })
 
   afterEach((): void => {
@@ -63,17 +41,23 @@ describe("useGet", (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(JSON.stringify({
-      name: "Joe Bloggs",
-      age: 48
-    }))
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
   })
 
-  it('should execute GET command with object destructuring', async (): Promise<void> => {
-    fetch.mockResponseOnce(JSON.stringify({
-      name: "Joe Bloggs",
-      age: 48
-    }))
+  it('should execute GET command with object destructuring', async (): Promise<
+    void
+  > => {
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
 
     // const { getAllByTestId } = render(<ObjectDestructuringApp />)
 
@@ -83,11 +67,15 @@ describe("useGet", (): void => {
     // expect(els[1].innerHTML).toBe("48")
   })
 
-  it('should execute GET command with arrray destructuring', async (): Promise<void> => {
-    fetch.mockResponseOnce(JSON.stringify({
-      name: "Joe Bloggs",
-      age: 48
-    }))
+  it('should execute GET command with arrray destructuring', async (): Promise<
+    void
+  > => {
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        name: 'Joe Bloggs',
+        age: 48,
+      }),
+    )
 
     // const { getAllByTestId } = render(<ArrayDestructuringApp />)
 
@@ -96,4 +84,5 @@ describe("useGet", (): void => {
     // expect(els[0].innerHTML).toBe("Joe Bloggs")
     // expect(els[1].innerHTML).toBe("48")
   })
+  console.log('TODO: useGet')
 })

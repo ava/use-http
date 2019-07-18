@@ -1,6 +1,6 @@
 {
   "name": "use-http",
-  "version": "0.1.75",
+  "version": "0.1.77",
   "homepage": "https://codesandbox.io/embed/km04k9k9x5",
   "main": "dist/index.js",
   "license": "MIT",
@@ -30,10 +30,17 @@
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-react-hooks": "^1.6.1",
     "eslint-watch": "^5.1.2",
+    "eslint-config-prettier": "4.3.0",
+    "eslint-plugin-jest-formatting": "0.0.9",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-sonarjs": "^0.4.0",
     "jest": "^24.7.1",
     "jest-fetch-mock": "^2.1.2",
+    "prettier": "^1.18.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-hooks-testing-library": "^0.6.0",
     "react-test-renderer": "^16.8.6",
     "ts-jest": "^24.0.0",
     "typescript": "^3.4.5",
@@ -41,9 +48,9 @@
   },
   "scripts": {
     "prepublishOnly": "yarn build # runs before publish",
-    "build": "rm -rf dist && ./node_modules/.bin/tsc --module CommonJS",
-    "build:watch": "rm -rf dist && ./node_modules/.bin/tsc -w --module CommonJS",
-    "tsc": "./node_modules/.bin/tsc -p . --noEmit && tsc -p ./src/__tests__",
+    "build": "rm -rf dist && tsc --module CommonJS",
+    "build:watch": "rm -rf dist && tsc -w --module CommonJS",
+    "tsc": "tsc -p . --noEmit && tsc -p ./src/__tests__",
     "test:browser": "yarn tsc && jest -c ./config/jest.config.js --env=jsdom",
     "test:browser:watch": "yarn tsc && jest --watch -c ./config/jest.config.js --env=jsdom",
     "test:server": "yarn tsc && jest -c ./config/jest.config.js --env=node",
@@ -51,74 +58,10 @@
     "test:watch": "yarn test:browser:watch && yarn test:server:watch",
     "test": "yarn test:browser && yarn test:server",
     "clean": "npm prune; yarn cache clean; rm -rf ./node_modules package-lock.json yarn.lock; yarn",
-    "lint": "./node_modules/.bin/eslint . ./src/*.* ./src/__tests__/*",
-    "lint:watch": "./node_modules/.bin/watch 'yarn lint'"
+    "lint": "eslint ./src/**/*.{ts,tsx}",
+    "lint:fix": "npm run lint -- --fix",
+    "lint:watch": "watch 'yarn lint'"
   },
-  "eslintConfig": {
-    "env": {
-      "browser": true,
-      "commonjs": true,
-      "es6": true,
-      "node": true,
-      "jest": true
-    },
-    "settings": {
-      "react": {
-        "version": "detect"
-      }
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "globals": {
-      "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "ecmaFeatures": {
-        "jsx": true
-      },
-      "ecmaVersion": 2018,
-      "sourceType": "module",
-      "project": "./tsconfig.json",
-      "tsconfigRootDir": "."
-    },
-    "plugins": [
-      "jest",
-      "react",
-      "react-hooks",
-      "@typescript-eslint"
-    ],
-    "rules": {
-      "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
-      "indent": "off",
-      "@typescript-eslint/indent": [
-        "error",
-        2
-      ],
-      "@typescript-eslint/member-delimiter-style": [
-        "error",
-        {
-          "multiline": {
-            "delimiter": "none",
-            "requireLast": false
-          },
-          "singleline": {
-            "delimiter": "comma",
-            "requireLast": false
-          }
-        }
-      ]
-    }
-  },
-  "eslintIgnore": [
-    "dist/*",
-    ".gitignore"
-  ],
   "files": [
     "dist"
   ],
