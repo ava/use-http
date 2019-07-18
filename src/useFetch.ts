@@ -120,15 +120,12 @@ function useFetch<TData = any>(
   useEffect((): void => {
     if (!onMount) return
     const methodName = requestInit.method || HTTPMethod.GET
+    const methodLower = methodName.toLowerCase() as keyof FetchCommands
     if (methodName !== HTTPMethod.GET) {
-      const req = request[
-        methodName.toLowerCase() as keyof FetchCommands
-      ] as BodyOnly
+      const req = request[methodLower] as BodyOnly
       req(requestInit.body as BodyInit)
     } else {
-      const req = request[
-        methodName.toLowerCase() as keyof FetchCommands
-      ] as NoArgs
+      const req = request[methodLower] as NoArgs
       req()
     }
   }, [
