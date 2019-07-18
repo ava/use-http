@@ -5,7 +5,7 @@
 > 🐶 React hook for making isomorphic http requests
 
 [GitHub](https://github.com/alex-cory/use-http)
-[Get Started](http://use-http.com/#/?id=managed-state-usage-⚠️)
+[Get Started](#/?id=managed-state-usage-⚠️)
 
 <!-- ![color](#e5e5e5) -->
 
