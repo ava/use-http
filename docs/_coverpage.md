@@ -1,6 +1,6 @@
 <!-- _coverpage.md -->
 
-![logo](public/dog.png)
+![logo](https://github.com/alex-cory/use-http/raw/master/public/dog.png)
 
 > 🐶 React hook for making isomorphic http requests
 
