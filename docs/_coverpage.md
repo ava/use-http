@@ -7,7 +7,7 @@
 [GitHub](https://github.com/alex-cory/use-http)
 [Get Started](#/?id=managed-state-usage-⚠️)
 
-<!-- ![color](#e5e5e5) -->
+<!-- ![color](#ffff) -->
 
 [github-watch-badge]: https://img.shields.io/github/watchers/alex-cory/use-http.svg?style=social
 [github-watch]: https://github.com/alex-cory/use-http/watchers
