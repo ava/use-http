@@ -83,7 +83,7 @@ Usage
   </ul>
 </details>
 
-<details><summary><b>Basic Usage (managed state) <code>useFetch</code></b></summary>
+<details open><summary><b>Basic Usage (managed state) <code>useFetch</code></b></summary>
 
 ```js
 import useFetch from 'use-http'
