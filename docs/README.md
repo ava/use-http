@@ -99,7 +99,7 @@ function Todos() {
 }
 ```
 
-Managed State Usage 🔥
+Managed State Usage ⚠️
 -------------------
 
 ```js
