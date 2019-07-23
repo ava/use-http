@@ -481,8 +481,21 @@ Todos
       auth: jwt
     })
     .get()
-
 ```
+ - [ ] maybe change array destructure syntax to
+  ```jsx
+  const [request, response] = useFetch()
+  const { get, post, loading, ...etc } = request
+  const { data, ok, status, headers, type, ...restOfResponse } = response
+  ```
+  - [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
+        convert all the keys in the response to camelCase.
+        Not exactly sure how this syntax should look because what
+        if you want to have this only go 1 layer deep into the response
+        object. Or if this is just out of scope for this library.
+  ```jsx
+  <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
+  ```
 
 <details><summary><b>The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
     
