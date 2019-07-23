@@ -83,7 +83,48 @@ Usage
   </ul>
 </details>
 
-<details><summary><b>Basic Usage <code>useFetch</code></b></summary>
+<details open><summary><b>Basic Usage (managed state) <code>useFetch</code></b></summary>
+
+```js
+import useFetch from 'use-http'
+
+function Todos() {
+  const [todos, setTodos] = useState([])
+
+  const request = useFetch('https://example.com')
+
+  // on mount, initialize the todos
+  useEffect(() => {
+    initializeTodos()
+  }, [])
+
+  async function initializeTodos() {
+    const initialTodos = await request.get('/todos')
+    setTodos(initialTodos)
+  }
+
+  async function addTodo() {
+    const newTodo = await request.post('/todos', {
+      title: 'no way',
+    })
+    setTodos(oldTodos => [...oldTodos, newTodo])
+  }
+
+  return (
+    <>
+      <button onClick={addTodo}>Add Todo</button>
+      {request.error && 'Error!'}
+      {request.loading && 'Loading...'}
+      {todos.length > 0 && todos.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+    </>
+  )
+}
+```
+</details>
+
+<details><summary><b>Basic Usage (no managed state) <code>useFetch</code></b></summary>
     
 ```js
 import useFetch from 'use-http'
@@ -114,7 +155,6 @@ function Todos() {
 }
 ```
 </details>
-
 
 <details><summary><b>Destructured <code>useFetch</code></b></summary>
 
@@ -428,14 +468,9 @@ Todos
  - [ ] add `timeout`
  - [ ] add `debounce`
  - [ ] maybe add a `retry: 3` which would specify the amount of times it should retry before erroring out
- - [ ] ERROR handling:
-   - [ ] make sure `options` (as 2nd param) to all hooks except `useMutation` and `useQuery` is an object, if not `invariant`/throw error
- - [ ] add array destructuring return types for helper hooks
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
-     - [ ] add preview image
-     - [ ] add google analytics
      - [ ] show comparison with Apollo
  - [ ] maybe add syntax for inline headers like this
 ```jsx

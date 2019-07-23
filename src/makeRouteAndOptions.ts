@@ -37,6 +37,11 @@ export default function makeRouteAndOptions(
   const body = ((): string => {
     if (isObject(routeOrBody)) return JSON.stringify(routeOrBody)
     if (isObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
+    if (
+      isBrowser && (
+        bodyAs2ndParam instanceof FormData ||
+        bodyAs2ndParam instanceof URLSearchParams
+      )) return bodyAs2ndParam;
     return JSON.stringify({})
   })()
 
