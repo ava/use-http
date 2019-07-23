@@ -7,12 +7,7 @@ import {
   DestructuringCommands,
   UseFetchResult,
 } from './types'
-import {
-  BodyOnly,
-  FetchData,
-  NoArgs,
-  NoUrlOptions,
-} from './types'
+import { BodyOnly, FetchData, NoArgs, NoUrlOptions } from './types'
 import useCustomOptions from './useCustomOptions'
 import useRequestInit from './useRequestInit'
 import useSSR from 'use-ssr'
