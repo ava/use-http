@@ -31,7 +31,7 @@ export default function makeRouteAndOptions(
       isBrowser && (
         bodyAs2ndParam instanceof FormData ||
         bodyAs2ndParam instanceof URLSearchParams
-      ) return bodyAs2ndParam;
+      )) return bodyAs2ndParam;
     return JSON.stringify({})
   })()
 
