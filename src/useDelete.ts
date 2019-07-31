@@ -19,12 +19,12 @@ interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
   delete: FetchData
   del: FetchData
 }
-type UseDelete = ArrayDestructure & ObjectDestructure
+type UseDelete<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TData>
 
 export const useDelete = <TData = any>(
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions,
-): UseDelete => {
+): UseDelete<TData> => {
   const customOptions = useCustomOptions(urlOrOptions, optionsNoURLs)
   const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 

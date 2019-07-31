@@ -12,12 +12,12 @@ type ArrayDestructure<TData = any> = [
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
   query: (variables?: object) => Promise<any>
 }
-type UseQuery = ArrayDestructure & ObjectDestructure
+type UseQuery<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TData>
 
 export const useQuery = <TData = any>(
   urlOrQuery: string | TemplateStringsArray,
   queryArg?: string,
-): UseQuery => {
+): UseQuery<TData> => {
   const context = useContext(FetchContext)
 
   useURLRequiredInvariant(
