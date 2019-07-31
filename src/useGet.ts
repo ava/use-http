@@ -17,12 +17,12 @@ type ArrayDestructure<TData = any> = [
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
   get: (route?: string) => Promise<any>
 }
-type UseGet = ArrayDestructure & ObjectDestructure
+type UseGet<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TData>
 
 export const useGet = <TData = any>(
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions,
-): UseGet => {
+): UseGet<TData> => {
   const customOptions = useCustomOptions(urlOrOptions, optionsNoURLs)
   const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
