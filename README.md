@@ -112,9 +112,9 @@ function Todos() {
 
   return (
     <>
-      <button onClick={addTodo}>Add Todo</button>
-      {request.error && 'Error!'}
-      {request.loading && 'Loading...'}
+      <button onClick={ addTodo }>Add Todo</button>
+      {todos.error && 'Error!'}
+      {todos.loading && 'Loading...'}
       {todos.length > 0 && todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
