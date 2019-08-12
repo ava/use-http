@@ -18,12 +18,12 @@ type ArrayDestructure<TData = any> = [
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
   patch: FetchData
 }
-type UsePatch = ArrayDestructure & ObjectDestructure
+type UsePatch<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TData>
 
 export const usePatch = <TData = any>(
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions,
-): UsePatch => {
+): UsePatch<TData> => {
   const customOptions = useCustomOptions(urlOrOptions, optionsNoURLs)
   const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 

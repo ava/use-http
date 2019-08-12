@@ -12,12 +12,12 @@ type ArrayDestructure<TData = any> = [
 interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
   mutate: (variables?: object) => Promise<any>
 }
-type UseMutation = ArrayDestructure & ObjectDestructure
+type UseMutation<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TData>
 
 export const useMutation = <TData = any>(
   urlOrMutation: string | TemplateStringsArray,
   mutationArg?: string,
-): UseMutation => {
+): UseMutation<TData> => {
   const context = useContext(FetchContext)
 
   useURLRequiredInvariant(

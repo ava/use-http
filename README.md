@@ -112,9 +112,9 @@ function Todos() {
 
   return (
     <>
-      <button onClick={addTodo}>Add Todo</button>
-      {request.error && 'Error!'}
-      {request.loading && 'Loading...'}
+      <button onClick={ addTodo }>Add Todo</button>
+      {todos.error && 'Error!'}
+      {todos.loading && 'Loading...'}
       {todos.length > 0 && todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
@@ -481,8 +481,29 @@ Todos
       auth: jwt
     })
     .get()
-
 ```
+ - [ ] maybe change array destructure syntax to
+  ```jsx
+  const [request, response] = useFetch()
+  const { get, post, loading, ...etc } = request
+  const { data, ok, status, headers, type, ...restOfResponse } = response
+  ```
+  - [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
+        convert all the keys in the response to camelCase.
+        Not exactly sure how this syntax should look because what
+        if you want to have this only go 1 layer deep into the response
+        object. Or if this is just out of scope for this library.
+  ```jsx
+  <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
+  ```
+  - [ ] see if you can make this work without causing infinite loop when having `request` as a dependency of `useEffect`. I wish the exhaustive dependencies would allow you to do `[request.get]` instead of forcing `[request]`. It doesn't cause infinite loop with `[request.get]` and that's the only method being used inside `useEffect`
+  - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Auth': 'some-token' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
+  ```jsx
+  const request = useFetch('https://url.com', globalOptions => {
+    delete globalOptions.Auth
+    return globalOptions
+  })
+  ```
 
 <details><summary><b>The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
     
