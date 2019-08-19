@@ -18,7 +18,7 @@
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
     <a href="https://www.npmjs.com/package/use-http">
-      <img src="https://img.shields.io/npm/dm/use-http.svg" />
+      <img src="https://img.shields.io/npm/dt/use-http.svg" />
     </a>
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
