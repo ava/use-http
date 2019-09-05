@@ -472,6 +472,50 @@ Todos
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
      - [ ] show comparison with Apollo
+ - [ ] Interceptors (potential syntax example) this shows how to get access tokens on each request if an access token or refresh token is expired
+```jsx
+const App = () => {
+  const { get } = useFetch('https://example.com')
+  const [accessToken, setAccessToken] = useLocalStorage('access-token')
+  const [refreshToken, setRefreshToken] = useLocalStorage('refresh-token')
+  const { history } = useReactRouter()
+  const options = {
+    interceptors: {
+      async request(opts) {
+        let headers = {}
+        // refresh token expires in 1 day, used to get access token
+        if (!refreshToken || isExpired(refreshToken)) {
+          return history.push('/login')
+        }
+        // access token expires every 15 minutes, use refresh token to get new access token
+        if (!accessToken || isExpired(accessToken)) {
+          const access = await get(`/access-token?refreshToken=${refreshToken}`)
+          setAccessToken(access)
+          headers = {
+            Authorization: `Bearer ${access}`,
+          }
+        }
+        const finalOptions = {
+          ...opts,
+          headers: {
+            ...opts.headers,
+            ...headers,
+          },
+        }
+        return finalOptions
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  }
+  return (
+    <Provider url='https://example.com' options={options}>
+      <App />
+    </Provider>
+  )
+}
+```
  - [ ] maybe add syntax for inline headers like this
 ```jsx
   const user = useFetch()
