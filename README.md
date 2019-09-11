@@ -363,7 +363,7 @@ function App() {
 
   const options = {
     headers: {
-      Authorization: 'Bearer:asdfasdfasdfasdfasdafd'
+      Authorization: 'Bearer YOUR_TOKEN_HERE'
     }
   }
   
