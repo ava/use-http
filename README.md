@@ -551,7 +551,7 @@ const App = () => {
   - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Auth': 'some-token' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
   ```jsx
   const request = useFetch('https://url.com', globalOptions => {
-    delete globalOptions.Auth
+    delete globalOptions.headers.Authorization
     return globalOptions
   })
   ```
