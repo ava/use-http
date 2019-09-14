@@ -75,13 +75,13 @@ import useFetch from 'use-http'
 
 function Todos() {
   const options = { // accepts all `fetch` options
-    onMount: true // will fire on componentDidMount
+    onMount: true // will fire on componentDidMount, if no `method` is specified, will default to GET
   }
 
-  const todos = useFetch('https://example.com/todos', options)
+  const request = useFetch('https://example.com/todos', options)
 
   function addTodo() {
-    todos.post({
+    request.post({
       title: 'no way',
     })
   }
@@ -91,7 +91,7 @@ function Todos() {
       <button onClick={addTodo}>Add Todo</button>
       {request.error && 'Error!'}
       {request.loading && 'Loading...'}
-      {(todos.data || []).length > 0 && todos.data.map(todo => (
+      {(request.data || []).length > 0 && request.data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
