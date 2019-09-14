@@ -526,6 +526,7 @@ const App = () => {
     })
     .get()
 ```
+ - [ ] when `onMount` is set to `true`, make `loading` true by default so you can just use the `{!todos.loading && todos.data.map(todo => (`. It's cleaner than `{(todos.data || []).length > 0 && todos.data.map(todo => (`
  - [ ] maybe change array destructure syntax to
   ```jsx
   const [request, response] = useFetch()
