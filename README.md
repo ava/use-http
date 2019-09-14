@@ -131,7 +131,7 @@ import useFetch from 'use-http'
 
 function Todos() {
   const options = { // accepts all `fetch` options
-    onMount: true // will fire on componentDidMount
+    onMount: true // will fire on componentDidMount, if no `method` is specified, will default to GET
   }
 
   const todos = useFetch('https://example.com/todos', options)
