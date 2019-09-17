@@ -461,7 +461,8 @@ Todos
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
- - [ ] make work with FormData
+ - [ ] react native support
+ - [ ] documentation for FormData
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
