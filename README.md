@@ -517,6 +517,8 @@ const App = () => {
   )
 }
 ```
+ - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
+ - [ ] Cache responses to improve speed and reduce amount of requests
  - [ ] maybe add syntax for inline headers like this
 ```jsx
   const user = useFetch()
