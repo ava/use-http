@@ -549,6 +549,12 @@ const App = () => {
     loading: true, // will set the default value of `request.loading` to true
   })
   ```
+  - [ ] potential syntax `onUpdate`
+  ```jsx
+  const request = useFetch('url', {
+    onUpdate: [props.id] // everytime props.id is updated, it will re-run the request GET in this case
+  })
+  ```
   - [ ] see if you can make this work without causing infinite loop when having `request` as a dependency of `useEffect`. I wish the exhaustive dependencies would allow you to do `[request.get]` instead of forcing `[request]`. It doesn't cause infinite loop with `[request.get]` and that's the only method being used inside `useEffect`
   - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Auth': 'some-token' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
   ```jsx
