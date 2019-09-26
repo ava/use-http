@@ -67,13 +67,14 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     expect(result.current.loading).toBe(true)
     expect(result.current.error).toBe(undefined)
     expect(result.current.request.data).toBe(undefined)
+    expect(result.current.response.data).toEqual(undefined)
     expect(result.current.request.loading).toBe(true)
 
     await waitForNextUpdate()
 
     expect(result.current.request.data).toEqual(expected)
     expect(result.current.data).toEqual(expected)
-    // expect(response.data).toEqual(expected)
+    expect(result.current.response.data).toEqual(expected)
     expect(result.current.request.loading).toBe(false)
     expect(result.current.loading).toBe(false)
 

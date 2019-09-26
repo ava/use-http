@@ -2,7 +2,7 @@ export enum HTTPMethod {
   DELETE = 'DELETE',
   GET = 'GET',
   HEAD = 'HEAD',
-  OTIONS = 'OPTIONS',
+  OPTIONS = 'OPTIONS',
   PATCH = 'PATCH',
   POST = 'POST',
   PUT = 'PUT',
@@ -34,10 +34,7 @@ export type RequestInitJSON = RequestInit & {
   }
 }
 
-export interface FetchCommands<TData = any> {
-  data: TData | undefined
-  loading: boolean
-  error: Error
+export interface ReqMethods {
   get: (route?: string) => Promise<any>
   post: FetchData
   patch: FetchData
@@ -49,26 +46,38 @@ export interface FetchCommands<TData = any> {
   abort: () => void
 }
 
-export type DestructuringCommands<TData = any> = [
-  TData | undefined,
-  boolean,
-  any,
-  FetchCommands,
-]
+export interface Data<TData> {
+  data: TData | undefined
+}
 
-export interface UseFetchBaseResult<TData = any> {
+export interface ReqBase<TData> {
   data: TData | undefined
   loading: boolean
   error: Error
 }
 
-export type UseFetchResult<TData = any> = UseFetchBaseResult<TData> &
-  FetchCommands & {
-    request: FetchCommands & UseFetchBaseResult
+// export type Res<TData = any> = Response & Data<TData>
+export interface Res<TData> extends Response {
+  data: TData | undefined
+}
+
+export type Req<TData = any> = ReqMethods & ReqBase<TData>
+
+export type UseFetchArrayReturn<TData> = [
+  Req<TData>,
+  Res<TData>,
+  boolean,
+  Error,
+]
+
+export type UseFetchObjectReturn<TData> = ReqBase<TData> &
+  ReqMethods & {
+    request: Req<TData>
+    response: Res<TData>
   }
 
-export type UseFetch<TData> = DestructuringCommands<TData> &
-  UseFetchResult<TData>
+export type UseFetch<TData> = UseFetchArrayReturn<TData> &
+  UseFetchObjectReturn<TData>
 
 export interface CustomOptions {
   onMount?: boolean

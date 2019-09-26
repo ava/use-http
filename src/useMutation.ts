@@ -1,6 +1,6 @@
 import useFetch, { FetchContext } from '.'
 import { useContext, useCallback } from 'react'
-import { UseFetchBaseResult } from './types'
+import { ReqBase } from './types'
 import { invariant, isString, useURLRequiredInvariant } from './utils'
 
 type ArrayDestructure<TData = any> = [
@@ -9,7 +9,7 @@ type ArrayDestructure<TData = any> = [
   Error,
   (variables?: object) => Promise<any>,
 ]
-interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
+interface ObjectDestructure<TData = any> extends ReqBase<TData> {
   mutate: (variables?: object) => Promise<any>
 }
 type UseMutation<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TData>
