@@ -56,7 +56,6 @@ export interface ReqBase<TData> {
   error: Error
 }
 
-// export type Res<TData = any> = Response & Data<TData>
 export interface Res<TData> extends Response {
   data: TData | undefined
 }
