@@ -34,7 +34,10 @@ export type RequestInitJSON = RequestInit & {
   }
 }
 
-export interface FetchCommands {
+export interface FetchCommands<TData = any> {
+  data: TData | undefined
+  loading: boolean
+  error: Error
   get: (route?: string) => Promise<any>
   post: FetchData
   patch: FetchData
@@ -61,7 +64,7 @@ export interface UseFetchBaseResult<TData = any> {
 
 export type UseFetchResult<TData = any> = UseFetchBaseResult<TData> &
   FetchCommands & {
-    request: FetchCommands
+    request: FetchCommands & UseFetchBaseResult
   }
 
 export type UseFetch<TData> = DestructuringCommands<TData> &

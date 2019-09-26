@@ -25,7 +25,7 @@ export const useQuery = <TData = any>(
     'useQuery',
   )
   useURLRequiredInvariant(
-    !!context.url && isString(urlOrQuery) && !queryArg,
+    !!context.url || isString(urlOrQuery) && !queryArg,
     'useQuery',
     'OR you need to do useQuery("https://example.com", `your graphql query`)',
   )
@@ -49,20 +49,17 @@ export const useQuery = <TData = any>(
     QUERY = urlOrQuery as string
   }
 
-  const request = useFetch<TData>(url as string)
+  const { loading, error, ...request } = useFetch<TData>(url as string)
 
   const query = useCallback(
     (variables?: object): Promise<any> => request.query(QUERY, variables),
     [QUERY, request],
   )
 
+  const data = (request.data as TData & { data: any } || { data: undefined }).data
+
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
-    [request.data, request.loading, request.error, query],
-    {
-      data: request.data,
-      loading: request.loading,
-      error: request.error,
-      query,
-    },
+    [data, loading, error, query],
+    { data, loading, error, query },
   )
 }

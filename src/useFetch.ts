@@ -72,7 +72,7 @@ function useFetch<TData = any>(
       }
     },
     [
-      /* url, isBrowser, requestInit, isServer */
+      url, isBrowser, requestInit, isServer
     ],
   )
 
@@ -98,6 +98,9 @@ function useFetch<TData = any>(
 
   const request = useMemo(
     (): FetchCommands => ({
+      loading,
+      data: data.current,
+      error,
       get,
       post,
       patch,
@@ -108,7 +111,7 @@ function useFetch<TData = any>(
       query,
       mutate,
     }),
-    [get, post, patch, put, del, abort, query, mutate],
+    [get, post, patch, put, del, abort, query, mutate, loading, data, error],
   )
 
   // handling onMount
@@ -124,12 +127,12 @@ function useFetch<TData = any>(
       req()
     }
   }, [
-    /*onMount, requestInit.body, requestInit.method, request, url*/
+    onMount, requestInit.body, requestInit.method, url,
   ])
 
   return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(
     [data.current, loading, error, request],
-    { data: data.current, loading, error, request, ...request },
+    { request, ...request },
   )
 }
 

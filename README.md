@@ -79,7 +79,6 @@ Usage
   <ul>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/useget-with-provider-c78w2'>useGet + < Provider /></a></li>
   </ul>
 </details>
 
@@ -177,25 +176,6 @@ var request = useFetch('https://example.com')
 
 request.post('/todos', {
   no: 'way'
-})
-```
-</details>
-
-
-<details><summary><b><code>useGet</code>, <code>usePost</code>, <code>usePatch</code>, <code>usePut</code>, <code>useDelete</code></b></summary>
-
-```jsx
-import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
-
-const [data, loading, error, patch] = usePatch({
-  url: 'https://example.com',
-  headers: {
-    'Accept': 'application/json; charset=UTF-8'
-  }
-})
-
-patch({
-  yes: 'way',
 })
 ```
 </details>
@@ -387,11 +367,6 @@ Overview
 | Hook                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `useFetch` | The base hook |
-| `useGet` | Defaults to a GET request |
-| `usePost` | Defaults to a POST request |
-| `usePut` | Defaults to a PUT request |
-| `usePatch` | Defaults to a PATCH request |
-| `useDelete` | Defaults to a DELETE request |
 | `useQuery` | For making a GraphQL query |
 | `useMutation` | For making a GraphQL mutation |
     

@@ -25,7 +25,7 @@ export const useMutation = <TData = any>(
     'useMutation',
   )
   useURLRequiredInvariant(
-    !!context.url && isString(urlOrMutation) && !mutationArg,
+    !!context.url || isString(urlOrMutation) && !mutationArg,
     'useMutation',
     'OR you need to do useMutation("https://example.com", `your graphql mutation`)',
   )
@@ -49,20 +49,17 @@ export const useMutation = <TData = any>(
     MUTATION = urlOrMutation as string
   }
 
-  const request = useFetch<TData>(url as string)
+  const { loading, error, ...request } = useFetch<TData>(url as string)
 
   const mutate = useCallback(
     (inputs?: object): Promise<any> => request.mutate(MUTATION, inputs),
     [MUTATION, request],
   )
 
+  const data = (request.data as TData & { data: any } || { data: undefined }).data
+
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
-    [request.data, request.loading, request.error, mutate],
-    {
-      data: request.data,
-      loading: request.loading,
-      error: request.error,
-      mutate,
-    },
+    [data, loading, error, mutate],
+    { data, loading, error, mutate },
   )
 }
