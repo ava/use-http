@@ -522,13 +522,6 @@ const App = () => {
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
-  - [ ] add default functionality to the options. i.e.
-  ```jsx
-  const request = useFetch('url', {
-    data: [], // will set the default value of `request.data` to an array
-    loading: true, // will set the default value of `request.loading` to true
-  })
-  ```
   - [ ] potential syntax `onUpdate`
   ```jsx
   const request = useFetch('url', {
