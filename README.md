@@ -444,9 +444,6 @@ Todos
  - [ ] documentation for FormData
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
- - [ ] Allow option to fetch on server instead of just having `loading` state
- - [ ] add `timeout`
- - [ ] maybe add a `retry: 3` which would specify the amount of times it should retry before erroring out
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
@@ -515,14 +512,22 @@ const App = () => {
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
-  - [ ] potential syntax `onUpdate`
+  - [ ] potential option ideas
   ```jsx
-  const request = useFetch('url', {
+  const request = useFetch({
     onUpdate: [props.id] // everytime props.id is updated, it will re-run the request GET in this case
+    path: '/todos'       // this would allow you to POST and GET to the same path onMount and on demand if you had a url in context
+    retry: 3,            // amount of times it should retry before erroring out
+    retryDuration: 1000, // amount of time for each retry before timing out?
+    timeout: 10000,      // amount of time period before erroring out
+    onServer: true,      // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
+    interceptors: {      
+      request(opts) {}   // i.e. if you need to do some kind of authentication before a request
+      response(opts) {}  // i.e. if you want to camelCase all fields in a response everytime
+    }
   })
   ```
-  - [ ] see if you can make this work without causing infinite loop when having `request` as a dependency of `useEffect`. I wish the exhaustive dependencies would allow you to do `[request.get]` instead of forcing `[request]`. It doesn't cause infinite loop with `[request.get]` and that's the only method being used inside `useEffect`
-  - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Auth': 'some-token' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
+  - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Authentication': 'Bearer MY_TOKEN' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
   ```jsx
   const request = useFetch('https://url.com', globalOptions => {
     delete globalOptions.headers.Authorization
