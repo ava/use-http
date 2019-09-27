@@ -18,7 +18,7 @@
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
     <a href="https://www.npmjs.com/package/use-http">
-      <img src="https://img.shields.io/npm/dm/use-http.svg" />
+      <img src="https://img.shields.io/npm/dt/use-http.svg" />
     </a>
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
@@ -385,7 +385,7 @@ function App() {
 
   const options = {
     headers: {
-      Authorization: 'Bearer jwt-asdfasdfasdf'
+      Authorization: 'Bearer YOUR_TOKEN_HERE'
     }
   }
   
@@ -447,7 +447,8 @@ Todos
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
- - [X] make work with FormData
+ - [ ] react native support
+ - [ ] documentation for FormData
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
@@ -457,6 +458,52 @@ Todos
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
      - [ ] show comparison with Apollo
+ - [ ] Interceptors (potential syntax example) this shows how to get access tokens on each request if an access token or refresh token is expired
+```jsx
+const App = () => {
+  const { get } = useFetch('https://example.com')
+  const [accessToken, setAccessToken] = useLocalStorage('access-token')
+  const [refreshToken, setRefreshToken] = useLocalStorage('refresh-token')
+  const { history } = useReactRouter()
+  const options = {
+    interceptors: {
+      async request(opts) {
+        let headers = {}
+        // refresh token expires in 1 day, used to get access token
+        if (!refreshToken || isExpired(refreshToken)) {
+          return history.push('/login')
+        }
+        // access token expires every 15 minutes, use refresh token to get new access token
+        if (!accessToken || isExpired(accessToken)) {
+          const access = await get(`/access-token?refreshToken=${refreshToken}`)
+          setAccessToken(access)
+          headers = {
+            Authorization: `Bearer ${access}`,
+          }
+        }
+        const finalOptions = {
+          ...opts,
+          headers: {
+            ...opts.headers,
+            ...headers,
+          },
+        }
+        return finalOptions
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  }
+  return (
+    <Provider url='https://example.com' options={options}>
+      <App />
+    </Provider>
+  )
+}
+```
+ - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
+ - [ ] Cache responses to improve speed and reduce amount of requests
  - [ ] maybe add syntax for inline headers like this
 ```jsx
   const user = useFetch()
@@ -475,11 +522,24 @@ Todos
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
+  - [ ] add default functionality to the options. i.e.
+  ```jsx
+  const request = useFetch('url', {
+    data: [], // will set the default value of `request.data` to an array
+    loading: true, // will set the default value of `request.loading` to true
+  })
+  ```
+  - [ ] potential syntax `onUpdate`
+  ```jsx
+  const request = useFetch('url', {
+    onUpdate: [props.id] // everytime props.id is updated, it will re-run the request GET in this case
+  })
+  ```
   - [ ] see if you can make this work without causing infinite loop when having `request` as a dependency of `useEffect`. I wish the exhaustive dependencies would allow you to do `[request.get]` instead of forcing `[request]`. It doesn't cause infinite loop with `[request.get]` and that's the only method being used inside `useEffect`
   - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Auth': 'some-token' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
   ```jsx
   const request = useFetch('https://url.com', globalOptions => {
-    delete globalOptions.Auth
+    delete globalOptions.headers.Authorization
     return globalOptions
   })
   ```
