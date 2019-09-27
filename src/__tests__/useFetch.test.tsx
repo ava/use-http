@@ -154,6 +154,21 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     )
   })
 
+  it('should work correctly: useFetch({ onMount: true, data: [] })', async (): Promise<
+    void
+  > => {
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({ onMount: true, data: {} }),
+      { wrapper: wrapper as React.ComponentType }
+    )
+
+    expect(result.current.data).toEqual({})
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toMatchObject(expected)
+  })
+
   it('should execute GET using Provider url: useFetch({ onMount: true })', async (): Promise<
     void
   > => {

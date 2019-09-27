@@ -43,5 +43,16 @@ export default function useCustomOptions(
     return false
   }, [urlOrOptions, optionsNoURLs])
 
-  return { url, onMount }
+  const loading = useMemo((): boolean => {
+    if (isObject(urlOrOptions)) return !!urlOrOptions.loading || !!urlOrOptions.onMount
+    if (isObject(optionsNoURLs)) return !!optionsNoURLs.loading || !!optionsNoURLs.onMount
+    return false
+  }, [urlOrOptions, optionsNoURLs])
+
+  const data = useMemo((): any => {
+    if (isObject(urlOrOptions)) return urlOrOptions.data
+    if (isObject(optionsNoURLs)) return optionsNoURLs.data
+  }, [urlOrOptions, optionsNoURLs])
+
+  return { url, onMount, loading, data }
 }

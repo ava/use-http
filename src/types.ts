@@ -62,6 +62,8 @@ export interface Res<TData> extends Response {
 
 export type Req<TData = any> = ReqMethods & ReqBase<TData>
 
+export type UseFetchArgs = [(string | OptionsMaybeURL)?, NoUrlOptions?]
+
 export type UseFetchArrayReturn<TData> = [
   Req<TData>,
   Res<TData>,
@@ -82,6 +84,8 @@ export interface CustomOptions {
   onMount?: boolean
   timeout?: number
   url: string
+  loading?: boolean
+  data?: any
 }
 
 export type Options = CustomOptions &

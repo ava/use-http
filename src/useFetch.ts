@@ -1,15 +1,15 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import {
   HTTPMethod,
-  OptionsMaybeURL,
   UseFetch,
   ReqMethods,
   Req,
   Res,
   UseFetchArrayReturn,
   UseFetchObjectReturn,
+  UseFetchArgs
 } from './types'
-import { BodyOnly, FetchData, NoArgs, NoUrlOptions } from './types'
+import { BodyOnly, FetchData, NoArgs } from './types'
 import useCustomOptions from './useCustomOptions'
 import useRequestInit from './useRequestInit'
 import useSSR from 'use-ssr'
@@ -25,19 +25,17 @@ import makeRouteAndOptions from './makeRouteAndOptions'
 // function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 // TODO: handle context.graphql
-function useFetch<TData = any>(
-  urlOrOptions?: string | OptionsMaybeURL,
-  optionsNoURLs?: NoUrlOptions,
-): UseFetch<TData> {
+function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
+  const { url, onMount, ...defaults } = useCustomOptions(...args)
+  const requestInit = useRequestInit(...args)
+
   const { isBrowser, isServer } = useSSR()
-  const { onMount, url } = useCustomOptions(urlOrOptions, optionsNoURLs)
-  const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
   const controller = useRef<AbortController | null>()
   const res = useRef<Response>()
-  const data = useRef<TData>()
+  const data = useRef<TData>(defaults.data)
 
-  const [loading, setLoading] = useState(onMount || false)
+  const [loading, setLoading] = useState(defaults.loading)
   const [error, setError] = useState<any>()
 
   const makeFetch = useCallback(
@@ -59,8 +57,8 @@ function useFetch<TData = any>(
           setLoading(true)
           if (isServer) return // TODO: for now, we don't do anything on the server
 
-          // const response = await fetch(`${url}${route}`, options)
           res.current = await fetch(`${url}${route}`, options)
+
           try {
             data.current = await res.current.json()
           } catch (err) {
@@ -95,7 +93,7 @@ function useFetch<TData = any>(
     },
     query: (query, variables) => post({ query, variables }),
     mutate: (mutation, variables) => post({ mutation, variables }),
-    loading,
+    loading: loading as boolean,
     error,
     data: data.current,
   }
@@ -124,7 +122,7 @@ function useFetch<TData = any>(
   ])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, response as Res<TData>, loading, error],
+    [request, response as Res<TData>, loading as boolean, error],
     { request, response: response as Res<TData>, ...request },
   )
 }
