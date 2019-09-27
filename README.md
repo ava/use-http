@@ -92,6 +92,15 @@ function Todos() {
 
   const [request, response] = useFetch('https://example.com')
 
+  // componentDidMount
+  const mounted = useRef(false)
+  useEffect(() => {
+    if (!mounted.current) {
+      initializeTodos()
+      mounted.current= true
+    }
+  })
+  
   async function initializeTodos() {
     const initialTodos = await request.get('/todos')
     if (response.ok) setTodos(initialTodos)
@@ -422,8 +431,8 @@ useFetch({
   // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com', // used to be `baseUrl`
   onMount: true,
-  data: [], // default for `data` field
-  loading: false, // default for `loading` field
+  data: [],                   // default for `data` field
+  loading: false,             // default for `loading` field
 })
 ```
 
