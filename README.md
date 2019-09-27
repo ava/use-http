@@ -115,7 +115,7 @@ function Todos() {
 
   return (
     <>
-      <button onClick={ addTodo }>Add Todo</button>
+      <button onClick={addTodo}>Add Todo</button>
       {request.error && 'Error!'}
       {request.loading && 'Loading...'}
       {todos.length > 0 && todos.map(todo => (
@@ -135,20 +135,13 @@ import useFetch from 'use-http'
 function Todos() {
   const options = { // accepts all `fetch` options
     onMount: true,  // will fire on componentDidMount (GET by default)
-    data: []        // default for `data` will be an array instead of undefined
+    data: []        // setting default for `data` as array instead of undefined
   }
 
   const { loading, error, data, post } = useFetch('https://example.com/todos', options)
 
-  function addTodo() {
-    post({
-      title: 'no way'
-    })
-  }
-
   return (
     <>
-      <button onClick={addTodo}>Add Todo</button>
       {error && 'Error!'}
       {loading && 'Loading...'}
       {!loading && data.map(todo => (
