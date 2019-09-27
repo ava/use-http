@@ -183,6 +183,20 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.loading).toBe(false)
     expect(result.current.data).toMatchObject(expected)
   })
+
+  it('should execute GET using Provider url: useFetch({ path: "/people", onMount: true })', async (): Promise<
+    void
+  > => {
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({ path: '/people', onMount: true }),
+      { wrapper: wrapper as React.ComponentType }
+    )
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toMatchObject(expected)
+    // TODO: test if you do a post('/alex'), if the url is /people/alex
+  })
 })
 
 describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {

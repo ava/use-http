@@ -20,7 +20,8 @@ describe('useCustomOptions: general usages', (): void => {
       url: 'https://example.com',
       onMount: false,
       loading: false,
-      data: undefined
+      data: undefined,
+      path: ''
     })
   })
 
@@ -35,7 +36,8 @@ describe('useCustomOptions: general usages', (): void => {
       url: 'https://example.com',
       onMount: true,
       loading: true,
-      data: undefined
+      data: undefined,
+      path: ''
     })
   })
 
@@ -45,7 +47,8 @@ describe('useCustomOptions: general usages', (): void => {
       url: 'https://example.com',
       onMount: false,
       loading: false,
-      data: undefined
+      data: undefined,
+      path: ''
     })
   })
 
@@ -58,7 +61,8 @@ describe('useCustomOptions: general usages', (): void => {
       url: 'https://cool.com',
       onMount: true,
       loading: true,
-      data: undefined
+      data: undefined,
+      path: ''
     })
   })
 
@@ -71,7 +75,8 @@ describe('useCustomOptions: general usages', (): void => {
       url: 'https://example.com',
       onMount: false,
       loading: false,
-      data: []
+      data: [],
+      path: ''
     })
   })
 
@@ -88,7 +93,8 @@ describe('useCustomOptions: general usages', (): void => {
       url: 'http://localhost',
       onMount: false,
       loading: false,
-      data: undefined
+      data: undefined,
+      path: ''
     })
   })
 })

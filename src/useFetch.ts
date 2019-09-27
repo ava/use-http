@@ -25,7 +25,7 @@ import makeRouteAndOptions from './makeRouteAndOptions'
 // function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
-  const { url, onMount, ...defaults } = useCustomOptions(...args)
+  const { url, onMount, path, ...defaults } = useCustomOptions(...args)
   const requestInit = useRequestInit(...args)
 
   const { isBrowser, isServer } = useSSR()
@@ -37,45 +37,40 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const [loading, setLoading] = useState(defaults.loading)
   const [error, setError] = useState<any>()
 
-  const makeFetch = useCallback(
-    (method: HTTPMethod): FetchData => {
-      return async (
-        routeOrBody?: string | BodyInit | object,
-        body?: BodyInit | object,
-      ): Promise<any> => {
-        controller.current = isBrowser ? new AbortController() : null
-        const { route, options } = makeRouteAndOptions(
-          requestInit,
-          method,
-          controller,
-          routeOrBody,
-          body,
-        )
+  const makeFetch = useCallback((method: HTTPMethod): FetchData => {
+    return async (
+      routeOrBody?: string | BodyInit | object,
+      body?: BodyInit | object,
+    ): Promise<any> => {
+      controller.current = isBrowser ? new AbortController() : null
+      const { route, options } = makeRouteAndOptions(
+        requestInit,
+        method,
+        controller,
+        routeOrBody,
+        body,
+      )
+
+      try {
+        setLoading(true)
+        if (isServer) return // TODO: for now, we don't do anything on the server
+
+        res.current = await fetch(`${url}${path}${route}`, options)
 
         try {
-          setLoading(true)
-          if (isServer) return // TODO: for now, we don't do anything on the server
-
-          res.current = await fetch(`${url}${route}`, options)
-
-          try {
-            data.current = await res.current.json()
-          } catch (err) {
-            data.current = (await res.current.text()) as any // FIXME: should not be `any` type
-          }
+          data.current = await res.current.json()
         } catch (err) {
-          if (err.name !== 'AbortError') setError(err)
-        } finally {
-          controller.current = null
-          setLoading(false)
+          data.current = (await res.current.text()) as any // FIXME: should not be `any` type
         }
-        return data.current
+      } catch (err) {
+        if (err.name !== 'AbortError') setError(err)
+      } finally {
+        controller.current = null
+        setLoading(false)
       }
-    },
-    [
-      url, isBrowser, requestInit, isServer
-    ],
-  )
+      return data.current
+    }
+  }, [url, isBrowser, requestInit, isServer])
 
   const post = makeFetch(HTTPMethod.POST)
   const del = makeFetch(HTTPMethod.DELETE)
@@ -116,9 +111,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const req = request[methodLower] as NoArgs
       req()
     }
-  }, [
-    onMount, requestInit.body, requestInit.method, url,
-  ])
+  }, [onMount, requestInit.body, requestInit.method, url])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, response as Res<TData>, loading as boolean, error],

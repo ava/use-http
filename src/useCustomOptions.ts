@@ -22,6 +22,7 @@ export default function useCustomOptions(
 ): CustomOptions {
   const context = useContext(FetchContext)
   const { isServer } = useSSR()
+
   invariant(
     !(isObject(urlOrOptions) && isObject(optionsNoURLs)),
     'You cannot have a 2nd parameter of useFetch when your first argument is an object config.',
@@ -57,5 +58,11 @@ export default function useCustomOptions(
     if (isObject(optionsNoURLs)) return optionsNoURLs.data
   }, [urlOrOptions, optionsNoURLs])
 
-  return { url, onMount, loading, data }
+  const path = useMemo((): string => {
+    if (isObject(urlOrOptions) && urlOrOptions.path) return urlOrOptions.path as string
+    if (isObject(optionsNoURLs) && optionsNoURLs.path) return optionsNoURLs.path as string
+    return ''
+  }, [urlOrOptions, optionsNoURLs])
+
+  return { url, onMount, loading, data, path }
 }

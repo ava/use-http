@@ -522,8 +522,12 @@ const App = () => {
     timeout: 10000,      // amount of time period before erroring out
     onServer: true,      // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     interceptors: {      
-      request(opts) {}   // i.e. if you need to do some kind of authentication before a request
-      response(opts) {}  // i.e. if you want to camelCase all fields in a response everytime
+      request(opts) { // i.e. if you need to do some kind of authentication before a request
+        return opts
+      }   
+      response(res) { // i.e. if you want to camelCase all fields in a response everytime
+        return res
+      }  
     }
   })
   ```
