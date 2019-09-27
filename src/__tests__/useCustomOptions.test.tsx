@@ -6,6 +6,8 @@ import React from 'react'
 import { isServer } from '../utils'
 
 describe('useCustomOptions: general usages', (): void => {
+  if (isServer) return
+
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
     <Provider url='https://example.com'>{children as ReactElement}</Provider>
   )

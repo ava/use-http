@@ -24,7 +24,6 @@ import makeRouteAndOptions from './makeRouteAndOptions'
 // function useFetch<TData = any>(url?: string, options?: NoUrlOptions): UseFetch<TData>
 // function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
-// TODO: handle context.graphql
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { url, onMount, ...defaults } = useCustomOptions(...args)
   const requestInit = useRequestInit(...args)

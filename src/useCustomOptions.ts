@@ -1,6 +1,7 @@
 import { OptionsMaybeURL, NoUrlOptions, CustomOptions } from './types'
 import { isString, isObject, invariant } from './utils'
 import { useContext, useMemo } from 'react'
+import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
 
 // Provider ex: useFetch({ url: 'https://url.com' }) -- (overwrites global url)
@@ -20,6 +21,7 @@ export default function useCustomOptions(
   optionsNoURLs?: NoUrlOptions,
 ): CustomOptions {
   const context = useContext(FetchContext)
+  const { isServer } = useSSR()
   invariant(
     !(isObject(urlOrOptions) && isObject(optionsNoURLs)),
     'You cannot have a 2nd parameter of useFetch when your first argument is an object config.',
@@ -44,6 +46,7 @@ export default function useCustomOptions(
   }, [urlOrOptions, optionsNoURLs])
 
   const loading = useMemo((): boolean => {
+    if (isServer) return true
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || !!urlOrOptions.onMount
     if (isObject(optionsNoURLs)) return !!optionsNoURLs.loading || !!optionsNoURLs.onMount
     return false
