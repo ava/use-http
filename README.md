@@ -160,7 +160,7 @@ function Todos() {
 ```
 </details>
 
-<details><summary><b>Destructured <code>useFetch</code></b></summary>
+<details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
 ```js
 var [request, response, loading, error] = useFetch('https://example.com')
