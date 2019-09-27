@@ -78,17 +78,10 @@ function Todos() {
     data: []        // default for `data` will be an array instead of undefined
   }
 
-  const { loading, error, data, post } = useFetch('https://example.com/todos', options)
-
-  function addTodo() {
-    post({
-      title: 'no way'
-    })
-  }
+  const { loading, error, data } = useFetch('https://example.com/todos', options)
 
   return (
     <>
-      <button onClick={addTodo}>Add Todo</button>
       {error && 'Error!'}
       {loading && 'Loading...'}
       {!loading && data.map(todo => (
