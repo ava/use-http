@@ -385,7 +385,7 @@ function App() {
 
   const options = {
     headers: {
-      Authorization: 'Bearer:asdfasdfasdfasdfasdafd'
+      Authorization: 'Bearer jwt-asdfasdfasdf'
     }
   }
   
