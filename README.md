@@ -90,9 +90,7 @@ import useFetch from 'use-http'
 function Todos() {
   const [todos, setTodos] = useState([])
 
-  const [request, response] = useFetch('https://example.com', {
-    onMount: true // this set's request.loading === true by default
-  })
+  const [request, response] = useFetch('https://example.com')
 
   async function initializeTodos() {
     const initialTodos = await request.get('/todos')
@@ -103,7 +101,7 @@ function Todos() {
     const newTodo = await request.post('/todos', {
       title: 'no way',
     })
-    if (response.ok) setTodos(oldTodos => [...oldTodos, newTodo])
+    if (response.ok) setTodos([...todos, newTodo])
   }
 
   return (
@@ -111,7 +109,7 @@ function Todos() {
       <button onClick={ addTodo }>Add Todo</button>
       {request.error && 'Error!'}
       {request.loading && 'Loading...'}
-      {!request.loading && todos.map(todo => (
+      {todos.length > 0 && todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -120,7 +118,7 @@ function Todos() {
 ```
 </details>
 
-<details><summary><b>Basic Usage (no managed state) <code>useFetch</code></b></summary>
+<details open><summary><b>Basic Usage (no managed state) <code>useFetch</code></b></summary>
     
 ```js
 import useFetch from 'use-http'
@@ -128,13 +126,13 @@ import useFetch from 'use-http'
 function Todos() {
   const options = { // accepts all `fetch` options
     onMount: true,  // will fire on componentDidMount
-    data: []        // default will be array for the `data`
+    data: []        // default for `data` will be an array instead of undefined
   }
 
-  const todos = useFetch('https://example.com/todos', options)
+  const { loading, error, data, post } = useFetch('https://example.com/todos', options)
 
   function addTodo() {
-    todos.post({
+    post({
       title: 'no way'
     })
   }
@@ -142,9 +140,9 @@ function Todos() {
   return (
     <>
       <button onClick={addTodo}>Add Todo</button>
-      {todos.error && 'Error!'}
-      {todos.loading && 'Loading...'}
-      {!todos.loading && todos.data.map(todo => (
+      {error && 'Error!'}
+      {loading && 'Loading...'}
+      {!loading && data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -156,10 +154,47 @@ function Todos() {
 <details><summary><b>Destructured <code>useFetch</code></b></summary>
 
 ```js
-var [data, loading, error, request] = useFetch('https://example.com')
+var [request, response, loading, error] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
-var { data, loading, error, request } = useFetch('https://example.com')
+var {
+  request,
+  response,
+  loading,
+  error,
+  data,
+  get,
+  post,
+  put,
+  patch,
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
+  mutate, // GraphQL
+  query,  // GraphQL
+  abort
+} = useFetch('https://example.com')
+
+var {
+  loading,
+  error,
+  data,
+  get,
+  post,
+  put,
+  patch,
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
+  mutate, // GraphQL
+  query,  // GraphQL
+  abort
+} = request
+
+var {
+  data,
+  ok,
+  headers,
+  ...restOfHttpResponse // everything you would get in a response from an http request
+} = response
 ```
 </details>
 
@@ -360,7 +395,7 @@ function App() {
 Overview
 --------
 
-<details><summary><b>Hooks</b></summary>
+### Hooks
 
 | Hook                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
@@ -371,7 +406,7 @@ Overview
 </details>
 
 
-<details><summary><b>Options</b></summary>
+### Options
     
 This is exactly what you would pass to the normal js `fetch`, with a little extra.
 
@@ -379,23 +414,11 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `onMount` | Once the component mounts, the http request will run immediately | false |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
+| `data` | Allows you to set a default value for `data`       | `undefined` |
+| `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
 
 ```jsx
-const {
-  data,
-  loading,
-  error,
-  request,
-  get,
-  post,
-  patch,
-  put,
-  delete  // don't destructure `delete` though, it's a keyword
-  del,    // <- that's why we have this (del). or use `request.delete`
-  abort,
-  query,  // GraphQL
-  mutate, // GraphQL
-} = useFetch({
+useFetch({
   // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com', // used to be `baseUrl`
   onMount: true,
@@ -403,36 +426,6 @@ const {
   loading: false, // default for `loading` field
 })
 ```
-or
-```jsx
-const [request, response, loading, error] = useFetch({
-  // accepts all `fetch` options such as headers, method, etc.
-  url: 'https://example.com', // used to be `baseUrl`
-  onMount: true,
-  data: [], // default for `data` field
-  loading: false, // default for `loading` field
-})
-
-const {
-  loading,
-  data,
-  get,
-  post,
-  patch,
-  put,
-  delete  // don't destructure `delete` though, it's a keyword
-  del,    // <- that's why we have this (del). or use `request.delete`
-  abort,
-  query,  // GraphQL
-  mutate, // GraphQL
-} = request
-
-const {
-  ok,
-  data,
-} = response
-```
-</details>
 
 
 Feature Requests/Ideas
@@ -445,12 +438,11 @@ Todos
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
- - [ ] make work with FormData
+ - [X] make work with FormData
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] add `timeout`
- - [ ] add `debounce`
  - [ ] maybe add a `retry: 3` which would specify the amount of times it should retry before erroring out
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
@@ -466,12 +458,6 @@ Todos
     })
     .get()
 ```
- - [ ] maybe change array destructure syntax to
-  ```jsx
-  const [request, response] = useFetch()
-  const { get, post, loading, ...etc } = request
-  const { data, ok, status, headers, type, ...restOfResponse } = response
-  ```
   - [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
         convert all the keys in the response to camelCase.
         Not exactly sure how this syntax should look because what
