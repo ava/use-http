@@ -1,24 +1,16 @@
-import React, { useEffect, useState, useCallback, ReactElement } from 'react'
+import React, { ReactElement } from 'react'
 import { useFetch, Provider } from '..'
 import ReactDOM from 'react-dom'
-import {
-  render,
-  cleanup,
-  waitForElement,
-  RenderResult,
-  fireEvent,
-} from '@testing-library/react'
+import { cleanup } from '@testing-library/react'
 import { isServer, isBrowser } from '../utils'
 import { PersonView, Person } from './test-utils'
-// import * as reactTest from '@testing-library/react'
-// console.log('REACT TEST: ', reactTest)
 
 import { FetchMock } from 'jest-fetch-mock'
 
 const fetch = global.fetch as FetchMock
 
 import * as testUtilsDOM from 'react-dom/test-utils'
-// import { act, renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks'
 
 const ObjectDestructuringApp = (): ReactElement => {
   const { loading, data, error } = useFetch<Person>('https://example.com', {
@@ -26,14 +18,6 @@ const ObjectDestructuringApp = (): ReactElement => {
   })
 
   return <PersonView person={data} loading={loading} error={error} />
-}
-
-const ArrayDestructuringApp = (): ReactElement => {
-  const [person, isLoading, anError] = useFetch<Person>('https://example.com', {
-    onMount: true,
-  })
-
-  return <PersonView person={person} loading={isLoading} error={anError} />
 }
 
 describe('useFetch - general', (): void => {
@@ -53,6 +37,13 @@ describe('useFetch - general', (): void => {
 describe('useFetch - BROWSER - basic functionality', (): void => {
   if (isServer) return
 
+  const expected = {
+    name: 'Alex Cory',
+    age: 29,
+  }
+
+  const wrapper = ({ children }: { children: ReactElement }) => <Provider url="https://example.com">{children}</Provider>
+
   afterEach((): void => {
     cleanup()
     fetch.resetMocks()
@@ -60,37 +51,61 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
 
   beforeEach((): void => {
     fetch.mockResponseOnce(
-      JSON.stringify({
-        name: 'Joe Bloggs',
-        age: 48,
-      }),
+      JSON.stringify(expected),
     )
   })
 
   it('should execute GET command with object destructuring', async (): Promise<
     void
   > => {
-    const { getAllByTestId } = render(<ObjectDestructuringApp />)
-
-    const els = await waitForElement((): HTMLElement[] =>
-      getAllByTestId(/^person-/),
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({ onMount: true }),
+      { wrapper: wrapper as React.ComponentType }
     )
 
-    expect(els[0].innerHTML).toBe('Joe Bloggs')
-    expect(els[1].innerHTML).toBe('48')
+    expect(result.current.data).toBe(undefined)
+    expect(result.current.loading).toBe(true)
+    expect(result.current.error).toBe(undefined)
+    expect(result.current.request.data).toBe(undefined)
+    expect(result.current.response.data).toEqual(undefined)
+    expect(result.current.request.loading).toBe(true)
+
+    await waitForNextUpdate()
+
+    expect(result.current.request.data).toEqual(expected)
+    expect(result.current.data).toEqual(expected)
+    expect(result.current.response.data).toEqual(expected)
+    expect(result.current.request.loading).toBe(false)
+    expect(result.current.loading).toBe(false)
+
+
+    expect(typeof result.current.get).toBe('function')
+    expect(typeof result.current.post).toBe('function')
+    expect(typeof result.current.patch).toBe('function')
+    expect(typeof result.current.put).toBe('function')
+    expect(typeof result.current.delete).toBe('function')
+    expect(typeof result.current.del).toBe('function')
+    expect(typeof result.current.abort).toBe('function')
+    expect(typeof result.current.query).toBe('function')
+    expect(typeof result.current.mutate).toBe('function') 
   })
 
   it('should execute GET command with arrray destructuring', async (): Promise<
     void
   > => {
-    const { getAllByTestId } = render(<ArrayDestructuringApp />)
+    // const { result, waitForNextUpdate } = renderHook(
+    //   () => useFetch({ onMount: true }),
+    //   { wrapper: wrapper as React.ComponentType }
+    // )
 
-    const els = await waitForElement((): HTMLElement[] =>
-      getAllByTestId(/^person-/),
-    )
-
-    expect(els[0].innerHTML).toBe('Joe Bloggs')
-    expect(els[1].innerHTML).toBe('48')
+    // const [request, response, loading, error] = result.current
+    // expect(request.loading).toBe(true)
+    // expect(loading).toBe(true)
+    // expect(error).toBe(undefined)
+    // await waitForNextUpdate()
+    // expect(response.data).toEqual(expected)
+    // expect(request.loading).toBe(false)
+    // expect(loading).toBe(false)
   })
 })
 
@@ -117,38 +132,16 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
  * Errors:
  * SSR Tests:
  */
-const NoURLOnMountTest = (): ReactElement => {
-  const [person, loading, error] = useFetch({ onMount: true })
-  return (
-    <PersonView id="person-1" person={person} loading={loading} error={error} />
-  )
-}
-
-const NoURLGetUseEffect = (): ReactElement => {
-  const [person, loading, error, request] = useFetch()
-  useEffect((): void => {
-    request.get()
-  }, [request])
-  return (
-    <PersonView id="person-2" person={person} loading={loading} error={error} />
-  )
-}
-
-const NoURLGetUseEffectRelativeRoute = (): ReactElement => {
-  const [person, loading, error, request] = useFetch()
-  useEffect((): void => {
-    request.get('/people')
-  }, [request])
-  return (
-    <PersonView id="person-3" person={person} loading={loading} error={error} />
-  )
-}
-
-const renderWithProvider = (comp: ReactElement): RenderResult =>
-  render(<Provider url="https://example.com">{comp}</Provider>)
 
 describe('useFetch - BROWSER - with <Provider />', (): void => {
   if (isServer) return
+
+  const expected = {
+    name: 'Alex Cory',
+    age: 29,
+  }
+
+  const wrapper = ({ children }: { children: ReactElement }) => <Provider url="https://example.com">{children}</Provider>
 
   afterEach((): void => {
     cleanup()
@@ -157,104 +150,124 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
 
   beforeEach((): void => {
     fetch.mockResponseOnce(
-      JSON.stringify({
-        name: 'Joe Bloggs',
-        age: 48,
-      }),
+      JSON.stringify(expected),
     )
+  })
+
+  it('should work correctly: useFetch({ onMount: true, data: [] })', async (): Promise<
+    void
+  > => {
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({ onMount: true, data: {} }),
+      { wrapper: wrapper as React.ComponentType }
+    )
+
+    expect(result.current.data).toEqual({})
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toMatchObject(expected)
   })
 
   it('should execute GET using Provider url: useFetch({ onMount: true })', async (): Promise<
     void
   > => {
-    const { getAllByTestId } = renderWithProvider(<NoURLOnMountTest />)
-
-    const els = await waitForElement((): HTMLElement[] =>
-      getAllByTestId(/^person-1-/),
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({ onMount: true }),
+      { wrapper: wrapper as React.ComponentType }
     )
 
-    expect(els[0].innerHTML).toBe('Joe Bloggs')
-    expect(els[1].innerHTML).toBe('48')
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toMatchObject(expected)
   })
 
   it('should execute GET using Provider url: request = useFetch(), request.get()', async (): Promise<
     void
   > => {
-    const { getAllByTestId } = renderWithProvider(<NoURLGetUseEffect />)
-
-    const els = await waitForElement((): HTMLElement[] =>
-      getAllByTestId(/^person-2-/),
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch(),
+      { wrapper: wrapper as React.ComponentType }
     )
-
-    expect(els[0].innerHTML).toBe('Joe Bloggs')
-    expect(els[1].innerHTML).toBe('48')
+    expect(result.current.loading).toBe(false)
+    result.current.get()
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toMatchObject(expected)
   })
 
   it('should execute GET using Provider url: request = useFetch(), request.get("/people")', async (): Promise<
     void
   > => {
-    const { getAllByTestId } = renderWithProvider(
-      <NoURLGetUseEffectRelativeRoute />,
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch(),
+      { wrapper: wrapper as React.ComponentType }
     )
-
-    const els = await waitForElement((): HTMLElement[] =>
-      getAllByTestId(/^person-3-/),
-    )
-
-    expect(els[0].innerHTML).toBe('Joe Bloggs')
-    expect(els[1].innerHTML).toBe('48')
+    expect(result.current.loading).toBe(false)
+    result.current.get('/people')
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toMatchObject(expected)
   })
 })
 
-const ManagedStateTest = (): ReactElement => {
-  const [todos, setTodos] = useState<{ title: string }[]>([{ title: 'test' }])
+// const ManagedStateTest = (): ReactElement => {
+//   const [todos, setTodos] = useState<{ title: string }[]>([{ title: 'test' }])
 
-  const { get, post, abort, error, loading } = useFetch('http:example.com')
+//   const { get, post, abort, error, loading } = useFetch('http:example.com')
 
-  const initializeTodos = useCallback(async (): Promise<void> => {
-    const initialTodos = await get('/todos')
-    setTodos((todos: { title: string }[]): { title: string }[] => [
-      ...todos,
-      ...(initialTodos || []),
-    ])
-  }, [get, setTodos])
+//   const initializeTodos = useCallback(async (): Promise<void> => {
+//     const initialTodos = await get('/todos')
+//     setTodos((todos: { title: string }[]): { title: string }[] => [
+//       ...todos,
+//       ...(initialTodos || []),
+//     ])
+//   }, [get, setTodos])
 
-  useEffect((): (() => void) => {
-    initializeTodos()
-    return abort
-  }, [initializeTodos, abort])
+//   useEffect((): (() => void) => {
+//     initializeTodos()
+//     return abort
+//   }, [initializeTodos, abort])
 
-  const addTodo = useCallback(async (): Promise<void> => {
-    const data = {
-      title: 'No way...',
-    }
-    const newTodo = await post('/todos', data)
-    setTodos((oldTodos): { title: string }[] => [...oldTodos, newTodo])
-  }, [post, setTodos])
+//   const addTodo = useCallback(async (): Promise<void> => {
+//     const data = {
+//       title: 'No way...',
+//     }
+//     const newTodo = await post('/todos', data)
+//     setTodos((oldTodos): { title: string }[] => [...oldTodos, newTodo])
+//   }, [post, setTodos])
 
-  return (
-    <>
-      <button data-testid="todos-1-add-todo" onClick={addTodo}>
-        Add Todo
-      </button>
-      {error && <div>Error!</div>}
-      <div data-testid="todos-1-loading">{loading ? 'Loading...' : ''}</div>
-      <div>
-        {todos.length > 0 &&
-          todos.map(
-            ({ title }, i): ReactElement => (
-              <div data-testid="todos-1" key={i}>
-                {title}
-              </div>
-            ),
-          )}
-      </div>
-    </>
-  )
-}
+//   return (
+//     <>
+//       <button data-testid="todos-1-add-todo" onClick={addTodo}>
+//         Add Todo
+//       </button>
+//       {error && <div>Error!</div>}
+//       <div data-testid="todos-1-loading">{loading ? 'Loading...' : ''}</div>
+//       <div>
+//         {todos.length > 0 &&
+//           todos.map(
+//             ({ title }, i): ReactElement => (
+//               <div data-testid="todos-1" key={i}>
+//                 {title}
+//               </div>
+//             ),
+//           )}
+//       </div>
+//     </>
+//   )
+// }
 
 describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   if (isServer) return
+
+  const expected = { title: 'Alex Cory' }
+ 
+
+  const wrapper = ({ children }: { children: ReactElement }) => <Provider url="https://example.com">{children}</Provider>
 
   afterEach((): void => {
     fetch.resetMocks()
@@ -263,66 +276,20 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
 
   beforeEach((): void => {
     fetch.mockResponseOnce(
-      JSON.stringify([
-        {
-          title: 1,
-        },
-        {
-          title: 2,
-        },
-      ]),
+      JSON.stringify(expected),
     )
   })
 
-  it('should execute GET using Provider url: request = useFetch(), request.get("/todos")', async (): Promise<
-    void
-  > => {
-    const { getAllByTestId, getByTestId } = renderWithProvider(
-      <ManagedStateTest />,
+  it('should return response data when awaiting. i.e. const todos = await get("/todos")', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper: wrapper as React.ComponentType }
     )
-    let loading = getByTestId('todos-1-loading')
-    expect(loading.innerHTML).toBe('Loading...')
-
-    await waitForElement((): HTMLElement[] => getAllByTestId(/^todos-1/))
-
-    loading = getByTestId('todos-1-loading')
-    expect(loading.innerHTML).toBe('')
-
-    const els = getAllByTestId(/^todos-1/)
-    expect(els[2].innerHTML).toBe('test')
-    expect(els[3].innerHTML).toBe('1')
-    expect(els[4].innerHTML).toBe('2')
-  })
-
-  it('should add a todo to the list', async (): Promise<void> => {
-    const { getAllByTestId, getByTestId } = renderWithProvider(
-      <ManagedStateTest />,
-    )
-
-    let loading = getByTestId('todos-1-loading')
-    expect(loading.innerHTML).toBe('Loading...')
-
-    fetch.mockResponseOnce(
-      JSON.stringify({
-        title: 'No way...',
-      }),
-    )
-
-    const button = getByTestId('todos-1-add-todo')
-    testUtilsDOM.act((): void => {
-      fireEvent.click(button)
-    })
-
-    await waitForElement((): HTMLElement[] => getAllByTestId(/^todos-1/))
-
-    loading = getByTestId('todos-1-loading')
-    expect(loading.innerHTML).toBe('')
-
-    const els = getAllByTestId(/^todos-1/)
-    expect(els[2].innerHTML).toBe('test')
-    expect(els[3].innerHTML).toBe('1')
-    expect(els[4].innerHTML).toBe('2')
-    expect(els[5].innerHTML).toBe('No way...')
+    expect(result.current.loading).toBe(false)
+    const responseData = await result.current.post('/people', expected)
+    expect(responseData).toEqual(expected)
+    expect(result.current.data).toEqual(expected)
+    expect(result.current.loading).toBe(false)
   })
 })
 

@@ -56,7 +56,6 @@ Examples
 =========
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a>
-- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/useget-with-provider-c78w2'>useGet + < Provider /></a>
 
 Installation
 =============
@@ -75,23 +74,24 @@ import useFetch from 'use-http'
 
 function Todos() {
   const options = { // accepts all `fetch` options
-    onMount: true // will fire on componentDidMount, if no `method` is specified, will default to GET
+    onMount: true,  // will fire on componentDidMount (GET by default)
+    data: []        // default for `data` will be an array instead of undefined
   }
 
-  const request = useFetch('https://example.com/todos', options)
+  const { loading, error, data, post } = useFetch('https://example.com/todos', options)
 
   function addTodo() {
-    request.post({
-      title: 'no way',
+    post({
+      title: 'no way'
     })
   }
 
   return (
     <>
       <button onClick={addTodo}>Add Todo</button>
-      {request.error && 'Error!'}
-      {request.loading && 'Loading...'}
-      {(request.data || []).length > 0 && request.data.map(todo => (
+      {error && 'Error!'}
+      {loading && 'Loading...'}
+      {!loading && data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -99,7 +99,7 @@ function Todos() {
 }
 ```
 
-Managed State Usage ⚠️
+Managed State Usage
 -------------------
 
 ```js
@@ -108,22 +108,27 @@ import useFetch from 'use-http'
 function Todos() {
   const [todos, setTodos] = useState([])
 
-  const request = useFetch('https://example.com')
-  
+  const [request, response] = useFetch('https://example.com')
+
+  // componentDidMount
+  const mounted = useRef(false)
   useEffect(() => {
-    initializeTodos()
-  }, [])
+    if (!mounted.current) {
+      initializeTodos()
+      mounted.current= true
+    }
+  })
   
   async function initializeTodos() {
     const initialTodos = await request.get('/todos')
-    setTodos(initialTodos)
+    if (response.ok) setTodos(initialTodos)
   }
 
   async function addTodo() {
     const newTodo = await request.post('/todos', {
       title: 'no way',
     })
-    setTodos(oldTodos => [...oldTodos, newTodo])
+    if (response.ok) setTodos([...todos, newTodo])
   }
 
   return (
@@ -142,10 +147,47 @@ function Todos() {
 Destructured
 -------------
 ```js
-var [data, loading, error, request] = useFetch('https://example.com')
+var [request, response, loading, error] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
-var { data, loading, error, request } = useFetch('https://example.com')
+var {
+  request,
+  response,
+  loading,
+  error,
+  data,
+  get,
+  post,
+  put,
+  patch,
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
+  mutate, // GraphQL
+  query,  // GraphQL
+  abort
+} = useFetch('https://example.com')
+
+var {
+  loading,
+  error,
+  data,
+  get,
+  post,
+  put,
+  patch,
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
+  mutate, // GraphQL
+  query,  // GraphQL
+  abort
+} = request
+
+var {
+  data,
+  ok,
+  headers,
+  ...restOfHttpResponse // everything you would get in a response from an http request
+} = response
 ```
 
 Relative routes
@@ -158,23 +200,6 @@ var request = useFetch('https://example.com')
 
 request.post('/todos', {
   no: 'way'
-})
-```
-Helper hooks (**usePost, usePut, useGet, etc.**)
---------------------------------------------------
-
-```js
-import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
-
-const [data, loading, error, patch] = usePatch({
-  url: 'https://example.com',
-  headers: {
-    'Accept': 'application/json; charset=UTF-8'
-  }
-})
-
-patch({
-  yes: 'way',
 })
 ```
 
@@ -343,11 +368,6 @@ Hooks
 | Option                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `useFetch` | The base hook |
-| `useGet` | Defaults to a GET request |
-| `usePost` | Defaults to a POST request |
-| `usePut` | Defaults to a PUT request |
-| `usePatch` | Defaults to a PATCH request |
-| `useDelete` | Defaults to a DELETE request |
 | `useQuery` | For making a GraphQL query |
 | `useMutation` | For making a GraphQL mutation |
 
@@ -360,45 +380,17 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `onMount` | Once the component mounts, the http request will run immediately | false |
 | `url` | Allows you to set a base url so relative paths can be used for each request. You can also just set this as the 1st argument like `useFetch('url')`      | empty string |
+| `data` | Allows you to set a default value for `data`       | `undefined` |
+| `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
 
-```js
-const {
-  data,
-  loading,
-  error,
-  request,
-  get,
-  post,
-  patch,
-  put,
-  delete  // don't destructure `delete` though, it's a keyword
-  del,    // <- that's why we have this (del). or use `request.delete`
-  abort,
-  query,  // GraphQL
-  mutate, // GraphQL
-} = useFetch({
-  url: 'https://example.com', // replaced baseUrl
-  onMount: true
+```jsx
+useFetch({
+  // accepts all `fetch` options such as headers, method, etc.
+  url: 'https://example.com', // used to be `baseUrl`
+  onMount: true,
+  data: [],                   // default for `data` field
+  loading: false,             // default for `loading` field
 })
-```
-or
-```js
-const [data, loading, error, request] = useFetch({
-  url: 'https://example.com', // replaced baseUrl
-  onMount: true
-})
-
-const {
-  get,
-  post,
-  patch,
-  put,
-  delete  // don't destructure `delete` though, it's a keyword
-  del,    // <- that's why we have this (del). or use `request.delete`
-  abort,
-  query,  // GraphQL
-  mutate, // GraphQL
-} = request
 ```
 
 Feature Requests/Ideas

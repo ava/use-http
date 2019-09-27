@@ -1,13 +1,15 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import {
   HTTPMethod,
-  OptionsMaybeURL,
   UseFetch,
-  FetchCommands,
-  DestructuringCommands,
-  UseFetchResult,
+  ReqMethods,
+  Req,
+  Res,
+  UseFetchArrayReturn,
+  UseFetchObjectReturn,
+  UseFetchArgs
 } from './types'
-import { BodyOnly, FetchData, NoArgs, NoUrlOptions } from './types'
+import { BodyOnly, FetchData, NoArgs } from './types'
 import useCustomOptions from './useCustomOptions'
 import useRequestInit from './useRequestInit'
 import useSSR from 'use-ssr'
@@ -23,18 +25,17 @@ import makeRouteAndOptions from './makeRouteAndOptions'
 // function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 // TODO: handle context.graphql
-function useFetch<TData = any>(
-  urlOrOptions?: string | OptionsMaybeURL,
-  optionsNoURLs?: NoUrlOptions,
-): UseFetch<TData> {
+function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
+  const { url, onMount, ...defaults } = useCustomOptions(...args)
+  const requestInit = useRequestInit(...args)
+
   const { isBrowser, isServer } = useSSR()
-  const { onMount, url } = useCustomOptions(urlOrOptions, optionsNoURLs)
-  const requestInit = useRequestInit(urlOrOptions, optionsNoURLs)
 
   const controller = useRef<AbortController | null>()
-  const data = useRef<TData>()
+  const res = useRef<Response>()
+  const data = useRef<TData>(defaults.data)
 
-  const [loading, setLoading] = useState(onMount || false)
+  const [loading, setLoading] = useState(defaults.loading)
   const [error, setError] = useState<any>()
 
   const makeFetch = useCallback(
@@ -56,11 +57,12 @@ function useFetch<TData = any>(
           setLoading(true)
           if (isServer) return // TODO: for now, we don't do anything on the server
 
-          const response = await fetch(`${url}${route}`, options)
+          res.current = await fetch(`${url}${route}`, options)
+
           try {
-            data.current = await response.json()
+            data.current = await res.current.json()
           } catch (err) {
-            data.current = (await response.text()) as any // FIXME: should not be `any` type
+            data.current = (await res.current.text()) as any // FIXME: should not be `any` type
           }
         } catch (err) {
           if (err.name !== 'AbortError') setError(err)
@@ -72,50 +74,42 @@ function useFetch<TData = any>(
       }
     },
     [
-      /* url, isBrowser, requestInit, isServer */
+      url, isBrowser, requestInit, isServer
     ],
   )
 
-  const get = useCallback(makeFetch(HTTPMethod.GET), [])
-  const post = useCallback(makeFetch(HTTPMethod.POST), [])
-  const patch = useCallback(makeFetch(HTTPMethod.PATCH), [])
-  const put = useCallback(makeFetch(HTTPMethod.PUT), [])
-  const del = useCallback(makeFetch(HTTPMethod.DELETE), [])
-  const query = useCallback(
-    (query: string, variables?: BodyInit | object): Promise<any> =>
-      post({ query, variables }),
-    [post],
-  )
-  const mutate = useCallback(
-    (mutation: string, variables?: BodyInit | object): Promise<any> =>
-      post({ mutation, variables }),
-    [post],
-  )
+  const post = makeFetch(HTTPMethod.POST)
+  const del = makeFetch(HTTPMethod.DELETE)
 
-  const abort = useCallback((): void => {
-    controller.current && controller.current.abort()
-  }, [])
+  const request: Req<TData> = {
+    get: makeFetch(HTTPMethod.GET),
+    post,
+    patch: makeFetch(HTTPMethod.PATCH),
+    put: makeFetch(HTTPMethod.PUT),
+    del,
+    delete: del,
+    abort(): void {
+      controller.current && controller.current.abort()
+    },
+    query: (query, variables) => post({ query, variables }),
+    mutate: (mutation, variables) => post({ mutation, variables }),
+    loading: loading as boolean,
+    error,
+    data: data.current,
+  }
 
-  const request = useMemo(
-    (): FetchCommands => ({
-      get,
-      post,
-      patch,
-      put,
-      del,
-      delete: del,
-      abort,
-      query,
-      mutate,
-    }),
-    [get, post, patch, put, del, abort, query, mutate],
-  )
+  const response = {
+    data: data.current,
+    ...res.current
+  }
 
   // handling onMount
+  const mounted = useRef(false)
   useEffect((): void => {
-    if (!onMount) return
+    if (!onMount || mounted.current) return
+    mounted.current = true
     const methodName = requestInit.method || HTTPMethod.GET
-    const methodLower = methodName.toLowerCase() as keyof FetchCommands
+    const methodLower = methodName.toLowerCase() as keyof ReqMethods
     if (methodName !== HTTPMethod.GET) {
       const req = request[methodLower] as BodyOnly
       req(requestInit.body as BodyInit)
@@ -124,12 +118,12 @@ function useFetch<TData = any>(
       req()
     }
   }, [
-    /*onMount, requestInit.body, requestInit.method, request, url*/
+    onMount, requestInit.body, requestInit.method, url,
   ])
 
-  return Object.assign<DestructuringCommands<TData>, UseFetchResult<TData>>(
-    [data.current, loading, error, request],
-    { data: data.current, loading, error, request, ...request },
+  return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
+    [request, response as Res<TData>, loading as boolean, error],
+    { request, response: response as Res<TData>, ...request },
   )
 }
 

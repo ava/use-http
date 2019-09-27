@@ -6,41 +6,48 @@ import React from 'react'
 import { isServer } from '../utils'
 
 describe('useCustomOptions: general usages', (): void => {
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+  )
+
   it('should create custom options with `onMount: false` by default', (): void => {
     const { result } = renderHook((): any =>
-      useCustomOptions('http://example.com'),
+      useCustomOptions('https://example.com'),
     )
     expect(result.current).toEqual({
-      url: 'http://example.com',
+      url: 'https://example.com',
       onMount: false,
+      loading: false,
+      data: undefined
     })
   })
 
   it('should create custom options with 1st arg as config object with `onMount: true`', (): void => {
     const { result } = renderHook((): any =>
       useCustomOptions({
-        url: 'http://example.com',
+        url: 'https://example.com',
         onMount: true,
       }),
     )
-    expect(result.current).toEqual({ url: 'http://example.com', onMount: true })
+    expect(result.current).toEqual({
+      url: 'https://example.com',
+      onMount: true,
+      loading: true,
+      data: undefined
+    })
   })
 
   it('should create custom options handling Provider/Context properly', (): void => {
-    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-      <Provider url="https://example.com">{children as ReactElement}</Provider>
-    )
     const { result } = renderHook((): any => useCustomOptions(), { wrapper })
     expect(result.current).toStrictEqual({
       url: 'https://example.com',
       onMount: false,
+      loading: false,
+      data: undefined
     })
   })
 
   it('should overwrite `url` that is set in Provider/Context properly', (): void => {
-    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-      <Provider url="https://example.com">{children as ReactElement}</Provider>
-    )
     const { result } = renderHook(
       (): any => useCustomOptions('https://cool.com', { onMount: true }),
       { wrapper },
@@ -48,19 +55,38 @@ describe('useCustomOptions: general usages', (): void => {
     expect(result.current).toStrictEqual({
       url: 'https://cool.com',
       onMount: true,
+      loading: true,
+      data: undefined
+    })
+  })
+
+  it('should set default data === []', (): void => {
+    const { result } = renderHook(
+      (): any => useCustomOptions({ data: [] }),
+      { wrapper },
+    )
+    expect(result.current).toStrictEqual({
+      url: 'https://example.com',
+      onMount: false,
+      loading: false,
+      data: []
     })
   })
 
   it('should have a default `url` if no URL is set in Provider', (): void => {
     if (isServer) return
 
-    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+    const wrapper2 = ({ children }: { children?: ReactNode }): ReactElement => (
       <Provider>{children as ReactElement}</Provider>
     )
-    const { result } = renderHook((): any => useCustomOptions(), { wrapper })
+
+    const { result } = renderHook((): any => useCustomOptions(), { wrapper: wrapper2 })
+
     expect(result.current).toStrictEqual({
       url: 'http://localhost',
       onMount: false,
+      loading: false,
+      data: undefined
     })
   })
 })
