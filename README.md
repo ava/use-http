@@ -134,7 +134,7 @@ import useFetch from 'use-http'
 
 function Todos() {
   const options = { // accepts all `fetch` options
-    onMount: true,  // will fire on componentDidMount
+    onMount: true,  // will fire on componentDidMount (GET by default)
     data: []        // default for `data` will be an array instead of undefined
   }
 
