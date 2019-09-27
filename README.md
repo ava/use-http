@@ -138,7 +138,7 @@ function Todos() {
     data: []        // setting default for `data` as array instead of undefined
   }
 
-  const { loading, error, data, post } = useFetch('https://example.com/todos', options)
+  const { loading, error, data } = useFetch('https://example.com/todos', options)
 
   return (
     <>
