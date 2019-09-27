@@ -1,6 +1,6 @@
 import useFetch, { FetchContext } from '.'
 import { useContext, useCallback } from 'react'
-import { UseFetchBaseResult } from './types'
+import { ReqBase } from './types'
 import { invariant, isString, useURLRequiredInvariant } from './utils'
 
 type ArrayDestructure<TData = any> = [
@@ -9,7 +9,7 @@ type ArrayDestructure<TData = any> = [
   Error,
   (variables?: object) => Promise<any>,
 ]
-interface ObjectDestructure<TData = any> extends UseFetchBaseResult<TData> {
+interface ObjectDestructure<TData = any> extends ReqBase<TData> {
   query: (variables?: object) => Promise<any>
 }
 type UseQuery<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TData>
@@ -25,7 +25,7 @@ export const useQuery = <TData = any>(
     'useQuery',
   )
   useURLRequiredInvariant(
-    !!context.url && isString(urlOrQuery) && !queryArg,
+    !!context.url || isString(urlOrQuery) && !queryArg,
     'useQuery',
     'OR you need to do useQuery("https://example.com", `your graphql query`)',
   )
@@ -49,20 +49,17 @@ export const useQuery = <TData = any>(
     QUERY = urlOrQuery as string
   }
 
-  const request = useFetch<TData>(url as string)
+  const { loading, error, ...request } = useFetch<TData>(url as string)
 
   const query = useCallback(
     (variables?: object): Promise<any> => request.query(QUERY, variables),
     [QUERY, request],
   )
 
+  const data = (request.data as TData & { data: any } || { data: undefined }).data
+
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
-    [request.data, request.loading, request.error, query],
-    {
-      data: request.data,
-      loading: request.loading,
-      error: request.error,
-      query,
-    },
+    [data, loading, error, query],
+    { data, loading, error, query },
   )
 }

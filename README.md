@@ -18,7 +18,7 @@
       <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
     </a>
     <a href="https://www.npmjs.com/package/use-http">
-      <img src="https://img.shields.io/npm/dm/use-http.svg" />
+      <img src="https://img.shields.io/npm/dt/use-http.svg" />
     </a>
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
@@ -79,7 +79,6 @@ Usage
   <ul>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/useget-with-provider-c78w2'>useGet + < Provider /></a></li>
   </ul>
 </details>
 
@@ -91,30 +90,34 @@ import useFetch from 'use-http'
 function Todos() {
   const [todos, setTodos] = useState([])
 
-  const request = useFetch('https://example.com')
+  const [request, response] = useFetch('https://example.com')
 
-  // on mount, initialize the todos
+  // componentDidMount
+  const mounted = useRef(false)
   useEffect(() => {
-    initializeTodos()
-  }, [])
-
+    if (!mounted.current) {
+      initializeTodos()
+      mounted.current= true
+    }
+  })
+  
   async function initializeTodos() {
     const initialTodos = await request.get('/todos')
-    setTodos(initialTodos)
+    if (response.ok) setTodos(initialTodos)
   }
 
   async function addTodo() {
     const newTodo = await request.post('/todos', {
       title: 'no way',
     })
-    setTodos(oldTodos => [...oldTodos, newTodo])
+    if (response.ok) setTodos([...todos, newTodo])
   }
 
   return (
     <>
-      <button onClick={ addTodo }>Add Todo</button>
-      {todos.error && 'Error!'}
-      {todos.loading && 'Loading...'}
+      <button onClick={addTodo}>Add Todo</button>
+      {request.error && 'Error!'}
+      {request.loading && 'Loading...'}
       {todos.length > 0 && todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
@@ -124,30 +127,24 @@ function Todos() {
 ```
 </details>
 
-<details><summary><b>Basic Usage (no managed state) <code>useFetch</code></b></summary>
+<details open><summary><b>Basic Usage (no managed state) <code>useFetch</code></b></summary>
     
 ```js
 import useFetch from 'use-http'
 
 function Todos() {
   const options = { // accepts all `fetch` options
-    onMount: true // will fire on componentDidMount
+    onMount: true,  // will fire on componentDidMount (GET by default)
+    data: []        // setting default for `data` as array instead of undefined
   }
 
-  const todos = useFetch('https://example.com/todos', options)
-
-  function addTodo() {
-    todos.post({
-      title: 'no way',
-    })
-  }
+  const { loading, error, data, post } = useFetch('https://example.com/todos', options)
 
   return (
     <>
-      <button onClick={addTodo}>Add Todo</button>
-      {request.error && 'Error!'}
-      {request.loading && 'Loading...'}
-      {(todos.data || []).length > 0 && todos.data.map(todo => (
+      {error && 'Error!'}
+      {loading && 'Loading...'}
+      {!loading && data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -156,13 +153,50 @@ function Todos() {
 ```
 </details>
 
-<details><summary><b>Destructured <code>useFetch</code></b></summary>
+<details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
 ```js
-var [data, loading, error, request] = useFetch('https://example.com')
+var [request, response, loading, error] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
-var { data, loading, error, request } = useFetch('https://example.com')
+var {
+  request,
+  response,
+  loading,
+  error,
+  data,
+  get,
+  post,
+  put,
+  patch,
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
+  mutate, // GraphQL
+  query,  // GraphQL
+  abort
+} = useFetch('https://example.com')
+
+var {
+  loading,
+  error,
+  data,
+  get,
+  post,
+  put,
+  patch,
+  delete  // don't destructure `delete` though, it's a keyword
+  del,    // <- that's why we have this (del). or use `request.delete`
+  mutate, // GraphQL
+  query,  // GraphQL
+  abort
+} = request
+
+var {
+  data,
+  ok,
+  headers,
+  ...restOfHttpResponse // everything you would get in a response from an http request
+} = response
 ```
 </details>
 
@@ -177,25 +211,6 @@ var request = useFetch('https://example.com')
 
 request.post('/todos', {
   no: 'way'
-})
-```
-</details>
-
-
-<details><summary><b><code>useGet</code>, <code>usePost</code>, <code>usePatch</code>, <code>usePut</code>, <code>useDelete</code></b></summary>
-
-```jsx
-import { useGet, usePost, usePatch, usePut, useDelete } from 'use-http'
-
-const [data, loading, error, patch] = usePatch({
-  url: 'https://example.com',
-  headers: {
-    'Accept': 'application/json; charset=UTF-8'
-  }
-})
-
-patch({
-  yes: 'way',
 })
 ```
 </details>
@@ -363,7 +378,7 @@ function App() {
 
   const options = {
     headers: {
-      Authorization: 'Bearer:asdfasdfasdfasdfasdafd'
+      Authorization: 'Bearer YOUR_TOKEN_HERE'
     }
   }
   
@@ -382,23 +397,18 @@ function App() {
 Overview
 --------
 
-<details><summary><b>Hooks</b></summary>
+### Hooks
 
 | Hook                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `useFetch` | The base hook |
-| `useGet` | Defaults to a GET request |
-| `usePost` | Defaults to a POST request |
-| `usePut` | Defaults to a PUT request |
-| `usePatch` | Defaults to a PATCH request |
-| `useDelete` | Defaults to a DELETE request |
 | `useQuery` | For making a GraphQL query |
 | `useMutation` | For making a GraphQL mutation |
     
 </details>
 
 
-<details><summary><b>Options</b></summary>
+### Options
     
 This is exactly what you would pass to the normal js `fetch`, with a little extra.
 
@@ -406,49 +416,18 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `onMount` | Once the component mounts, the http request will run immediately | false |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
+| `data` | Allows you to set a default value for `data`       | `undefined` |
+| `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
 
 ```jsx
-const {
-  data,
-  loading,
-  error,
-  request,
-  get,
-  post,
-  patch,
-  put,
-  delete  // don't destructure `delete` though, it's a keyword
-  del,    // <- that's why we have this (del). or use `request.delete`
-  abort,
-  query,  // GraphQL
-  mutate, // GraphQL
-} = useFetch({
+useFetch({
   // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com', // used to be `baseUrl`
-  onMount: true
+  onMount: true,
+  data: [],                   // default for `data` field
+  loading: false,             // default for `loading` field
 })
 ```
-or
-```jsx
-const [data, loading, error, request] = useFetch({
-  // accepts all `fetch` options such as headers, method, etc.
-  url: 'https://example.com', // used to be `baseUrl`
-  onMount: true
-})
-
-const {
-  get,
-  post,
-  patch,
-  put,
-  delete  // don't destructure `delete` though, it's a keyword
-  del,    // <- that's why we have this (del). or use `request.delete`
-  abort,
-  query,  // GraphQL
-  mutate, // GraphQL
-} = request
-```
-</details>
 
 
 Feature Requests/Ideas
@@ -461,17 +440,63 @@ Todos
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
- - [ ] make work with FormData
+ - [ ] react native support
+ - [ ] documentation for FormData
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] Allow option to fetch on server instead of just having `loading` state
  - [ ] add `timeout`
- - [ ] add `debounce`
  - [ ] maybe add a `retry: 3` which would specify the amount of times it should retry before erroring out
  - [ ] make GraphQL work with React Suspense
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
      - [ ] show comparison with Apollo
+ - [ ] Interceptors (potential syntax example) this shows how to get access tokens on each request if an access token or refresh token is expired
+```jsx
+const App = () => {
+  const { get } = useFetch('https://example.com')
+  const [accessToken, setAccessToken] = useLocalStorage('access-token')
+  const [refreshToken, setRefreshToken] = useLocalStorage('refresh-token')
+  const { history } = useReactRouter()
+  const options = {
+    interceptors: {
+      async request(opts) {
+        let headers = {}
+        // refresh token expires in 1 day, used to get access token
+        if (!refreshToken || isExpired(refreshToken)) {
+          return history.push('/login')
+        }
+        // access token expires every 15 minutes, use refresh token to get new access token
+        if (!accessToken || isExpired(accessToken)) {
+          const access = await get(`/access-token?refreshToken=${refreshToken}`)
+          setAccessToken(access)
+          headers = {
+            Authorization: `Bearer ${access}`,
+          }
+        }
+        const finalOptions = {
+          ...opts,
+          headers: {
+            ...opts.headers,
+            ...headers,
+          },
+        }
+        return finalOptions
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  }
+  return (
+    <Provider url='https://example.com' options={options}>
+      <App />
+    </Provider>
+  )
+}
+```
+ - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
+ - [ ] Cache responses to improve speed and reduce amount of requests
  - [ ] maybe add syntax for inline headers like this
 ```jsx
   const user = useFetch()
@@ -482,12 +507,6 @@ Todos
     })
     .get()
 ```
- - [ ] maybe change array destructure syntax to
-  ```jsx
-  const [request, response] = useFetch()
-  const { get, post, loading, ...etc } = request
-  const { data, ok, status, headers, type, ...restOfResponse } = response
-  ```
   - [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
         convert all the keys in the response to camelCase.
         Not exactly sure how this syntax should look because what
@@ -496,11 +515,17 @@ Todos
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
+  - [ ] potential syntax `onUpdate`
+  ```jsx
+  const request = useFetch('url', {
+    onUpdate: [props.id] // everytime props.id is updated, it will re-run the request GET in this case
+  })
+  ```
   - [ ] see if you can make this work without causing infinite loop when having `request` as a dependency of `useEffect`. I wish the exhaustive dependencies would allow you to do `[request.get]` instead of forcing `[request]`. It doesn't cause infinite loop with `[request.get]` and that's the only method being used inside `useEffect`
   - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Auth': 'some-token' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
   ```jsx
   const request = useFetch('https://url.com', globalOptions => {
-    delete globalOptions.Auth
+    delete globalOptions.headers.Authorization
     return globalOptions
   })
   ```
