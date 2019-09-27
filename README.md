@@ -90,31 +90,28 @@ import useFetch from 'use-http'
 function Todos() {
   const [todos, setTodos] = useState([])
 
-  const request = useFetch('https://example.com')
-
-  // on mount, initialize the todos
-  useEffect(() => {
-    initializeTodos()
-  }, [])
+  const [request, response] = useFetch('https://example.com', {
+    onMount: true // this set's request.loading === true by default
+  })
 
   async function initializeTodos() {
     const initialTodos = await request.get('/todos')
-    setTodos(initialTodos)
+    if (response.ok) setTodos(initialTodos)
   }
 
   async function addTodo() {
     const newTodo = await request.post('/todos', {
       title: 'no way',
     })
-    setTodos(oldTodos => [...oldTodos, newTodo])
+    if (response.ok) setTodos(oldTodos => [...oldTodos, newTodo])
   }
 
   return (
     <>
       <button onClick={ addTodo }>Add Todo</button>
-      {todos.error && 'Error!'}
-      {todos.loading && 'Loading...'}
-      {todos.length > 0 && todos.map(todo => (
+      {request.error && 'Error!'}
+      {request.loading && 'Loading...'}
+      {!request.loading && todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -130,23 +127,24 @@ import useFetch from 'use-http'
 
 function Todos() {
   const options = { // accepts all `fetch` options
-    onMount: true // will fire on componentDidMount
+    onMount: true,  // will fire on componentDidMount
+    data: []        // default will be array for the `data`
   }
 
   const todos = useFetch('https://example.com/todos', options)
 
   function addTodo() {
     todos.post({
-      title: 'no way',
+      title: 'no way'
     })
   }
 
   return (
     <>
       <button onClick={addTodo}>Add Todo</button>
-      {request.error && 'Error!'}
-      {request.loading && 'Loading...'}
-      {(todos.data || []).length > 0 && todos.data.map(todo => (
+      {todos.error && 'Error!'}
+      {todos.loading && 'Loading...'}
+      {!todos.loading && todos.data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -400,18 +398,24 @@ const {
 } = useFetch({
   // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com', // used to be `baseUrl`
-  onMount: true
+  onMount: true,
+  data: [], // default for `data` field
+  loading: false, // default for `loading` field
 })
 ```
 or
 ```jsx
-const [data, loading, error, request] = useFetch({
+const [request, response, loading, error] = useFetch({
   // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com', // used to be `baseUrl`
-  onMount: true
+  onMount: true,
+  data: [], // default for `data` field
+  loading: false, // default for `loading` field
 })
 
 const {
+  loading,
+  data,
   get,
   post,
   patch,
@@ -422,6 +426,11 @@ const {
   query,  // GraphQL
   mutate, // GraphQL
 } = request
+
+const {
+  ok,
+  data,
+} = response
 ```
 </details>
 
