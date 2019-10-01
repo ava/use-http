@@ -155,6 +155,37 @@ function Todos() {
 
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
+<details open><summary>Basic Usage with `Provider`</summary>
+
+```js
+import useFetch, { Provider } from 'use-http'
+
+function Todos() {
+  const { loading, error, data } = useFetch({
+    onMount: true,
+    path: '/todos',
+    data: []
+  })
+
+  return (
+    <>
+      {error && 'Error!'}
+      {loading && 'Loading...'}
+      {!loading && data.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+    </>
+  )
+}
+
+const App = () => (
+  <Provider url='https://example.com'>
+    <Todos />
+  </Provider>
+)
+```
+</details>
+
 ```js
 var [request, response, loading, error] = useFetch('https://example.com')
 

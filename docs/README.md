@@ -137,6 +137,36 @@ function Todos() {
 }
 ```
 
+Basic Example With Provider
+---------------------------
+```js
+import useFetch, { Provider } from 'use-http'
+
+function Todos() {
+  const { loading, error, data } = useFetch({ // accepts all `fetch` options
+    onMount: true,  // will fire on componentDidMount (GET by default)
+    path: '/todos',
+    data: []        // default for `data` will be an array instead of undefined
+  })
+
+  return (
+    <>
+      {error && 'Error!'}
+      {loading && 'Loading...'}
+      {!loading && data.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+    </>
+  )
+}
+
+const App = () => (
+  <Provider url='https://example.com'>
+    <Todos />
+  </Provider>
+)
+```
+
 Destructured
 -------------
 ```js
