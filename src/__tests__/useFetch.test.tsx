@@ -253,4 +253,18 @@ describe('useFetch - BROWSER - errors', (): void => {
     expect(result.current.error).toBe(undefined)
     expect(result.current.data).toEqual(expectedSuccess)
   })
+
+  it('should leave the default `data` as array if response is undefined or error', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch({
+        url: 'https://example.com',
+        data: []
+      }),
+    )
+    expect(result.current.data).toEqual([])
+    expect(result.current.loading).toBe(false)
+    await result.current.get()
+    expect(result.current.error).toEqual(expectedError)
+    expect(result.current.data).toEqual([])
+  })
 })
