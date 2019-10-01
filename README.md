@@ -153,7 +153,7 @@ function Todos() {
 ```
 </details>
 
-<details open><summary>Basic Usage with `Provider`</summary>
+<details open><summary>Basic Usage with <code>Provider</code></summary>
 
 ```js
 import useFetch, { Provider } from 'use-http'
