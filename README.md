@@ -546,12 +546,14 @@ const App = () => {
   - [ ] potential option ideas
   ```jsx
   const request = useFetch({
-    onUpdate: [props.id] // everytime props.id is updated, it will re-run the request GET in this case
-    path: '/todos'       // this would allow you to POST and GET to the same path onMount and on demand if you had a url in context
-    retry: 3,            // amount of times it should retry before erroring out
-    retryDuration: 1000, // amount of time for each retry before timing out?
-    timeout: 10000,      // amount of time period before erroring out
-    onServer: true,      // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
+    onUpdate: [props.id]     // everytime props.id is updated, it will re-run the request GET in this case
+    path: '/todos'           // this would allow you to POST and GET to the same path onMount and on demand if you had a url in context
+    retry: 3,                // amount of times it should retry before erroring out
+    retryDuration: 1000,     // amount of time for each retry before timing out?
+    timeout: 10000,          // amount of time period before erroring out
+    onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
+    query: `some graphql query`       // if you would prefer to pass the query in the config
+    mutation: `some graphql mutation` // if you would prefer to pass the mutation in the config
     interceptors: {      
       request(opts) { // i.e. if you need to do some kind of authentication before a request
         return opts
@@ -561,6 +563,10 @@ const App = () => {
       }  
     }
   })
+  ```
+  - [ ] potential option ideas for `GraphQL`
+  ```jsx
+  const request = useQuery({ onMount: true })`your graphql query`
   ```
   - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Authentication': 'Bearer MY_TOKEN' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
   ```jsx
