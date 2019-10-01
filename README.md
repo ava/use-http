@@ -153,8 +153,6 @@ function Todos() {
 ```
 </details>
 
-<details open><summary><b>Destructured <code>useFetch</code></b></summary>
-
 <details open><summary>Basic Usage with `Provider`</summary>
 
 ```js
@@ -185,6 +183,8 @@ const App = () => (
 )
 ```
 </details>
+
+<details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
 ```js
 var [request, response, loading, error] = useFetch('https://example.com')
