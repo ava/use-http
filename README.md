@@ -575,6 +575,7 @@ const App = () => {
     return globalOptions
   })
   ```
+  - [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
 
 <details><summary><b>The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
     
