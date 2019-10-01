@@ -53,6 +53,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       try {
         setLoading(true)
+        if (error) setError(undefined)
         if (isServer) return // TODO: for now, we don't do anything on the server
 
         res.current = await fetch(`${url}${path}${route}`, options)
