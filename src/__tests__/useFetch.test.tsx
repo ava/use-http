@@ -201,7 +201,6 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
 
 describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   const expected = { title: 'Alex Cory' }
- 
 
   const wrapper = ({ children }: { children: ReactElement }) => <Provider url="https://example.com">{children}</Provider>
 
@@ -226,5 +225,32 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
     expect(responseData).toEqual(expected)
     expect(result.current.data).toEqual(expected)
     expect(result.current.loading).toBe(false)
+  })
+})
+
+describe('useFetch - BROWSER - errors', (): void => {
+  const expectedError = { name: 'error', message: 'error' }
+  const expectedSuccess = { name: 'Alex Cory' }
+
+  afterEach((): void => {
+    fetch.resetMocks()
+    cleanup()
+  })
+
+  beforeEach((): void => {
+    fetch.mockRejectOnce(expectedError)
+    fetch.mockResponseOnce(JSON.stringify(expectedSuccess))
+  })
+
+  it('should reset the error after each call', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch('https://example.com'),
+    )
+    expect(result.current.loading).toBe(false)
+    await result.current.get()
+    expect(result.current.error).toEqual(expectedError)
+    await result.current.get()
+    expect(result.current.error).toBe(undefined)
+    expect(result.current.data).toEqual(expectedSuccess)
   })
 })
