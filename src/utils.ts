@@ -104,6 +104,8 @@ export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInit => {
   )
 }
 
+export const isEmpty = (x: any) => x === undefined || x === null
+
 export const isBrowser = !!(
   typeof window !== 'undefined' &&
   window.document &&

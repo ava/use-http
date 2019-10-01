@@ -14,6 +14,7 @@ import useCustomOptions from './useCustomOptions'
 import useRequestInit from './useRequestInit'
 import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions'
+import { isEmpty } from './utils'
 
 // No <Provider url='example.com' />
 // function useFetch<TData = any>(url: string, options?: NoUrlOptions): UseFetch<TData>
@@ -51,6 +52,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         body,
       )
 
+      let theData
+
       try {
         setLoading(true)
         if (error) setError(undefined)
@@ -59,13 +62,18 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         res.current = await fetch(`${url}${path}${route}`, options)
 
         try {
-          data.current = await res.current.json()
+          theData = await res.current.json()
         } catch (err) {
-          data.current = (await res.current.text()) as any // FIXME: should not be `any` type
+          theData = (await res.current.text()) as any // FIXME: should not be `any` type
         }
       } catch (err) {
         if (err.name !== 'AbortError') setError(err)
       } finally {
+        if (defaults.data && isEmpty(theData)) {
+          data.current = defaults.data
+        } else {
+          data.current = theData
+        }
         controller.current = null
         setLoading(false)
       }
