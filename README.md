@@ -153,6 +153,37 @@ function Todos() {
 ```
 </details>
 
+<details open><summary>Basic Usage with <code>Provider</code></summary>
+
+```js
+import useFetch, { Provider } from 'use-http'
+
+function Todos() {
+  const { loading, error, data } = useFetch({
+    onMount: true,
+    path: '/todos',
+    data: []
+  })
+
+  return (
+    <>
+      {error && 'Error!'}
+      {loading && 'Loading...'}
+      {!loading && data.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+    </>
+  )
+}
+
+const App = () => (
+  <Provider url='https://example.com'>
+    <Todos />
+  </Provider>
+)
+```
+</details>
+
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
 ```js
@@ -522,8 +553,12 @@ const App = () => {
     timeout: 10000,      // amount of time period before erroring out
     onServer: true,      // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     interceptors: {      
-      request(opts) {}   // i.e. if you need to do some kind of authentication before a request
-      response(opts) {}  // i.e. if you want to camelCase all fields in a response everytime
+      request(opts) { // i.e. if you need to do some kind of authentication before a request
+        return opts
+      }   
+      response(res) { // i.e. if you want to camelCase all fields in a response everytime
+        return res
+      }  
     }
   })
   ```

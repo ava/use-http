@@ -83,6 +83,7 @@ export type UseFetch<TData> = UseFetchArrayReturn<TData> &
 export interface CustomOptions {
   onMount?: boolean
   timeout?: number
+  path?: string
   url: string
   loading?: boolean
   data?: any
