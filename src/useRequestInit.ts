@@ -1,4 +1,4 @@
-import { OptionsMaybeURL, NoUrlOptions } from './types'
+import { OptionsMaybeURL, NoUrlOptions, FetchContextTypes } from './types'
 import { isObject, pullOutRequestInit } from './utils'
 import { useContext } from 'react'
 import FetchContext from './FetchContext'
@@ -7,7 +7,8 @@ export default function useRequestInit(
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions,
 ): RequestInit {
-  const context = useContext(FetchContext)
+  const context: FetchContextTypes = useContext(FetchContext)
+  const contextRequestInit = pullOutRequestInit(context.options as OptionsMaybeURL)
 
   const requestInitOptions = isObject(urlOrOptions)
     ? urlOrOptions
@@ -17,13 +18,13 @@ export default function useRequestInit(
   const requestInit: RequestInit = pullOutRequestInit(requestInitOptions)
 
   return {
-    ...context.options,
+    ...contextRequestInit,
     ...requestInit,
     headers: {
       // default content types http://bit.ly/2N2ovOZ
       // Accept: 'application/json',
       'Content-Type': 'application/json',
-      ...(context.options || {}).headers,
+      ...contextRequestInit.headers,
       ...requestInit.headers,
     },
   }

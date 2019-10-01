@@ -10,7 +10,7 @@ export enum HTTPMethod {
 
 export interface FetchContextTypes {
   url?: string
-  options?: RequestInit | undefined
+  options?: Options | undefined
   graphql?: boolean
 }
 
@@ -80,6 +80,11 @@ export type UseFetchObjectReturn<TData> = ReqBase<TData> &
 export type UseFetch<TData> = UseFetchArrayReturn<TData> &
   UseFetchObjectReturn<TData>
 
+export type Interceptors = {
+  request?: (options: Options) => Options | void
+  response?: (response: Res<any>) => any
+}
+
 export interface CustomOptions {
   onMount?: boolean
   timeout?: number
@@ -87,6 +92,7 @@ export interface CustomOptions {
   url: string
   loading?: boolean
   data?: any
+  interceptors?: Interceptors
 }
 
 export type Options = CustomOptions &
@@ -99,3 +105,5 @@ export type OptionsMaybeURL = NoUrlOptions &
 
 // TODO: this is still yet to be implemented
 export type OptionsOverwriteWithContext = (options: Options) => Options
+
+export type ValueOf<T> = T[keyof T]

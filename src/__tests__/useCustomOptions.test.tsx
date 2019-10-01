@@ -21,7 +21,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: false,
       loading: false,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -37,7 +38,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: true,
       loading: true,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -48,7 +50,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: false,
       loading: false,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -62,7 +65,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: true,
       loading: true,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -76,7 +80,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: false,
       loading: false,
       data: [],
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -94,7 +99,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: false,
       loading: false,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 })

@@ -1,4 +1,4 @@
-import { OptionsMaybeURL, NoUrlOptions, CustomOptions } from './types'
+import { OptionsMaybeURL, NoUrlOptions, Interceptors, FetchContextTypes } from './types'
 import { isString, isObject, invariant } from './utils'
 import { useContext, useMemo } from 'react'
 import useSSR from 'use-ssr'
@@ -7,6 +7,15 @@ import FetchContext from './FetchContext'
 // Provider ex: useFetch({ url: 'https://url.com' }) -- (overwrites global url)
 // TODO - Provider: arg1 = oldGlobalOptions => ({ my: 'new local options'}) (overwrite all global options for this instance of useFetch)
 
+type UseCustomOptions = {
+  onMount: boolean
+  // timeout: number
+  path: string
+  url: string
+  loading: boolean
+  data?: any
+  interceptors: Interceptors
+}
 /**
  * Handles all special options.
  * Ex: (+ means not implemented)
@@ -19,8 +28,8 @@ import FetchContext from './FetchContext'
 export default function useCustomOptions(
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions,
-): CustomOptions {
-  const context = useContext(FetchContext)
+): UseCustomOptions {
+  const context: FetchContextTypes = useContext(FetchContext)
   const { isServer } = useSSR()
 
   invariant(
@@ -64,5 +73,22 @@ export default function useCustomOptions(
     return ''
   }, [urlOrOptions, optionsNoURLs])
 
-  return { url, onMount, loading, data, path }
+  const interceptors = useMemo((): Interceptors => {
+    const final: Interceptors  = {}
+    if (isObject(urlOrOptions) && isObject(urlOrOptions.interceptors)) {
+      if (urlOrOptions.interceptors.request) final.request = urlOrOptions.interceptors.request
+    } else if (context.options.interceptors.request) {
+      final.request = context.options.interceptors.request
+    }
+    if (isObject(optionsNoURLs) && isObject(optionsNoURLs.interceptors)) {
+      if (optionsNoURLs.interceptors.request) {
+        final.response = urlOrOptions.interceptors.response
+      }
+    } else if (context.interceptors.response) {
+      final.response = context.interceptors.response
+    }
+    return final
+  }, [urlOrOptions, optionsNoURLs])
+
+  return { url, onMount, loading, data, path, interceptors }
 }

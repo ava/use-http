@@ -1,6 +1,6 @@
 import useFetch, { FetchContext } from '.'
 import { useContext, useCallback } from 'react'
-import { ReqBase } from './types'
+import { ReqBase, FetchContextTypes } from './types'
 import { invariant, isString, useURLRequiredInvariant } from './utils'
 
 type ArrayDestructure<TData = any> = [
@@ -18,7 +18,7 @@ export const useMutation = <TData = any>(
   urlOrMutation: string | TemplateStringsArray,
   mutationArg?: string,
 ): UseMutation<TData> => {
-  const context = useContext(FetchContext)
+  const context: FetchContextTypes = useContext(FetchContext)
 
   useURLRequiredInvariant(
     !!context.url && Array.isArray(urlOrMutation),
