@@ -482,7 +482,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `onMount` | Once the component mounts, the http request will run immediately | `false` |
-| `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. Great for pagination. | `[]` |
+| `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. | `[]` |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
