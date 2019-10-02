@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useState } from 'react'
+import React, { ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
@@ -232,17 +232,19 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   })
 
   it('should re-run the request when onUpdate dependencies are updated', async (): Promise<void> => {
-    // const [x, setX] = useState(1)
-    // const { result } = renderHook(
-    //   () => useFetch({
-    //     onUpdate: [x],
-    //     data: {}
-    //   }),
-    //   { wrapper }
-    // )
-    // expect(result.current.data).toEqual({})
-    // setX(2)
-    // expect(result.current.data).toEqual(expected)
+    let initialValue = 0
+    const { result, rerender, waitForNextUpdate } = renderHook(
+      () => useFetch({
+        onUpdate: [initialValue],
+        data: {}
+      }),
+      { wrapper }
+    )
+    expect(result.current.data).toEqual({})
+    initialValue = 1
+    rerender()
+    await waitForNextUpdate()
+    expect(result.current.data).toEqual(expected)
   })
 })
 
