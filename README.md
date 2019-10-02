@@ -480,8 +480,9 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
-| `onMount` | Once the component mounts, the http request will run immediately | false |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
+| `onMount` | Once the component mounts, the http request will run immediately | `false` |
+| `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. Great for pagination. | `[]` |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
@@ -492,6 +493,7 @@ useFetch({
   // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com',     // used to be `baseUrl`
   onMount: true,
+  onUpdate: []                    // everytime a variable in this array is updated, it will re-run the request (GET by default)
   data: [],                       // default for `data` field
   loading: false,                 // default for `loading` field
   interceptors: {                 // typically, `interceptors` would be added as an option to the `<Provider />`
@@ -547,7 +549,6 @@ Todos
   - [ ] potential option ideas
   ```jsx
   const request = useFetch({
-    onUpdate: [props.id]     // everytime props.id is updated, it will re-run the request GET in this case
     retry: 3,                // amount of times it should retry before erroring out
     retryDuration: 1000,     // amount of time for each retry before timing out?
     timeout: 10000,          // amount of time period before erroring out
