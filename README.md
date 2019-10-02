@@ -550,8 +550,9 @@ Todos
   ```jsx
   const request = useFetch({
     retry: 3,                // amount of times it should retry before erroring out
-    retryDuration: 1000,     // amount of time for each retry before timing out?
+    retryDuration: 1000,     // amount of time for each retry before timing out? I think I can just use `timeout` for this...
     timeout: 10000,          // amount of time period before erroring out
+    onTimeout: () => {},     // called when the last `retry` is made and times out
     onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     query: `some graphql query`       // if you would prefer to pass the query in the config
     mutation: `some graphql mutation` // if you would prefer to pass the mutation in the config
