@@ -26,7 +26,7 @@ import { isEmpty } from './utils'
 // function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
-  const { url, onMount, path, ...defaults } = useCustomOptions(...args)
+  const { url, onMount, path, interceptors, ...defaults } = useCustomOptions(...args)
   const requestInit = useRequestInit(...args)
 
   const { isBrowser, isServer } = useSSR()
@@ -44,19 +44,22 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       body?: BodyInit | object,
     ): Promise<any> => {
       controller.current = isBrowser ? new AbortController() : null
-      const { route, options } = makeRouteAndOptions(
+
+      setLoading(true)
+      if (error) setError(undefined)
+
+      let { route, options } = await makeRouteAndOptions(
         requestInit,
         method,
         controller,
         routeOrBody,
         body,
+        interceptors.request,
       )
 
       let theData
 
       try {
-        setLoading(true)
-        if (error) setError(undefined)
         if (isServer) return // TODO: for now, we don't do anything on the server
 
         res.current = await fetch(`${url}${path}${route}`, options)
@@ -69,11 +72,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       } catch (err) {
         if (err.name !== 'AbortError') setError(err)
       } finally {
-        if (defaults.data && isEmpty(theData)) {
-          data.current = defaults.data
-        } else {
-          data.current = theData
-        }
+        data.current = (defaults.data && isEmpty(theData)) ? defaults.data : theData
         controller.current = null
         setLoading(false)
       }
@@ -101,10 +100,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     data: data.current,
   }
 
-  const response = {
-    data: data.current,
-    ...res.current
-  }
+  const responseObj = { data: data.current, ...res.current }
+  const response = interceptors.response ? interceptors.response(responseObj as Res<TData>) : responseObj
 
   // handling onMount
   const mounted = useRef(false)

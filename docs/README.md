@@ -387,6 +387,40 @@ function App() {
 
 ```
 
+Request/Response Interceptors with `Provider`
+---------------------------------------------
+
+This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
+    
+```jsx
+import { Provider } from 'use-http'
+import camelCase from 'camelcase-keys-recursive'
+
+function App() {
+  let [token] = useLocalStorage('token')
+  
+  const options = {
+    interceptors: {
+      // every time we make an http request, this will run 1st before the request is made
+      request: async (options) => {
+        if (isExpired(token)) token = await getNewToken()
+        options.headers.Authorization = `Bearer ${token}`
+        return options
+      },
+      // every time we make an http request, before getting the response back, this will run
+      response: (response) => camelCase(response)
+    }
+  }
+  
+  return (
+    <Provider url='http://example.com' options={options}>
+      <SomeComponent />
+    <Provider/>
+  )
+}
+
+```
+
 Hooks
 =======
 | Option                | Description                                                                              |
@@ -406,14 +440,24 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `url` | Allows you to set a base url so relative paths can be used for each request. You can also just set this as the 1st argument like `useFetch('url')`      | empty string |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
+| `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
+| `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 
 ```jsx
 useFetch({
   // accepts all `fetch` options such as headers, method, etc.
-  url: 'https://example.com', // used to be `baseUrl`
+  url: 'https://example.com',     // used to be `baseUrl`
   onMount: true,
-  data: [],                   // default for `data` field
-  loading: false,             // default for `loading` field
+  data: [],                       // default for `data` field
+  loading: false,                 // default for `loading` field
+  interceptors: {                 // typically, `interceptors` would be added as an option to the `<Provider />`
+    request: async (options) => { // `async` is not required
+      return options              // returning the `options` is important
+    },
+    response: (response) => {
+      return response             // returning the `response` is important
+    }
+  }
 })
 ```
 

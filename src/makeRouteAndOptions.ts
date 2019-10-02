@@ -1,4 +1,4 @@
-import { HTTPMethod } from './types'
+import { HTTPMethod, Interceptors, ValueOf } from './types'
 import { isObject, invariant, isBrowser, isString } from './utils'
 import { MutableRefObject } from 'react'
 
@@ -9,13 +9,14 @@ interface RouteAndOptions {
   options: RequestInit
 }
 
-export default function makeRouteAndOptions(
+export default async function makeRouteAndOptions(
   initialOptions: RequestInit,
   method: HTTPMethod,
   controller: MutableRefObject<AbortController | null | undefined>,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
-): RouteAndOptions {
+  requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
+): Promise<RouteAndOptions> {
   invariant(
     !(isObject(routeOrBody) && isObject(bodyAs2ndParam)),
     `If first argument of ${method.toLowerCase()}() is an object, you cannot have a 2nd argument. 😜`,
@@ -47,7 +48,7 @@ export default function makeRouteAndOptions(
     return JSON.stringify({})
   })()
 
-  const options = ((): RequestInit => {
+  const options = await (async (): Promise<RequestInit> => {
     const opts = {
       ...initialOptions,
       body,
@@ -69,6 +70,7 @@ export default function makeRouteAndOptions(
       delete opts.headers['Content-Type']
     }
     if (method === GET || method === OPTIONS) delete opts.body
+    if (requestInterceptor) return await requestInterceptor(opts)
     return opts
   })()
 
