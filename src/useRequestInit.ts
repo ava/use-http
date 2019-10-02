@@ -8,6 +8,7 @@ export default function useRequestInit(
   optionsNoURLs?: NoUrlOptions,
 ): RequestInit {
   const context = useContext(FetchContext)
+  const contextRequestInit = pullOutRequestInit(context.options as OptionsMaybeURL)
 
   const requestInitOptions = isObject(urlOrOptions)
     ? urlOrOptions
@@ -17,13 +18,13 @@ export default function useRequestInit(
   const requestInit: RequestInit = pullOutRequestInit(requestInitOptions)
 
   return {
-    ...context.options,
+    ...contextRequestInit,
     ...requestInit,
     headers: {
       // default content types http://bit.ly/2N2ovOZ
       // Accept: 'application/json',
       'Content-Type': 'application/json',
-      ...(context.options || {}).headers,
+      ...contextRequestInit.headers,
       ...requestInit.headers,
     },
   }

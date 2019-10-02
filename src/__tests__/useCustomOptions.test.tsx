@@ -21,7 +21,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: false,
       loading: false,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -37,7 +38,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: true,
       loading: true,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -48,7 +50,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: false,
       loading: false,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -62,7 +65,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: true,
       loading: true,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -76,7 +80,8 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: false,
       loading: false,
       data: [],
-      path: ''
+      path: '',
+      interceptors: {}
     })
   })
 
@@ -94,8 +99,68 @@ describe('useCustomOptions: general usages', (): void => {
       onMount: false,
       loading: false,
       data: undefined,
-      path: ''
+      path: '',
+      interceptors: {}
     })
+  })
+
+  it('should correctly execute request + response interceptors with Provider', async (): Promise<void> => {
+    const interceptors = {
+      request(options: any) {
+        options.headers.Authorization = 'Bearer test'
+        return options
+      },
+      response(response: any) {
+        response.test = 'test'
+        return response
+      }
+    }
+
+    const wrapper2 = ({ children }: { children?: ReactNode }): ReactElement => (
+      <Provider url='https://example.com' options={{ interceptors }}>{children as ReactElement}</Provider>
+    )
+
+    const { result } = renderHook(
+      (): any => useCustomOptions(),
+      { wrapper: wrapper2 },
+    )
+    
+    const options = result.current.interceptors.request({ headers: {} })
+    expect(options.headers).toHaveProperty('Authorization')
+    expect(options).toStrictEqual({
+      headers: {
+        Authorization: 'Bearer test',
+      },
+    })
+    const response = result.current.interceptors.response({})
+    expect(response).toHaveProperty('test')
+    expect(response).toEqual({ test: 'test' })
+  })
+
+  it('should correctly execute request + response interceptors', async (): Promise<void> => {
+    const interceptors = {
+      request(options: any) {
+        options.headers.Authorization = 'Bearer test'
+        return options
+      },
+      response(response: any) {
+        response.test = 'test'
+        return response
+      }
+    }
+
+    const { result } = renderHook((): any => useCustomOptions('https://example.com', { interceptors }))
+    
+    const options = result.current.interceptors.request({ headers: {} })
+    expect(options.headers).toHaveProperty('Authorization')
+    expect(options).toStrictEqual({
+      headers: {
+        Authorization: 'Bearer test',
+      },
+    })
+    const response = result.current.interceptors.response({})
+    expect(response).toHaveProperty('test')
+    expect(response).toEqual({ test: 'test' })
   })
 })
 
