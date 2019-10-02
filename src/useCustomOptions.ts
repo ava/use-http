@@ -30,6 +30,7 @@ export default function useCustomOptions(
   optionsNoURLs?: NoUrlOptions,
 ): UseCustomOptions {
   const context: FetchContextTypes = useContext(FetchContext)
+  const contextInterceptors = context.options && context.options.interceptors || {}
   const { isServer } = useSSR()
 
   invariant(
@@ -74,18 +75,14 @@ export default function useCustomOptions(
   }, [urlOrOptions, optionsNoURLs])
 
   const interceptors = useMemo((): Interceptors => {
-    const final: Interceptors  = {}
+    const final: Interceptors  = { ...contextInterceptors }
     if (isObject(urlOrOptions) && isObject(urlOrOptions.interceptors)) {
       if (urlOrOptions.interceptors.request) final.request = urlOrOptions.interceptors.request
-    } else if (context.options.interceptors.request) {
-      final.request = context.options.interceptors.request
+      if (urlOrOptions.interceptors.response) final.response = urlOrOptions.interceptors.response
     }
     if (isObject(optionsNoURLs) && isObject(optionsNoURLs.interceptors)) {
-      if (optionsNoURLs.interceptors.request) {
-        final.response = urlOrOptions.interceptors.response
-      }
-    } else if (context.interceptors.response) {
-      final.response = context.interceptors.response
+      if (optionsNoURLs.interceptors.request) final.request = optionsNoURLs.interceptors.request
+      if (optionsNoURLs.interceptors.response) final.response = optionsNoURLs.interceptors.response
     }
     return final
   }, [urlOrOptions, optionsNoURLs])

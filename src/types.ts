@@ -81,7 +81,7 @@ export type UseFetch<TData> = UseFetchArrayReturn<TData> &
   UseFetchObjectReturn<TData>
 
 export type Interceptors = {
-  request?: (options: Options) => Options | void
+  request?: (options: Options) => Options
   response?: (response: Res<any>) => any
 }
 
@@ -89,7 +89,7 @@ export interface CustomOptions {
   onMount?: boolean
   timeout?: number
   path?: string
-  url: string
+  url?: string
   loading?: boolean
   data?: any
   interceptors?: Interceptors
