@@ -1,4 +1,4 @@
-import { OptionsMaybeURL, NoUrlOptions, Interceptors, FetchContextTypes } from './types'
+import { OptionsMaybeURL, NoUrlOptions, Interceptors } from './types'
 import { isString, isObject, invariant } from './utils'
 import { useContext, useMemo } from 'react'
 import useSSR from 'use-ssr'
@@ -29,7 +29,7 @@ export default function useCustomOptions(
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions,
 ): UseCustomOptions {
-  const context: FetchContextTypes = useContext(FetchContext)
+  const context = useContext(FetchContext)
   const contextInterceptors = context.options && context.options.interceptors || {}
   const { isServer } = useSSR()
 
