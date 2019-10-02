@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, ReactNode, useState } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
@@ -112,7 +112,9 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     age: 29,
   }
 
-  const wrapper = ({ children }: { children: ReactElement }) => <Provider url="https://example.com">{children}</Provider>
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+  )
 
   afterEach((): void => {
     cleanup()
@@ -145,7 +147,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   > => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({ onMount: true }),
-      { wrapper: wrapper as React.ComponentType }
+      { wrapper }
     )
 
     expect(result.current.loading).toBe(true)
@@ -159,7 +161,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   > => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(),
-      { wrapper: wrapper as React.ComponentType }
+      { wrapper }
     )
     expect(result.current.loading).toBe(false)
     result.current.get()
@@ -174,7 +176,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   > => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(),
-      { wrapper: wrapper as React.ComponentType }
+      { wrapper }
     )
     expect(result.current.loading).toBe(false)
     result.current.get('/people')
@@ -189,7 +191,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   > => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({ path: '/people', onMount: true }),
-      { wrapper: wrapper as React.ComponentType }
+      { wrapper }
     )
     expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
@@ -202,7 +204,9 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
 describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   const expected = { title: 'Alex Cory' }
 
-  const wrapper = ({ children }: { children: ReactElement }) => <Provider url="https://example.com">{children}</Provider>
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+  )
 
   afterEach((): void => {
     fetch.resetMocks()
@@ -225,6 +229,20 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
     expect(responseData).toEqual(expected)
     expect(result.current.data).toEqual(expected)
     expect(result.current.loading).toBe(false)
+  })
+
+  it('should re-run the request when onUpdate dependencies are updated', async (): Promise<void> => {
+    // const [x, setX] = useState(1)
+    // const { result } = renderHook(
+    //   () => useFetch({
+    //     onUpdate: [x],
+    //     data: {}
+    //   }),
+    //   { wrapper }
+    // )
+    // expect(result.current.data).toEqual({})
+    // setX(2)
+    // expect(result.current.data).toEqual(expected)
   })
 })
 

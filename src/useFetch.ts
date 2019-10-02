@@ -26,7 +26,7 @@ import { isEmpty } from './utils'
 // function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
-  const { url, onMount, path, interceptors, ...defaults } = useCustomOptions(...args)
+  const { url, onMount, onUpdate, path, interceptors, ...defaults } = useCustomOptions(...args)
   const requestInit = useRequestInit(...args)
 
   const { isBrowser, isServer } = useSSR()
@@ -103,10 +103,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const responseObj = { data: data.current, ...res.current }
   const response = interceptors.response ? interceptors.response(responseObj as Res<TData>) : responseObj
 
-  // handling onMount
+  // handling onMount and onUpdate
   const mounted = useRef(false)
   useEffect((): void => {
-    if (!onMount || mounted.current) return
+    if ((!onMount || mounted.current) && onUpdate.length < 1) return
     mounted.current = true
     const methodName = requestInit.method || HTTPMethod.GET
     const methodLower = methodName.toLowerCase() as keyof ReqMethods
@@ -117,7 +117,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const req = request[methodLower] as NoArgs
       req()
     }
-  }, [onMount, requestInit.body, requestInit.method, url])
+  }, [onMount, requestInit.body, requestInit.method, url, ...onUpdate])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, response as Res<TData>, loading as boolean, error],

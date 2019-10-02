@@ -4,11 +4,9 @@ import { useContext, useMemo } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
 
-// Provider ex: useFetch({ url: 'https://url.com' }) -- (overwrites global url)
-// TODO - Provider: arg1 = oldGlobalOptions => ({ my: 'new local options'}) (overwrite all global options for this instance of useFetch)
-
 type UseCustomOptions = {
   onMount: boolean
+  onUpdate: any[]
   // timeout: number
   path: string
   url: string
@@ -16,15 +14,7 @@ type UseCustomOptions = {
   data?: any
   interceptors: Interceptors
 }
-/**
- * Handles all special options.
- * Ex: (+ means not implemented)
- * - url
- * - onMount
- * + timeout
- * + retry - amount of times it will retry
- * + retryDuration - interval at which each retry is done
- */
+
 export default function useCustomOptions(
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions,
@@ -87,5 +77,11 @@ export default function useCustomOptions(
     return final
   }, [urlOrOptions, optionsNoURLs])
 
-  return { url, onMount, loading, data, path, interceptors }
+  const onUpdate = useMemo((): any[] => {
+    if (isObject(urlOrOptions) && urlOrOptions.onUpdate) return urlOrOptions.onUpdate
+    if (isObject(optionsNoURLs) && optionsNoURLs.onUpdate) return optionsNoURLs.onUpdate
+    return []
+  }, [urlOrOptions, optionsNoURLs])
+
+  return { url, onMount, onUpdate, loading, data, path, interceptors }
 }

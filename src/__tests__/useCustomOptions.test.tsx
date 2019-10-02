@@ -19,6 +19,7 @@ describe('useCustomOptions: general usages', (): void => {
     expect(result.current).toEqual({
       url: 'https://example.com',
       onMount: false,
+      onUpdate: [],
       loading: false,
       data: undefined,
       path: '',
@@ -36,6 +37,7 @@ describe('useCustomOptions: general usages', (): void => {
     expect(result.current).toEqual({
       url: 'https://example.com',
       onMount: true,
+      onUpdate: [],
       loading: true,
       data: undefined,
       path: '',
@@ -48,6 +50,7 @@ describe('useCustomOptions: general usages', (): void => {
     expect(result.current).toStrictEqual({
       url: 'https://example.com',
       onMount: false,
+      onUpdate: [],
       loading: false,
       data: undefined,
       path: '',
@@ -63,6 +66,7 @@ describe('useCustomOptions: general usages', (): void => {
     expect(result.current).toStrictEqual({
       url: 'https://cool.com',
       onMount: true,
+      onUpdate: [],
       loading: true,
       data: undefined,
       path: '',
@@ -78,6 +82,7 @@ describe('useCustomOptions: general usages', (): void => {
     expect(result.current).toStrictEqual({
       url: 'https://example.com',
       onMount: false,
+      onUpdate: [],
       loading: false,
       data: [],
       path: '',
@@ -97,6 +102,7 @@ describe('useCustomOptions: general usages', (): void => {
     expect(result.current).toStrictEqual({
       url: 'http://localhost',
       onMount: false,
+      onUpdate: [],
       loading: false,
       data: undefined,
       path: '',
