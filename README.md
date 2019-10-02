@@ -493,12 +493,12 @@ useFetch({
   onMount: true,
   data: [],                       // default for `data` field
   loading: false,                 // default for `loading` field
-  interceptors: {
+  interceptors: {                 // typically, `interceptors` would be added as an option to the `<Provider />`
     request: async (options) => { // `async` is not required
       return options              // returning the `options` is important
     },
     response: (response) => {
-      return response .           // returning the `response` is important
+      return response             // returning the `response` is important
     }
   }
 })
