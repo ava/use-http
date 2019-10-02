@@ -518,6 +518,7 @@ Todos
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
+ - [ ] make this a github package
  - [ ] react native support
  - [ ] documentation for FormData
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
@@ -546,10 +547,19 @@ Todos
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
-  - [ ] potential option ideas
+  - [ ] potential option ideas (for [retryOn](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable))
   ```jsx
   const request = useFetch({
     retry: 3,                // amount of times it should retry before erroring out
+    retryOn: [503],          // can retry on certain http status codes
+    // OR
+    retryOn(attempt, error, response) {
+      // retry on any network error, or 4xx or 5xx status codes
+      if (error !== null || response.status >= 400) {
+        console.log(`retrying, attempt number ${attempt + 1}`);
+        return true;
+      }
+    },
     retryDuration: 1000,     // amount of time for each retry before timing out? I think I can just use `timeout` for this...
     timeout: 10000,          // amount of time period before erroring out
     onTimeout: () => {},     // called when the last `retry` is made and times out
