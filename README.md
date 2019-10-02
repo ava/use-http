@@ -71,7 +71,7 @@ Features
 - 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
-- [Request and response interceptors](https://github.com/alex-cory/use-http#user-content-interceptors)
+- Request and response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
 
 Usage
 -----
