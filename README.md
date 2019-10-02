@@ -560,8 +560,7 @@ Todos
         return true;
       }
     },
-    retryDuration: 1000,     // amount of time for each retry before timing out? I think I can just use `timeout` for this...
-    timeout: 10000,          // amount of time period before erroring out
+    timeout: 10000,          // amount of time before the request (or request(s) for retries) errors out.
     onTimeout: () => {},     // called when the last `retry` is made and times out
     onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     query: `some graphql query`       // if you would prefer to pass the query in the config
