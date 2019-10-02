@@ -425,6 +425,40 @@ function App() {
 </details>
 
 
+<details><summary><b>Request/Response Interceptors</b></summary>
+    
+This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
+    
+```jsx
+import { Provider } from 'use-http'
+import camelCase from 'camelcase-keys-recursive'
+
+function App() {
+  let [token] = useLocalStorage('token')
+  
+  const options = {
+    interceptors: {
+      // every time we make an http request, this will run 1st before the request is made
+      request: async (options) => {
+        if (isExpired(token)) token = await getNewToken()
+        options.headers.Authorization = `Bearer ${token}`
+        return options
+      },
+      // every time we make an http request, before getting the response back, this will run
+      response: (response) => camelCase(response)
+    }
+  }
+  
+  return (
+    <Provider url='http://example.com' options={options}>
+      <SomeComponent />
+    <Provider/>
+  )
+}
+
+```
+</details>
+
 Overview
 --------
 
@@ -449,14 +483,24 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
+| `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
+| `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 
 ```jsx
 useFetch({
   // accepts all `fetch` options such as headers, method, etc.
-  url: 'https://example.com', // used to be `baseUrl`
+  url: 'https://example.com',     // used to be `baseUrl`
   onMount: true,
-  data: [],                   // default for `data` field
-  loading: false,             // default for `loading` field
+  data: [],                       // default for `data` field
+  loading: false,                 // default for `loading` field
+  interceptors: {                 // typically, `interceptors` would be added as an option to the `<Provider />`
+    request: async (options) => { // `async` is not required
+      return options              // returning the `options` is important
+    },
+    response: (response) => {
+      return response             // returning the `response` is important
+    }
+  }
 })
 ```
 
@@ -479,50 +523,6 @@ Todos
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
      - [ ] show comparison with Apollo
- - [ ] Interceptors (potential syntax example) this shows how to get access tokens on each request if an access token or refresh token is expired
-```jsx
-const App = () => {
-  const { get } = useFetch('https://example.com')
-  const [accessToken, setAccessToken] = useLocalStorage('access-token')
-  const [refreshToken, setRefreshToken] = useLocalStorage('refresh-token')
-  const { history } = useReactRouter()
-  const options = {
-    interceptors: {
-      async request(opts) {
-        let headers = {}
-        // refresh token expires in 1 day, used to get access token
-        if (!refreshToken || isExpired(refreshToken)) {
-          return history.push('/login')
-        }
-        // access token expires every 15 minutes, use refresh token to get new access token
-        if (!accessToken || isExpired(accessToken)) {
-          const access = await get(`/access-token?refreshToken=${refreshToken}`)
-          setAccessToken(access)
-          headers = {
-            Authorization: `Bearer ${access}`,
-          }
-        }
-        const finalOptions = {
-          ...opts,
-          headers: {
-            ...opts.headers,
-            ...headers,
-          },
-        }
-        return finalOptions
-      },
-    },
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  }
-  return (
-    <Provider url='https://example.com' options={options}>
-      <App />
-    </Provider>
-  )
-}
-```
  - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
  - [ ] Cache responses to improve speed and reduce amount of requests
  - [ ] maybe add syntax for inline headers like this
@@ -547,21 +547,12 @@ const App = () => {
   ```jsx
   const request = useFetch({
     onUpdate: [props.id]     // everytime props.id is updated, it will re-run the request GET in this case
-    path: '/todos'           // this would allow you to POST and GET to the same path onMount and on demand if you had a url in context
     retry: 3,                // amount of times it should retry before erroring out
     retryDuration: 1000,     // amount of time for each retry before timing out?
     timeout: 10000,          // amount of time period before erroring out
     onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     query: `some graphql query`       // if you would prefer to pass the query in the config
     mutation: `some graphql mutation` // if you would prefer to pass the mutation in the config
-    interceptors: {      
-      request(opts) { // i.e. if you need to do some kind of authentication before a request
-        return opts
-      }   
-      response(res) { // i.e. if you want to camelCase all fields in a response everytime
-        return res
-      }  
-    }
   })
   ```
   - [ ] potential option ideas for `GraphQL`
