@@ -71,6 +71,7 @@ Features
 - 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
+- Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
 
 Usage
 -----
@@ -153,7 +154,7 @@ function Todos() {
 ```
 </details>
 
-<details open><summary>Basic Usage with <code>Provider</code></summary>
+<details open><summary><b>Basic Usage with <code>Provider</code></b></summary>
 
 ```js
 import useFetch, { Provider } from 'use-http'
@@ -425,7 +426,7 @@ function App() {
 </details>
 
 
-<details><summary><b>Request/Response Interceptors</b></summary>
+<details id='interceptors'><summary><b>Request/Response Interceptors</b></summary>
     
 This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
     
