@@ -2,6 +2,7 @@ import { useMemo, useEffect } from 'react'
 import useSSR from 'use-ssr'
 import { RequestInitJSON, OptionsMaybeURL } from './types'
 
+
 /**
  * Used for error checking. If the condition is false, throw an error
  */

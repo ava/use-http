@@ -10,28 +10,27 @@ import {
   UseFetchArgs
 } from './types'
 import { BodyOnly, FetchData, NoArgs } from './types'
-import useCustomOptions from './useCustomOptions'
-import useRequestInit from './useRequestInit'
+import useFetchArgs from './useFetchArgs'
 import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions'
 import { isEmpty } from './utils'
 
-// No <Provider url='example.com' />
-// function useFetch<TData = any>(url: string, options?: NoUrlOptions): UseFetch<TData>
-// function useFetch<TData = any>(options: Options): UseFetch<TData>
-// With <Provider url='example.com' />
-// options should be extended. In future maybe have options callback to completely overwrite options
-// i.e. useFetch('ex.com', oldOptions => ({ ...newOptions })) to overwrite
-// function useFetch<TData = any>(url?: string, options?: NoUrlOptions): UseFetch<TData>
-// function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
-  const { url, onMount, onUpdate, path, interceptors, ...defaults } = useCustomOptions(...args)
-  const requestInit = useRequestInit(...args)
+  const { customOptions, requestInit, defaults } = useFetchArgs(...args)
+  const {
+    url,
+    onMount,
+    onUpdate,
+    path,
+    interceptors,
+    // timeout,
+    // retries
+  } = customOptions
 
   const { isBrowser, isServer } = useSSR()
 
-  const controller = useRef<AbortController | null>()
+  const controller = useRef<AbortController>()
   const res = useRef<Response>()
   const data = useRef<TData>(defaults.data)
 
@@ -39,14 +38,16 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const [error, setError] = useState<any>()
 
   const makeFetch = useCallback((method: HTTPMethod): FetchData => {
-    return async (
+    
+    const doFetch = async (
       routeOrBody?: string | BodyInit | object,
       body?: BodyInit | object,
     ): Promise<any> => {
-      controller.current = isBrowser ? new AbortController() : null
+      if (isServer) return // TODO: for now, we don't do anything on the server
+      controller.current = new AbortController()
 
       setLoading(true)
-      if (error) setError(undefined)
+      setError(undefined)
 
       let { route, options } = await makeRouteAndOptions(
         requestInit,
@@ -60,10 +61,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       let theData
 
       try {
-        if (isServer) return // TODO: for now, we don't do anything on the server
-
         res.current = await fetch(`${url}${path}${route}`, options)
-
         try {
           theData = await res.current.json()
         } catch (err) {
@@ -73,11 +71,14 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (err.name !== 'AbortError') setError(err)
       } finally {
         data.current = (defaults.data && isEmpty(theData)) ? defaults.data : theData
-        controller.current = null
+        controller.current = undefined
         setLoading(false)
       }
       return data.current
     }
+
+    return doFetch
+
   }, [url, isBrowser, requestInit, isServer])
 
   const post = makeFetch(HTTPMethod.POST)
