@@ -68,5 +68,4 @@ describe('makeRouteAndOptions: Errors', (): void => {
   // ADD TESTS:
   // - request.get('/test', {})
   // - request.get('/test', '')
-  console.log('TODO: makeRouteAndOptions')
 })

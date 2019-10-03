@@ -102,11 +102,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const responseObj = { data: data.current, ...res.current }
   const response = interceptors.response ? interceptors.response(responseObj as Res<TData>) : responseObj
 
-  // handling onMount
-  const mounted = useRef(false)
-  useEffect((): void => {
-    if (!onMount || mounted.current) return
-    mounted.current = true
+  const executeRequest = useCallback(() => {
     const methodName = requestInit.method || HTTPMethod.GET
     const methodLower = methodName.toLowerCase() as keyof ReqMethods
     if (methodName !== HTTPMethod.GET) {
@@ -116,7 +112,23 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const req = request[methodLower] as NoArgs
       req()
     }
-  }, [onMount, requestInit.body, requestInit.method, url])
+  }, [requestInit.body, requestInit.method, url])
+
+  const mounted = useRef(false)
+
+  // handling onUpdate
+  useEffect((): void => {
+    if (onUpdate.length === 0 || !mounted.current) return
+    executeRequest()
+  }, [...onUpdate, executeRequest])
+
+  // handling onMount
+  useEffect((): void => {
+    if (mounted.current) return
+    mounted.current = true
+    if (!onMount) return
+    executeRequest()
+  }, [onMount, executeRequest])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, response as Res<TData>, loading as boolean, error],

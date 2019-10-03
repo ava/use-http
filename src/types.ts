@@ -87,6 +87,7 @@ export type Interceptors = {
 
 export interface CustomOptions {
   onMount?: boolean
+  onUpdate?: any[]
   timeout?: number
   path?: string
   url?: string
