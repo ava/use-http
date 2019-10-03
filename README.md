@@ -460,6 +460,35 @@ function App() {
 ```
 </details>
 
+<details id='form-data'><summary><b>File Uploads (FormData)</b></summary>
+    
+This example shows how we can upload a file using `useFetch`.
+    
+```jsx
+import useFetch from 'use-http'
+
+const FileUploader = () => {
+  const [file, setFile] = useState()
+  
+  const { post } = useFetch('https://example.com/upload')
+
+  const uploadFile = async () => {
+    const data = new FormData()
+    data.append('file', file)
+    if (file instanceof FormData) await post(data)
+  }
+
+  return (
+    <div>
+      {/* Drop a file onto the input below */}
+      <input onChange={e => setFile(e.target.files[0])} />
+      <button onClick={uploadFile}>Upload</button>
+    </div>
+  )
+}
+```
+</details>
+
 Overview
 --------
 
@@ -521,7 +550,6 @@ Todos
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
  - [ ] make this a github package
  - [ ] react native support
- - [ ] documentation for FormData
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] make GraphQL work with React Suspense
