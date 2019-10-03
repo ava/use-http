@@ -8,6 +8,7 @@ type UseFetchArgsReturn = {
   customOptions: {
     onMount: boolean
     onUpdate: any[]
+    retries: number
     timeout: number
     path: string
     url: string
@@ -24,6 +25,7 @@ export const useFetchArgsDefaults = {
   customOptions: {
     onMount: false,
     onUpdate: [],
+    retries: 0,
     timeout: 30000, // 30 seconds
     path: '',
     url: '',
@@ -73,6 +75,7 @@ export default function useFetchArgs(
   const data = useField('data', defaults.data, urlOrOptions, optionsNoURLs)
   const path = useField<string>('path', defaults.path, urlOrOptions, optionsNoURLs)
   const timeout = useField<number>('timeout', defaults.timeout, urlOrOptions, optionsNoURLs)
+  const retries = useField<number>('retries', defaults.retries, urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isServer) return true
@@ -80,7 +83,6 @@ export default function useFetchArgs(
     if (isObject(optionsNoURLs)) return !!optionsNoURLs.loading || !!optionsNoURLs.onMount
     return defaults.loading
   }, [urlOrOptions, optionsNoURLs])
-
 
   const interceptors = useMemo((): Interceptors => {
     const contextInterceptors = context.options && context.options.interceptors || {}
@@ -125,7 +127,8 @@ export default function useFetchArgs(
       onUpdate,
       path,
       interceptors,
-      timeout
+      timeout,
+      retries,
     },
     requestInit,
     defaults: {
@@ -137,13 +140,16 @@ export default function useFetchArgs(
 
 const useField = <DV = any>(
   field: keyof OptionsMaybeURL | keyof NoUrlOptions,
-  defaults: DV,
+  defaultVal: DV,
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions
 ) => {
+  const context = useContext(FetchContext)
+  const contextOptions = context.options || {}
   return useMemo((): DV => {
     if (isObject(urlOrOptions) && urlOrOptions[field]) return urlOrOptions[field]
     if (isObject(optionsNoURLs) && optionsNoURLs[field as keyof NoUrlOptions]) return optionsNoURLs[field as keyof NoUrlOptions]
-    return defaults
+    if (contextOptions[field]) return  contextOptions[field]
+    return defaultVal
   }, [urlOrOptions, optionsNoURLs])
 }

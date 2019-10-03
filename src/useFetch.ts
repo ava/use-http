@@ -30,7 +30,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
   const { isBrowser, isServer } = useSSR()
 
-  const controller = useRef<AbortController | null>()
+  const controller = useRef<AbortController>()
   const res = useRef<Response>()
   const data = useRef<TData>(defaults.data)
 
@@ -38,11 +38,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const [error, setError] = useState<any>()
 
   const makeFetch = useCallback((method: HTTPMethod): FetchData => {
-    return async (
+    
+    const doFetch = async (
       routeOrBody?: string | BodyInit | object,
       body?: BodyInit | object,
     ): Promise<any> => {
-      controller.current = isBrowser ? new AbortController() : null
+      if (isServer) return // TODO: for now, we don't do anything on the server
+      controller.current = new AbortController()
 
       setLoading(true)
       setError(undefined)
@@ -59,10 +61,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       let theData
 
       try {
-        if (isServer) return // TODO: for now, we don't do anything on the server
-
         res.current = await fetch(`${url}${path}${route}`, options)
-
         try {
           theData = await res.current.json()
         } catch (err) {
@@ -72,11 +71,14 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (err.name !== 'AbortError') setError(err)
       } finally {
         data.current = (defaults.data && isEmpty(theData)) ? defaults.data : theData
-        controller.current = null
+        controller.current = undefined
         setLoading(false)
       }
       return data.current
     }
+
+    return doFetch
+
   }, [url, isBrowser, requestInit, isServer])
 
   const post = makeFetch(HTTPMethod.POST)
