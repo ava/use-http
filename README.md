@@ -514,6 +514,7 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
+ - [ ] add browser support to docs (currently does not support ie 11)
  - [ ] tests
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
