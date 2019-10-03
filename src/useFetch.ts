@@ -28,7 +28,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     // retries
   } = customOptions
 
-  const { isBrowser, isServer } = useSSR()
+  const { isServer } = useSSR()
 
   const controller = useRef<AbortController>()
   const res = useRef<Response>()
@@ -43,7 +43,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       routeOrBody?: string | BodyInit | object,
       body?: BodyInit | object,
     ): Promise<any> => {
-      if (isServer) return // TODO: for now, we don't do anything on the server
+      if (isServer) return // for now, we don't do anything on the server
       controller.current = new AbortController()
 
       setLoading(true)
@@ -79,7 +79,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
     return doFetch
 
-  }, [url, isBrowser, requestInit, isServer])
+  }, [url, requestInit, isServer])
 
   const post = makeFetch(HTTPMethod.POST)
   const del = makeFetch(HTTPMethod.DELETE)
@@ -91,9 +91,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     put: makeFetch(HTTPMethod.PUT),
     del,
     delete: del,
-    abort(): void {
-      controller.current && controller.current.abort()
-    },
+    abort: () => controller.current && controller.current.abort(),
     query: (query, variables) => post({ query, variables }),
     mutate: (mutation, variables) => post({ mutation, variables }),
     loading: loading as boolean,
@@ -114,7 +112,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const req = request[methodLower] as NoArgs
       req()
     }
-  }, [requestInit.body, requestInit.method, url])
+  }, [requestInit.body, requestInit.method])
 
   const mounted = useRef(false)
 
