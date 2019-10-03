@@ -15,6 +15,7 @@ import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions'
 import { isEmpty } from './utils'
 
+const log = (varName: string, actual: any, expected: any) => console.log(`${varName.toUpperCase()} === ${expected}: `, actual === expected ? '👍' : '👎')
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults } = useFetchArgs(...args)
@@ -24,9 +25,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     onUpdate,
     path,
     interceptors,
-    // timeout,
+    timeout,
     // retries
   } = customOptions
+  log('timeout', 10, timeout)
+
 
   const { isServer } = useSSR()
 
@@ -59,21 +62,39 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       )
 
       let theData
+      let timer
 
       try {
+        if (timeout) {
+          timer = setTimeout(() => {
+            console.log('TIMED OUT');
+            (controller.current as AbortController).abort()
+            throw new Error('timed out 😘')
+          }, timeout)
+        }
+
+        console.time('RES TIME')
         res.current = await fetch(`${url}${path}${route}`, options)
+        console.timeEnd('RES TIME')
+        console.log('RES: ', res.current)
+
         try {
           theData = await res.current.json()
         } catch (err) {
           theData = (await res.current.text()) as any // FIXME: should not be `any` type
         }
       } catch (err) {
+        console.log('CATCH')
+        console.log('SHOULD HAVE THROWN ERROR FOR TIMEOUT: ', err)
         if (err.name !== 'AbortError') setError(err)
       } finally {
+        console.log('FINALLY')
+        if (timer) clearTimeout(timer)
         data.current = (defaults.data && isEmpty(theData)) ? defaults.data : theData
         controller.current = undefined
         setLoading(false)
       }
+      console.log('ERROR: ', error);
       return data.current
     }
 

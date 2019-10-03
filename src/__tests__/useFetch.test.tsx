@@ -199,7 +199,67 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
     // TODO: test if you do a post('/alex'), if the url is /people/alex
   })
+
 })
+
+// describe('timeouts', (): void => {
+//   // const expected = { title: 'Alex Cory' }
+
+//   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+//     <Provider url='https://example.com'>{children as ReactElement}</Provider>
+//   )
+
+//   afterEach((): void => {
+//     fetch.resetMocks()
+//     cleanup()
+//   })
+
+//   beforeEach((): void => {
+//     // fetch.mockResponseOnce(
+//     //   JSON.stringify(expected),
+//     // )
+//     // fetch.mockResponseOnce(
+//     //   () => new Promise(resolve => setTimeout(() => resolve({ body: 'ok' }))),
+//     //   100
+//     // )
+//     // fetch.mockReject(new Error('timed out'))
+//     // fetch.mockResponseOnce(
+//     //   JSON.stringify({ body: 'ok' })
+//     // )
+//     fetch.mockResponseOnce(
+//       () => new Promise(resolve => setTimeout(() => resolve({ body: 'ok' }), 100))
+//     )
+//     // fetch.mockResponseOnce(
+//     //   () => new Promise(resolve => setTimeout(() => resolve({ body: 'ok' }), 1000)),
+//     //   // () => new Promise((resolve, reject) => setTimeout(() => reject(new Error('timed out')), 100))
+//     // )
+//   })
+
+//   it('should execute GET and timeout after 1000ms', async (done): Promise<
+//     void
+//   > => {
+//     console.time('FETCH TIME')
+//     const { result } = renderHook(
+//       () => useFetch({ timeout: 10 }),
+//       { wrapper }
+//     )
+//     // console.log('LOADING TRUE: ', result.current.loading ? '👍' : '👎')
+//     // expect(result.current.loading).toBe(true)
+//     // await sleep(1000)
+//     act(() => {
+//     })
+//     await result.current.get('/test')
+//     // await waitForNextUpdate()
+//     done()
+//     console.timeEnd('FETCH TIME')
+//     console.log('LOADING FALSE: ', !result.current.loading ? '👍' : '👎')
+//     expect(result.current.loading).toBe(false)
+//     console.log('ERROR === "timed out": ', result.current.error)
+//     // expect(result.current.error.message).toBe('timed out')
+//     // expect(result.current.data).toMatchObject(expected)
+//   })
+
+// })
 
 describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   const expected = { title: 'Alex Cory' }
