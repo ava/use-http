@@ -10,24 +10,23 @@ import {
   UseFetchArgs
 } from './types'
 import { BodyOnly, FetchData, NoArgs } from './types'
-import useCustomOptions from './useCustomOptions'
-import useRequestInit from './useRequestInit'
+import useFetchArgs from './useFetchArgs'
 import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions'
 import { isEmpty } from './utils'
 
-// No <Provider url='example.com' />
-// function useFetch<TData = any>(url: string, options?: NoUrlOptions): UseFetch<TData>
-// function useFetch<TData = any>(options: Options): UseFetch<TData>
-// With <Provider url='example.com' />
-// options should be extended. In future maybe have options callback to completely overwrite options
-// i.e. useFetch('ex.com', oldOptions => ({ ...newOptions })) to overwrite
-// function useFetch<TData = any>(url?: string, options?: NoUrlOptions): UseFetch<TData>
-// function useFetch<TData = any>(options?: OptionsMaybeURL): UseFetch<TData>
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
-  const { url, onMount, path, interceptors, ...defaults } = useCustomOptions(...args)
-  const requestInit = useRequestInit(...args)
+  const { customOptions, requestInit, defaults } = useFetchArgs(...args)
+  const {
+    url,
+    onMount,
+    onUpdate,
+    path,
+    interceptors,
+    // timeout,
+    // retries
+  } = customOptions
 
   const { isBrowser, isServer } = useSSR()
 

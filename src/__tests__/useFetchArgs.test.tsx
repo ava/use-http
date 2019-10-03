@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react-hooks'
-import useCustomOptions from '../useCustomOptions'
+import useFetchArgs from '../useFetchArgs'
 import { ReactElement, ReactNode } from 'react'
 import { Provider } from '..'
 import React from 'react'
 import { isServer } from '../utils'
 
-describe('useCustomOptions: general usages', (): void => {
+describe('useFetchArgs: general usages', (): void => {
   if (isServer) return
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
@@ -14,74 +14,124 @@ describe('useCustomOptions: general usages', (): void => {
 
   it('should create custom options with `onMount: false` by default', (): void => {
     const { result } = renderHook((): any =>
-      useCustomOptions('https://example.com'),
+      useFetchArgs('https://example.com'),
     )
     expect(result.current).toEqual({
-      url: 'https://example.com',
-      onMount: false,
-      loading: false,
-      data: undefined,
-      path: '',
-      interceptors: {}
+      customOptions: {
+        url: 'https://example.com',
+        onMount: false,
+        onUpdate: [],
+        path: '',
+        interceptors: {}
+      },
+      requestInit: {
+        headers: {
+          'Content-Type': 'application/json', 
+        }
+      },
+      defaults: {
+        loading: false,
+        data: undefined,
+      }
     })
   })
 
   it('should create custom options with 1st arg as config object with `onMount: true`', (): void => {
     const { result } = renderHook((): any =>
-      useCustomOptions({
+      useFetchArgs({
         url: 'https://example.com',
         onMount: true,
       }),
     )
     expect(result.current).toEqual({
-      url: 'https://example.com',
-      onMount: true,
-      loading: true,
-      data: undefined,
-      path: '',
-      interceptors: {}
+      customOptions: {
+        url: 'https://example.com',
+        onMount: true,
+        onUpdate: [],
+        path: '',
+        interceptors: {}
+      },
+      requestInit: {
+        headers: {
+          'Content-Type': 'application/json', 
+        }
+      },
+      defaults: {
+        loading: true,
+        data: undefined,
+      }
     })
   })
 
   it('should create custom options handling Provider/Context properly', (): void => {
-    const { result } = renderHook((): any => useCustomOptions(), { wrapper })
+    const { result } = renderHook((): any => useFetchArgs(), { wrapper })
     expect(result.current).toStrictEqual({
-      url: 'https://example.com',
-      onMount: false,
-      loading: false,
-      data: undefined,
-      path: '',
-      interceptors: {}
+      customOptions: {
+        url: 'https://example.com',
+        onMount: false,
+        onUpdate: [],
+        path: '',
+        interceptors: {}
+      },
+      requestInit: {
+        headers: {
+          'Content-Type': 'application/json', 
+        }
+      },
+      defaults: {
+        loading: false,
+        data: undefined,
+      }
     })
   })
 
   it('should overwrite `url` that is set in Provider/Context properly', (): void => {
     const { result } = renderHook(
-      (): any => useCustomOptions('https://cool.com', { onMount: true }),
+      (): any => useFetchArgs('https://cool.com', { onMount: true }),
       { wrapper },
     )
     expect(result.current).toStrictEqual({
-      url: 'https://cool.com',
-      onMount: true,
-      loading: true,
-      data: undefined,
-      path: '',
-      interceptors: {}
+      customOptions: {
+        url: 'https://cool.com',
+        onMount: true,
+        onUpdate: [],
+        path: '',
+        interceptors: {}
+      },
+      requestInit: {
+        headers: {
+          'Content-Type': 'application/json', 
+        }
+      },
+      defaults: {
+        loading: true,
+        data: undefined,
+      }
     })
   })
 
   it('should set default data === []', (): void => {
     const { result } = renderHook(
-      (): any => useCustomOptions({ data: [] }),
+      (): any => useFetchArgs({ data: [] }),
       { wrapper },
     )
     expect(result.current).toStrictEqual({
-      url: 'https://example.com',
-      onMount: false,
-      loading: false,
-      data: [],
-      path: '',
-      interceptors: {}
+      customOptions: {
+        url: 'https://example.com',
+        onMount: false,
+        onUpdate: [],
+        path: '',
+        interceptors: {}
+      },
+      requestInit: {
+        headers: {
+          'Content-Type': 'application/json', 
+        }
+      },
+      defaults: {
+        loading: false,
+        data: [],
+      }
     })
   })
 
@@ -92,15 +142,25 @@ describe('useCustomOptions: general usages', (): void => {
       <Provider>{children as ReactElement}</Provider>
     )
 
-    const { result } = renderHook((): any => useCustomOptions(), { wrapper: wrapper2 })
+    const { result } = renderHook((): any => useFetchArgs(), { wrapper: wrapper2 })
 
     expect(result.current).toStrictEqual({
-      url: 'http://localhost',
-      onMount: false,
-      loading: false,
-      data: undefined,
-      path: '',
-      interceptors: {}
+      customOptions: {
+        url: 'http://localhost',
+        onMount: false,
+        onUpdate: [],
+        path: '',
+        interceptors: {}
+      },
+      requestInit: {
+        headers: {
+          'Content-Type': 'application/json', 
+        }
+      },
+      defaults: {
+        loading: false,
+        data: undefined,
+      }
     })
   })
 
@@ -121,18 +181,19 @@ describe('useCustomOptions: general usages', (): void => {
     )
 
     const { result } = renderHook(
-      (): any => useCustomOptions(),
+      (): any => useFetchArgs(),
       { wrapper: wrapper2 },
     )
     
-    const options = result.current.interceptors.request({ headers: {} })
+    const { customOptions } = result.current
+    const options = customOptions.interceptors.request({ headers: {} })
     expect(options.headers).toHaveProperty('Authorization')
     expect(options).toStrictEqual({
       headers: {
         Authorization: 'Bearer test',
       },
     })
-    const response = result.current.interceptors.response({})
+    const response = customOptions.interceptors.response({})
     expect(response).toHaveProperty('test')
     expect(response).toEqual({ test: 'test' })
   })
@@ -149,24 +210,25 @@ describe('useCustomOptions: general usages', (): void => {
       }
     }
 
-    const { result } = renderHook((): any => useCustomOptions('https://example.com', { interceptors }))
+    const { result } = renderHook((): any => useFetchArgs('https://example.com', { interceptors }))
     
-    const options = result.current.interceptors.request({ headers: {} })
+    const { customOptions } = result.current
+    const options = customOptions.interceptors.request({ headers: {} })
     expect(options.headers).toHaveProperty('Authorization')
     expect(options).toStrictEqual({
       headers: {
         Authorization: 'Bearer test',
       },
     })
-    const response = result.current.interceptors.response({})
+    const response = customOptions.interceptors.response({})
     expect(response).toHaveProperty('test')
     expect(response).toEqual({ test: 'test' })
   })
 })
 
-describe('useCustomOptions: Errors', (): void => {
+describe('useFetchArgs: Errors', (): void => {
   it('should error if no url string is set and no Provider is in place', (): void => {
-    const { result } = renderHook((): any => useCustomOptions())
+    const { result } = renderHook((): any => useFetchArgs())
     expect(result.error.name).toBe('Invariant Violation')
     expect(result.error.message).toBe(
       'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>',
@@ -174,7 +236,7 @@ describe('useCustomOptions: Errors', (): void => {
   })
 
   it('should error if 1st arg is object and no URL field is set in it', (): void => {
-    const { result } = renderHook((): any => useCustomOptions({}))
+    const { result } = renderHook((): any => useFetchArgs({}))
     expect(result.error.name).toBe('Invariant Violation')
     expect(result.error.message).toBe(
       'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>',
@@ -182,7 +244,7 @@ describe('useCustomOptions: Errors', (): void => {
   })
 
   it('should error if no URL is specified', (): void => {
-    const { result } = renderHook((): any => useCustomOptions(''))
+    const { result } = renderHook((): any => useFetchArgs(''))
     expect(result.error.name).toBe('Invariant Violation')
     expect(result.error.message).toBe(
       'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>',
@@ -190,7 +252,7 @@ describe('useCustomOptions: Errors', (): void => {
   })
 
   it('should error if 1st and 2nd arg are both objects', (): void => {
-    const { result } = renderHook((): any => useCustomOptions({}, {}))
+    const { result } = renderHook((): any => useFetchArgs({}, {}))
     expect(result.error.name).toBe('Invariant Violation')
     expect(result.error.message).toBe(
       'You cannot have a 2nd parameter of useFetch when your first argument is an object config.',

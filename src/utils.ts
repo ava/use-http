@@ -2,6 +2,27 @@ import { useMemo, useEffect } from 'react'
 import useSSR from 'use-ssr'
 import { RequestInitJSON, OptionsMaybeURL } from './types'
 
+// export const betterFetch = async (url: string, options: RequestInit, timeout: number = 5000, retries: number = 0): Promise<Response> => {
+//   let timer
+//   let res
+//   try {
+//     if (timeout) {
+//       // if (options.signal) options.signal.addEventListener('abort', () => controller.abort());
+//       timer = setTimeout(async () => {
+//         controller.abort()
+//         throw Error('timed out')
+//       }, timeout)
+//     }
+//     res = await fetch(url, options)
+//   } catch(err) {
+//     if (retries <= 1) throw err;
+//     res = await betterFetch(url, options, timeout, retries - 1)
+//   } finally {
+//     if (timer) clearTimeout(timer)
+//     return res as Response
+//   }
+// }
+
 /**
  * Used for error checking. If the condition is false, throw an error
  */

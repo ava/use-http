@@ -3,32 +3,28 @@ import { isString, isObject, invariant } from './utils'
 import { useContext, useMemo } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
+import useRequestInit from './useRequestInit'
 
-// Provider ex: useFetch({ url: 'https://url.com' }) -- (overwrites global url)
-// TODO - Provider: arg1 = oldGlobalOptions => ({ my: 'new local options'}) (overwrite all global options for this instance of useFetch)
-
-type UseCustomOptions = {
-  onMount: boolean
-  // timeout: number
-  path: string
-  url: string
-  loading: boolean
-  data?: any
-  interceptors: Interceptors
+type UseFetchArgsReturn = {
+  customOptions: {
+    onMount: boolean
+    onUpdate: any[]
+    // timeout: number
+    path: string
+    url: string
+    interceptors: Interceptors
+  },
+  requestInit: RequestInit
+  defaults: {
+    loading: boolean
+    data?: any
+  },
 }
-/**
- * Handles all special options.
- * Ex: (+ means not implemented)
- * - url
- * - onMount
- * + timeout
- * + retry - amount of times it will retry
- * + retryDuration - interval at which each retry is done
- */
-export default function useCustomOptions(
+
+export default function useFetchArgs(
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions,
-): UseCustomOptions {
+): UseFetchArgsReturn {
   const context = useContext(FetchContext)
   const contextInterceptors = context.options && context.options.interceptors || {}
   const { isServer } = useSSR()
@@ -87,5 +83,24 @@ export default function useCustomOptions(
     return final
   }, [urlOrOptions, optionsNoURLs])
 
-  return { url, onMount, loading, data, path, interceptors }
+  const onUpdate = useMemo((): any[] => {
+    if (isObject(urlOrOptions) && urlOrOptions.onUpdate) return urlOrOptions.onUpdate
+    if (isObject(optionsNoURLs) && optionsNoURLs.onUpdate) return optionsNoURLs.onUpdate
+    return []
+  }, [urlOrOptions, optionsNoURLs])
+
+  return {
+    customOptions: {
+      url,
+      onMount,
+      onUpdate,
+      path,
+      interceptors
+    },
+    requestInit: useRequestInit(urlOrOptions, optionsNoURLs),
+    defaults: {
+      data, 
+      loading
+    }
+  }
 }
