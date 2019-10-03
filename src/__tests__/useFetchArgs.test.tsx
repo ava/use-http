@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks'
-import useFetchArgs from '../useFetchArgs'
+import useFetchArgs, { useFetchArgsDefaults } from '../useFetchArgs'
 import { ReactElement, ReactNode } from 'react'
 import { Provider } from '..'
 import React from 'react'
@@ -17,21 +17,10 @@ describe('useFetchArgs: general usages', (): void => {
       useFetchArgs('https://example.com'),
     )
     expect(result.current).toEqual({
+      ...useFetchArgsDefaults,
       customOptions: {
+        ...useFetchArgsDefaults.customOptions,
         url: 'https://example.com',
-        onMount: false,
-        onUpdate: [],
-        path: '',
-        interceptors: {}
-      },
-      requestInit: {
-        headers: {
-          'Content-Type': 'application/json', 
-        }
-      },
-      defaults: {
-        loading: false,
-        data: undefined,
       }
     })
   })
@@ -44,17 +33,11 @@ describe('useFetchArgs: general usages', (): void => {
       }),
     )
     expect(result.current).toEqual({
+      ...useFetchArgsDefaults,
       customOptions: {
+        ...useFetchArgsDefaults.customOptions,
         url: 'https://example.com',
         onMount: true,
-        onUpdate: [],
-        path: '',
-        interceptors: {}
-      },
-      requestInit: {
-        headers: {
-          'Content-Type': 'application/json', 
-        }
       },
       defaults: {
         loading: true,
@@ -66,22 +49,11 @@ describe('useFetchArgs: general usages', (): void => {
   it('should create custom options handling Provider/Context properly', (): void => {
     const { result } = renderHook((): any => useFetchArgs(), { wrapper })
     expect(result.current).toStrictEqual({
+      ...useFetchArgsDefaults,
       customOptions: {
+        ...useFetchArgsDefaults.customOptions,
         url: 'https://example.com',
-        onMount: false,
-        onUpdate: [],
-        path: '',
-        interceptors: {}
       },
-      requestInit: {
-        headers: {
-          'Content-Type': 'application/json', 
-        }
-      },
-      defaults: {
-        loading: false,
-        data: undefined,
-      }
     })
   })
 
@@ -91,17 +63,11 @@ describe('useFetchArgs: general usages', (): void => {
       { wrapper },
     )
     expect(result.current).toStrictEqual({
+      ...useFetchArgsDefaults,
       customOptions: {
+        ...useFetchArgsDefaults.customOptions,
         url: 'https://cool.com',
         onMount: true,
-        onUpdate: [],
-        path: '',
-        interceptors: {}
-      },
-      requestInit: {
-        headers: {
-          'Content-Type': 'application/json', 
-        }
       },
       defaults: {
         loading: true,
@@ -116,17 +82,10 @@ describe('useFetchArgs: general usages', (): void => {
       { wrapper },
     )
     expect(result.current).toStrictEqual({
+      ...useFetchArgsDefaults,
       customOptions: {
+        ...useFetchArgsDefaults.customOptions,
         url: 'https://example.com',
-        onMount: false,
-        onUpdate: [],
-        path: '',
-        interceptors: {}
-      },
-      requestInit: {
-        headers: {
-          'Content-Type': 'application/json', 
-        }
       },
       defaults: {
         loading: false,
@@ -145,22 +104,11 @@ describe('useFetchArgs: general usages', (): void => {
     const { result } = renderHook((): any => useFetchArgs(), { wrapper: wrapper2 })
 
     expect(result.current).toStrictEqual({
+      ...useFetchArgsDefaults,
       customOptions: {
+        ...useFetchArgsDefaults.customOptions,
         url: 'http://localhost',
-        onMount: false,
-        onUpdate: [],
-        path: '',
-        interceptors: {}
       },
-      requestInit: {
-        headers: {
-          'Content-Type': 'application/json', 
-        }
-      },
-      defaults: {
-        loading: false,
-        data: undefined,
-      }
     })
   })
 
@@ -223,6 +171,73 @@ describe('useFetchArgs: general usages', (): void => {
     const response = customOptions.interceptors.response({})
     expect(response).toHaveProperty('test')
     expect(response).toEqual({ test: 'test' })
+  })
+
+
+  it('should create custom options with `Content-Type: application/text`', (): void => {
+    const options = { headers: { 'Content-Type': 'application/text' } }
+    const { result } = renderHook((): any => useFetchArgs(options), { wrapper })
+    expect(result.current).toStrictEqual({
+      ...useFetchArgsDefaults,
+      customOptions: {
+        ...useFetchArgsDefaults.customOptions,
+        url: "https://example.com",
+      },
+      requestInit: {
+        ...useFetchArgsDefaults.requestInit,
+        ...options,
+      }
+    })
+  })
+
+  it('should create custom options and use the global options instead of defaults', (): void => {
+    const options = { headers: { 'Content-Type': 'application/text' } }
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+      <Provider options={options}>{children as ReactElement}</Provider>
+    )
+    const { result } = renderHook((): any => useFetchArgs(), { wrapper })
+    expect(result.current).toStrictEqual({
+      ...useFetchArgsDefaults,
+      customOptions: {
+        ...useFetchArgsDefaults.customOptions,
+        url: "http://localhost",
+      },
+      requestInit: {
+        ...useFetchArgsDefaults.requestInit,
+        ...options,
+      }
+    })
+  })
+
+  it('should overwrite `Content-Type` that is set in Provider', (): void => {
+    const options = {
+      headers: {
+        'Content-Type': 'application/text',
+      },
+    }
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+      <Provider options={options}>{children as ReactElement}</Provider>
+    )
+    const overwriteProviderOptions = {
+      headers: {
+        'Content-Type': 'multipart/form-data; boundary=something',
+      },
+    }
+    const { result } = renderHook(
+      (): any => useFetchArgs(overwriteProviderOptions),
+      { wrapper },
+    )
+    expect(result.current).toStrictEqual({
+      ...useFetchArgsDefaults,
+      customOptions: {
+        ...useFetchArgsDefaults.customOptions,
+        url: "http://localhost",
+      },
+      requestInit: {
+        ...useFetchArgsDefaults.requestInit,
+        ...overwriteProviderOptions,
+      }
+    })
   })
 })
 

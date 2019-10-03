@@ -45,7 +45,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       controller.current = isBrowser ? new AbortController() : null
 
       setLoading(true)
-      if (error) setError(undefined)
+      setError(undefined)
 
       let { route, options } = await makeRouteAndOptions(
         requestInit,

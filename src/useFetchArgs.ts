@@ -1,15 +1,14 @@
-import { OptionsMaybeURL, NoUrlOptions, Interceptors } from './types'
-import { isString, isObject, invariant } from './utils'
+import { OptionsMaybeURL, NoUrlOptions, Interceptors, Flatten } from './types'
+import { isString, isObject, invariant, pullOutRequestInit } from './utils'
 import { useContext, useMemo } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
-import useRequestInit from './useRequestInit'
 
 type UseFetchArgsReturn = {
   customOptions: {
     onMount: boolean
     onUpdate: any[]
-    // timeout: number
+    timeout: number
     path: string
     url: string
     interceptors: Interceptors
@@ -21,12 +20,35 @@ type UseFetchArgsReturn = {
   },
 }
 
+export const useFetchArgsDefaults = {
+  customOptions: {
+    onMount: false,
+    onUpdate: [],
+    timeout: 30000, // 30 seconds
+    path: '',
+    url: '',
+    interceptors: {},
+  },
+  requestInit: {
+    headers: {
+      // default content types http://bit.ly/2N2ovOZ
+      // Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }
+  },
+  defaults: {
+    data: undefined,
+    loading: false,
+  }
+}
+
+const defaults = Object.values(useFetchArgsDefaults).reduce((a, o) => ({ ...a, ...o }), {} as Flatten<UseFetchArgsReturn>)
+
 export default function useFetchArgs(
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions,
 ): UseFetchArgsReturn {
   const context = useContext(FetchContext)
-  const contextInterceptors = context.options && context.options.interceptors || {}
   const { isServer } = useSSR()
 
   invariant(
@@ -38,7 +60,7 @@ export default function useFetchArgs(
     if (isString(urlOrOptions) && urlOrOptions) return urlOrOptions as string
     if (isObject(urlOrOptions) && !!urlOrOptions.url) return urlOrOptions.url
     if (context.url) return context.url
-    return ''
+    return defaults.url
   }, [context.url, urlOrOptions])
 
   invariant(
@@ -46,31 +68,22 @@ export default function useFetchArgs(
     'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>',
   )
 
-  const onMount = useMemo((): boolean => {
-    if (isObject(urlOrOptions)) return !!urlOrOptions.onMount
-    if (isObject(optionsNoURLs)) return !!optionsNoURLs.onMount
-    return false
-  }, [urlOrOptions, optionsNoURLs])
+  const onMount = useField<boolean>('onMount', defaults.onMount, urlOrOptions, optionsNoURLs)
+  const onUpdate = useField<[]>('onUpdate', defaults.onUpdate as [], urlOrOptions, optionsNoURLs)
+  const data = useField('data', defaults.data, urlOrOptions, optionsNoURLs)
+  const path = useField<string>('path', defaults.path, urlOrOptions, optionsNoURLs)
+  const timeout = useField<number>('timeout', defaults.timeout, urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isServer) return true
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || !!urlOrOptions.onMount
     if (isObject(optionsNoURLs)) return !!optionsNoURLs.loading || !!optionsNoURLs.onMount
-    return false
+    return defaults.loading
   }, [urlOrOptions, optionsNoURLs])
 
-  const data = useMemo((): any => {
-    if (isObject(urlOrOptions)) return urlOrOptions.data
-    if (isObject(optionsNoURLs)) return optionsNoURLs.data
-  }, [urlOrOptions, optionsNoURLs])
-
-  const path = useMemo((): string => {
-    if (isObject(urlOrOptions) && urlOrOptions.path) return urlOrOptions.path as string
-    if (isObject(optionsNoURLs) && optionsNoURLs.path) return optionsNoURLs.path as string
-    return ''
-  }, [urlOrOptions, optionsNoURLs])
 
   const interceptors = useMemo((): Interceptors => {
+    const contextInterceptors = context.options && context.options.interceptors || {}
     const final: Interceptors  = { ...contextInterceptors }
     if (isObject(urlOrOptions) && isObject(urlOrOptions.interceptors)) {
       if (urlOrOptions.interceptors.request) final.request = urlOrOptions.interceptors.request
@@ -83,10 +96,26 @@ export default function useFetchArgs(
     return final
   }, [urlOrOptions, optionsNoURLs])
 
-  const onUpdate = useMemo((): any[] => {
-    if (isObject(urlOrOptions) && urlOrOptions.onUpdate) return urlOrOptions.onUpdate
-    if (isObject(optionsNoURLs) && optionsNoURLs.onUpdate) return optionsNoURLs.onUpdate
-    return []
+  const requestInit = useMemo((): RequestInit => {
+    const contextRequestInit = pullOutRequestInit(context.options as OptionsMaybeURL)
+
+    const requestInitOptions = isObject(urlOrOptions)
+      ? urlOrOptions
+      : isObject(optionsNoURLs)
+      ? optionsNoURLs
+      : {}
+
+    const requestInit = pullOutRequestInit(requestInitOptions)
+
+    return {
+      ...contextRequestInit,
+      ...requestInit,
+      headers: {
+        ...useFetchArgsDefaults.requestInit.headers,
+        ...contextRequestInit.headers,
+        ...requestInit.headers,
+      },
+    }
   }, [urlOrOptions, optionsNoURLs])
 
   return {
@@ -95,12 +124,26 @@ export default function useFetchArgs(
       onMount,
       onUpdate,
       path,
-      interceptors
+      interceptors,
+      timeout
     },
-    requestInit: useRequestInit(urlOrOptions, optionsNoURLs),
+    requestInit,
     defaults: {
       data, 
       loading
     }
   }
+}
+
+const useField = <DV = any>(
+  field: keyof OptionsMaybeURL | keyof NoUrlOptions,
+  defaults: DV,
+  urlOrOptions?: string | OptionsMaybeURL,
+  optionsNoURLs?: NoUrlOptions
+) => {
+  return useMemo((): DV => {
+    if (isObject(urlOrOptions) && urlOrOptions[field]) return urlOrOptions[field]
+    if (isObject(optionsNoURLs) && optionsNoURLs[field as keyof NoUrlOptions]) return optionsNoURLs[field as keyof NoUrlOptions]
+    return defaults
+  }, [urlOrOptions, optionsNoURLs])
 }

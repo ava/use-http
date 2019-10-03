@@ -107,4 +107,24 @@ export type OptionsMaybeURL = NoUrlOptions &
 // TODO: this is still yet to be implemented
 export type OptionsOverwriteWithContext = (options: Options) => Options
 
+/**
+ * Helpers
+ */
 export type ValueOf<T> = T[keyof T]
+
+export type NonObjectKeysOf<T> = {
+  [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T]
+
+export type ObjectValuesOf<T extends Object> = Exclude<
+  Exclude<Extract<ValueOf<T>, object>, never>,
+  Array<any>
+>
+
+export type UnionToIntersection<U> = (U extends any
+  ? (k: U) => void
+  : never) extends ((k: infer I) => void)
+  ? I
+  : never
+
+export type Flatten<T> = Pick<T, NonObjectKeysOf<T>> & UnionToIntersection<ObjectValuesOf<T>>
