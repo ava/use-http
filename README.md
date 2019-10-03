@@ -80,7 +80,7 @@ Usage
   <ul>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch - Next.js</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch - create-react-app</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>GraphQL - useQuery</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a></li>
   </ul>
 
 <details open><summary><b>Basic Usage (managed state) <code>useFetch</code></b></summary>
@@ -480,8 +480,9 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
-| `onMount` | Once the component mounts, the http request will run immediately | false |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
+| `onMount` | Once the component mounts, the http request will run immediately | `false` |
+| `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. | `[]` |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
@@ -492,6 +493,7 @@ useFetch({
   // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com',     // used to be `baseUrl`
   onMount: true,
+  onUpdate: []                    // everytime a variable in this array is updated, it will re-run the request (GET by default)
   data: [],                       // default for `data` field
   loading: false,                 // default for `loading` field
   interceptors: {                 // typically, `interceptors` would be added as an option to the `<Provider />`
@@ -512,10 +514,12 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
+ - [ ] add browser support to docs (currently does not support ie 11)
  - [ ] tests
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
+ - [ ] make this a github package
  - [ ] react native support
  - [ ] documentation for FormData
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
@@ -544,13 +548,21 @@ Todos
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
-  - [ ] potential option ideas
+  - [ ] potential option ideas (for [retryOn](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable))
   ```jsx
   const request = useFetch({
-    onUpdate: [props.id]     // everytime props.id is updated, it will re-run the request GET in this case
     retry: 3,                // amount of times it should retry before erroring out
-    retryDuration: 1000,     // amount of time for each retry before timing out?
-    timeout: 10000,          // amount of time period before erroring out
+    retryOn: [503],          // can retry on certain http status codes
+    // OR
+    retryOn(attempt, error, response) {
+      // retry on any network error, or 4xx or 5xx status codes
+      if (error !== null || response.status >= 400) {
+        console.log(`retrying, attempt number ${attempt + 1}`);
+        return true;
+      }
+    },
+    timeout: 10000,          // amount of time before the request (or request(s) for retries) errors out.
+    onTimeout: () => {},     // called when the last `retry` is made and times out
     onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     query: `some graphql query`       // if you would prefer to pass the query in the config
     mutation: `some graphql mutation` // if you would prefer to pass the mutation in the config
