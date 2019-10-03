@@ -250,6 +250,68 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 </>
 ```
 
+Request/Response Interceptors with `Provider`
+---------------------------------------------
+
+This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
+    
+```jsx
+import { Provider } from 'use-http'
+import camelCase from 'camelcase-keys-recursive'
+
+function App() {
+  let [token] = useLocalStorage('token')
+  
+  const options = {
+    interceptors: {
+      // every time we make an http request, this will run 1st before the request is made
+      request: async (options) => {
+        if (isExpired(token)) token = await getNewToken()
+        options.headers.Authorization = `Bearer ${token}`
+        return options
+      },
+      // every time we make an http request, before getting the response back, this will run
+      response: (response) => camelCase(response)
+    }
+  }
+  
+  return (
+    <Provider url='http://example.com' options={options}>
+      <SomeComponent />
+    <Provider/>
+  )
+}
+
+```
+
+File Upload (FormData)
+----------------------
+This example shows how we can upload a file using `useFetch`.
+
+```jsx
+import useFetch from 'use-http'
+
+const FileUploader = () => {
+  const [file, setFile] = useState()
+  
+  const { post } = useFetch('https://example.com/upload')
+
+  const uploadFile = async () => {
+    const data = new FormData()
+    data.append('file', file)
+    if (file instanceof FormData) await post(data)
+  }
+
+  return (
+    <div>
+      {/* Drop a file onto the input below */}
+      <input onChange={e => setFile(e.target.files[0])} />
+      <button onClick={uploadFile}>Upload</button>
+    </div>
+  )
+}
+```
+
 GraphQL Query
 ---------------
 ```js
@@ -381,40 +443,6 @@ function App() {
     <Provider url='http://example.com' options={options}>
       <QueryComponent />
       <MutationComponent />
-    <Provider/>
-  )
-}
-
-```
-
-Request/Response Interceptors with `Provider`
----------------------------------------------
-
-This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
-    
-```jsx
-import { Provider } from 'use-http'
-import camelCase from 'camelcase-keys-recursive'
-
-function App() {
-  let [token] = useLocalStorage('token')
-  
-  const options = {
-    interceptors: {
-      // every time we make an http request, this will run 1st before the request is made
-      request: async (options) => {
-        if (isExpired(token)) token = await getNewToken()
-        options.headers.Authorization = `Bearer ${token}`
-        return options
-      },
-      // every time we make an http request, before getting the response back, this will run
-      response: (response) => camelCase(response)
-    }
-  }
-  
-  return (
-    <Provider url='http://example.com' options={options}>
-      <SomeComponent />
     <Provider/>
   )
 }
