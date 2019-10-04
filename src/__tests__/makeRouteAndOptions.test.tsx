@@ -2,13 +2,13 @@ import makeRouteAndOptions from '../makeRouteAndOptions'
 import { HTTPMethod } from '../types'
 
 describe('makeRouteAndOptions: general usages', (): void => {
-  const controller = new AbortController()
 
   it('should be defined', (): void => {
     expect(makeRouteAndOptions).toBeDefined()
   })
 
   it('should form the correct Route', async (): Promise<void> => {
+    const controller = new AbortController()
     const expectedRoute = '/test'
     const { route, options } = await makeRouteAndOptions(
       {},
@@ -29,6 +29,7 @@ describe('makeRouteAndOptions: general usages', (): void => {
   })
 
   it('should correctly modify the options with the request interceptor', async (): Promise<void> => {
+    const controller = new AbortController()
     const interceptors = {
       request(options: any) {
         options.headers.Authorization = 'Bearer test'
@@ -58,9 +59,9 @@ describe('makeRouteAndOptions: general usages', (): void => {
 
 describe('makeRouteAndOptions: Errors', (): void => {
   it('should error if 1st and 2nd arg of doFetch are both objects', async (): Promise<void> => {
+    const controller = new AbortController()
     // AKA, the last 2 arguments of makeRouteAndOptions are both objects
     try {
-      const controller = new AbortController()
       await makeRouteAndOptions({}, HTTPMethod.GET, controller, {}, {})
     } catch(err) {
       expect(err.name).toBe('Invariant Violation')
