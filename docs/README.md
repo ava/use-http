@@ -250,6 +250,68 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 </>
 ```
 
+Request/Response Interceptors with `Provider`
+---------------------------------------------
+
+This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
+    
+```jsx
+import { Provider } from 'use-http'
+import camelCase from 'camelcase-keys-recursive'
+
+function App() {
+  let [token] = useLocalStorage('token')
+  
+  const options = {
+    interceptors: {
+      // every time we make an http request, this will run 1st before the request is made
+      request: async (options) => {
+        if (isExpired(token)) token = await getNewToken()
+        options.headers.Authorization = `Bearer ${token}`
+        return options
+      },
+      // every time we make an http request, before getting the response back, this will run
+      response: (response) => camelCase(response)
+    }
+  }
+  
+  return (
+    <Provider url='http://example.com' options={options}>
+      <SomeComponent />
+    <Provider/>
+  )
+}
+
+```
+
+File Upload (FormData)
+----------------------
+This example shows how we can upload a file using `useFetch`.
+
+```jsx
+import useFetch from 'use-http'
+
+const FileUploader = () => {
+  const [file, setFile] = useState()
+  
+  const { post } = useFetch('https://example.com/upload')
+
+  const uploadFile = async () => {
+    const data = new FormData()
+    data.append('file', file)
+    if (file instanceof FormData) await post(data)
+  }
+
+  return (
+    <div>
+      {/* Drop a file onto the input below */}
+      <input onChange={e => setFile(e.target.files[0])} />
+      <button onClick={uploadFile}>Upload</button>
+    </div>
+  )
+}
+```
+
 GraphQL Query
 ---------------
 ```js
@@ -387,40 +449,6 @@ function App() {
 
 ```
 
-Request/Response Interceptors with `Provider`
----------------------------------------------
-
-This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
-    
-```jsx
-import { Provider } from 'use-http'
-import camelCase from 'camelcase-keys-recursive'
-
-function App() {
-  let [token] = useLocalStorage('token')
-  
-  const options = {
-    interceptors: {
-      // every time we make an http request, this will run 1st before the request is made
-      request: async (options) => {
-        if (isExpired(token)) token = await getNewToken()
-        options.headers.Authorization = `Bearer ${token}`
-        return options
-      },
-      // every time we make an http request, before getting the response back, this will run
-      response: (response) => camelCase(response)
-    }
-  }
-  
-  return (
-    <Provider url='http://example.com' options={options}>
-      <SomeComponent />
-    <Provider/>
-  )
-}
-
-```
-
 Hooks
 =======
 | Option                | Description                                                                              |
@@ -432,13 +460,15 @@ Hooks
 Options
 ========
 
-This is exactly what you would pass to the normal js `fetch`, with a little extra.
+This is exactly what you would pass to the normal js `fetch`, with a little extra. All these options can be passed to the `<Provider options={/* every option below */} />`, or directly to `useFetch`. If you have both in the `<Provider />` and in `useFetch`, the `useFetch` options will overwrite the ones from the `<Provider />`
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `onMount` | Once the component mounts, the http request will run immediately | `false` |
 | `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. | `[]` |
+| `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
+| `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**       | `30000` </br> (30 seconds) |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
@@ -450,6 +480,8 @@ useFetch({
   url: 'https://example.com',     // used to be `baseUrl`
   onMount: true,
   onUpdate: []                    // everytime a variable in this array is updated, it will re-run the request (GET by default)
+  retries: 3,                     // amount of times it should retry before erroring out
+  timeout: 10000,                 // amount of time before the request (or request(s) for retries) errors out.
   data: [],                       // default for `data` field
   loading: false,                 // default for `loading` field
   interceptors: {                 // typically, `interceptors` would be added as an option to the `<Provider />`
