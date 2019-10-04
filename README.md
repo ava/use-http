@@ -72,6 +72,7 @@ Features
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
 - Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
+- React Native support
 
 Usage
 -----
@@ -553,7 +554,6 @@ Todos
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
  - [ ] make this a github package
- - [ ] react native support
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] make GraphQL work with React Suspense
