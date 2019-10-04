@@ -505,13 +505,15 @@ Overview
 
 ### Options
     
-This is exactly what you would pass to the normal js `fetch`, with a little extra.
+This is exactly what you would pass to the normal js `fetch`, with a little extra. All these options can be passed to the `<Provider options={/* every option below */} />`, or directly to `useFetch`. If you have both in the `<Provider />` and in `useFetch`, the `useFetch` options will overwrite the ones from the `<Provider />`
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `onMount` | Once the component mounts, the http request will run immediately | `false` |
 | `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. | `[]` |
+| `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
+| `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**       | `30000` </br> (30 seconds) |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
@@ -523,6 +525,8 @@ useFetch({
   url: 'https://example.com',     // used to be `baseUrl`
   onMount: true,
   onUpdate: []                    // everytime a variable in this array is updated, it will re-run the request (GET by default)
+  retries: 3,                     // amount of times it should retry before erroring out
+  timeout: 10000,                 // amount of time before the request (or request(s) for retries) errors out.
   data: [],                       // default for `data` field
   loading: false,                 // default for `loading` field
   interceptors: {                 // typically, `interceptors` would be added as an option to the `<Provider />`
@@ -579,7 +583,6 @@ Todos
   - [ ] potential option ideas (for [retryOn](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable))
   ```jsx
   const request = useFetch({
-    retry: 3,                // amount of times it should retry before erroring out
     retryOn: [503],          // can retry on certain http status codes
     // OR
     retryOn(attempt, error, response) {
@@ -589,7 +592,6 @@ Todos
         return true;
       }
     },
-    timeout: 10000,          // amount of time before the request (or request(s) for retries) errors out.
     onTimeout: () => {},     // called when the last `retry` is made and times out
     onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     query: `some graphql query`       // if you would prefer to pass the query in the config
