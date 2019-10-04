@@ -4386,7 +4386,7 @@ urix@^0.1.0:
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
 
-use-ssr@^1.0.18:
+use-ssr@^1.0.19:
   version "1.0.19"
   resolved "https://registry.yarnpkg.com/use-ssr/-/use-ssr-1.0.19.tgz#8c03bec79069103b2813f77d17d2e5fafc02461b"
   integrity sha512-Bkor42KtUZHTTuEot4Nma0Q9bccu+ZOGqukyNJI1A11uSymNag7VX3ub2Rzi2nLez4fUYUUROn0mEtil5KOsCg==
