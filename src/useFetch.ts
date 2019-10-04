@@ -15,7 +15,6 @@ import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions'
 import { isEmpty } from './utils'
 
-// const log = (varName: string, actual: any, expected: any) => console.log(`${varName.toUpperCase()} === ${expected}: `, actual === expected ? '👍' : '👎')
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults } = useFetchArgs(...args)

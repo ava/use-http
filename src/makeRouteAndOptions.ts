@@ -1,6 +1,5 @@
 import { HTTPMethod, Interceptors, ValueOf } from './types'
 import { isObject, invariant, isBrowser, isString } from './utils'
-// import { MutableRefObject } from 'react'
 
 const { GET, OPTIONS } = HTTPMethod
 

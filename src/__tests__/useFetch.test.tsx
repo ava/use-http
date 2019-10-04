@@ -231,6 +231,7 @@ describe('timeouts', (): void => {
     expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
     done()
+    expect(fetch).toHaveBeenCalledTimes(1)
     expect(result.current.loading).toBe(false)
     expect(result.current.error.name).toBe('AbortError')
     expect(result.current.error.message).toBe('Timeout Error')
@@ -243,13 +244,17 @@ describe('timeouts', (): void => {
       () => useFetch({
         onMount: true,
         retries: 1,
-        timeout: 10
+        timeout: 10,
+        path: '/todos'
       }),
       { wrapper }
     )
     expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
-    await result.current.get()
+    expect(result.current.loading).toBe(false)
+    await waitForNextUpdate()
+    expect(fetch.mock.calls[0][0]).toBe('https://example.com/todos')
+    expect(fetch).toHaveBeenCalledTimes(2)
     expect(result.current.loading).toBe(false)
     expect(result.current.error.name).toBe('AbortError')
     expect(result.current.error.message).toBe('Timeout Error')
