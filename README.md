@@ -97,10 +97,9 @@ function Todos() {
   // componentDidMount
   const mounted = useRef(false)
   useEffect(() => {
-    if (!mounted.current) {
-      initializeTodos()
-      mounted.current= true
-    }
+    if (mounted.current) return
+    mounted.current= true
+    initializeTodos()
   })
   
   async function initializeTodos() {
