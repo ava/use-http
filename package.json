@@ -9,7 +9,7 @@
     "url": "https://github.com/alex-cory/use-http.git"
   },
   "dependencies": {
-    "use-ssr": "^1.0.18"
+    "use-ssr": "^1.0.19"
   },
   "peerDependencies": {
     "react": "^16.8.6",
