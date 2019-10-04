@@ -1,6 +1,6 @@
 import { HTTPMethod, Interceptors, ValueOf } from './types'
 import { isObject, invariant, isBrowser, isString } from './utils'
-import { MutableRefObject } from 'react'
+// import { MutableRefObject } from 'react'
 
 const { GET, OPTIONS } = HTTPMethod
 
@@ -12,7 +12,7 @@ interface RouteAndOptions {
 export default async function makeRouteAndOptions(
   initialOptions: RequestInit,
   method: HTTPMethod,
-  controller: MutableRefObject<AbortController | null | undefined>,
+  controller: AbortController,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
   requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
@@ -53,7 +53,7 @@ export default async function makeRouteAndOptions(
       ...initialOptions,
       body,
       method,
-      signal: controller.current ? controller.current.signal : null,
+      signal: controller.signal,
       headers: {
         // default content types http://bit.ly/2N2ovOZ
         // Accept: 'application/json',

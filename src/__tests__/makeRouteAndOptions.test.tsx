@@ -1,9 +1,8 @@
 import makeRouteAndOptions from '../makeRouteAndOptions'
 import { HTTPMethod } from '../types'
-import { useRef } from 'react'
 
 describe('makeRouteAndOptions: general usages', (): void => {
-  const controller = { current: null } // fake ref
+  const controller = new AbortController()
 
   it('should be defined', (): void => {
     expect(makeRouteAndOptions).toBeDefined()
@@ -25,7 +24,7 @@ describe('makeRouteAndOptions: general usages', (): void => {
         'Content-Type': 'application/json',
       },
       method: 'POST',
-      signal: null,
+      signal: controller.signal,
     })
   })
 
@@ -52,18 +51,21 @@ describe('makeRouteAndOptions: general usages', (): void => {
         Authorization: 'Bearer test',
       },
       method: 'POST',
-      signal: null,
+      signal: controller.signal,
     })
   })
 })
 
 describe('makeRouteAndOptions: Errors', (): void => {
-  it('should error if 1st and 2nd arg of doFetch are both objects', (): void => {
+  it('should error if 1st and 2nd arg of doFetch are both objects', async (): Promise<void> => {
     // AKA, the last 2 arguments of makeRouteAndOptions are both objects
-    expect((): void => {
-      const controller = useRef(null)
-      makeRouteAndOptions({}, HTTPMethod.GET, controller, {}, {})
-    }).toThrow(Error)
+    try {
+      const controller = new AbortController()
+      await makeRouteAndOptions({}, HTTPMethod.GET, controller, {}, {})
+    } catch(err) {
+      expect(err.name).toBe('Invariant Violation')
+      expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')
+    }
   })
   // ADD TESTS:
   // - request.get('/test', {})
