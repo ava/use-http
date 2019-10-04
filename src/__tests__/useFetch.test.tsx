@@ -199,6 +199,67 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
     // TODO: test if you do a post('/alex'), if the url is /people/alex
   })
+
+})
+
+describe('timeouts', (): void => {
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
+    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+  )
+
+  afterEach((): void => {
+    fetch.resetMocks()
+    cleanup()
+  })
+
+  beforeEach((): void => {
+    fetch.mockResponse(
+      () => new Promise((resolve, reject) => setTimeout(() => reject({ name: 'AbortError', message: 'The user aborted a request.' }), 100))
+    )
+  })
+
+  it('should execute GET and timeout after 1000ms', async (done): Promise<
+    void
+  > => {
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({
+        onMount: true,
+        timeout: 10
+      }),
+      { wrapper }
+    )
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    done()
+    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(result.current.loading).toBe(false)
+    expect(result.current.error.name).toBe('AbortError')
+    expect(result.current.error.message).toBe('Timeout Error')
+  })
+
+  it('should execute GET, fail, then retry 1 additional time', async (done): Promise<
+    void
+  > => {
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({
+        onMount: true,
+        retries: 1,
+        timeout: 10,
+        path: '/todos'
+      }),
+      { wrapper }
+    )
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    await waitForNextUpdate()
+    expect(fetch.mock.calls[0][0]).toBe('https://example.com/todos')
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(result.current.loading).toBe(false)
+    expect(result.current.error.name).toBe('AbortError')
+    expect(result.current.error.message).toBe('Timeout Error')
+    done()
+  })
 })
 
 describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {

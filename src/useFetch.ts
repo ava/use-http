@@ -24,8 +24,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     onUpdate,
     path,
     interceptors,
-    // timeout,
-    // retries
+    timeout,
+    retries
   } = customOptions
 
   const { isServer } = useSSR()
@@ -33,6 +33,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const controller = useRef<AbortController>()
   const res = useRef<Response>()
   const data = useRef<TData>(defaults.data)
+  const timedout = useRef(false)
+  const attempts = useRef(retries)
 
   const [loading, setLoading] = useState(defaults.loading)
   const [error, setError] = useState<any>()
@@ -44,7 +46,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       body?: BodyInit | object,
     ): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
-      controller.current = new AbortController()
+      const theController = controller.current = new AbortController()
 
       setLoading(true)
       setError(undefined)
@@ -52,24 +54,37 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       let { route, options } = await makeRouteAndOptions(
         requestInit,
         method,
-        controller,
+        theController,
         routeOrBody,
         body,
         interceptors.request,
       )
 
+      const timer = timeout > 0 && setTimeout(() => {
+        timedout.current = true;
+        theController.abort()
+      }, timeout)
+
       let theData
 
       try {
         res.current = await fetch(`${url}${path}${route}`, options)
+
         try {
           theData = await res.current.json()
         } catch (err) {
           theData = (await res.current.text()) as any // FIXME: should not be `any` type
         }
+
       } catch (err) {
+        if (attempts.current > 0) return doFetch(routeOrBody, body)
+        if (attempts.current < 1 && timedout.current) setError({ name: 'AbortError', message: 'Timeout Error' })
         if (err.name !== 'AbortError') setError(err)
+
       } finally {
+        if (attempts.current > 0) attempts.current -= 1
+        timedout.current = false
+        if (timer) clearTimeout(timer)
         data.current = (defaults.data && isEmpty(theData)) ? defaults.data : theData
         controller.current = undefined
         setLoading(false)
