@@ -51,6 +51,8 @@ Features
 - 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
+- Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
+- React Native support
 
 Examples
 =========
