@@ -119,7 +119,7 @@ function Todos() {
       <button onClick={addTodo}>Add Todo</button>
       {request.error && 'Error!'}
       {request.loading && 'Loading...'}
-      {todos.length > 0 && todos.map(todo => (
+      {todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -145,7 +145,7 @@ function Todos() {
     <>
       {error && 'Error!'}
       {loading && 'Loading...'}
-      {!loading && data.map(todo => (
+      {data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -170,7 +170,7 @@ function Todos() {
     <>
       {error && 'Error!'}
       {loading && 'Loading...'}
-      {!loading && data.map(todo => (
+      {data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
