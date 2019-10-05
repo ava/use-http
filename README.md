@@ -561,13 +561,16 @@ Todos
      - [ ] show comparison with Apollo
  - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
  - [ ] Cache responses to improve speed and reduce amount of requests
- - [ ] maybe add syntax for inline headers like this
+ - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
 ```jsx
-  const user = useFetch()
+  const request = useFetch('https://example.com')
   
-  user
+  request
     .headers({
-      auth: jwt
+      auth: jwt      // this would inline add the `auth` header
+    })
+    .query({
+      no: 'way'      // this would inline make the url: https://example.com?no=way
     })
     .get()
 ```
@@ -592,6 +595,7 @@ Todos
       }
     },
     onTimeout: () => {},     // called when the last `retry` is made and times out
+    onAbort: () => {},       // called when aborting the request
     onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     query: `some graphql query`       // if you would prefer to pass the query in the config
     mutation: `some graphql mutation` // if you would prefer to pass the mutation in the config
