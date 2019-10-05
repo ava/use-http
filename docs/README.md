@@ -87,7 +87,7 @@ function Todos() {
     <>
       {error && 'Error!'}
       {loading && 'Loading...'}
-      {!loading && data.map(todo => (
+      {data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
