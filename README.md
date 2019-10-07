@@ -547,7 +547,8 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
- - [ ] add browser support to docs (currently does not support ie 11)
+ - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
+ - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
  - [ ] tests
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
@@ -559,6 +560,7 @@ Todos
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
      - [ ] show comparison with Apollo
+       - [ ] figure out a good way to show side-by-side comparisonsf
  - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
  - [ ] Cache responses to improve speed and reduce amount of requests
  - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
