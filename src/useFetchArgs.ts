@@ -13,6 +13,8 @@ type UseFetchArgsReturn = {
     path: string
     url: string
     interceptors: Interceptors
+    onAbort: () => void
+    onTimeout: () => void
   },
   requestInit: RequestInit
   defaults: {
@@ -30,6 +32,8 @@ export const useFetchArgsDefaults = {
     path: '',
     url: '',
     interceptors: {},
+    onAbort: () => {},
+    onTimeout: () => {}
   },
   requestInit: {
     headers: {
@@ -70,12 +74,14 @@ export default function useFetchArgs(
     'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>',
   )
 
-  const onMount = useField<boolean>('onMount', defaults.onMount, urlOrOptions, optionsNoURLs)
-  const onUpdate = useField<[]>('onUpdate', defaults.onUpdate as [], urlOrOptions, optionsNoURLs)
-  const data = useField('data', defaults.data, urlOrOptions, optionsNoURLs)
-  const path = useField<string>('path', defaults.path, urlOrOptions, optionsNoURLs)
-  const timeout = useField<number>('timeout', defaults.timeout, urlOrOptions, optionsNoURLs)
-  const retries = useField<number>('retries', defaults.retries, urlOrOptions, optionsNoURLs)
+  const onMount = useField<boolean>('onMount', urlOrOptions, optionsNoURLs)
+  const onUpdate = useField<[]>('onUpdate', urlOrOptions, optionsNoURLs)
+  const data = useField('data', urlOrOptions, optionsNoURLs)
+  const path = useField<string>('path', urlOrOptions, optionsNoURLs)
+  const timeout = useField<number>('timeout', urlOrOptions, optionsNoURLs)
+  const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
+  const onAbort = useField<() => void>('onAbort', urlOrOptions, optionsNoURLs)
+  const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isServer) return true
@@ -129,6 +135,8 @@ export default function useFetchArgs(
       interceptors,
       timeout,
       retries,
+      onAbort,
+      onTimeout
     },
     requestInit,
     defaults: {
@@ -140,7 +148,6 @@ export default function useFetchArgs(
 
 const useField = <DV = any>(
   field: keyof OptionsMaybeURL | keyof NoUrlOptions,
-  defaultVal: DV,
   urlOrOptions?: string | OptionsMaybeURL,
   optionsNoURLs?: NoUrlOptions
 ) => {
@@ -150,6 +157,6 @@ const useField = <DV = any>(
     if (isObject(urlOrOptions) && urlOrOptions[field]) return urlOrOptions[field]
     if (isObject(optionsNoURLs) && optionsNoURLs[field as keyof NoUrlOptions]) return optionsNoURLs[field as keyof NoUrlOptions]
     if (contextOptions[field]) return  contextOptions[field]
-    return defaultVal
+    return defaults[field]
   }, [urlOrOptions, optionsNoURLs])
 }

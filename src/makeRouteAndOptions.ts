@@ -1,12 +1,7 @@
-import { HTTPMethod, Interceptors, ValueOf } from './types'
+import { HTTPMethod, Interceptors, ValueOf, RouteAndOptions } from './types'
 import { isObject, invariant, isBrowser, isString } from './utils'
 
 const { GET, OPTIONS } = HTTPMethod
-
-interface RouteAndOptions {
-  route: string
-  options: RequestInit
-}
 
 export default async function makeRouteAndOptions(
   initialOptions: RequestInit,

@@ -8,6 +8,11 @@ export enum HTTPMethod {
   PUT = 'PUT',
 }
 
+export interface RouteAndOptions {
+  route: string
+  options: RequestInit
+}
+
 export interface FetchContextTypes {
   url?: string
   options?: Options | undefined
@@ -95,6 +100,8 @@ export interface CustomOptions {
   loading?: boolean
   data?: any
   interceptors?: Interceptors
+  onAbort?: () => void
+  onTimeout?: () => void
 }
 
 export type Options = CustomOptions &
