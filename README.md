@@ -549,6 +549,7 @@ Todos
 ------
  - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
  - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
+ - [ ] add sponsers [similar to this](https://github.com/carbon-app/carbon)
  - [ ] tests
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
