@@ -72,6 +72,7 @@ Features
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
 - Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
+- React Native support
 
 Usage
 -----
@@ -96,10 +97,9 @@ function Todos() {
   // componentDidMount
   const mounted = useRef(false)
   useEffect(() => {
-    if (!mounted.current) {
-      initializeTodos()
-      mounted.current= true
-    }
+    if (mounted.current) return
+    mounted.current= true
+    initializeTodos()
   })
   
   async function initializeTodos() {
@@ -119,7 +119,7 @@ function Todos() {
       <button onClick={addTodo}>Add Todo</button>
       {request.error && 'Error!'}
       {request.loading && 'Loading...'}
-      {todos.length > 0 && todos.map(todo => (
+      {todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -145,7 +145,7 @@ function Todos() {
     <>
       {error && 'Error!'}
       {loading && 'Loading...'}
-      {!loading && data.map(todo => (
+      {data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -170,7 +170,7 @@ function Todos() {
     <>
       {error && 'Error!'}
       {loading && 'Loading...'}
-      {!loading && data.map(todo => (
+      {data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -553,7 +553,6 @@ Todos
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
  - [ ] make this a github package
- - [ ] react native support
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
  - [ ] make GraphQL work with React Suspense
@@ -562,13 +561,16 @@ Todos
      - [ ] show comparison with Apollo
  - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
  - [ ] Cache responses to improve speed and reduce amount of requests
- - [ ] maybe add syntax for inline headers like this
+ - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
 ```jsx
-  const user = useFetch()
+  const request = useFetch('https://example.com')
   
-  user
+  request
     .headers({
-      auth: jwt
+      auth: jwt      // this would inline add the `auth` header
+    })
+    .query({
+      no: 'way'      // this would inline make the url: https://example.com?no=way
     })
     .get()
 ```
@@ -593,6 +595,7 @@ Todos
       }
     },
     onTimeout: () => {},     // called when the last `retry` is made and times out
+    onAbort: () => {},       // called when aborting the request
     onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     query: `some graphql query`       // if you would prefer to pass the query in the config
     mutation: `some graphql mutation` // if you would prefer to pass the mutation in the config

@@ -51,6 +51,8 @@ Features
 - 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
+- Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
+- React Native support
 
 Examples
 =========
@@ -85,7 +87,7 @@ function Todos() {
     <>
       {error && 'Error!'}
       {loading && 'Loading...'}
-      {!loading && data.map(todo => (
+      {data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -107,10 +109,9 @@ function Todos() {
   // componentDidMount
   const mounted = useRef(false)
   useEffect(() => {
-    if (!mounted.current) {
-      initializeTodos()
-      mounted.current= true
-    }
+    if (mounted.current) return
+    mounted.current= true
+    initializeTodos()
   })
   
   async function initializeTodos() {
@@ -130,7 +131,7 @@ function Todos() {
       <button onClick={addTodo}>Add Todo</button>
       {request.error && 'Error!'}
       {request.loading && 'Loading...'}
-      {todos.length > 0 && todos.map(todo => (
+      {todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
@@ -154,7 +155,7 @@ function Todos() {
     <>
       {error && 'Error!'}
       {loading && 'Loading...'}
-      {!loading && data.map(todo => (
+      {data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
     </>
