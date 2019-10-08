@@ -31,6 +31,12 @@ import { renderHook } from '@testing-library/react-hooks'
  * SSR Tests:
  */
 
+/**
+ * Tests to add:
+ * - FormData
+ * - React Native
+ * - more `interceptor` tests. Specifically for the `data` that is not in the `response` object
+ */
 
 describe('useFetch - BROWSER - basic functionality', (): void => {
   const expected = {
@@ -199,7 +205,6 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
     // TODO: test if you do a post('/alex'), if the url is /people/alex
   })
-
 })
 
 describe('timeouts', (): void => {
@@ -218,16 +223,30 @@ describe('timeouts', (): void => {
     )
   })
 
-  it('should execute GET and timeout after 1000ms', async (done): Promise<
+  it('should execute GET and timeout after 1000ms, and fire `onTimeout` and `onAbort`', async (done): Promise<
     void
   > => {
+    const onAbort = { called: false, timesCalled: 0 }
+    const onTimeout = { called: false, timesCalled: 0 }
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
         onMount: true,
-        timeout: 10
+        timeout: 10,
+        onAbort() {
+          onAbort.called = true
+          onAbort.timesCalled += 1
+        },
+        onTimeout() {
+          onTimeout.called = true
+          onTimeout.timesCalled += 1
+        }
       }),
       { wrapper }
     )
+    expect(onAbort.called).toBe(false)
+    expect(onTimeout.called).toBe(false)
+    expect(onAbort.timesCalled).toBe(0)
+    expect(onTimeout.timesCalled).toBe(0)
     expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
     done()
@@ -235,20 +254,38 @@ describe('timeouts', (): void => {
     expect(result.current.loading).toBe(false)
     expect(result.current.error.name).toBe('AbortError')
     expect(result.current.error.message).toBe('Timeout Error')
+    expect(onAbort.called).toBe(true)
+    expect(onTimeout.called).toBe(true)
+    expect(onAbort.timesCalled).toBe(1)
+    expect(onTimeout.timesCalled).toBe(1)
   })
 
   it('should execute GET, fail, then retry 1 additional time', async (done): Promise<
     void
   > => {
+    const onAbort = { called: false, timesCalled: 0 }
+    const onTimeout = { called: false, timesCalled: 0 }
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
         onMount: true,
         retries: 1,
         timeout: 10,
-        path: '/todos'
+        path: '/todos',
+        onAbort() {
+          onAbort.called = true
+          onAbort.timesCalled += 1
+        },
+        onTimeout() {
+          onTimeout.called = true
+          onTimeout.timesCalled += 1
+        }
       }),
       { wrapper }
     )
+    expect(onAbort.called).toBe(false)
+    expect(onTimeout.called).toBe(false)
+    expect(onAbort.timesCalled).toBe(0)
+    expect(onTimeout.timesCalled).toBe(0)
     expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
     expect(result.current.loading).toBe(false)
@@ -258,6 +295,10 @@ describe('timeouts', (): void => {
     expect(result.current.loading).toBe(false)
     expect(result.current.error.name).toBe('AbortError')
     expect(result.current.error.message).toBe('Timeout Error')
+    expect(onAbort.called).toBe(true)
+    expect(onTimeout.called).toBe(true)
+    expect(onAbort.timesCalled).toBe(2)
+    expect(onTimeout.timesCalled).toBe(2)
     done()
   })
 })
