@@ -513,7 +513,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `onMount` | Once the component mounts, the http request will run immediately | `false` |
 | `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. | `[]` |
 | `onAbort` | Runs when the request is aborted. | empty function |
-| `onTimeout` | Called when aborting the request. | empty function |
+| `onTimeout` | Called when the request times out. | empty function |
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**       | `30000` </br> (30 seconds) |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
