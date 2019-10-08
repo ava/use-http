@@ -25,7 +25,9 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     path,
     interceptors,
     timeout,
-    retries
+    retries,
+    onTimeout,
+    onAbort,
   } = customOptions
 
   const { isServer } = useSSR()
@@ -46,7 +48,9 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       body?: BodyInit | object,
     ): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
-      const theController = controller.current = new AbortController()
+      controller.current = new AbortController()
+      controller.current.signal.onabort = onAbort
+      const theController = controller.current
 
       setLoading(true)
       setError(undefined)
@@ -63,6 +67,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const timer = timeout > 0 && setTimeout(() => {
         timedout.current = true;
         theController.abort()
+        onTimeout()
       }, timeout)
 
       let theData

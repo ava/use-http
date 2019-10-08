@@ -512,6 +512,8 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `onMount` | Once the component mounts, the http request will run immediately | `false` |
 | `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. | `[]` |
+| `onAbort` | Runs when the request is aborted. | empty function |
+| `onTimeout` | Called when the request times out. | empty function |
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**       | `30000` </br> (30 seconds) |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
@@ -525,6 +527,8 @@ useFetch({
   url: 'https://example.com',     // used to be `baseUrl`
   onMount: true,
   onUpdate: []                    // everytime a variable in this array is updated, it will re-run the request (GET by default)
+  onTimeout: () => {},            // called when the request times out
+  onAbort: () => {},              // called when aborting the request
   retries: 3,                     // amount of times it should retry before erroring out
   timeout: 10000,                 // amount of time before the request (or request(s) for retries) errors out.
   data: [],                       // default for `data` field
@@ -547,7 +551,9 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
- - [ ] add browser support to docs (currently does not support ie 11)
+ - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
+ - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
+ - [ ] add sponsers [similar to this](https://github.com/carbon-app/carbon)
  - [ ] tests
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
@@ -559,6 +565,7 @@ Todos
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
      - [ ] show comparison with Apollo
+       - [ ] figure out a good way to show side-by-side comparisonsf
  - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
  - [ ] Cache responses to improve speed and reduce amount of requests
  - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
@@ -594,8 +601,6 @@ Todos
         return true;
       }
     },
-    onTimeout: () => {},     // called when the last `retry` is made and times out
-    onAbort: () => {},       // called when aborting the request
     onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     query: `some graphql query`       // if you would prefer to pass the query in the config
     mutation: `some graphql mutation` // if you would prefer to pass the mutation in the config
