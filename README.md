@@ -544,6 +544,13 @@ useFetch({
 })
 ```
 
+Sponsors
+--------
+
+Does your company use use-http? Consider sponsoring the project to fund new features, bug fixes, and more.
+
+<a href="https://ava.inc" style="margin-right: 2rem;" target="_blank"><img width="280px" src="https://ava.inc/ava-logo-green.png" /></a>
+
 
 Feature Requests/Ideas
 ----------------------
