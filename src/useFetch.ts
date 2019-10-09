@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import {
   HTTPMethod,
   UseFetch,
@@ -13,7 +13,7 @@ import { BodyOnly, FetchData, NoArgs } from './types'
 import useFetchArgs from './useFetchArgs'
 import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions'
-import { isEmpty } from './utils'
+import { isEmpty, invariant } from './utils'
 
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
@@ -33,7 +33,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { isServer } = useSSR()
 
   const controller = useRef<AbortController>()
-  const res = useRef<Res<TData>>()
+  const res = useRef<Res<TData>>({} as Res<TData>)
   const data = useRef<TData>(defaults.data)
   const timedout = useRef(false)
   const attempts = useRef(retries)
@@ -71,15 +71,23 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       }, timeout)
 
       let theData
+      let theRes
 
       try {
-        res.current = await fetch(`${url}${path}${route}`, options)
+        theRes = ((await fetch(`${url}${path}${route}`, options)) || {}) as Res<TData>
 
         try {
-          theData = await res.current.json()
+          theData = await theRes.json()
         } catch (err) {
-          theData = (await res.current.text()) as any // FIXME: should not be `any` type
+          theData = (await theRes.text()) as any // FIXME: should not be `any` type
         }
+
+        theData = (defaults.data && isEmpty(theData)) ? defaults.data : theData
+        theRes.data = theData
+
+        res.current = interceptors.response ? interceptors.response(theRes) : (theRes || {})
+        invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
+        data.current = res.current.data as TData
 
       } catch (err) {
         if (attempts.current > 0) return doFetch(routeOrBody, body)
@@ -90,7 +98,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (attempts.current > 0) attempts.current -= 1
         timedout.current = false
         if (timer) clearTimeout(timer)
-        data.current = (defaults.data && isEmpty(theData)) ? defaults.data : theData
         controller.current = undefined
         setLoading(false)
       }
@@ -118,20 +125,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     error,
     data: data.current,
   }
-
-  const response = useMemo((): Res<TData> => {
-    let resWithDefault = (res.current || {}) as Res<TData>
-    // because this is a js Response object, we have to modify it directly
-    resWithDefault.data = data.current
-
-    let response
-    try {
-      response = interceptors.response ? interceptors.response(resWithDefault) : resWithDefault
-    } catch(err) {
-      setError(err)
-    }
-    return response || {} as Res<TData>
-  }, [res.current])
 
   const executeRequest = useCallback(() => {
     const methodName = requestInit.method || HTTPMethod.GET
@@ -162,8 +155,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   }, [onMount, executeRequest])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, response as Res<TData>, loading as boolean, error],
-    { request, response: response as Res<TData>, ...request },
+    [request, res.current, loading as boolean, error],
+    { request, response: res.current, ...request },
   )
 }
 

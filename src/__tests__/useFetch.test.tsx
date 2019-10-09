@@ -363,7 +363,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
           return opts
         },
         response(res: Res<any>): Res<any> {
-          res.data = toCamel(res.data)
+          if (res.data) res.data = toCamel(res.data)
           return res
         }
       }
@@ -392,6 +392,16 @@ describe('useFetch - BROWSER - interceptors', (): void => {
     await result.current.get()
     expect(result.current.response.ok).toBe(true)
     expect(result.current.response.data).toEqual(expected)
+  })
+
+  it ('should have the `data` field correctly set when using a response interceptor', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper }
+    )
+    await result.current.get()
+    expect(result.current.response.ok).toBe(true)
+    expect(result.current.data).toEqual(expected)
   })
 })
 
