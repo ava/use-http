@@ -2,7 +2,7 @@ import React, { ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
-import { Options, Res } from '../types'
+import { Res } from '../types'
 import { toCamel } from 'convert-keys'
 
 const fetch = global.fetch as FetchMock
@@ -359,9 +359,6 @@ describe('useFetch - BROWSER - interceptors', (): void => {
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
     const options = {
       interceptors: {
-        async request(opts: Options) {
-          return opts
-        },
         response(res: Res<any>): Res<any> {
           if (res.data) res.data = toCamel(res.data)
           return res
@@ -448,9 +445,6 @@ describe('useFetch - BROWSER - errors', (): void => {
   const wrapperCustomError = ({ children }: { children?: ReactNode }): ReactElement => {
     const options = {
       interceptors: {
-        async request(opts: Options) {
-          return opts
-        },
         response(res: Res<any>): Res<any> {
           if (!res.ok) throw expectedError
           return res
