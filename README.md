@@ -81,6 +81,7 @@ Usage
   <ul>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch - Next.js</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch - create-react-app</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'>useFetch + Provider</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a></li>
   </ul>
 
@@ -183,6 +184,9 @@ const App = () => (
   </Provider>
 )
 ```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+
 </details>
 
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
@@ -365,6 +369,7 @@ export default function QueryComponent() {
   )
 }
 ```
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
 
 ##### Add a new todo
 ```jsx
@@ -432,7 +437,7 @@ This example shows how we can do authentication in the `request` interceptor and
     
 ```jsx
 import { Provider } from 'use-http'
-import camelCase from 'camelcase-keys-recursive'
+import { toCamel } from 'convert-keys'
 
 function App() {
   let [token] = useLocalStorage('token')
@@ -446,7 +451,13 @@ function App() {
         return options
       },
       // every time we make an http request, before getting the response back, this will run
-      response: (response) => camelCase(response)
+      response: (response) => {
+        // unfortunately, because this is a JS Response object, we have to modify it directly.
+        // It shouldn't have any negative affect since this is getting reset on each request.
+        // use "eslint-disable-next-line" if you're getting linting errors.
+        if (response.data) response.data = toCamel(response.data)
+        return response
+      }
     }
   }
   
@@ -543,6 +554,13 @@ useFetch({
   }
 })
 ```
+
+Sponsors
+--------
+
+Does your company use use-http? Consider sponsoring the project to fund new features, bug fixes, and more.
+
+<a href="https://ava.inc" style="margin-right: 2rem;" target="_blank"><img width="280px" src="https://ava.inc/ava-logo-green.png" /></a>
 
 
 Feature Requests/Ideas
