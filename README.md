@@ -369,6 +369,7 @@ export default function QueryComponent() {
   )
 }
 ```
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
 
 ##### Add a new todo
 ```jsx
