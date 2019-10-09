@@ -81,6 +81,7 @@ Usage
   <ul>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch - Next.js</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch - create-react-app</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'>useFetch + Provider</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a></li>
   </ul>
 
@@ -183,6 +184,9 @@ const App = () => (
   </Provider>
 )
 ```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+
 </details>
 
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
@@ -365,6 +369,7 @@ export default function QueryComponent() {
   )
 }
 ```
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
 
 ##### Add a new todo
 ```jsx
@@ -549,6 +554,13 @@ useFetch({
   }
 })
 ```
+
+Sponsors
+--------
+
+Does your company use use-http? Consider sponsoring the project to fund new features, bug fixes, and more.
+
+<a href="https://ava.inc" style="margin-right: 2rem;" target="_blank"><img width="280px" src="https://ava.inc/ava-logo-green.png" /></a>
 
 
 Feature Requests/Ideas
