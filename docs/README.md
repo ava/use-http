@@ -276,7 +276,7 @@ function App() {
         // unfortunately, because this is a JS Response object, we have to modify it directly.
         // It shouldn't have any negative affect since this is getting reset on each request.
         // use "eslint-disable-next-line" if you're getting linting errors.
-        response.data = toCamel(response.data)
+        if (response.data) response.data = toCamel(response.data)
         return response
       }
     }
