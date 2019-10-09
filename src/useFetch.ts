@@ -85,7 +85,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         theData = (defaults.data && isEmpty(theData)) ? defaults.data : theData
         theRes.data = theData
 
-        res.current = interceptors.response ? interceptors.response(theRes) : (theRes || {})
+        res.current = interceptors.response ? interceptors.response(theRes) : theRes
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
         data.current = res.current.data as TData
 
