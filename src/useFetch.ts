@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import {
   HTTPMethod,
   UseFetch,
@@ -33,7 +33,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { isServer } = useSSR()
 
   const controller = useRef<AbortController>()
-  const res = useRef<Response>()
+  const res = useRef<Res<TData>>()
   const data = useRef<TData>(defaults.data)
   const timedout = useRef(false)
   const attempts = useRef(retries)
@@ -119,8 +119,19 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     data: data.current,
   }
 
-  const responseObj = { data: data.current, ...res.current }
-  const response = interceptors.response ? interceptors.response(responseObj as Res<TData>) : responseObj
+  const response = useMemo((): Res<TData> => {
+    let resWithDefault = (res.current || {}) as Res<TData>
+    // because this is a js Response object, we have to modify it directly
+    resWithDefault.data = data.current
+
+    let response
+    try {
+      response = interceptors.response ? interceptors.response(resWithDefault) : resWithDefault
+    } catch(err) {
+      setError(err)
+    }
+    return response || {} as Res<TData>
+  }, [res.current])
 
   const executeRequest = useCallback(() => {
     const methodName = requestInit.method || HTTPMethod.GET
