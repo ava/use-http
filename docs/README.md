@@ -261,7 +261,7 @@ This example shows how we can do authentication in the `request` interceptor and
     
 ```jsx
 import { Provider } from 'use-http'
-import camelCase from 'camelcase-keys-recursive'
+import { toCamel } from 'convert-keys'
 
 function App() {
   let [token] = useLocalStorage('token')
@@ -275,7 +275,13 @@ function App() {
         return options
       },
       // every time we make an http request, before getting the response back, this will run
-      response: (response) => camelCase(response)
+      response: (response) => {
+        // unfortunately, because this is a JS Response object, we have to modify it directly.
+        // It shouldn't have any negative affect since this is getting reset on each request.
+        // use "eslint-disable-next-line" if you're getting linting errors.
+        if (response.data) response.data = toCamel(response.data)
+        return response
+      }
     }
   }
   

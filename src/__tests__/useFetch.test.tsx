@@ -2,6 +2,8 @@ import React, { ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
+import { Res } from '../types'
+import { toCamel } from 'convert-keys'
 
 const fetch = global.fetch as FetchMock
 
@@ -350,6 +352,56 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   })
 })
 
+describe('useFetch - BROWSER - interceptors', (): void => {
+  const snake_case = { title: 'Alex Cory', first_name: 'Alex' }
+  const expected = { title: 'Alex Cory', firstName: 'Alex' }
+
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
+    const options = {
+      interceptors: {
+        response(res: Res<any>): Res<any> {
+          if (res.data) res.data = toCamel(res.data)
+          return res
+        }
+      }
+    }
+    return (
+      <Provider url='https://example.com' options={options}>{children as ReactElement}</Provider>
+    )
+  }
+
+  afterEach((): void => {
+    fetch.resetMocks()
+    cleanup()
+  })
+
+  beforeEach((): void => {
+    fetch.mockResponseOnce(
+      JSON.stringify(snake_case),
+    )
+  })
+
+  it ('should pass the proper response object for `interceptors.response`', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper }
+    )
+    await result.current.get()
+    expect(result.current.response.ok).toBe(true)
+    expect(result.current.response.data).toEqual(expected)
+  })
+
+  it ('should have the `data` field correctly set when using a response interceptor', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper }
+    )
+    await result.current.get()
+    expect(result.current.response.ok).toBe(true)
+    expect(result.current.data).toEqual(expected)
+  })
+})
+
 describe('useFetch - BROWSER - errors', (): void => {
   const expectedError = { name: 'error', message: 'error' }
   const expectedSuccess = { name: 'Alex Cory' }
@@ -388,5 +440,40 @@ describe('useFetch - BROWSER - errors', (): void => {
     await result.current.get()
     expect(result.current.error).toEqual(expectedError)
     expect(result.current.data).toEqual([])
+  })
+
+  const wrapperCustomError = ({ children }: { children?: ReactNode }): ReactElement => {
+    const options = {
+      interceptors: {
+        response(res: Res<any>): Res<any> {
+          if (!res.ok) throw expectedError
+          return res
+        }
+      }
+    }
+    return (
+      <Provider url='https://example.com' options={options}>{children as ReactElement}</Provider>
+    )
+  }
+
+  it ('should set the `error` properly for `interceptors.response`', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper: wrapperCustomError }
+    )
+    await result.current.get()
+    expect(result.current.response.ok).toBe(undefined)
+    expect(result.current.response).toEqual({})
+    expect(result.current.error).toEqual(expectedError)
+  })
+
+  it ('should set the `error` properly for `interceptors.response` onMount', async (): Promise<void> => {
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({ onMount: true }),
+      { wrapper: wrapperCustomError }
+    )
+    await waitForNextUpdate()
+    expect(result.current.response.ok).toBe(undefined)
+    expect(result.current.error).toEqual(expectedError)
   })
 })

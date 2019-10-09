@@ -62,7 +62,7 @@ export interface ReqBase<TData> {
 }
 
 export interface Res<TData> extends Response {
-  data: TData | undefined
+  data?: TData | undefined
 }
 
 export type Req<TData = any> = ReqMethods & ReqBase<TData>
@@ -86,8 +86,8 @@ export type UseFetch<TData> = UseFetchArrayReturn<TData> &
   UseFetchObjectReturn<TData>
 
 export type Interceptors = {
-  request?: (options: Options) => Options
-  response?: (response: Res<any>) => any
+  request?: (options: Options) => Promise<Options> | Options
+  response?: (response: Res<any>) => Res<any>
 }
 
 export interface CustomOptions {
