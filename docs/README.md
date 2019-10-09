@@ -260,7 +260,7 @@ Request/Response Interceptors with `Provider`
 
 This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
     
-```jsx
+```js
 import { Provider } from 'use-http'
 import { toCamel } from 'convert-keys'
 
@@ -301,7 +301,7 @@ File Upload (FormData)
 ----------------------
 This example shows how we can upload a file using `useFetch`.
 
-```jsx
+```js
 import useFetch from 'use-http'
 
 const FileUploader = () => {
@@ -491,7 +491,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 
-```jsx
+```js
 useFetch({
   // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com',     // used to be `baseUrl`
