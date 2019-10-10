@@ -571,6 +571,7 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
+ - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
  - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
  - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
  - [ ] add sponsers [similar to this](https://github.com/carbon-app/carbon)
@@ -596,7 +597,7 @@ Todos
     .headers({
       auth: jwt      // this would inline add the `auth` header
     })
-    .query({
+    .query({         // might have to use .params({ }) since we're using .query() for GraphQL
       no: 'way'      // this would inline make the url: https://example.com?no=way
     })
     .get()
