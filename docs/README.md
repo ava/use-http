@@ -518,13 +518,13 @@ Who's using use-http?
 =====================
 <div style="display: flex; align-items: center; justify-content: center;">
   <a href="https://ava.inc">
-    <img height="220px" src="https://github.com/alex-cory/use-http/raw/master/public/ava-logo.png" />
-  </a>
-  <a href="https://beapte.com">
-    <img height="220px" src="https://github.com/alex-cory/use-http/raw/master/public/apte-logo.png" />
+    <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/ava-logo.png" />
   </a>
   <a href="https://github.com/microsoft/DLWorkspace">
-    <img height="220px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
+    <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
+  </a>
+  <a href="https://beapte.com">
+    <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/apte-logo.png" />
   </a>
 </div>
 
