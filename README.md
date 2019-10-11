@@ -630,6 +630,17 @@ Todos
   - [ ] potential option ideas for `GraphQL`
   ```jsx
   const request = useQuery({ onMount: true })`your graphql query`
+  
+  const request = useFetch(...)
+  const userID = 'some-user-uuid'
+  const res = await request.query({ userID })`
+    query Todos($userID string!) {
+      todos(userID: $userID) {
+        id
+        title
+      }
+    }
+  `
   ```
   - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Authentication': 'Bearer MY_TOKEN' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
   ```jsx
