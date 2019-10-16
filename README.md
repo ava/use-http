@@ -528,6 +528,8 @@ const App = () => {
   )
 }
 ```
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-different-response-types-c6csw)
+
 </details>
 
 Overview
