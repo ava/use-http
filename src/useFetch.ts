@@ -158,7 +158,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   }, [onMount, executeRequest])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, makeResponseProxy(res.current), loading as boolean, error],
+    [request, makeResponseProxy(res), loading as boolean, error],
     { request, response: makeResponseProxy(res), ...request },
   )
 }
