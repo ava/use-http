@@ -16,7 +16,7 @@ import makeRouteAndOptions from './makeRouteAndOptions'
 import { isEmpty, invariant } from './utils'
 
 const makeResponseProxy = (res = {}) => new Proxy(res, {
-  get: (httpResponse: any, key) => httpResponse.current[key],
+  get: (httpResponse: any, key) => (httpResponse.current || {})[key]
 })
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
@@ -158,7 +158,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   }, [onMount, executeRequest])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, res.current, loading as boolean, error],
+    [request, makeResponseProxy(res.current), loading as boolean, error],
     { request, response: makeResponseProxy(res), ...request },
   )
 }
