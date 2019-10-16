@@ -334,7 +334,7 @@ import useFetch from 'use-http'
 const App = () => {
   const [name, setName] = useState('')
   
-  const { get, loading, error, data, response } = useFetch('http://example.com')
+  const { get, loading, error, response } = useFetch('http://example.com')
 
   const handleClick = async () => {
     await get('/users/1?name=true') // will return just the user's name
@@ -347,7 +347,7 @@ const App = () => {
       <button onClick={handleClick}>Load Data</button>
       {error && error.messge}
       {loading && "Loading..."}
-      {data && <div>{name}</div>}
+      {name && <div>{name}</div>}
     </>
   )
 }
