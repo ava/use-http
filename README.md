@@ -610,6 +610,8 @@ Todos
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
    - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
+   - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
+ - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
  - [ ] make this a github package
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
