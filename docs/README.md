@@ -59,6 +59,7 @@ Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'>useFetch + Provider</a>
+- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'>useFetch + Request/Response Interceptors + Provider</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a>
 
 Installation
@@ -175,11 +176,15 @@ const App = () => (
 Destructured
 -------------
 ```js
+// the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
+// ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
 var [request, response, loading, error] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
 var {
   request,
+  // the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
+  // ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
   response,
   loading,
   error,
@@ -209,13 +214,6 @@ var {
   query,  // GraphQL
   abort
 } = request
-
-var {
-  data,
-  ok,
-  headers,
-  ...restOfHttpResponse // everything you would get in a response from an http request
-} = response
 ```
 
 Relative routes
@@ -259,7 +257,7 @@ Request/Response Interceptors with `Provider`
 
 This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
     
-```jsx
+```js
 import { Provider } from 'use-http'
 import { toCamel } from 'convert-keys'
 
@@ -293,12 +291,14 @@ function App() {
 }
 
 ```
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex)
+
 
 File Upload (FormData)
 ----------------------
 This example shows how we can upload a file using `useFetch`.
 
-```jsx
+```js
 import useFetch from 'use-http'
 
 const FileUploader = () => {
@@ -488,7 +488,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 
-```jsx
+```js
 useFetch({
   // accepts all `fetch` options such as headers, method, etc.
   url: 'https://example.com',     // used to be `baseUrl`
@@ -510,6 +510,20 @@ useFetch({
   }
 })
 ```
+
+Who's using use-http?
+=====================
+<div style="display: flex; align-items: center; justify-content: center;">
+  <a href="https://ava.inc">
+    <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/ava-logo.png" />
+  </a>
+  <a href="https://github.com/microsoft/DLWorkspace">
+    <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
+  </a>
+  <a href="https://beapte.com">
+    <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/apte-logo.png" />
+  </a>
+</div>
 
 Feature Requests/Ideas
 ======================

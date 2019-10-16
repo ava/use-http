@@ -15,6 +15,9 @@ import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions'
 import { isEmpty, invariant } from './utils'
 
+const makeResponseProxy = (res = {}) => new Proxy(res, {
+  get: (httpResponse: any, key) => (httpResponse.current || {})[key]
+})
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults } = useFetchArgs(...args)
@@ -155,8 +158,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   }, [onMount, executeRequest])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, res.current, loading as boolean, error],
-    { request, response: res.current, ...request },
+    [request, makeResponseProxy(res), loading as boolean, error],
+    { request, response: makeResponseProxy(res), ...request },
   )
 }
 

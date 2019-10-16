@@ -82,6 +82,7 @@ Usage
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch - Next.js</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch - create-react-app</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'>useFetch + Provider</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'>useFetch + Request/Response Interceptors + Provider</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a></li>
   </ul>
 
@@ -192,11 +193,15 @@ const App = () => (
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
 ```js
+// the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
+// ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
 var [request, response, loading, error] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
 var {
   request,
+  // the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
+  // ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
   response,
   loading,
   error,
@@ -226,14 +231,8 @@ var {
   query,  // GraphQL
   abort
 } = request
-
-var {
-  data,
-  ok,
-  headers,
-  ...restOfHttpResponse // everything you would get in a response from an http request
-} = response
 ```
+
 </details>
 
 
@@ -469,6 +468,7 @@ function App() {
 }
 
 ```
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex)
 </details>
 
 <details id='form-data'><summary><b>File Uploads (FormData)</b></summary>
@@ -569,6 +569,7 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 
 Todos
 ------
+ - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
  - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
  - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
  - [ ] add sponsers [similar to this](https://github.com/carbon-app/carbon)
@@ -576,6 +577,7 @@ Todos
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
+   - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
  - [ ] make this a github package
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
@@ -594,7 +596,7 @@ Todos
     .headers({
       auth: jwt      // this would inline add the `auth` header
     })
-    .query({
+    .query({         // might have to use .params({ }) since we're using .query() for GraphQL
       no: 'way'      // this would inline make the url: https://example.com?no=way
     })
     .get()
@@ -627,6 +629,17 @@ Todos
   - [ ] potential option ideas for `GraphQL`
   ```jsx
   const request = useQuery({ onMount: true })`your graphql query`
+  
+  const request = useFetch(...)
+  const userID = 'some-user-uuid'
+  const res = await request.query({ userID })`
+    query Todos($userID string!) {
+      todos(userID: $userID) {
+        id
+        title
+      }
+    }
+  `
   ```
   - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Authentication': 'Bearer MY_TOKEN' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
   ```jsx
