@@ -500,6 +500,36 @@ const FileUploader = () => {
 ```
 </details>
 
+<details><summary><b>Handling Different Response Types Than JSON</b></summary>
+    
+This example shows how we can get `.json()`, `.text()`, `.formData()`, `.blob()`, `.arrayBuffer()`, and all the other [http response methods](https://developer.mozilla.org/en-US/docs/Web/API/Response#Methods). By default, `useFetch` 1st tries to call `response.json()` under the hood, if that fails it's backup is `response.text()`. If that fails, then you need a different response type which is where this comes in.
+
+```js
+import useFetch from 'use-http'
+
+const App = () => {
+  const [name, setName] = useState('')
+  
+  const { get, loading, error, data, response } = useFetch('http://example.com')
+
+  const handleClick = async () => {
+    await get('/users/1?name=true') // will return just the user's name
+    const text = await response.text()
+    setName(text)
+  }
+  
+  return (
+    <>
+      <button onClick={handleClick}>Load Data</button>
+      {error && error.messge}
+      {loading && "Loading..."}
+      {data && <div>{name}</div>}
+    </>
+  )
+}
+```
+</details>
+
 Overview
 --------
 
