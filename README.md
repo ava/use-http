@@ -500,7 +500,7 @@ const FileUploader = () => {
 ```
 </details>
 
-<details><summary><b>Handling Different Response Types Than JSON</b></summary>
+<details><summary><b>Handling Different Response Types</b></summary>
     
 This example shows how we can get `.json()`, `.text()`, `.formData()`, `.blob()`, `.arrayBuffer()`, and all the other [http response methods](https://developer.mozilla.org/en-US/docs/Web/API/Response#Methods). By default, `useFetch` 1st tries to call `response.json()` under the hood, if that fails it's backup is `response.text()`. If that fails, then you need a different response type which is where this comes in.
 
