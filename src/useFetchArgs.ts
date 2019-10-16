@@ -116,10 +116,11 @@ export default function useFetchArgs(
     const requestInit = pullOutRequestInit(requestInitOptions)
 
     return {
+      ...useFetchArgsDefaults.requestInit,
       ...contextRequestInit,
       ...requestInit,
       headers: {
-        ...useFetchArgsDefaults.requestInit.headers,
+        ...defaults.headers,
         ...contextRequestInit.headers,
         ...requestInit.headers,
       },

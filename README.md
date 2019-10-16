@@ -193,11 +193,15 @@ const App = () => (
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
 ```js
+// the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
+// ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
 var [request, response, loading, error] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
 var {
   request,
+  // the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
+  // ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
   response,
   loading,
   error,
@@ -227,14 +231,8 @@ var {
   query,  // GraphQL
   abort
 } = request
-
-var {
-  data,
-  ok,
-  headers,
-  ...restOfHttpResponse // everything you would get in a response from an http request
-} = response
 ```
+
 </details>
 
 
@@ -579,6 +577,7 @@ Todos
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
+   - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
  - [ ] make this a github package
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
