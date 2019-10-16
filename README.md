@@ -191,10 +191,10 @@ const App = () => (
 </details>
 
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
-
+    
+⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
+    
 ```js
-// the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
-// ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
 var [request, response, loading, error] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
