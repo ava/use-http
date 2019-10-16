@@ -175,9 +175,10 @@ const App = () => (
 
 Destructured
 -------------
+
+⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
+
 ```js
-// the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
-// ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
 var [request, response, loading, error] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
@@ -321,6 +322,39 @@ const FileUploader = () => {
   )
 }
 ```
+
+Handling Different Response Types
+---------------------------------
+    
+This example shows how we can get `.json()`, `.text()`, `.formData()`, `.blob()`, `.arrayBuffer()`, and all the other [http response methods](https://developer.mozilla.org/en-US/docs/Web/API/Response#Methods). By default, `useFetch` 1st tries to call `response.json()` under the hood, if that fails it's backup is `response.text()`. If that fails, then you need a different response type which is where this comes in.
+
+```js
+import useFetch from 'use-http'
+
+const App = () => {
+  const [name, setName] = useState('')
+  
+  const { get, loading, error, data, response } = useFetch('http://example.com')
+
+  const handleClick = async () => {
+    await get('/users/1?name=true') // will return just the user's name
+    const text = await response.text()
+    setName(text)
+  }
+  
+  return (
+    <>
+      <button onClick={handleClick}>Load Data</button>
+      {error && error.messge}
+      {loading && "Loading..."}
+      {data && <div>{name}</div>}
+    </>
+  )
+}
+```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-different-response-types-c6csw)
+
 
 GraphQL Query
 ---------------
