@@ -532,6 +532,50 @@ const App = () => {
 
 </details>
 
+<details><summary><b>Overwrite/Remove Options/Headers Set in Provider</b></summary>
+    
+This example shows how to remove a header all together. Let's say you have `<Provider url='url.com' options={{ headers: { Authentication: 'Bearer MY_TOKEN' } }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that.
+
+```js
+import useFetch from 'use-http'
+
+const Todos = () => {
+  // let's say for this request, you don't want the `Accept` header at all
+  const { loading, error, data: todos } = useFetch(globalOptions => {
+    delete globalOptions.headers.Accept
+    return {
+      onMount: true,
+      data: [],
+      ...globalOptions
+    }
+  })
+  
+  // can also do this and overwrite the url like this
+  // const { loading, error, data: todos } = useFetch('https://my-new-url.com', globalOptions => {
+  
+  return (
+    <>
+      {error && error.messge}
+      {loading && "Loading..."}
+      {todos && <ul>{todos.map(todo => <li key={todo.id}>{todo.title}</li>)}</ul>}
+    </>
+  )
+}
+
+const App = () => {
+  const options = {
+    headers: {
+      Accept: 'application/json'
+    }
+  }
+  return (
+    <Provider url='https://url.com' options={options}><Todos /></Provider>
+}
+```
+
+</details>
+
+
 Overview
 --------
 
@@ -674,13 +718,6 @@ Todos
       }
     }
   `
-  ```
-  - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Authentication': 'Bearer MY_TOKEN' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
-  ```jsx
-  const request = useFetch('https://url.com', globalOptions => {
-    delete globalOptions.headers.Authorization
-    return globalOptions
-  })
   ```
   - [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
 
