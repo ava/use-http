@@ -545,6 +545,7 @@ const Todos = () => {
     delete globalOptions.headers.Accept
     return {
       onMount: true,
+      data: [],
       ...globalOptions
     }
   })
