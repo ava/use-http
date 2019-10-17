@@ -1,11 +1,7 @@
 import React, { useMemo, ReactElement } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
-import { FetchContextTypes } from './types'
-
-interface FetchProviderProps extends FetchContextTypes {
-  children: ReactElement
-}
+import { FetchContextTypes, FetchProviderProps } from './types'
 
 export const Provider = ({
   url,

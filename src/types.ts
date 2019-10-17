@@ -1,3 +1,5 @@
+import { ReactElement } from 'react'
+
 export enum HTTPMethod {
   DELETE = 'DELETE',
   GET = 'GET',
@@ -14,20 +16,29 @@ export interface RouteAndOptions {
 }
 
 export interface FetchContextTypes {
-  url?: string
-  options?: Options | undefined
+  url: string
+  options: Options,
   graphql?: boolean
 }
 
+export interface FetchProviderProps {
+  url?: string
+  options?: Options,
+  graphql?: boolean
+  children: ReactElement
+}
+
 export type BodyOnly = (body: BodyInit | object) => Promise<any>
+
 export type RouteOnly = (route: string) => Promise<any>
+
 export type RouteAndBodyOnly = (
   route: string,
   body: BodyInit | object,
 ) => Promise<any>
+
 export type NoArgs = () => Promise<any>
-// type RouteAndBody = (routeOrBody?: string | object, body?: object) => Promise<void>
-// type FetchData = BodyOnly | RouteOnly | RouteAndBodyOnly | NoArgs
+
 export type FetchData = (
   routeOrBody?: string | BodyInit | object,
   body?: BodyInit | object,
@@ -67,7 +78,7 @@ export interface Res<TData> extends Response {
 
 export type Req<TData = any> = ReqMethods & ReqBase<TData>
 
-export type UseFetchArgs = [(string | OptionsMaybeURL)?, NoUrlOptions?]
+export type UseFetchArgs = [(string | OptionsMaybeURL | OverwriteGlobalOptions)?, (NoUrlOptions | OverwriteGlobalOptions)?]
 
 export type UseFetchArrayReturn<TData> = [
   Req<TData>,
@@ -113,7 +124,7 @@ export type OptionsMaybeURL = NoUrlOptions &
   Partial<Pick<Options, 'url'>> & { url?: string }
 
 // TODO: this is still yet to be implemented
-export type OptionsOverwriteWithContext = (options: Options) => Options
+export type OverwriteGlobalOptions = (options: Options) => Options
 
 /**
  * Helpers
