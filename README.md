@@ -690,6 +690,8 @@ Todos
   - [ ] potential option ideas (for [retryOn](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable))
   ```jsx
   const request = useFetch({
+    onSuccess: (/* idk what to put here */) => {}      // maybe? idk if we actually need this
+    onError: (error) => {}                             // maybe? idk if we actually need this
     retryOn: [503],          // can retry on certain http status codes
     // OR
     retryOn(attempt, error, response) {
