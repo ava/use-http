@@ -164,6 +164,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     executeRequest()
   }, [onMount, executeRequest])
 
+  // handling onUnMount
+  // Cancel any running request when unmounting to avoid updating state after component has unmounted
+  // This can happen if a request's promise resolves after component unmounts
+  useEffect(() => request.abort, [])
+
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, makeResponseProxy(res), loading as boolean, error],
     { request, response: makeResponseProxy(res), ...request },

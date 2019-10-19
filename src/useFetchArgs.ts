@@ -4,7 +4,7 @@ import { isString, isObject, invariant, pullOutRequestInit } from './utils'
 import { useContext, useMemo } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
-import { isFunction } from 'util'
+import { isFunction } from './utils'
 
 type UseFetchArgsReturn = {
   customOptions: {
