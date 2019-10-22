@@ -191,13 +191,17 @@ const App = () => (
 </details>
 
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
-
+    
+⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
+    
 ```js
 var [request, response, loading, error] = useFetch('https://example.com')
 
 // want to use object destructuring? You can do that too
 var {
   request,
+  // the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
+  // ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
   response,
   loading,
   error,
@@ -227,14 +231,8 @@ var {
   query,  // GraphQL
   abort
 } = request
-
-var {
-  data,
-  ok,
-  headers,
-  ...restOfHttpResponse // everything you would get in a response from an http request
-} = response
 ```
+
 </details>
 
 
@@ -502,6 +500,82 @@ const FileUploader = () => {
 ```
 </details>
 
+<details><summary><b>Handling Different Response Types</b></summary>
+    
+This example shows how we can get `.json()`, `.text()`, `.formData()`, `.blob()`, `.arrayBuffer()`, and all the other [http response methods](https://developer.mozilla.org/en-US/docs/Web/API/Response#Methods). By default, `useFetch` 1st tries to call `response.json()` under the hood, if that fails it's backup is `response.text()`. If that fails, then you need a different response type which is where this comes in.
+
+```js
+import useFetch from 'use-http'
+
+const App = () => {
+  const [name, setName] = useState('')
+  
+  const { get, loading, error, response } = useFetch('http://example.com')
+
+  const handleClick = async () => {
+    await get('/users/1?name=true') // will return just the user's name
+    const text = await response.text()
+    setName(text)
+  }
+  
+  return (
+    <>
+      <button onClick={handleClick}>Load Data</button>
+      {error && error.messge}
+      {loading && "Loading..."}
+      {name && <div>{name}</div>}
+    </>
+  )
+}
+```
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-different-response-types-c6csw)
+
+</details>
+
+<details><summary><b>Overwrite/Remove Options/Headers Set in Provider</b></summary>
+    
+This example shows how to remove a header all together. Let's say you have `<Provider url='url.com' options={{ headers: { Authentication: 'Bearer MY_TOKEN' } }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that.
+
+```js
+import useFetch from 'use-http'
+
+const Todos = () => {
+  // let's say for this request, you don't want the `Accept` header at all
+  const { loading, error, data: todos } = useFetch(globalOptions => {
+    delete globalOptions.headers.Accept
+    return {
+      onMount: true,
+      data: [],
+      ...globalOptions
+    }
+  })
+  
+  // can also do this and overwrite the url like this
+  // const { loading, error, data: todos } = useFetch('https://my-new-url.com', globalOptions => {
+  
+  return (
+    <>
+      {error && error.messge}
+      {loading && "Loading..."}
+      {todos && <ul>{todos.map(todo => <li key={todo.id}>{todo.title}</li>)}</ul>}
+    </>
+  )
+}
+
+const App = () => {
+  const options = {
+    headers: {
+      Accept: 'application/json'
+    }
+  }
+  return (
+    <Provider url='https://url.com' options={options}><Todos /></Provider>
+}
+```
+
+</details>
+
+
 Overview
 --------
 
@@ -579,6 +653,9 @@ Todos
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
+   - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
+   - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
+ - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
  - [ ] make this a github package
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
  - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
@@ -613,6 +690,8 @@ Todos
   - [ ] potential option ideas (for [retryOn](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable))
   ```jsx
   const request = useFetch({
+    onSuccess: (/* idk what to put here */) => {}      // maybe? idk if we actually need this
+    onError: (error) => {}                             // maybe? idk if we actually need this
     retryOn: [503],          // can retry on certain http status codes
     // OR
     retryOn(attempt, error, response) {
@@ -641,13 +720,6 @@ Todos
       }
     }
   `
-  ```
-  - [ ] add callback to completely overwrite options. Let's say you have `<Provider url='url.com' options={{ headers: 'Authentication': 'Bearer MY_TOKEN' }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that
-  ```jsx
-  const request = useFetch('https://url.com', globalOptions => {
-    delete globalOptions.headers.Authorization
-    return globalOptions
-  })
   ```
   - [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
 

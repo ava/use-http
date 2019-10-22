@@ -402,6 +402,86 @@ describe('useFetch - BROWSER - interceptors', (): void => {
   })
 })
 
+
+describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): void => {
+  const baseHeaders = {
+    'Content-Type': 'application/json'
+  }
+  const providerHeaders = {
+    Authorization: 'Bearer TOKEN'
+  }
+
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
+    const options = { headers: providerHeaders }
+    return <Provider url='https://example.com' options={options}>{children as ReactElement}</Provider>
+  }
+
+  afterEach((): void => {
+    fetch.resetMocks()
+    cleanup()
+  })
+
+  beforeEach((): void => {
+    fetch.mockResponseOnce(JSON.stringify({}))
+  })
+
+  it('should have the correct headers set in the options set in the Provider', async (): Promise<void> => {
+    const expectedHeaders = { ...baseHeaders, ...providerHeaders }
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper }
+    )
+    await result.current.get()
+    expect(fetch.mock.calls[0][0]).toBe('https://example.com')
+    expect(fetch.mock.calls[0][1].headers).toEqual(expectedHeaders)
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('should overwrite url and options set in the Provider', async (): Promise<void> => {
+    const expectedHeaders = { ...baseHeaders }
+    const expectedURL = 'https://example2.com'
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch(expectedURL, globalOptions => {
+        // TODO: fix the generics here so it knows when a header
+        // such as Authorization is set
+        delete (globalOptions.headers as any).Authorization
+        return {
+          onMount: true,
+          ...globalOptions
+        }
+      }),
+      { wrapper }
+    )
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(fetch.mock.calls[0][0]).toBe(expectedURL)
+    expect(fetch.mock.calls[0][1].headers).toEqual(expectedHeaders)
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('should overwrite options set in the Provider', async (): Promise<void> => {
+    const expectedHeaders = { ...baseHeaders }
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch(globalOptions => {
+        // TODO: fix the generics here so it knows when a header
+        // such as Authorization is set
+        delete (globalOptions.headers as any).Authorization
+        return {
+          onMount: true,
+          ...globalOptions
+        }
+      }),
+      { wrapper }
+    )
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(fetch.mock.calls[0][0]).toBe('https://example.com')
+    expect(fetch.mock.calls[0][1].headers).toEqual(expectedHeaders)
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+})
+
+
 describe('useFetch - BROWSER - errors', (): void => {
   const expectedError = { name: 'error', message: 'error' }
   const expectedSuccess = { name: 'Alex Cory' }

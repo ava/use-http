@@ -1,8 +1,10 @@
-import { OptionsMaybeURL, NoUrlOptions, Interceptors, Flatten } from './types'
+import { OptionsMaybeURL, NoUrlOptions, Flatten } from './types'
+import { Interceptors, OverwriteGlobalOptions, Options } from './types'
 import { isString, isObject, invariant, pullOutRequestInit } from './utils'
 import { useContext, useMemo } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
+import { isFunction } from './utils'
 
 type UseFetchArgsReturn = {
   customOptions: {
@@ -50,12 +52,22 @@ export const useFetchArgsDefaults = {
 
 const defaults = Object.values(useFetchArgsDefaults).reduce((a, o) => ({ ...a, ...o }), {} as Flatten<UseFetchArgsReturn>)
 
+
 export default function useFetchArgs(
-  urlOrOptions?: string | OptionsMaybeURL,
-  optionsNoURLs?: NoUrlOptions,
+  urlOrOptionsOrOverwriteGlobal?: string | OptionsMaybeURL | OverwriteGlobalOptions,
+  optionsNoURLsOrOverwriteGlobal?: NoUrlOptions | OverwriteGlobalOptions,
 ): UseFetchArgsReturn {
-  const context = useContext(FetchContext)
   const { isServer } = useSSR()
+  const context = useContext(FetchContext)
+  context.options = useMemo(() => {
+    const overwriteGlobalOptions = (isFunction(urlOrOptionsOrOverwriteGlobal) ? urlOrOptionsOrOverwriteGlobal : isFunction(optionsNoURLsOrOverwriteGlobal) && optionsNoURLsOrOverwriteGlobal) as OverwriteGlobalOptions
+    if (!overwriteGlobalOptions) return context.options
+    // make a copy so we make sure not to modify the original context
+    return overwriteGlobalOptions({ ...context.options } as Options)
+  }, [])
+
+  const urlOrOptions = urlOrOptionsOrOverwriteGlobal as string | OptionsMaybeURL
+  const optionsNoURLs = optionsNoURLsOrOverwriteGlobal as NoUrlOptions
 
   invariant(
     !(isObject(urlOrOptions) && isObject(optionsNoURLs)),
@@ -116,10 +128,11 @@ export default function useFetchArgs(
     const requestInit = pullOutRequestInit(requestInitOptions)
 
     return {
+      ...useFetchArgsDefaults.requestInit,
       ...contextRequestInit,
       ...requestInit,
       headers: {
-        ...useFetchArgsDefaults.requestInit.headers,
+        ...defaults.headers,
         ...contextRequestInit.headers,
         ...requestInit.headers,
       },

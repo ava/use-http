@@ -15,6 +15,14 @@ import useSSR from 'use-ssr'
 import makeRouteAndOptions from './makeRouteAndOptions'
 import { isEmpty, invariant } from './utils'
 
+const responseMethods = ['clone', 'error', 'redirect', 'arrayBuffer', 'blob', 'formData', 'json', 'text']
+
+const makeResponseProxy = (res = {}) => new Proxy(res, {
+  get: (httpResponse: any, key: string) => {
+    if (responseMethods.includes(key)) return () => httpResponse.current[key]()
+    return (httpResponse.current || {})[key]
+  }
+})
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults } = useFetchArgs(...args)
@@ -67,7 +75,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const timer = timeout > 0 && setTimeout(() => {
         timedout.current = true;
         theController.abort()
-        onTimeout()
+        if (onTimeout) onTimeout()
       }, timeout)
 
       let theData
@@ -75,6 +83,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       try {
         theRes = ((await fetch(`${url}${path}${route}`, options)) || {}) as Res<TData>
+        res.current = theRes.clone()
 
         try {
           theData = await theRes.json()
@@ -84,8 +93,9 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
         theData = (defaults.data && isEmpty(theData)) ? defaults.data : theData
         theRes.data = theData
+        res.current.data = theData
 
-        res.current = interceptors.response ? interceptors.response(theRes) : theRes
+        res.current = interceptors.response ? interceptors.response(res.current) : res.current
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
         data.current = res.current.data as TData
 
@@ -154,9 +164,14 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     executeRequest()
   }, [onMount, executeRequest])
 
+  // handling onUnMount
+  // Cancel any running request when unmounting to avoid updating state after component has unmounted
+  // This can happen if a request's promise resolves after component unmounts
+  useEffect(() => request.abort, [])
+
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, res.current, loading as boolean, error],
-    { request, response: res.current, ...request },
+    [request, makeResponseProxy(res), loading as boolean, error],
+    { request, response: makeResponseProxy(res), ...request },
   )
 }
 
