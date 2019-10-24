@@ -1343,10 +1343,10 @@ eslint-config-prettier@6.4.0:
   dependencies:
     get-stdin "^6.0.0"
 
-eslint-plugin-jest-formatting@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest-formatting/-/eslint-plugin-jest-formatting-1.1.0.tgz#5ff96f30c238b761d7bfacac8099ca221c7716f2"
-  integrity sha512-2xoYCgjruAghYpy9s55KSW3QzfKw3To7A5MaGJeeYh/eEVPV1Jx0G0GGmDPTq+YCbdqM9f8L+NwwUNb2uIr8kQ==
+eslint-plugin-jest-formatting@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest-formatting/-/eslint-plugin-jest-formatting-1.1.1.tgz#68f7afb044a4fa742a0b95f28ed6df630bc01204"
+  integrity sha512-koiWaMowWWMd+INl+m++JrFVyUux+g2mGqqQsbHIqTeW/aJFWE4zYntmo/xwhraZwk2oRQgpEJBluWVTUFUGvg==
 
 eslint-plugin-jest@22.18.0:
   version "22.18.0"
