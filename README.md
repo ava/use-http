@@ -687,12 +687,14 @@ Todos
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
-  - [ ] potential option ideas (for [retryOn](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable))
+  - [ ] potential option ideas
   ```jsx
   const request = useFetch({
-    onSuccess: (/* idk what to put here */) => {}      // maybe? idk if we actually need this
-    onError: (error) => {}                             // maybe? idk if we actually need this
-    retryOn: [503],          // can retry on certain http status codes
+    onSuccess: (/* idk what to put here */) => {},
+    onError: (error) => {},
+    
+    // can retry on certain http status codes
+    retryOn: [503],
     // OR
     retryOn(attempt, error, response) {
       // retry on any network error, or 4xx or 5xx status codes
@@ -701,11 +703,49 @@ Todos
         return true;
       }
     },
-    onServer: true,          // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
-    query: `some graphql query`       // if you would prefer to pass the query in the config
-    mutation: `some graphql mutation` // if you would prefer to pass the mutation in the config
+    
+    // This function receives a retryAttempt integer and returns the delay to apply before the next attempt in milliseconds
+    retryDelay(attempt, error, response) {
+      // applies exponential backoff
+      return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
+      // applies linear backoff
+      return attempt * 1000
+    },
+    
+    // these will be the exact same ones as Apollo's
+    // this will eventually default to 'cache-first'
+    cachePolicy: 'cache-first', // 'cache-first', 'cache-and-network', 'network-only', 'cache-only', 'no-cache'
+    
+    // The time in milliseconds that cache data remains fresh.
+    // After a successful cache update, that cache data will become stale after this duration
+    cacheTime: 10000,
+    
+    // The time in milliseconds that unused/inactive cache data remains in memory.
+    // When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+    invalidateCacheTime: 10000,
+    
+    // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
+    onServer: true,
+    
+    // if you would prefer to pass the query in the config
+    query: `some graphql query`
+    
+    // if you would prefer to pass the mutation in the config
+    mutation: `some graphql mutation`
+    
+    // enabled React Suspense mode
+    suspense: false,
+    
+    retryOnError: false,
+    
+    refreshWhenHidden: false,
   })
   ```
+   - resources
+     - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
+     - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
+     - [zeit's swr](https://github.com/zeit/swr)
+      
   - [ ] potential option ideas for `GraphQL`
   ```jsx
   const request = useQuery({ onMount: true })`your graphql query`
