@@ -664,6 +664,8 @@ Todos
  - [ ] Documentation:
      - [ ] show comparison with Apollo
        - [ ] figure out a good way to show side-by-side comparisonsf
+     - [ ] show comparison with Axios
+     - [ ] how this cancels a request on unmount of a component to avoid the error "cannot update state during a state transition" or something like that due to an incomplete http request
  - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
  - [ ] Cache responses to improve speed and reduce amount of requests
  - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
