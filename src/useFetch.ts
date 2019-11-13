@@ -118,14 +118,14 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
   }, [url, requestInit, isServer])
 
-  const post = makeFetch(HTTPMethod.POST)
-  const del = makeFetch(HTTPMethod.DELETE)
+  const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
+  const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
 
   const request: Req<TData> = {
-    get: makeFetch(HTTPMethod.GET),
+    get: useCallback(makeFetch(HTTPMethod.GET), [makeFetch]),
     post,
-    patch: makeFetch(HTTPMethod.PATCH),
-    put: makeFetch(HTTPMethod.PUT),
+    patch: useCallback(makeFetch(HTTPMethod.PATCH), [makeFetch]),
+    put: useCallback(makeFetch(HTTPMethod.PUT), [makeFetch]),
     del,
     delete: del,
     abort: () => controller.current && controller.current.abort(),
