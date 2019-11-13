@@ -318,10 +318,10 @@
     pretty-format "^24.8.0"
     wait-for-expect "^1.3.0"
 
-"@testing-library/react-hooks@^2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@testing-library/react-hooks/-/react-hooks-2.0.2.tgz#00afc3cd36f1f4c13681f019a1a4c0e8d2c46903"
-  integrity sha512-jsAGP52cQOXOtvigNQNiqPvMLVAl56oozHVFRdVFMmqIDv7bL7GszTyNYqVJdxurWCi9YqK6TblujO6vJKZv4g==
+"@testing-library/react-hooks@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/react-hooks/-/react-hooks-3.0.0.tgz#ceffe5e3e0543ca74b5489cb25dbc80af3215870"
+  integrity sha512-WH1QVygUjUCk5ov9FHtvyvjO5YbFdi3+UqYm59e/mA+Rc/1PBVzK5aiUe6dXWdBS0znlnLhtrS/ebzKroXIRbg==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@types/testing-library__react-hooks" "^2.0.0"
@@ -1336,22 +1336,22 @@ escodegen@^1.9.1:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-prettier@6.2.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.2.0.tgz#80e0b8714e3f6868c4ac2a25fbf39c02e73527a7"
-  integrity sha512-VLsgK/D+S/FEsda7Um1+N8FThec6LqE3vhcMyp8mlmto97y3fGf3DX7byJexGuOb1QY0Z/zz222U5t+xSfcZDQ==
+eslint-config-prettier@6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.4.0.tgz#0a04f147e31d33c6c161b2dd0971418ac52d0477"
+  integrity sha512-YrKucoFdc7SEko5Sxe4r6ixqXPDP1tunGw91POeZTTRKItf/AMFYt/YLEQtZMkR2LVpAVhcAcZgcWpm1oGPW7w==
   dependencies:
     get-stdin "^6.0.0"
 
-eslint-plugin-jest-formatting@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest-formatting/-/eslint-plugin-jest-formatting-1.1.0.tgz#5ff96f30c238b761d7bfacac8099ca221c7716f2"
-  integrity sha512-2xoYCgjruAghYpy9s55KSW3QzfKw3To7A5MaGJeeYh/eEVPV1Jx0G0GGmDPTq+YCbdqM9f8L+NwwUNb2uIr8kQ==
+eslint-plugin-jest-formatting@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest-formatting/-/eslint-plugin-jest-formatting-1.1.1.tgz#68f7afb044a4fa742a0b95f28ed6df630bc01204"
+  integrity sha512-koiWaMowWWMd+INl+m++JrFVyUux+g2mGqqQsbHIqTeW/aJFWE4zYntmo/xwhraZwk2oRQgpEJBluWVTUFUGvg==
 
-eslint-plugin-jest@22.16.0:
-  version "22.16.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-22.16.0.tgz#30c4e0e9dc331beb2e7369b70dd1363690c1ce05"
-  integrity sha512-eBtSCDhO1k7g3sULX/fuRK+upFQ7s548rrBtxDyM1fSoY7dTWp/wICjrJcDZKVsW7tsFfH22SG+ZaxG5BZodIg==
+eslint-plugin-jest@22.20.1:
+  version "22.20.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-22.20.1.tgz#183688ec8bd65dec043552fcd2fa63b7e54f326f"
+  integrity sha512-bNkII1QUmb7P9KHXqRoDWwFrY1hkxI2bAXCvuZbKuzywcxjPNrCzRqsOEUe9T4fHVfhat2zRN7dS5n61C8rhoA==
   dependencies:
     "@typescript-eslint/experimental-utils" "^1.13.0"
 
