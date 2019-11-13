@@ -2,7 +2,6 @@ import { OptionsMaybeURL, NoUrlOptions, Flatten } from './types'
 import { Interceptors, OverwriteGlobalOptions, Options } from './types'
 import { isString, isObject, invariant, pullOutRequestInit } from './utils'
 import { useContext, useMemo } from 'react'
-import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
 import { isFunction } from './utils'
 
@@ -41,7 +40,7 @@ export const useFetchArgsDefaults = {
     headers: {
       // default content types http://bit.ly/2N2ovOZ
       // Accept: 'application/json',
-      'Content-Type': 'application/json',
+      // 'Content-Type': 'application/json',
     }
   },
   defaults: {
@@ -57,7 +56,6 @@ export default function useFetchArgs(
   urlOrOptionsOrOverwriteGlobal?: string | OptionsMaybeURL | OverwriteGlobalOptions,
   optionsNoURLsOrOverwriteGlobal?: NoUrlOptions | OverwriteGlobalOptions,
 ): UseFetchArgsReturn {
-  const { isServer } = useSSR()
   const context = useContext(FetchContext)
   context.options = useMemo(() => {
     const overwriteGlobalOptions = (isFunction(urlOrOptionsOrOverwriteGlobal) ? urlOrOptionsOrOverwriteGlobal : isFunction(optionsNoURLsOrOverwriteGlobal) && optionsNoURLsOrOverwriteGlobal) as OverwriteGlobalOptions
@@ -96,7 +94,6 @@ export default function useFetchArgs(
   const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
-    if (isServer) return true
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || !!urlOrOptions.onMount
     if (isObject(optionsNoURLs)) return !!optionsNoURLs.loading || !!optionsNoURLs.onMount
     return defaults.loading
