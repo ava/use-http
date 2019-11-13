@@ -1,7 +1,7 @@
 import { HTTPMethod, Interceptors, ValueOf, RouteAndOptions } from './types'
 import { isObject, invariant, isBrowser, isString } from './utils'
 
-const { GET, OPTIONS } = HTTPMethod
+const { GET } = HTTPMethod
 
 export default async function makeRouteAndOptions(
   initialOptions: RequestInit,
@@ -30,7 +30,7 @@ export default async function makeRouteAndOptions(
     return ''
   })()
 
-  const body = ((): BodyInit => {
+  const body = ((): BodyInit | null => {
     if (isObject(routeOrBody)) return JSON.stringify(routeOrBody)
     if (isObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
     if (
@@ -39,22 +39,41 @@ export default async function makeRouteAndOptions(
         (bodyAs2ndParam as any) instanceof URLSearchParams)
     )
       return bodyAs2ndParam as string
-    return JSON.stringify({})
+    if (isObject(initialOptions.body)) return JSON.stringify(initialOptions.body)
+    return null
+  })()
+
+  const headers = ((): HeadersInit | null => {
+    const contentType = ((initialOptions.headers || {}) as any)['Content-Type']
+    const shouldAddContentType = !!contentType || [HTTPMethod.POST, HTTPMethod.PUT].includes(method)
+    const headers: any = { ...initialOptions.headers }
+    if (shouldAddContentType) {
+      // default content types http://bit.ly/2N2ovOZ
+      // Accept: 'application/json',
+      // roughly, should only add for POST and PUT http://bit.ly/2NJNt3N
+      // unless specified by the user
+      headers['Content-Type'] = contentType || 'application/json'
+    } else if (Object.keys(headers).length === 0) {
+      return null
+    }
+    return headers
   })()
 
   const options = await (async (): Promise<RequestInit> => {
     const opts = {
       ...initialOptions,
-      body,
       method,
       signal: controller.signal,
-      headers: {
-        // default content types http://bit.ly/2N2ovOZ
-        // Accept: 'application/json',
-        ...initialOptions.headers,
-      },
     }
-    if (method === GET || method === OPTIONS) delete opts.body
+
+    if (headers !== null) {
+      opts.headers = headers
+    } else {
+      delete opts.headers
+    }
+
+    if (body !== null) opts.body = body
+
     if (requestInterceptor) return await requestInterceptor(opts)
     return opts
   })()

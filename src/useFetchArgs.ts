@@ -36,13 +36,7 @@ export const useFetchArgsDefaults = {
     onAbort: () => {},
     onTimeout: () => {}
   },
-  requestInit: {
-    headers: {
-      // default content types http://bit.ly/2N2ovOZ
-      // Accept: 'application/json',
-      // 'Content-Type': 'application/json',
-    }
-  },
+  requestInit: { headers: {} },
   defaults: {
     data: undefined,
     loading: false,
@@ -125,11 +119,9 @@ export default function useFetchArgs(
     const requestInit = pullOutRequestInit(requestInitOptions)
 
     return {
-      ...useFetchArgsDefaults.requestInit,
       ...contextRequestInit,
       ...requestInit,
       headers: {
-        ...defaults.headers,
         ...contextRequestInit.headers,
         ...requestInit.headers,
       },
