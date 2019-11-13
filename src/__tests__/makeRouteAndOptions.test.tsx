@@ -20,9 +20,7 @@ describe('makeRouteAndOptions: general usages', (): void => {
     expect(route).toBe(expectedRoute)
     expect(options).toStrictEqual({
       body: '{}',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {},
       method: 'POST',
       signal: controller.signal,
     })
@@ -48,7 +46,6 @@ describe('makeRouteAndOptions: general usages', (): void => {
     expect(options).toStrictEqual({
       body: '{}',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: 'Bearer test',
       },
       method: 'POST',
