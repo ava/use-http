@@ -51,17 +51,8 @@ export default async function makeRouteAndOptions(
       headers: {
         // default content types http://bit.ly/2N2ovOZ
         // Accept: 'application/json',
-        'Content-Type': 'application/json',
         ...initialOptions.headers,
       },
-    }
-    if (
-      isBrowser &&
-      (routeOrBody instanceof URLSearchParams ||
-        routeOrBody instanceof FormData ||
-        bodyAs2ndParam instanceof FormData)
-    ) {
-      delete opts.headers['Content-Type']
     }
     if (method === GET || method === OPTIONS) delete opts.body
     if (requestInterceptor) return await requestInterceptor(opts)

@@ -404,9 +404,6 @@ describe('useFetch - BROWSER - interceptors', (): void => {
 
 
 describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): void => {
-  const baseHeaders = {
-    'Content-Type': 'application/json'
-  }
   const providerHeaders = {
     Authorization: 'Bearer TOKEN'
   }
@@ -426,7 +423,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   it('should have the correct headers set in the options set in the Provider', async (): Promise<void> => {
-    const expectedHeaders = { ...baseHeaders, ...providerHeaders }
+    const expectedHeaders = providerHeaders
     const { result } = renderHook(
       () => useFetch(),
       { wrapper }
@@ -438,7 +435,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   it('should overwrite url and options set in the Provider', async (): Promise<void> => {
-    const expectedHeaders = { ...baseHeaders }
+    const expectedHeaders = {}
     const expectedURL = 'https://example2.com'
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(expectedURL, globalOptions => {
@@ -460,7 +457,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   it('should overwrite options set in the Provider', async (): Promise<void> => {
-    const expectedHeaders = { ...baseHeaders }
+    const expectedHeaders = {}
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(globalOptions => {
         // TODO: fix the generics here so it knows when a header
