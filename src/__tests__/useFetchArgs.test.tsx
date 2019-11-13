@@ -103,13 +103,14 @@ describe('useFetchArgs: general usages', (): void => {
 
     const { result } = renderHook((): any => useFetchArgs(), { wrapper: wrapper2 })
 
-    expect(result.current).toStrictEqual({
+    const expected = {
       ...useFetchArgsDefaults,
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
         url: 'http://localhost',
       },
-    })
+    }
+    expect(result.current).toEqual(expected)
   })
 
   it('should correctly execute request + response interceptors with Provider', async (): Promise<void> => {
@@ -184,7 +185,6 @@ describe('useFetchArgs: general usages', (): void => {
         url: "https://example.com",
       },
       requestInit: {
-        ...useFetchArgsDefaults.requestInit,
         ...options,
       }
     })
@@ -203,7 +203,6 @@ describe('useFetchArgs: general usages', (): void => {
         url: "http://localhost",
       },
       requestInit: {
-        ...useFetchArgsDefaults.requestInit,
         ...options,
       }
     })
@@ -234,7 +233,6 @@ describe('useFetchArgs: general usages', (): void => {
         url: "http://localhost",
       },
       requestInit: {
-        ...useFetchArgsDefaults.requestInit,
         ...overwriteProviderOptions,
       }
     })

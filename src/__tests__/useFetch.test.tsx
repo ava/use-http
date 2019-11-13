@@ -422,6 +422,26 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
     fetch.mockResponseOnce(JSON.stringify({}))
   })
 
+  it('should only add Content-Type: application/json for POST and PUT by default', async (): Promise<void> => {
+    const expectedHeadersGET = providerHeaders
+    const expectedHeadersPOSTandPUT = {
+      ...providerHeaders,
+      'Content-Type': 'application/json'
+    }
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper }
+    )
+    await result.current.get()
+    expect(fetch.mock.calls[0][0]).toBe('https://example.com')
+    expect(fetch.mock.calls[0][1].headers).toEqual(expectedHeadersGET)
+    await result.current.post()
+    expect(fetch.mock.calls[1][1].headers).toEqual(expectedHeadersPOSTandPUT)
+    await result.current.put()
+    expect(fetch.mock.calls[2][1].headers).toEqual(expectedHeadersPOSTandPUT)
+    expect(fetch).toHaveBeenCalledTimes(3)
+  })
+
   it('should have the correct headers set in the options set in the Provider', async (): Promise<void> => {
     const expectedHeaders = providerHeaders
     const { result } = renderHook(
@@ -435,7 +455,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   it('should overwrite url and options set in the Provider', async (): Promise<void> => {
-    const expectedHeaders = {}
+    const expectedHeaders = undefined
     const expectedURL = 'https://example2.com'
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(expectedURL, globalOptions => {
@@ -457,7 +477,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   it('should overwrite options set in the Provider', async (): Promise<void> => {
-    const expectedHeaders = {}
+    const expectedHeaders = undefined
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(globalOptions => {
         // TODO: fix the generics here so it knows when a header
