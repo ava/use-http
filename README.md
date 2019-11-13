@@ -73,6 +73,7 @@ Features
 - Provider to set default `url` and `options`
 - Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
 - React Native support
+- Aborts/Cancels pending http requests when a component unmounts
 
 Usage
 -----
