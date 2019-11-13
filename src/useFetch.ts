@@ -60,8 +60,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       controller.current.signal.onabort = onAbort
       const theController = controller.current
 
-      if (!loading) setLoading(true)
-      if (error) setError(undefined)
+      setLoading(true)
+      setError(undefined)
 
       let { route, options } = await makeRouteAndOptions(
         requestInit,
