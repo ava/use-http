@@ -742,13 +742,37 @@ Todos
     retryOnError: false,
     
     refreshWhenHidden: false,
+    
+    // this will allow you to merge the data the way you would like
+    paginate: (currData, newData) => {
+      return [...currData, ...newData]
+    },
   })
   ```
    - resources
      - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
      - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
      - [zeit's swr](https://github.com/zeit/swr)
-      
+  - [ ] potential syntax for pagination
+  ```js
+  const App = () => {
+    const [page, setPage] = useState(1)
+    const { data, loading } = useFetch({
+      onMount: true,
+      onUpdate: [page],
+      path: `/todos?page=${page}&pageSize=15`,
+      paginate: (currData, newData) => [...currData, ...neweData],
+      data: []
+    })
+    
+    return (
+      <>
+        {data.map(item => <div key={item.id}>{item.name}</div>}
+        <button onClick={() => setPage(page + 1)}>Load More</button>
+      </>
+    )
+  }
+  ```
   - [ ] potential option ideas for `GraphQL`
   ```jsx
   const request = useQuery({ onMount: true })`your graphql query`
