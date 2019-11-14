@@ -53,6 +53,8 @@ Features
 - Provider to set default `url` and `options`
 - Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
 - React Native support
+- Aborts/Cancels pending http requests when a component unmounts
+
 
 Examples
 =========
@@ -263,13 +265,16 @@ import { Provider } from 'use-http'
 import { toCamel } from 'convert-keys'
 
 function App() {
-  let [token] = useLocalStorage('token')
+  let [token, setToken] = useLocalStorage('token')
   
   const options = {
     interceptors: {
       // every time we make an http request, this will run 1st before the request is made
       request: async (options) => {
-        if (isExpired(token)) token = await getNewToken()
+        if (isExpired(token)) {
+          token = await getNewToken()
+          setToken(token)
+        }
         options.headers.Authorization = `Bearer ${token}`
         return options
       },
