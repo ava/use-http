@@ -40,7 +40,8 @@ export const useFetchArgsDefaults = {
   defaults: {
     data: undefined,
     loading: false,
-  }
+  },
+  dependencies: undefined,
 }
 
 const defaults = Object.values(useFetchArgsDefaults).reduce((a, o) => ({ ...a, ...o }), {} as Flatten<UseFetchArgsReturn>)
