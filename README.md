@@ -138,11 +138,13 @@ import useFetch from 'use-http'
 
 function Todos() {
   const options = { // accepts all `fetch` options
-    onMount: true,  // will fire on componentDidMount (GET by default)
     data: []        // setting default for `data` as array instead of undefined
   }
-
-  const { loading, error, data } = useFetch('https://example.com/todos', options)
+  // when last parameter is:
+  // []              onMount        GET by default
+  // [someVariable]  onUpdate
+  // in the example below, it's like onMount/componentDidMount
+  const { loading, error, data } = useFetch('https://example.com/todos', options, [])
 
   return (
     <>
@@ -164,10 +166,9 @@ import useFetch, { Provider } from 'use-http'
 
 function Todos() {
   const { loading, error, data } = useFetch({
-    onMount: true,
     path: '/todos',
     data: []
-  })
+  }, []) // onMount
 
   return (
     <>
@@ -761,12 +762,11 @@ Todos
   const App = () => {
     const [page, setPage] = useState(1)
     const { data, loading } = useFetch({
-      onMount: true,
-      onUpdate: [page],
       path: `/todos?page=${page}&pageSize=15`,
-      paginate: (currData, newData) => [...currData, ...neweData],
+      // merges the data when a new fetch request is made
+      onNewData: (currData, newData) => [...currData, ...neweData],
       data: []
-    })
+    }, [page]) // runs onMount and whenever the `page` updates (onUpdate)
     
     return (
       <>
