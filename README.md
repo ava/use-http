@@ -587,11 +587,10 @@ const Todos = () => {
   const { loading, error, data: todos } = useFetch(globalOptions => {
     delete globalOptions.headers.Accept
     return {
-      onMount: true,
       data: [],
       ...globalOptions
     }
-  })
+  }, []) // onMount
   
   // can also do this and overwrite the url like this
   // const { loading, error, data: todos } = useFetch('https://my-new-url.com', globalOptions => {
@@ -646,7 +645,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**       | `30000` </br> (30 seconds) |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
-| `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
+| `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 
@@ -663,7 +662,7 @@ const options = {
   // called when aborting the request
   onAbort: () => {},
   
-  // this will allow you to merge the data the way you would like
+  // this will allow you to merge the data however you choose. Used for Pagination
   onNewData: (currData, newData) => {
     return [...currData, ...newData] 
   },
@@ -671,7 +670,7 @@ const options = {
   // amount of times it should retry before erroring out
   retries: 3,
   
-  // amount of time before the request (or request(s) for retries) errors out.
+  // amount of time before the request (or request(s) for each retry) errors out.
   timeout: 10000,
   
   // set's the default for the `data` field
