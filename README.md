@@ -724,6 +724,7 @@ Todos
    - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
    - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
    - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
+   - [ ] aborts fetch on unmount
  - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
  - [ ] make this a github package
  - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)

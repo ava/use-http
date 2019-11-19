@@ -184,7 +184,7 @@ Pagination With Provider
 
 The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below, we are appending the new todos to the end of the current todos.
 
-```jsx
+```js
 import useFetch, { Provider } from 'use-http'
 
 const Todos = () => {
