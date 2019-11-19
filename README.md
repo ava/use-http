@@ -194,12 +194,11 @@ const App = () => (
 
 </details>
 
-<details open><summary><b>Pagination</b></summary>
+<details open><summary><b>Pagination + <code>Provider</code></b></summary>
 
 The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below
 
-```js
-    
+```jsx
 import useFetch, { Provider } from 'use-http'
 
 const Todos = () => {
@@ -212,13 +211,13 @@ const Todos = () => {
   }, [page]) // runs onMount AND whenever the `page` updates (onUpdate)
 
   return (
-    <>
-      {data.map(todo => <div key={todo.id}>{todo.title}</div>}
+    <ul>
+      {data.map(todo => <li key={todo.id}>{todo.title}</li>}
       {loading && 'Loading...'}
       {!loading && (
         <button onClick={() => setPage(page + 1)}>Load More Todos</button>
       )}
-    </>
+    </ul>
   )
 }
 
@@ -227,10 +226,7 @@ const App = () => (
     <Todos />
   </Provider>
 )
-  
 ```
-
-<!-- [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) -->
 
 </details>
 
