@@ -133,7 +133,7 @@ function Todos() {
 ```
 </details>
 
-<details open><summary><b>Basic Usage (no managed state) <code>useFetch</code></b></summary>
+<details><summary><b>Basic Usage (no managed state) <code>useFetch</code></b></summary>
 
 This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`).
 
@@ -161,7 +161,7 @@ function Todos() {
 ```
 </details>
 
-<details open><summary><b>Basic Usage with <code>Provider</code></b></summary>
+<details open><summary><b>Basic Usage (no managed state) with <code>Provider</code></b></summary>
 
 ```js
 import useFetch, { Provider } from 'use-http'
@@ -191,6 +191,46 @@ const App = () => (
 ```
 
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+
+</details>
+
+<details open><summary><b>Pagination</b></summary>
+
+The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below
+
+```js
+    
+import useFetch, { Provider } from 'use-http'
+
+const Todos = () => {
+  const [page, setPage] = useState(1)
+
+  const { data, loading } = useFetch({
+    path: `/todos?page=${page}&amountPerPage=15`,
+    onNewData: (currTodos, newTodos) => [...currTodos, ...newTodos], // appends newly fetched todos
+    data: []
+  }, [page]) // runs onMount AND whenever the `page` updates (onUpdate)
+
+  return (
+    <>
+      {data.map(todo => <div key={todo.id}>{todo.title}</div>}
+      {loading && 'Loading...'}
+      {!loading && (
+        <button onClick={() => setPage(page + 1)}>Load More Todos</button>
+      )}
+    </>
+  )
+}
+
+const App = () => (
+  <Provider url='https://example.com'>
+    <Todos />
+  </Provider>
+)
+  
+```
+
+<!-- [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) -->
 
 </details>
 
@@ -604,8 +644,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
-| `onMount` | Once the component mounts, the http request will run immediately | `false` |
-| `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. | `[]` |
+| `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
 | `onAbort` | Runs when the request is aborted. | empty function |
 | `onTimeout` | Called when the request times out. | empty function |
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
@@ -616,18 +655,37 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 
 ```jsx
-useFetch({
+const options = {
   // accepts all `fetch` options such as headers, method, etc.
-  url: 'https://example.com',     // used to be `baseUrl`
-  onMount: true,
-  onUpdate: []                    // everytime a variable in this array is updated, it will re-run the request (GET by default)
-  onTimeout: () => {},            // called when the request times out
-  onAbort: () => {},              // called when aborting the request
-  retries: 3,                     // amount of times it should retry before erroring out
-  timeout: 10000,                 // amount of time before the request (or request(s) for retries) errors out.
-  data: [],                       // default for `data` field
-  loading: false,                 // default for `loading` field
-  interceptors: {                 // typically, `interceptors` would be added as an option to the `<Provider />`
+  
+  // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
+  url: 'https://example.com',
+  
+  // called when the request times out
+  onTimeout: () => {},
+  
+  // called when aborting the request
+  onAbort: () => {},
+  
+  // this will allow you to merge the data the way you would like
+  onNewData: (currData, newData) => {
+    return [...currData, ...newData] 
+  },
+  
+  // amount of times it should retry before erroring out
+  retries: 3,
+  
+  // amount of time before the request (or request(s) for retries) errors out.
+  timeout: 10000,
+  
+  // set's the default for the `data` field
+  data: [],
+  
+  // set's the default for `loading` field
+  loading: false,
+  
+  // typically, `interceptors` would be added as an option to the `<Provider />`
+  interceptors: {
     request: async (options) => { // `async` is not required
       return options              // returning the `options` is important
     },
@@ -635,7 +693,11 @@ useFetch({
       return response             // returning the `response` is important
     }
   }
-})
+}
+
+useFetch(options)
+// OR
+<Provider options={options}><ResOfYourApp /></Provider>
 ```
 
 Sponsors
@@ -748,36 +810,13 @@ Todos
     retryOnError: false,
     
     refreshWhenHidden: false,
-    
-    // this will allow you to merge the data the way you would like
-    paginate: (currData, newData) => {
-      return [...currData, ...newData]
-    },
   })
   ```
    - resources
      - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
      - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
      - [zeit's swr](https://github.com/zeit/swr)
-  - [ ] potential syntax for pagination
-  ```js
-  const App = () => {
-    const [page, setPage] = useState(1)
-    const { data, loading } = useFetch({
-      path: `/todos?page=${page}&pageSize=15`,
-      // merges the data when a new fetch request is made
-      onNewData: (currData, newData) => [...currData, ...neweData],
-      data: []
-    }, [page]) // runs onMount and whenever the `page` updates (onUpdate)
-    
-    return (
-      <>
-        {data.map(item => <div key={item.id}>{item.name}</div>}
-        <button onClick={() => setPage(page + 1)}>Load More</button>
-      </>
-    )
-  }
-  ```
+
   - [ ] potential option ideas for `GraphQL`
   ```jsx
   const request = useQuery({ onMount: true })`your graphql query`
