@@ -25,17 +25,16 @@ const makeResponseProxy = (res = {}) => new Proxy(res, {
 })
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
-  const { customOptions, requestInit, defaults } = useFetchArgs(...args)
+  const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
   const {
     url,
-    onMount,
-    onUpdate,
     path,
     interceptors,
     timeout,
     retries,
     onTimeout,
     onAbort,
+    onNewData,
   } = customOptions
 
   const { isServer } = useSSR()
@@ -78,7 +77,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (onTimeout) onTimeout()
       }, timeout)
 
-      let theData
+      let newData
       let theRes
 
       try {
@@ -86,14 +85,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         res.current = theRes.clone()
 
         try {
-          theData = await theRes.json()
+          newData = await theRes.json()
         } catch (err) {
-          theData = (await theRes.text()) as any // FIXME: should not be `any` type
+          newData = (await theRes.text()) as any // FIXME: should not be `any` type
         }
 
-        theData = (defaults.data && isEmpty(theData)) ? defaults.data : theData
-        theRes.data = theData
-        res.current.data = theData
+        newData = (defaults.data && isEmpty(newData)) ? defaults.data : newData
+        res.current.data = onNewData(data.current, newData)
 
         res.current = interceptors.response ? interceptors.response(res.current) : res.current
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
@@ -136,38 +134,23 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     data: data.current,
   }
 
-  const executeRequest = useCallback(() => {
-    const methodName = requestInit.method || HTTPMethod.GET
-    const methodLower = methodName.toLowerCase() as keyof ReqMethods
-    if (methodName !== HTTPMethod.GET) {
-      const req = request[methodLower] as BodyOnly
-      req(requestInit.body as BodyInit)
-    } else {
-      const req = request[methodLower] as NoArgs
-      req()
+  // onMount/onUpdate
+  useEffect((): any => {
+    if (dependencies && Array.isArray(dependencies)) {
+      const methodName = requestInit.method || HTTPMethod.GET
+      const methodLower = methodName.toLowerCase() as keyof ReqMethods
+      if (methodName !== HTTPMethod.GET) {
+        const req = request[methodLower] as BodyOnly
+        req(requestInit.body as BodyInit)
+      } else {
+        const req = request[methodLower] as NoArgs
+        req()
+      }
     }
-  }, [requestInit.body, requestInit.method])
-
-  const mounted = useRef(false)
-
-  // handling onUpdate
-  useEffect((): void => {
-    if (onUpdate.length === 0 || !mounted.current) return
-    executeRequest()
-  }, [...onUpdate, executeRequest])
-
-  // handling onMount
-  useEffect((): void => {
-    if (mounted.current) return
-    mounted.current = true
-    if (!onMount) return
-    executeRequest()
-  }, [onMount, executeRequest])
-
-  // handling onUnMount
-  // Cancel any running request when unmounting to avoid updating state after component has unmounted
-  // This can happen if a request's promise resolves after component unmounts
-  useEffect(() => request.abort, [])
+    // Cancel any running request when unmounting to avoid updating state after component has unmounted
+    // This can happen if a request's promise resolves after component unmounts
+    return request.abort
+  }, dependencies)
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, makeResponseProxy(res), loading as boolean, error],
