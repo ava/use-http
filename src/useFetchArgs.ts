@@ -14,6 +14,7 @@ type UseFetchArgsReturn = {
     interceptors: Interceptors
     onAbort: () => void
     onTimeout: () => void
+    onNewData: (currData: any, newData: any) => any
   },
   requestInit: RequestInit
   defaults: {
@@ -31,7 +32,8 @@ export const useFetchArgsDefaults = {
     url: '',
     interceptors: {},
     onAbort: () => {},
-    onTimeout: () => {}
+    onTimeout: () => {},
+    onNewData: (currData: any, newData: any) => newData,
   },
   requestInit: { headers: {} },
   defaults: {
@@ -92,6 +94,7 @@ export default function useFetchArgs(
   const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
   const onAbort = useField<() => void>('onAbort', urlOrOptions, optionsNoURLs)
   const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
+  const onNewData = useField<() => void>('onNewData', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)
@@ -142,7 +145,8 @@ export default function useFetchArgs(
       timeout,
       retries,
       onAbort,
-      onTimeout
+      onTimeout,
+      onNewData,
     },
     requestInit,
     defaults: {

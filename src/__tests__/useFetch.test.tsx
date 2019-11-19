@@ -194,7 +194,27 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
   })
 
-  it('should execute GET using Provider url: useFetch({ path: "/people", onMount: true })', async (): Promise<
+  it('should merge the data onNewData for pagination', async (): Promise<
+    void
+  > => {
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({
+        path: '/people',
+        data: { no: 'way' },
+        onNewData: (currData, newData) => ({ ...currData, ...newData })
+      }, []), // onMount === true
+      { wrapper }
+    )
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toEqual({
+      ...expected,
+      no: 'way'
+    })
+  })
+
+  it('should execute GET using Provider url: useFetch({ path: "/people" }, [])', async (): Promise<
     void
   > => {
     const { result, waitForNextUpdate } = renderHook(

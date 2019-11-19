@@ -111,6 +111,7 @@ export interface CustomOptions {
   interceptors?: Interceptors
   onAbort?: () => void
   onTimeout?: () => void
+  onNewData?: (currData: any, newData: any) => any
 }
 
 export type Options = CustomOptions &

@@ -36,6 +36,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     retries,
     onTimeout,
     onAbort,
+    onNewData,
   } = customOptions
 
   const { isServer } = useSSR()
@@ -78,7 +79,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (onTimeout) onTimeout()
       }, timeout)
 
-      let theData
+      let newData
       let theRes
 
       try {
@@ -86,14 +87,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         res.current = theRes.clone()
 
         try {
-          theData = await theRes.json()
+          newData = await theRes.json()
         } catch (err) {
-          theData = (await theRes.text()) as any // FIXME: should not be `any` type
+          newData = (await theRes.text()) as any // FIXME: should not be `any` type
         }
 
-        theData = (defaults.data && isEmpty(theData)) ? defaults.data : theData
-        theRes.data = theData
-        res.current.data = theData
+        newData = (defaults.data && isEmpty(newData)) ? defaults.data : newData
+        res.current.data = onNewData(data.current, newData)
 
         res.current = interceptors.response ? interceptors.response(res.current) : res.current
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
