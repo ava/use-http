@@ -135,7 +135,7 @@ function Todos() {
 
 <details><summary><b>Basic Usage (no managed state) <code>useFetch</code></b></summary>
 
-This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`).
+This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). **If no method is specified, GET is the default**
 
 ```js
 import useFetch from 'use-http'
@@ -146,7 +146,7 @@ function Todos() {
     data: [],       // setting default for `data` as array instead of undefined
   }
   
-  const { loading, error, data } = useFetch('https://example.com/todos', options, [])
+  const { loading, error, data } = useFetch('https://example.com/todos', options, []) // onMount (GET by default)
 
   return (
     <>
@@ -196,7 +196,7 @@ const App = () => (
 
 <details open><summary><b>Pagination + <code>Provider</code></b></summary>
 
-The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below
+The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below, we are appending the new todos to the end of the current todos.
 
 ```jsx
 import useFetch, { Provider } from 'use-http'
@@ -695,12 +695,17 @@ useFetch(options)
 <Provider options={options}><ResOfYourApp /></Provider>
 ```
 
-Sponsors
---------
+Who's using use-http?
+----------------------
 
 Does your company use use-http? Consider sponsoring the project to fund new features, bug fixes, and more.
 
-<a href="https://ava.inc" style="margin-right: 2rem;" target="_blank"><img width="280px" src="https://ava.inc/ava-logo-green.png" /></a>
+<a href="https://ava.inc" style="margin-right: 2rem;" target="_blank">
+  <img width="200px" src="https://ava.inc/ava-logo-green.png" />
+</a>
+<a href="https://github.com/microsoft/DLWorkspace">
+  <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
+</a>
 
 
 Feature Requests/Ideas
