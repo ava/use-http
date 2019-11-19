@@ -7,8 +7,6 @@ import { isFunction } from './utils'
 
 type UseFetchArgsReturn = {
   customOptions: {
-    onMount: boolean
-    onUpdate: any[]
     retries: number
     timeout: number
     path: string
@@ -22,12 +20,11 @@ type UseFetchArgsReturn = {
     loading: boolean
     data?: any
   },
+  dependencies?: any[]
 }
 
 export const useFetchArgsDefaults = {
   customOptions: {
-    onMount: false,
-    onUpdate: [],
     retries: 0,
     timeout: 30000, // 30 seconds
     path: '',
@@ -44,23 +41,27 @@ export const useFetchArgsDefaults = {
   dependencies: undefined,
 }
 
-const defaults = Object.values(useFetchArgsDefaults).reduce((a, o) => ({ ...a, ...o }), {} as Flatten<UseFetchArgsReturn>)
+const defaults = Object.entries(useFetchArgsDefaults).reduce((acc, [key, value]) => {
+  if (isObject(value)) return { ...acc, ...value }
+  return { ...acc, [key]: value }
+}, {} as  Flatten<UseFetchArgsReturn> )
 
 
 export default function useFetchArgs(
   urlOrOptionsOrOverwriteGlobal?: string | OptionsMaybeURL | OverwriteGlobalOptions,
-  optionsNoURLsOrOverwriteGlobal?: NoUrlOptions | OverwriteGlobalOptions,
+  optionsNoURLsOrOverwriteGlobalOrDeps?: NoUrlOptions | OverwriteGlobalOptions | any[],
+  deps?: any[]
 ): UseFetchArgsReturn {
   const context = useContext(FetchContext)
   context.options = useMemo(() => {
-    const overwriteGlobalOptions = (isFunction(urlOrOptionsOrOverwriteGlobal) ? urlOrOptionsOrOverwriteGlobal : isFunction(optionsNoURLsOrOverwriteGlobal) && optionsNoURLsOrOverwriteGlobal) as OverwriteGlobalOptions
+    const overwriteGlobalOptions = (isFunction(urlOrOptionsOrOverwriteGlobal) ? urlOrOptionsOrOverwriteGlobal : isFunction(optionsNoURLsOrOverwriteGlobalOrDeps) && optionsNoURLsOrOverwriteGlobalOrDeps) as OverwriteGlobalOptions
     if (!overwriteGlobalOptions) return context.options
     // make a copy so we make sure not to modify the original context
     return overwriteGlobalOptions({ ...context.options } as Options)
   }, [])
 
   const urlOrOptions = urlOrOptionsOrOverwriteGlobal as string | OptionsMaybeURL
-  const optionsNoURLs = optionsNoURLsOrOverwriteGlobal as NoUrlOptions
+  const optionsNoURLs = optionsNoURLsOrOverwriteGlobalOrDeps as NoUrlOptions
 
   invariant(
     !(isObject(urlOrOptions) && isObject(optionsNoURLs)),
@@ -79,8 +80,12 @@ export default function useFetchArgs(
     'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>',
   )
 
-  const onMount = useField<boolean>('onMount', urlOrOptions, optionsNoURLs)
-  const onUpdate = useField<[]>('onUpdate', urlOrOptions, optionsNoURLs)
+  const dependencies = useMemo((): any[] | undefined => {
+    if (Array.isArray(optionsNoURLsOrOverwriteGlobalOrDeps)) return optionsNoURLsOrOverwriteGlobalOrDeps
+    if (Array.isArray(deps)) return deps
+    return defaults.dependencies
+  }, [])
+
   const data = useField('data', urlOrOptions, optionsNoURLs)
   const path = useField<string>('path', urlOrOptions, optionsNoURLs)
   const timeout = useField<number>('timeout', urlOrOptions, optionsNoURLs)
@@ -89,9 +94,9 @@ export default function useFetchArgs(
   const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
-    if (isObject(urlOrOptions)) return !!urlOrOptions.loading || !!urlOrOptions.onMount
-    if (isObject(optionsNoURLs)) return !!optionsNoURLs.loading || !!optionsNoURLs.onMount
-    return defaults.loading
+    if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)
+    if (isObject(optionsNoURLs)) return !!optionsNoURLs.loading || Array.isArray(dependencies)
+    return defaults.loading || Array.isArray(dependencies)
   }, [urlOrOptions, optionsNoURLs])
 
   const interceptors = useMemo((): Interceptors => {
@@ -132,8 +137,6 @@ export default function useFetchArgs(
   return {
     customOptions: {
       url,
-      onMount,
-      onUpdate,
       path,
       interceptors,
       timeout,
@@ -145,20 +148,23 @@ export default function useFetchArgs(
     defaults: {
       data, 
       loading
-    }
+    },
+    dependencies
   }
 }
 
 const useField = <DV = any>(
   field: keyof OptionsMaybeURL | keyof NoUrlOptions,
   urlOrOptions?: string | OptionsMaybeURL,
-  optionsNoURLs?: NoUrlOptions
+  optionsNoURLs?: NoUrlOptions | any[]
 ) => {
   const context = useContext(FetchContext)
   const contextOptions = context.options || {}
   return useMemo((): DV => {
     if (isObject(urlOrOptions) && urlOrOptions[field]) return urlOrOptions[field]
-    if (isObject(optionsNoURLs) && optionsNoURLs[field as keyof NoUrlOptions]) return optionsNoURLs[field as keyof NoUrlOptions]
+    if (isObject(optionsNoURLs) && (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]) {
+      return (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]
+    }
     if (contextOptions[field]) return  contextOptions[field]
     return defaults[field]
   }, [urlOrOptions, optionsNoURLs])

@@ -78,7 +78,7 @@ export interface Res<TData> extends Response {
 
 export type Req<TData = any> = ReqMethods & ReqBase<TData>
 
-export type UseFetchArgs = [(string | OptionsMaybeURL | OverwriteGlobalOptions)?, (NoUrlOptions | OverwriteGlobalOptions)?]
+export type UseFetchArgs = [(string | OptionsMaybeURL | OverwriteGlobalOptions)?, (NoUrlOptions | OverwriteGlobalOptions | any[])?, any[]?]
 
 export type UseFetchArrayReturn<TData> = [
   Req<TData>,
@@ -102,8 +102,6 @@ export type Interceptors = {
 }
 
 export interface CustomOptions {
-  onMount?: boolean
-  onUpdate?: any[]
   retries?: number
   timeout?: number
   path?: string

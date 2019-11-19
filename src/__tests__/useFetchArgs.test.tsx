@@ -29,20 +29,19 @@ describe('useFetchArgs: general usages', (): void => {
     const { result } = renderHook((): any =>
       useFetchArgs({
         url: 'https://example.com',
-        onMount: true,
-      }),
+      }, []), // onMount === true
     )
     expect(result.current).toEqual({
       ...useFetchArgsDefaults,
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
         url: 'https://example.com',
-        onMount: true,
       },
       defaults: {
         loading: true,
         data: undefined,
-      }
+      },
+      dependencies: [], // onMount === true
     })
   })
 
@@ -59,7 +58,7 @@ describe('useFetchArgs: general usages', (): void => {
 
   it('should overwrite `url` that is set in Provider/Context properly', (): void => {
     const { result } = renderHook(
-      (): any => useFetchArgs('https://cool.com', { onMount: true }),
+      (): any => useFetchArgs('https://cool.com', []), // onMount === true
       { wrapper },
     )
     expect(result.current).toStrictEqual({
@@ -67,12 +66,12 @@ describe('useFetchArgs: general usages', (): void => {
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
         url: 'https://cool.com',
-        onMount: true,
       },
       defaults: {
         loading: true,
         data: undefined,
-      }
+      },
+      dependencies: [], // onMount === true
     })
   })
 
