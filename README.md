@@ -89,6 +89,8 @@ Usage
 
 <details open><summary><b>Basic Usage (managed state) <code>useFetch</code></b></summary>
 
+If the last argument of `useFetch` is not a dependency array `[]`, then it will not fire until you call one of the http methods like `get`, `post`, etc.
+
 ```js
 import useFetch from 'use-http'
 
@@ -132,18 +134,18 @@ function Todos() {
 </details>
 
 <details open><summary><b>Basic Usage (no managed state) <code>useFetch</code></b></summary>
-    
+
+This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`).
+
 ```js
 import useFetch from 'use-http'
 
 function Todos() {
-  const options = { // accepts all `fetch` options
-    data: []        // setting default for `data` as array instead of undefined
+  // accepts all `fetch` options
+  const options = {
+    data: [],       // setting default for `data` as array instead of undefined
   }
-  // when last parameter is:
-  // []              onMount        GET by default
-  // [someVariable]  onUpdate
-  // in the example below, it's like onMount/componentDidMount
+  
   const { loading, error, data } = useFetch('https://example.com/todos', options, [])
 
   return (
