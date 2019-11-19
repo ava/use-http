@@ -46,7 +46,7 @@ export const useFetchArgsDefaults = {
 const defaults = Object.entries(useFetchArgsDefaults).reduce((acc, [key, value]) => {
   if (isObject(value)) return { ...acc, ...value }
   return { ...acc, [key]: value }
-}, {} as  Flatten<UseFetchArgsReturn> )
+}, {} as Flatten<UseFetchArgsReturn>)
 
 
 export default function useFetchArgs(

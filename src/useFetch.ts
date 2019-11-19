@@ -28,8 +28,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
   const {
     url,
-    // onMount,
-    // onUpdate,
     path,
     interceptors,
     timeout,
