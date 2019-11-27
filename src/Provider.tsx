@@ -1,4 +1,4 @@
-import React, { useMemo, ReactElement } from 'react'
+import React, { useMemo, ReactNode } from 'react'
 import useSSR from 'use-ssr'
 import FetchContext from './FetchContext'
 import { FetchContextTypes, FetchProviderProps } from './types'
@@ -8,7 +8,7 @@ export const Provider = ({
   options,
   graphql = false,
   children,
-}: FetchProviderProps): ReactElement => {
+}: FetchProviderProps): ReactNode => {
   const { isBrowser } = useSSR()
 
   const defaults = useMemo(
