@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks'
 import useFetchArgs, { useFetchArgsDefaults } from '../useFetchArgs'
-import { ReactNode } from 'react'
+import { ReactElement, ReactNode } from 'react'
 import { Provider } from '..'
 import React from 'react'
 import { isServer } from '../utils'
@@ -8,7 +8,7 @@ import { isServer } from '../utils'
 describe('useFetchArgs: general usages', (): void => {
   if (isServer) return
 
-  const wrapper = ({ children }: { children?: ReactNode }): ReactNode => (
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
     <Provider url='https://example.com'>{children}</Provider>
   )
 
@@ -96,7 +96,7 @@ describe('useFetchArgs: general usages', (): void => {
   it('should have a default `url` if no URL is set in Provider', (): void => {
     if (isServer) return
 
-    const wrapper2 = ({ children }: { children?: ReactNode }): ReactNode => (
+    const wrapper2 = ({ children }: { children?: ReactNode }): ReactElement => (
       <Provider>{children}</Provider>
     )
 
@@ -124,7 +124,7 @@ describe('useFetchArgs: general usages', (): void => {
       }
     }
 
-    const wrapper2 = ({ children }: { children?: ReactNode }): ReactNode => (
+    const wrapper2 = ({ children }: { children?: ReactNode }): ReactElement => (
       <Provider url='https://example.com' options={{ interceptors }}>{children}</Provider>
     )
 
@@ -191,7 +191,7 @@ describe('useFetchArgs: general usages', (): void => {
 
   it('should create custom options and use the global options instead of defaults', (): void => {
     const options = { headers: { 'Content-Type': 'application/text' } }
-    const wrapper = ({ children }: { children?: ReactNode }): ReactNode => (
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
       <Provider options={options}>{children}</Provider>
     )
     const { result } = renderHook((): any => useFetchArgs(), { wrapper })
@@ -213,7 +213,7 @@ describe('useFetchArgs: general usages', (): void => {
         'Content-Type': 'application/text',
       },
     }
-    const wrapper = ({ children }: { children?: ReactNode }): ReactNode => (
+    const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
       <Provider options={options}>{children}</Provider>
     )
     const overwriteProviderOptions = {

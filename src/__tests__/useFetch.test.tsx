@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
@@ -46,7 +46,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     age: 29,
   }
 
-  const wrapper = ({ children }: { children: ReactNode }) => <Provider url="https://example.com">{children}</Provider>
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <Provider url="https://example.com">{children}</Provider>
 
   afterEach((): void => {
     cleanup()
@@ -120,7 +120,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     age: 29,
   }
 
-  const wrapper = ({ children }: { children?: ReactNode }): ReactNode => (
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
     <Provider url='https://example.com'>{children}</Provider>
   )
 
@@ -230,7 +230,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
 })
 
 describe('timeouts', (): void => {
-  const wrapper = ({ children }: { children?: ReactNode }): ReactNode => (
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
     <Provider url='https://example.com'>{children}</Provider>
   )
 
@@ -326,7 +326,7 @@ describe('timeouts', (): void => {
 describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   const expected = { title: 'Alex Cory' }
 
-  const wrapper = ({ children }: { children?: ReactNode }): ReactNode => (
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
     <Provider url='https://example.com'>{children}</Provider>
   )
 
@@ -373,7 +373,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
   const snake_case = { title: 'Alex Cory', first_name: 'Alex' }
   const expected = { title: 'Alex Cory', firstName: 'Alex' }
 
-  const wrapper = ({ children }: { children?: ReactNode }): ReactNode => {
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
     const options = {
       interceptors: {
         response(res: Res<any>): Res<any> {
@@ -425,7 +425,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
     Authorization: 'Bearer TOKEN'
   }
 
-  const wrapper = ({ children }: { children?: ReactNode }): ReactNode => {
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
     const options = { headers: providerHeaders }
     return <Provider url='https://example.com' options={options}>{children}</Provider>
   }
@@ -554,7 +554,7 @@ describe('useFetch - BROWSER - errors', (): void => {
     expect(result.current.data).toEqual([])
   })
 
-  const wrapperCustomError = ({ children }: { children?: ReactNode }): ReactNode => {
+  const wrapperCustomError = ({ children }: { children?: ReactNode }): ReactElement => {
     const options = {
       interceptors: {
         response(res: Res<any>): Res<any> {
