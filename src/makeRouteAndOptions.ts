@@ -76,7 +76,7 @@ export default async function makeRouteAndOptions(
 
     if (body !== null) opts.body = body
 
-    if (requestInterceptor) return await requestInterceptor(opts, url, path)
+    if (requestInterceptor) return await requestInterceptor(opts, url, path, route)
     return opts
   })()
 
