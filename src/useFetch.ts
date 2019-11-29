@@ -64,6 +64,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       let { route, options } = await makeRouteAndOptions(
         requestInit,
+        url,
+        path,
         method,
         theController,
         routeOrBody,

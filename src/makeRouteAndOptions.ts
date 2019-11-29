@@ -5,6 +5,8 @@ const { GET } = HTTPMethod
 
 export default async function makeRouteAndOptions(
   initialOptions: RequestInit,
+  url: string,
+  path: string,
   method: HTTPMethod,
   controller: AbortController,
   routeOrBody?: string | BodyInit | object,
@@ -62,6 +64,8 @@ export default async function makeRouteAndOptions(
   const options = await (async (): Promise<RequestInit> => {
     const opts = {
       ...initialOptions,
+      url,
+      path,
       method,
       signal: controller.signal,
     }
@@ -74,7 +78,7 @@ export default async function makeRouteAndOptions(
 
     if (body !== null) opts.body = body
 
-    if (requestInterceptor) return await requestInterceptor(opts)
+    if (requestInterceptor) return await requestInterceptor(opts, url, path)
     return opts
   })()
 
