@@ -64,8 +64,6 @@ export default async function makeRouteAndOptions(
   const options = await (async (): Promise<RequestInit> => {
     const opts = {
       ...initialOptions,
-      url,
-      path,
       method,
       signal: controller.signal,
     }
