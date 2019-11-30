@@ -45,7 +45,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const timedout = useRef(false)
   const attempts = useRef(retries)
 
-  const [loading, setLoading] = useState(defaults.loading)
+  const [loading, setLoading] = useState<boolean>(defaults.loading)
   const [error, setError] = useState<any>()
 
   const makeFetch = useCallback((method: HTTPMethod): FetchData => {
@@ -129,7 +129,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     abort: () => controller.current && controller.current.abort(),
     query: (query, variables) => post({ query, variables }),
     mutate: (mutation, variables) => post({ mutation, variables }),
-    loading: loading as boolean,
+    loading: loading,
     error,
     data: data.current,
   }
@@ -154,7 +154,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   useEffect(() => request.abort, [])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, makeResponseProxy(res), loading as boolean, error],
+    [request, makeResponseProxy(res), loading, error],
     { request, response: makeResponseProxy(res), ...request },
   )
 }
