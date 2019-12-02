@@ -86,7 +86,7 @@ export default function useFetchArgs(
     if (Array.isArray(optionsNoURLsOrOverwriteGlobalOrDeps)) return optionsNoURLsOrOverwriteGlobalOrDeps
     if (Array.isArray(deps)) return deps
     return defaults.dependencies
-  }, [])
+  }, [optionsNoURLsOrOverwriteGlobalOrDeps, deps])
 
   const data = useField('data', urlOrOptions, optionsNoURLs)
   const path = useField<string>('path', urlOrOptions, optionsNoURLs)
