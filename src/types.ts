@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { ReactNode } from 'react'
 
 export enum HTTPMethod {
   DELETE = 'DELETE',
@@ -25,7 +25,7 @@ export interface FetchProviderProps {
   url?: string
   options?: Options,
   graphql?: boolean
-  children: ReactElement
+  children: ReactNode
 }
 
 export type BodyOnly = (body: BodyInit | object) => Promise<any>

@@ -46,7 +46,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     age: 29,
   }
 
-  const wrapper = ({ children }: { children: ReactElement }) => <Provider url="https://example.com">{children}</Provider>
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <Provider url="https://example.com">{children}</Provider>
 
   afterEach((): void => {
     cleanup()
@@ -121,7 +121,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   }
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+    <Provider url='https://example.com'>{children}</Provider>
   )
 
   afterEach((): void => {
@@ -231,7 +231,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
 
 describe('timeouts', (): void => {
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+    <Provider url='https://example.com'>{children}</Provider>
   )
 
   afterEach((): void => {
@@ -327,7 +327,7 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   const expected = { title: 'Alex Cory' }
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+    <Provider url='https://example.com'>{children}</Provider>
   )
 
   afterEach((): void => {
@@ -383,7 +383,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
       }
     }
     return (
-      <Provider url='https://example.com' options={options}>{children as ReactElement}</Provider>
+      <Provider url='https://example.com' options={options}>{children}</Provider>
     )
   }
 
@@ -427,7 +427,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
     const options = { headers: providerHeaders }
-    return <Provider url='https://example.com' options={options}>{children as ReactElement}</Provider>
+    return <Provider url='https://example.com' options={options}>{children}</Provider>
   }
 
   afterEach((): void => {
@@ -564,7 +564,7 @@ describe('useFetch - BROWSER - errors', (): void => {
       }
     }
     return (
-      <Provider url='https://example.com' options={options}>{children as ReactElement}</Provider>
+      <Provider url='https://example.com' options={options}>{children}</Provider>
     )
   }
 
