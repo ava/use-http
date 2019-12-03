@@ -60,7 +60,7 @@ export default function useFetchArgs(
     if (!overwriteGlobalOptions) return context.options
     // make a copy so we make sure not to modify the original context
     return overwriteGlobalOptions({ ...context.options } as Options)
-  }, [])
+  }, [context.options])
 
   const urlOrOptions = urlOrOptionsOrOverwriteGlobal as string | OptionsMaybeURL
   const optionsNoURLs = optionsNoURLsOrOverwriteGlobalOrDeps as NoUrlOptions
