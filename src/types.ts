@@ -97,7 +97,7 @@ export type UseFetch<TData> = UseFetchArrayReturn<TData> &
   UseFetchObjectReturn<TData>
 
 export type Interceptors = {
-  request?: (options: Options) => Promise<Options> | Options
+  request?: (options: Options, url: string, path: string, route: string) => Promise<Options> | Options
   response?: (response: Res<any>) => Res<any>
 }
 
