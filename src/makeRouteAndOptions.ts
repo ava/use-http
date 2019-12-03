@@ -5,6 +5,8 @@ const { GET } = HTTPMethod
 
 export default async function makeRouteAndOptions(
   initialOptions: RequestInit,
+  url: string,
+  path: string,
   method: HTTPMethod,
   controller: AbortController,
   routeOrBody?: string | BodyInit | object,
@@ -74,7 +76,7 @@ export default async function makeRouteAndOptions(
 
     if (body !== null) opts.body = body
 
-    if (requestInterceptor) return await requestInterceptor(opts)
+    if (requestInterceptor) return await requestInterceptor(opts, url, path, route)
     return opts
   })()
 

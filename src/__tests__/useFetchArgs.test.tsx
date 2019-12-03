@@ -9,7 +9,7 @@ describe('useFetchArgs: general usages', (): void => {
   if (isServer) return
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+    <Provider url='https://example.com'>{children}</Provider>
   )
 
   it('should create custom options with `onMount: false` by default', (): void => {
@@ -29,20 +29,19 @@ describe('useFetchArgs: general usages', (): void => {
     const { result } = renderHook((): any =>
       useFetchArgs({
         url: 'https://example.com',
-        onMount: true,
-      }),
+      }, []), // onMount === true
     )
     expect(result.current).toEqual({
       ...useFetchArgsDefaults,
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
         url: 'https://example.com',
-        onMount: true,
       },
       defaults: {
         loading: true,
         data: undefined,
-      }
+      },
+      dependencies: [], // onMount === true
     })
   })
 
@@ -59,7 +58,7 @@ describe('useFetchArgs: general usages', (): void => {
 
   it('should overwrite `url` that is set in Provider/Context properly', (): void => {
     const { result } = renderHook(
-      (): any => useFetchArgs('https://cool.com', { onMount: true }),
+      (): any => useFetchArgs('https://cool.com', []), // onMount === true
       { wrapper },
     )
     expect(result.current).toStrictEqual({
@@ -67,12 +66,12 @@ describe('useFetchArgs: general usages', (): void => {
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
         url: 'https://cool.com',
-        onMount: true,
       },
       defaults: {
         loading: true,
         data: undefined,
-      }
+      },
+      dependencies: [], // onMount === true
     })
   })
 
@@ -98,7 +97,7 @@ describe('useFetchArgs: general usages', (): void => {
     if (isServer) return
 
     const wrapper2 = ({ children }: { children?: ReactNode }): ReactElement => (
-      <Provider>{children as ReactElement}</Provider>
+      <Provider>{children}</Provider>
     )
 
     const { result } = renderHook((): any => useFetchArgs(), { wrapper: wrapper2 })
@@ -126,7 +125,7 @@ describe('useFetchArgs: general usages', (): void => {
     }
 
     const wrapper2 = ({ children }: { children?: ReactNode }): ReactElement => (
-      <Provider url='https://example.com' options={{ interceptors }}>{children as ReactElement}</Provider>
+      <Provider url='https://example.com' options={{ interceptors }}>{children}</Provider>
     )
 
     const { result } = renderHook(
@@ -193,7 +192,7 @@ describe('useFetchArgs: general usages', (): void => {
   it('should create custom options and use the global options instead of defaults', (): void => {
     const options = { headers: { 'Content-Type': 'application/text' } }
     const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-      <Provider options={options}>{children as ReactElement}</Provider>
+      <Provider options={options}>{children}</Provider>
     )
     const { result } = renderHook((): any => useFetchArgs(), { wrapper })
     expect(result.current).toStrictEqual({
@@ -215,7 +214,7 @@ describe('useFetchArgs: general usages', (): void => {
       },
     }
     const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-      <Provider options={options}>{children as ReactElement}</Provider>
+      <Provider options={options}>{children}</Provider>
     )
     const overwriteProviderOptions = {
       headers: {

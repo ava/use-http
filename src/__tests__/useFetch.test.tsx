@@ -2,7 +2,7 @@ import React, { ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
-import { Res } from '../types'
+import { Res, Options } from '../types'
 import { toCamel } from 'convert-keys'
 
 const fetch = global.fetch as FetchMock
@@ -46,7 +46,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     age: 29,
   }
 
-  const wrapper = ({ children }: { children: ReactElement }) => <Provider url="https://example.com">{children}</Provider>
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <Provider url="https://example.com">{children}</Provider>
 
   afterEach((): void => {
     cleanup()
@@ -63,7 +63,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     void
   > => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ onMount: true }),
+      () => useFetch('https://example.com', []), // onMount === true
       { wrapper: wrapper as React.ComponentType }
     )
 
@@ -98,7 +98,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     void
   > => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ onMount: true }),
+      () => useFetch('https://example.com', []), // onMount === true
       { wrapper: wrapper as React.ComponentType }
     )
 
@@ -121,7 +121,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   }
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+    <Provider url='https://example.com'>{children}</Provider>
   )
 
   afterEach((): void => {
@@ -139,7 +139,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     void
   > => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ onMount: true, data: {} }),
+      () => useFetch({ data: {} }, []), // onMount === true
       { wrapper: wrapper as React.ComponentType }
     )
 
@@ -150,11 +150,11 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
   })
 
-  it('should execute GET using Provider url: useFetch({ onMount: true })', async (): Promise<
+  it('should execute GET using Provider url', async (): Promise<
     void
   > => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ onMount: true }),
+      () => useFetch({ data: {} }, []), // onMount === true
       { wrapper }
     )
 
@@ -194,11 +194,31 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
   })
 
-  it('should execute GET using Provider url: useFetch({ path: "/people", onMount: true })', async (): Promise<
+  it('should merge the data onNewData for pagination', async (): Promise<
     void
   > => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ path: '/people', onMount: true }),
+      () => useFetch({
+        path: '/people',
+        data: { no: 'way' },
+        onNewData: (currData, newData) => ({ ...currData, ...newData })
+      }, []), // onMount === true
+      { wrapper }
+    )
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toEqual({
+      ...expected,
+      no: 'way'
+    })
+  })
+
+  it('should execute GET using Provider url: useFetch({ path: "/people" }, [])', async (): Promise<
+    void
+  > => {
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({ path: '/people' }, []), // onMount === true
       { wrapper }
     )
     expect(result.current.loading).toBe(true)
@@ -211,7 +231,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
 
 describe('timeouts', (): void => {
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+    <Provider url='https://example.com'>{children}</Provider>
   )
 
   afterEach((): void => {
@@ -232,7 +252,6 @@ describe('timeouts', (): void => {
     const onTimeout = { called: false, timesCalled: 0 }
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
-        onMount: true,
         timeout: 10,
         onAbort() {
           onAbort.called = true
@@ -242,7 +261,7 @@ describe('timeouts', (): void => {
           onTimeout.called = true
           onTimeout.timesCalled += 1
         }
-      }),
+      }, []), // onMount === true
       { wrapper }
     )
     expect(onAbort.called).toBe(false)
@@ -269,7 +288,6 @@ describe('timeouts', (): void => {
     const onTimeout = { called: false, timesCalled: 0 }
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
-        onMount: true,
         retries: 1,
         timeout: 10,
         path: '/todos',
@@ -281,7 +299,7 @@ describe('timeouts', (): void => {
           onTimeout.called = true
           onTimeout.timesCalled += 1
         }
-      }),
+      }, []), // onMount === true
       { wrapper }
     )
     expect(onAbort.called).toBe(false)
@@ -309,7 +327,7 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   const expected = { title: 'Alex Cory' }
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children as ReactElement}</Provider>
+    <Provider url='https://example.com'>{children}</Provider>
   )
 
   afterEach((): void => {
@@ -339,9 +357,8 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
     let initialValue = 0
     const { result, rerender, waitForNextUpdate } = renderHook(
       () => useFetch({
-        onUpdate: [initialValue],
         data: {}
-      }),
+      }, [initialValue]), // (onMount && onUpdate) === true
       { wrapper }
     )
     expect(result.current.data).toEqual({})
@@ -357,16 +374,28 @@ describe('useFetch - BROWSER - interceptors', (): void => {
   const expected = { title: 'Alex Cory', firstName: 'Alex' }
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
-    const options = {
+    const options: Options = {
       interceptors: {
-        response(res: Res<any>): Res<any> {
+        request: async (opts, url, path, route) => {
+          if (path === '/path') {
+            opts.data = 'path'
+          }
+          if (url === 'url') {
+            opts.data = 'url'
+          }
+          if (route === '/route') {
+            opts.data = 'route'
+          }
+          return opts
+        },
+        response(res) {
           if (res.data) res.data = toCamel(res.data)
           return res
         }
       }
     }
     return (
-      <Provider url='https://example.com' options={options}>{children as ReactElement}</Provider>
+      <Provider url='https://example.com' options={options}>{children}</Provider>
     )
   }
 
@@ -400,6 +429,33 @@ describe('useFetch - BROWSER - interceptors', (): void => {
     expect(result.current.response.ok).toBe(true)
     expect(result.current.data).toEqual(expected)
   })
+
+  it ('should pass the proper path string to `interceptors.request`', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch({ path: '/path' }),
+      { wrapper }
+    )
+    await result.current.get()
+    expect(fetch.mock.calls[0][1].data).toEqual('path');
+  })
+
+  it ('should pass the proper route string to `interceptors.request`', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper }
+    )
+    await result.current.get('/route')
+    expect(fetch.mock.calls[0][1].data).toEqual('route');
+  })
+
+  it ('should pass the proper url string to `interceptors.request`', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch('url'),
+      { wrapper }
+    )
+    await result.current.get()
+    expect(fetch.mock.calls[0][1].data).toEqual('url');
+  })
 })
 
 
@@ -410,7 +466,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
     const options = { headers: providerHeaders }
-    return <Provider url='https://example.com' options={options}>{children as ReactElement}</Provider>
+    return <Provider url='https://example.com' options={options}>{children}</Provider>
   }
 
   afterEach((): void => {
@@ -463,10 +519,9 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
         // such as Authorization is set
         delete (globalOptions.headers as any).Authorization
         return {
-          onMount: true,
           ...globalOptions
         }
-      }),
+      }, []), // onMount === true
       { wrapper }
     )
     expect(result.current.loading).toBe(true)
@@ -484,10 +539,9 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
         // such as Authorization is set
         delete (globalOptions.headers as any).Authorization
         return {
-          onMount: true,
           ...globalOptions
         }
-      }),
+      }, []), // onMount === true
       { wrapper }
     )
     expect(result.current.loading).toBe(true)
@@ -549,7 +603,7 @@ describe('useFetch - BROWSER - errors', (): void => {
       }
     }
     return (
-      <Provider url='https://example.com' options={options}>{children as ReactElement}</Provider>
+      <Provider url='https://example.com' options={options}>{children}</Provider>
     )
   }
 
@@ -566,7 +620,7 @@ describe('useFetch - BROWSER - errors', (): void => {
 
   it ('should set the `error` properly for `interceptors.response` onMount', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ onMount: true }),
+      () => useFetch('https://example.com', []), // onMount === true
       { wrapper: wrapperCustomError }
     )
     await waitForNextUpdate()

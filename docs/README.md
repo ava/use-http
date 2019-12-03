@@ -61,6 +61,7 @@ Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'>useFetch + Provider</a>
+- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg'>useFetch + Pagination + Provider</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'>useFetch + Request/Response Interceptors + Provider</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a>
 
@@ -76,16 +77,18 @@ Usage
 
 Basic Usage
 -------------------
+
+This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). **If no method is specified, GET is the default**
+
 ```js
 import useFetch from 'use-http'
 
 function Todos() {
   const options = { // accepts all `fetch` options
-    onMount: true,  // will fire on componentDidMount (GET by default)
     data: []        // default for `data` will be an array instead of undefined
   }
 
-  const { loading, error, data } = useFetch('https://example.com/todos', options)
+  const { loading, error, data } = useFetch('https://example.com/todos', options, []) // onMount (GET by default)
 
   return (
     <>
@@ -101,6 +104,8 @@ function Todos() {
 
 Managed State Usage
 -------------------
+
+If the last argument of `useFetch` is not a dependency array `[]`, then it will not fire until you call one of the http methods like `get`, `post`, etc.
 
 ```js
 import useFetch from 'use-http'
@@ -145,15 +150,15 @@ function Todos() {
 
 Basic Usage With Provider
 ---------------------------
+
 ```js
 import useFetch, { Provider } from 'use-http'
 
 function Todos() {
-  const { loading, error, data } = useFetch({ // accepts all `fetch` options
-    onMount: true,  // will fire on componentDidMount (GET by default)
+  const { loading, error, data } = useFetch({
     path: '/todos',
     data: []        // default for `data` will be an array instead of undefined
-  })
+  }, [])            // onMount
 
   return (
     <>
@@ -174,6 +179,44 @@ const App = () => (
 ```
 
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+
+Pagination With Provider
+---------------------------
+
+The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below, we are appending the new todos to the end of the current todos.
+
+```js
+import useFetch, { Provider } from 'use-http'
+
+const Todos = () => {
+  const [page, setPage] = useState(1)
+
+  const { data, loading } = useFetch({
+    path: `/todos?page=${page}&amountPerPage=15`,
+    onNewData: (currTodos, newTodos) => [...currTodos, ...newTodos], // appends newly fetched todos
+    data: []
+  }, [page]) // runs onMount AND whenever the `page` updates (onUpdate)
+
+  return (
+    <ul>
+      {data.map(todo => <li key={todo.id}>{todo.title}</li>}
+      {loading && 'Loading...'}
+      {!loading && (
+        <button onClick={() => setPage(page + 1)}>Load More Todos</button>
+      )}
+    </ul>
+  )
+}
+
+const App = () => (
+  <Provider url='https://example.com'>
+    <Todos />
+  </Provider>
+)
+```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg)
+
 
 Destructured
 -------------
@@ -270,7 +313,9 @@ function App() {
   const options = {
     interceptors: {
       // every time we make an http request, this will run 1st before the request is made
-      request: async (options) => {
+      // url, path and route are supplied to the interceptor
+      // request options can be modified and must be returned
+      request: async (options, url, path, route) => {
         if (isExpired(token)) {
           token = await getNewToken()
           setToken(token)
@@ -374,11 +419,10 @@ const Todos = () => {
   const { loading, error, data: todos } = useFetch(globalOptions => {
     delete globalOptions.headers.Accept
     return {
-      onMount: true,
       data: [],
       ...globalOptions
     }
-  })
+  }, []) // onMount
   
   // can also do this and overwrite the url like this
   // const { loading, error, data: todos } = useFetch('https://my-new-url.com', globalOptions => {
@@ -559,38 +603,61 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
-| `onMount` | Once the component mounts, the http request will run immediately | `false` |
-| `onUpdate` | This is essentially the same as the dependency array for useEffect. Whenever one of the variables in this array is updated, the http request will re-run. | `[]` |
+| `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
 | `onAbort` | Runs when the request is aborted. | empty function |
 | `onTimeout` | Called when the request times out. | empty function |
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**       | `30000` </br> (30 seconds) |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
-| `loading` | Allows you to set default value for `loading`       | `false` unless `onMount === true` |
+| `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 
-```js
-useFetch({
+
+```jsx
+const options = {
   // accepts all `fetch` options such as headers, method, etc.
-  url: 'https://example.com',     // used to be `baseUrl`
-  onMount: true,
-  onUpdate: []                    // everytime a variable in this array is updated, it will re-run the request (GET by default)
-  onAbort: () => {},              // called when aborting the request
-  onTimeout: () => {},            // called when the request times out
-  retries: 3,                     // amount of times it should retry before erroring out
-  timeout: 10000,                 // amount of time before the request (or request(s) for retries) errors out.
-  data: [],                       // default for `data` field
-  loading: false,                 // default for `loading` field
-  interceptors: {                 // typically, `interceptors` would be added as an option to the `<Provider />`
-    request: async (options) => { // `async` is not required
+  
+  // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
+  url: 'https://example.com',
+  
+  // called when the request times out
+  onTimeout: () => {},
+  
+  // called when aborting the request
+  onAbort: () => {},
+  
+  // this will allow you to merge the data however you choose. Used for Pagination
+  onNewData: (currData, newData) => {
+    return [...currData, ...newData] 
+  },
+  
+  // amount of times it should retry before erroring out
+  retries: 3,
+  
+  // amount of time before the request (or request(s) for each retry) errors out.
+  timeout: 10000,
+  
+  // set's the default for the `data` field
+  data: [],
+  
+  // set's the default for `loading` field
+  loading: false,
+  
+  // typically, `interceptors` would be added as an option to the `<Provider />`
+  interceptors: {
+    request: async (options, url, path, route) => { // `async` is not required
       return options              // returning the `options` is important
     },
     response: (response) => {
       return response             // returning the `response` is important
     }
   }
-})
+}
+
+useFetch(options)
+// OR
+<Provider options={options}><ResOfYourApp /></Provider>
 ```
 
 Who's using use-http?

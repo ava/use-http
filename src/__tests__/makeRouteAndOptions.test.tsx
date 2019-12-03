@@ -12,6 +12,8 @@ describe('makeRouteAndOptions: general usages', (): void => {
     const expectedRoute = '/test'
     const { route, options } = await makeRouteAndOptions(
       {},
+      '',
+      '',
       HTTPMethod.POST,
       controller,
       expectedRoute,
@@ -38,6 +40,8 @@ describe('makeRouteAndOptions: general usages', (): void => {
     }
     const { options } = await makeRouteAndOptions(
       {},
+      '',
+      '',
       HTTPMethod.POST,
       controller,
       '/test',
@@ -62,7 +66,7 @@ describe('makeRouteAndOptions: Errors', (): void => {
     const controller = new AbortController()
     // AKA, the last 2 arguments of makeRouteAndOptions are both objects
     try {
-      await makeRouteAndOptions({}, HTTPMethod.GET, controller, {}, {})
+      await makeRouteAndOptions({}, '', '', HTTPMethod.GET, controller, {}, {})
     } catch(err) {
       expect(err.name).toBe('Invariant Violation')
       expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')

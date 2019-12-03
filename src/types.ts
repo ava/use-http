@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { ReactNode } from 'react'
 
 export enum HTTPMethod {
   DELETE = 'DELETE',
@@ -25,7 +25,7 @@ export interface FetchProviderProps {
   url?: string
   options?: Options,
   graphql?: boolean
-  children: ReactElement
+  children: ReactNode
 }
 
 export type BodyOnly = (body: BodyInit | object) => Promise<any>
@@ -78,7 +78,7 @@ export interface Res<TData> extends Response {
 
 export type Req<TData = any> = ReqMethods & ReqBase<TData>
 
-export type UseFetchArgs = [(string | OptionsMaybeURL | OverwriteGlobalOptions)?, (NoUrlOptions | OverwriteGlobalOptions)?]
+export type UseFetchArgs = [(string | OptionsMaybeURL | OverwriteGlobalOptions)?, (NoUrlOptions | OverwriteGlobalOptions | any[])?, any[]?]
 
 export type UseFetchArrayReturn<TData> = [
   Req<TData>,
@@ -97,13 +97,11 @@ export type UseFetch<TData> = UseFetchArrayReturn<TData> &
   UseFetchObjectReturn<TData>
 
 export type Interceptors = {
-  request?: (options: Options) => Promise<Options> | Options
+  request?: (options: Options, url: string, path: string, route: string) => Promise<Options> | Options
   response?: (response: Res<any>) => Res<any>
 }
 
 export interface CustomOptions {
-  onMount?: boolean
-  onUpdate?: any[]
   retries?: number
   timeout?: number
   path?: string
@@ -113,6 +111,7 @@ export interface CustomOptions {
   interceptors?: Interceptors
   onAbort?: () => void
   onTimeout?: () => void
+  onNewData?: (currData: any, newData: any) => any
 }
 
 export type Options = CustomOptions &

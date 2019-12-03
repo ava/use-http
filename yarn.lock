@@ -1352,10 +1352,10 @@ eslint-plugin-jest-formatting@1.2.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-jest-formatting/-/eslint-plugin-jest-formatting-1.2.0.tgz#a9eef225520d53e63665d0f2fcf4d3eda894a18e"
   integrity sha512-EqsbDByAtdQa5vEhJFUFMqTW7fghN0Qhb8oulM7R3j9+9xRuMsQKCPjWvCIxpWhl3SJJmlxBC25o1pUXiBHaAw==
 
-eslint-plugin-jest@23.0.4:
-  version "23.0.4"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-23.0.4.tgz#1ab81ffe3b16c5168efa72cbd4db14d335092aa0"
-  integrity sha512-OaP8hhT8chJNodUPvLJ6vl8gnalcsU/Ww1t9oR3HnGdEWjm/DdCCUXLOral+IPGAeWu/EwgVQCK/QtxALpH1Yw==
+eslint-plugin-jest@23.0.5:
+  version "23.0.5"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-23.0.5.tgz#3c7c5e636c5a21677d2dfc8ba5424233ee2b9f27"
+  integrity sha512-etxXrWsFWzxsrxKwJnFC38uppH/vlJ3oF7Wmp/cxedqxRIxVhXup8e5y5MmtVXelevgxrgA1QS1vo8j889iK5Q==
   dependencies:
     "@typescript-eslint/experimental-utils" "^2.5.0"
 
@@ -4399,10 +4399,10 @@ urix@^0.1.0:
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
 
-use-ssr@^1.0.19:
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/use-ssr/-/use-ssr-1.0.19.tgz#8c03bec79069103b2813f77d17d2e5fafc02461b"
-  integrity sha512-Bkor42KtUZHTTuEot4Nma0Q9bccu+ZOGqukyNJI1A11uSymNag7VX3ub2Rzi2nLez4fUYUUROn0mEtil5KOsCg==
+use-ssr@^1.0.22:
+  version "1.0.22"
+  resolved "https://registry.yarnpkg.com/use-ssr/-/use-ssr-1.0.22.tgz#a43c2587b1907fabda61c6542b80542c619228fe"
+  integrity sha512-0kA0qfI4uw7PeRsz7X0XOdl2CdbgMBSFhj3n5JzMu8ZNlcZ2NrarhGjdmoxW1Q5d3WtNKbCNIjns/CKhpL7z8g==
 
 use@^3.1.0:
   version "3.1.1"
