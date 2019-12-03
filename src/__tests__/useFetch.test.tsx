@@ -2,7 +2,7 @@ import React, { ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
-import { Res } from '../types'
+import { Res, Options } from '../types'
 import { toCamel } from 'convert-keys'
 
 const fetch = global.fetch as FetchMock
@@ -374,9 +374,21 @@ describe('useFetch - BROWSER - interceptors', (): void => {
   const expected = { title: 'Alex Cory', firstName: 'Alex' }
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
-    const options = {
+    const options: Options = {
       interceptors: {
-        response(res: Res<any>): Res<any> {
+        request: async (opts, url, path, route) => {
+          if (path === '/path') {
+            opts.data = 'path'
+          }
+          if (url === 'url') {
+            opts.data = 'url'
+          }
+          if (route === '/route') {
+            opts.data = 'route'
+          }
+          return opts
+        },
+        response(res) {
           if (res.data) res.data = toCamel(res.data)
           return res
         }
@@ -416,6 +428,33 @@ describe('useFetch - BROWSER - interceptors', (): void => {
     await result.current.get()
     expect(result.current.response.ok).toBe(true)
     expect(result.current.data).toEqual(expected)
+  })
+
+  it ('should pass the proper path string to `interceptors.request`', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch({ path: '/path' }),
+      { wrapper }
+    )
+    await result.current.get()
+    expect(fetch.mock.calls[0][1].data).toEqual('path');
+  })
+
+  it ('should pass the proper route string to `interceptors.request`', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper }
+    )
+    await result.current.get('/route')
+    expect(fetch.mock.calls[0][1].data).toEqual('route');
+  })
+
+  it ('should pass the proper url string to `interceptors.request`', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch('url'),
+      { wrapper }
+    )
+    await result.current.get()
+    expect(fetch.mock.calls[0][1].data).toEqual('url');
   })
 })
 
