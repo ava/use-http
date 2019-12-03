@@ -487,7 +487,9 @@ function App() {
   const options = {
     interceptors: {
       // every time we make an http request, this will run 1st before the request is made
-      request: async (options) => {
+      // url, path and route are supplied to the interceptor
+      // request options can be modified and must be returned
+      request: async (options, url, path, route) => {
         if (isExpired(token)) {
           token = await getNewToken()
           setToken(token)
@@ -684,7 +686,7 @@ const options = {
   
   // typically, `interceptors` would be added as an option to the `<Provider />`
   interceptors: {
-    request: async (options) => { // `async` is not required
+    request: async (options, url, path, route) => { // `async` is not required
       return options              // returning the `options` is important
     },
     response: (response) => {
@@ -720,7 +722,7 @@ Todos
  - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
  - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
  - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
- - [ ] add sponsers [similar to this](https://github.com/carbon-app/carbon)
+ - [ ] add sponsors [similar to this](https://github.com/carbon-app/carbon)
  - [ ] tests
    - [ ] tests for SSR
    - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
