@@ -74,6 +74,8 @@ export const isString = (x: any): x is string => typeof x === 'string' // eslint
  */
 export const isObject = (obj: any): obj is object => Object.prototype.toString.call(obj) === '[object Object]' // eslint-disable-line
 
+export const isArray = (obj: any): obj is object => Object.prototype.toString.call(obj) === '[object Array]' // eslint-disable-line
+
 export const isFunction = (v: any): boolean => typeof v === 'function'
 
 // TODO: come back and fix the "anys" in this http://bit.ly/2Lm3OLi

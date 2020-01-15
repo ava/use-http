@@ -1,5 +1,5 @@
 import { HTTPMethod, Interceptors, ValueOf, RouteAndOptions } from './types'
-import { isObject, invariant, isBrowser, isString } from './utils'
+import { isObject, invariant, isBrowser, isString, isArray } from './utils'
 
 const { GET } = HTTPMethod
 
@@ -35,6 +35,7 @@ export default async function makeRouteAndOptions(
   const body = ((): BodyInit | null => {
     if (isObject(routeOrBody)) return JSON.stringify(routeOrBody)
     if (isObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
+    if (isArray(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
     if (
       isBrowser &&
       ((bodyAs2ndParam as any) instanceof FormData ||
