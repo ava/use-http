@@ -18,7 +18,7 @@
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
-    "target": "es6"
+    "target": "es5"
   },
   "include": [
     "src/*.ts"
