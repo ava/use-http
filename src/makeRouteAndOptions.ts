@@ -1,5 +1,5 @@
 import { HTTPMethod, Interceptors, ValueOf, RouteAndOptions } from './types'
-import { isObject, invariant, isBrowser, isString } from './utils'
+import { invariant, isBrowser, isString, isBodyObject } from './utils'
 
 const { GET } = HTTPMethod
 
@@ -14,11 +14,11 @@ export default async function makeRouteAndOptions(
   requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
 ): Promise<RouteAndOptions> {
   invariant(
-    !(isObject(routeOrBody) && isObject(bodyAs2ndParam)),
+    !(isBodyObject(routeOrBody) && isBodyObject(bodyAs2ndParam)),
     `If first argument of ${method.toLowerCase()}() is an object, you cannot have a 2nd argument. 😜`,
   )
   invariant(
-    !(method === GET && isObject(routeOrBody)),
+    !(method === GET && isBodyObject(routeOrBody)),
     `You can only have query params as 1st argument of request.get()`,
   )
   invariant(
@@ -33,15 +33,15 @@ export default async function makeRouteAndOptions(
   })()
 
   const body = ((): BodyInit | null => {
-    if (isObject(routeOrBody)) return JSON.stringify(routeOrBody)
-    if (isObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
+    if (isBodyObject(routeOrBody)) return JSON.stringify(routeOrBody)
+    if (isBodyObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
     if (
       isBrowser &&
       ((bodyAs2ndParam as any) instanceof FormData ||
         (bodyAs2ndParam as any) instanceof URLSearchParams)
     )
       return bodyAs2ndParam as string
-    if (isObject(initialOptions.body)) return JSON.stringify(initialOptions.body)
+    if (isBodyObject(initialOptions.body)) return JSON.stringify(initialOptions.body)
     return null
   })()
 
