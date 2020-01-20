@@ -74,6 +74,13 @@ export const isString = (x: any): x is string => typeof x === 'string' // eslint
  */
 export const isObject = (obj: any): obj is object => Object.prototype.toString.call(obj) === '[object Object]' // eslint-disable-line
 
+/**
+ * Determines if the given param is an object that can be used as a request body.
+ * Returns true for native objects or arrays.
+ * @param obj 
+ */
+export const isBodyObject = (obj: any): boolean => isObject(obj) || Array.isArray(obj)
+
 export const isFunction = (v: any): boolean => typeof v === 'function'
 
 // TODO: come back and fix the "anys" in this http://bit.ly/2Lm3OLi

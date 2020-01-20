@@ -30,6 +30,27 @@ describe('makeRouteAndOptions: general usages', (): void => {
     })
   })
 
+  it('should accept an array for the body of a request',  async (): Promise<void> => {
+    const controller = new AbortController()
+    const { options } = await makeRouteAndOptions(
+      {},
+      '',
+      '',
+      HTTPMethod.POST,
+      controller,
+      '/test',
+      [],
+    )
+    expect(options).toStrictEqual({
+      body: '[]',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      signal: controller.signal,
+    })
+  })
+
   it('should correctly modify the options with the request interceptor', async (): Promise<void> => {
     const controller = new AbortController()
     const interceptors = {
@@ -72,6 +93,18 @@ describe('makeRouteAndOptions: Errors', (): void => {
       expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')
     }
   })
+
+  it('should error if 1st and 2nd arg of doFetch are both arrays', async (): Promise<void> => {
+    const controller = new AbortController()
+    // AKA, the last 2 arguments of makeRouteAndOptions are both arrays
+    try {
+      await makeRouteAndOptions({}, '', '', HTTPMethod.GET, controller, [], [])
+    } catch(err) {
+      expect(err.name).toBe('Invariant Violation')
+      expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')
+    }
+  })
+
   // ADD TESTS:
   // - request.get('/test', {})
   // - request.get('/test', '')
