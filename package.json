@@ -4,9 +4,21 @@
   "homepage": "http://use-http.com",
   "main": "dist/index.js",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/alex-cory/use-http.git"
+  "scripts": {
+    "prepublishOnly": "yarn build # runs before publish",
+    "build": "rm -rf dist && tsc --module CommonJS",
+    "build:watch": "rm -rf dist && tsc -w --module CommonJS",
+    "tsc": "tsc -p . --noEmit && tsc -p ./src/__tests__",
+    "test:browser": "yarn tsc && jest -c ./config/jest.config.js --env=jsdom",
+    "test:browser:watch": "yarn tsc && jest --watch -c ./config/jest.config.js --env=jsdom",
+    "test:server": "yarn tsc && jest -c ./config/jest.config.js --env=node --testPathIgnorePatterns useFetch.test.tsx makeRouteAndOptions.test.tsx",
+    "test:server:watch": "yarn tsc && jest --watch -c ./config/jest.config.js --env=node --testPathIgnorePatterns useFetch.test.tsx makeRouteAndOptions.test.tsx",
+    "test:watch": "yarn test:browser:watch && yarn test:server:watch",
+    "test": "yarn test:browser && yarn test:server",
+    "clean": "npm prune; yarn cache clean; rm -rf ./node_modules package-lock.json yarn.lock; yarn",
+    "lint": "eslint ./src/**/*.{ts,tsx}",
+    "lint:fix": "npm run lint -- --fix",
+    "lint:watch": "watch 'yarn lint'"
   },
   "dependencies": {
     "use-ssr": "^1.0.22"
@@ -47,25 +59,13 @@
     "typescript": "^3.4.5",
     "watch": "^1.0.2"
   },
-  "scripts": {
-    "prepublishOnly": "yarn build # runs before publish",
-    "build": "rm -rf dist && tsc --module CommonJS",
-    "build:watch": "rm -rf dist && tsc -w --module CommonJS",
-    "tsc": "tsc -p . --noEmit && tsc -p ./src/__tests__",
-    "test:browser": "yarn tsc && jest -c ./config/jest.config.js --env=jsdom",
-    "test:browser:watch": "yarn tsc && jest --watch -c ./config/jest.config.js --env=jsdom",
-    "test:server": "yarn tsc && jest -c ./config/jest.config.js --env=node --testPathIgnorePatterns useFetch.test.tsx makeRouteAndOptions.test.tsx",
-    "test:server:watch": "yarn tsc && jest --watch -c ./config/jest.config.js --env=node --testPathIgnorePatterns useFetch.test.tsx makeRouteAndOptions.test.tsx",
-    "test:watch": "yarn test:browser:watch && yarn test:server:watch",
-    "test": "yarn test:browser && yarn test:server",
-    "clean": "npm prune; yarn cache clean; rm -rf ./node_modules package-lock.json yarn.lock; yarn",
-    "lint": "eslint ./src/**/*.{ts,tsx}",
-    "lint:fix": "npm run lint -- --fix",
-    "lint:watch": "watch 'yarn lint'"
-  },
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alex-cory/use-http.git"
+  },
   "keywords": [
     "react hook",
     "react-hook",

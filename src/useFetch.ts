@@ -81,6 +81,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       let newData
       let theRes
+      let theErr
 
       try {
         theRes = ((await fetch(`${url}${path}${route}`, options)) || {}) as Res<TData>
@@ -89,7 +90,9 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         try {
           newData = await theRes.json()
         } catch (err) {
-          newData = (await theRes.text()) as any // FIXME: should not be `any` type
+          try {
+            newData = (await theRes.text()) as any // FIXME: should not be `any` type
+          } catch(er) {}
         }
 
         newData = (defaults.data && isEmpty(newData)) ? defaults.data : newData
@@ -101,10 +104,19 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       } catch (err) {
         if (attempts.current > 0) return doFetch(routeOrBody, body)
-        if (attempts.current < 1 && timedout.current) setError({ name: 'AbortError', message: 'Timeout Error' })
-        if (err.name !== 'AbortError') setError(err)
+        if (attempts.current < 1 && timedout.current) {
+          setError({ name: 'AbortError', message: 'Timeout Error' })
+          theErr = err
+        }
+        if (err.name !== 'AbortError') {
+          setError(err)
+          theErr = err
+        }
 
       } finally {
+        console.log('theRes', theRes)
+        console.log('theErr', theErr)
+        if (theRes && !theRes.ok && !theErr) setError({ name: theRes.status, message: theRes.statusText })
         if (attempts.current > 0) attempts.current -= 1
         timedout.current = false
         if (timer) clearTimeout(timer)

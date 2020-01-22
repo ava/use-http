@@ -566,6 +566,7 @@ describe('useFetch - BROWSER - errors', (): void => {
     fetch.mockRejectOnce(expectedError)
     fetch.mockResponseOnce(JSON.stringify(expectedSuccess))
   })
+  console.log('fetch', fetch)
 
   it('should reset the error after each call', async (): Promise<void> => {
     const { result } = renderHook(
@@ -625,6 +626,19 @@ describe('useFetch - BROWSER - errors', (): void => {
     )
     await waitForNextUpdate()
     expect(result.current.response.ok).toBe(undefined)
+    expect(result.current.error).toEqual(expectedError)
+  })
+
+  it ('should set the `error` properly when the response.ok is false', async (): Promise<void> => {
+    fetch.mockResponseOnce('', )
+    // console.log('fetch.Response', fetch.Response)
+    const { result } = renderHook(
+      () => useFetch('https://example.com'),
+    )
+    // await waitForNextUpdate()
+    await result.current.get()
+    console.log('result', result.current)
+    expect(result.current.response.ok).toBe(false)
     expect(result.current.error).toEqual(expectedError)
   })
 })
