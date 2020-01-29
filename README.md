@@ -792,6 +792,10 @@ Todos
       return attempt * 1000
     },
     
+    // this will tell useFetch not to run the request if the list doesn't haveMore
+    // i.e. if the last page fetched was < 15, don't run the request again
+    perPage: 15,
+    
     // these will be the exact same ones as Apollo's
     // this will eventually default to 'cache-first'
     cachePolicy: 'cache-first', // 'cache-first', 'cache-and-network', 'network-only', 'cache-only', 'no-cache'
