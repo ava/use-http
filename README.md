@@ -714,7 +714,9 @@ Does your company use use-http? Consider sponsoring the project to fund new feat
 <a href="https://github.com/microsoft/DLWorkspace">
   <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
 </a>
-
+<a href="https://github.com/mozilla/Spoke">
+  <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/mozilla.png" />
+</a>
 
 Feature Requests/Ideas
 ----------------------
