@@ -714,7 +714,9 @@ Does your company use use-http? Consider sponsoring the project to fund new feat
 <a href="https://github.com/microsoft/DLWorkspace">
   <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
 </a>
-
+<a href="https://github.com/mozilla/Spoke">
+  <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/mozilla.png" />
+</a>
 
 Feature Requests/Ideas
 ----------------------
@@ -791,6 +793,10 @@ Todos
       // applies linear backoff
       return attempt * 1000
     },
+    
+    // this will tell useFetch not to run the request if the list doesn't haveMore
+    // i.e. if the last page fetched was < 15, don't run the request again
+    perPage: 15,
     
     // these will be the exact same ones as Apollo's
     // this will eventually default to 'cache-first'
