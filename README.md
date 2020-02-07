@@ -759,33 +759,35 @@ Does your company use use-http? Consider sponsoring the project to fund new feat
 
 Feature Requests/Ideas
 ----------------------
+
 If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
 
 Todos
 ------
- - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
- - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
- - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
- - [ ] add sponsors [similar to this](https://github.com/carbon-app/carbon)
- - [ ] tests
-   - [ ] tests for SSR
-   - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
-   - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
-   - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
-   - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
-   - [ ] aborts fetch on unmount
- - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
- - [ ] make this a github package
- - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
- - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
- - [ ] make GraphQL work with React Suspense
- - [ ] make GraphQL examples in codesandbox
- - [ ] Documentation:
-     - [ ] show comparison with Apollo
-       - [ ] figure out a good way to show side-by-side comparisons
-     - [ ] show comparison with Axios
-     - [ ] how this cancels a request on unmount of a component to avoid the error "cannot update state during a state transition" or something like that due to an incomplete http request
- - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
+
+- [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
+- [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
+- [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
+- [ ] add sponsors [similar to this](https://github.com/carbon-app/carbon)
+- [ ] tests
+  - [ ] tests for SSR
+  - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
+  - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
+  - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
+  - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
+  - [ ] aborts fetch on unmount
+- [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
+- [ ] make this a github package
+- [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
+- [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
+- [ ] make GraphQL work with React Suspense
+- [ ] make GraphQL examples in codesandbox
+- [ ] Documentation:
+  - [ ] show comparison with Apollo
+  - [ ] figure out a good way to show side-by-side comparisons
+  - [ ] show comparison with Axios
+  - [ ] how this cancels a request on unmount of a component to avoid the error "cannot update state during a state transition" or something like that due to an incomplete http request
+- [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
 ```jsx
   const request = useFetch('https://example.com')
   
@@ -798,15 +800,15 @@ Todos
     })
     .get()
 ```
-  - [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
-        convert all the keys in the response to camelCase.
-        Not exactly sure how this syntax should look because what
-        if you want to have this only go 1 layer deep into the response
-        object. Or if this is just out of scope for this library.
+- [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
+      convert all the keys in the response to camelCase.
+      Not exactly sure how this syntax should look because what
+      if you want to have this only go 1 layer deep into the response
+      object. Or if this is just out of scope for this library.
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
-  - [ ] potential option ideas
+- [ ] potential option ideas
   ```jsx
   const request = useFetch({
     onSuccess: (/* idk what to put here */) => {},
