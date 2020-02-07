@@ -203,12 +203,9 @@ const App = () => (
 	<br>
 	<hr>
 	<p>
-<!-- 		<p> -->
-			<sup>
-				<a href="https://github.com/sponsors/alex-cory">Consider sponsoring</a>
-			</sup>
-<!-- 		</p> -->
-		<!-- <sup>Special thanks to:</sup> -->
+    <sup>
+      <a href="https://github.com/sponsors/alex-cory">Consider sponsoring</a>
+    </sup>
 		<br>
 		<br>
 		<a href="https://ava.inc">
