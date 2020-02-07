@@ -1,6 +1,6 @@
 {
   "name": "use-http",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "homepage": "http://use-http.com",
   "main": "dist/index.js",
   "license": "MIT",
