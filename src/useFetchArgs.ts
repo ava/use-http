@@ -1,4 +1,4 @@
-import { OptionsMaybeURL, NoUrlOptions, Flatten } from './types'
+import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies } from './types'
 import { Interceptors, OverwriteGlobalOptions, Options } from './types'
 import { isString, isObject, invariant, pullOutRequestInit } from './utils'
 import { useContext, useMemo } from 'react'
@@ -15,6 +15,8 @@ type UseFetchArgsReturn = {
     onAbort: () => void
     onTimeout: () => void
     onNewData: (currData: any, newData: any) => any
+    cachePolicy: CachePolicies
+    cacheLife: number
   },
   requestInit: RequestInit
   defaults: {
@@ -34,6 +36,8 @@ export const useFetchArgsDefaults = {
     onAbort: () => {},
     onTimeout: () => {},
     onNewData: (currData: any, newData: any) => newData,
+    cachePolicy: CachePolicies.CACHE_FIRST,
+    cacheLife: 0
   },
   requestInit: { headers: {} },
   defaults: {
@@ -95,6 +99,8 @@ export default function useFetchArgs(
   const onAbort = useField<() => void>('onAbort', urlOrOptions, optionsNoURLs)
   const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
   const onNewData = useField<() => void>('onNewData', urlOrOptions, optionsNoURLs)
+  const cachePolicy = useField<CachePolicies>('cachePolicy', urlOrOptions, optionsNoURLs)
+  const cacheLife = useField<number>('cacheLife', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)
@@ -147,6 +153,8 @@ export default function useFetchArgs(
       onAbort,
       onTimeout,
       onNewData,
+      cachePolicy,
+      cacheLife,
     },
     requestInit,
     defaults: {
