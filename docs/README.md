@@ -55,9 +55,9 @@ Features
 - React Native support
 - Aborts/Cancels pending http requests when a component unmounts
 
-
 Examples
 =========
+
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'>useFetch + Provider</a>
@@ -217,7 +217,6 @@ const App = () => (
 
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg)
 
-
 Destructured
 -------------
 
@@ -264,7 +263,9 @@ var {
 
 Relative routes
 ---------------
+
 ⚠️ `baseUrl` is no longer supported, it is now only `url`
+
 ```js
 var request = useFetch({ url: 'https://example.com' })
 // OR
@@ -279,7 +280,6 @@ Abort
 -----
 
 <img src="https://raw.githubusercontent.com/alex-cory/use-http/master/public/abort-example-1.gif" height="250" />
-
 
 ```js
 const githubRepos = useFetch({
@@ -302,7 +302,7 @@ Request/Response Interceptors with `Provider`
 ---------------------------------------------
 
 This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
-    
+
 ```js
 import { Provider } from 'use-http'
 import { toCamel } from 'convert-keys'
@@ -342,11 +342,12 @@ function App() {
 }
 
 ```
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex)
 
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex)
 
 File Upload (FormData)
 ----------------------
+
 This example shows how we can upload a file using `useFetch`.
 
 ```js
@@ -405,10 +406,9 @@ const App = () => {
 
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-different-response-types-c6csw)
 
-
 Overwrite/Remove Options/Headers Set in Provider
 ------------------------------------------------
-    
+
 This example shows how to remove a header all together. Let's say you have `<Provider url='url.com' options={{ headers: { Authentication: 'Bearer MY_TOKEN' } }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that.
 
 ```js
@@ -447,9 +447,9 @@ const App = () => {
 }
 ```
 
-
 GraphQL Query
 ---------------
+
 ```js
 
 const QUERY = `
@@ -477,6 +477,7 @@ function App() {
 
 GraphQL Mutation
 -----------------
+
 ```js
 
 const MUTATION = `
@@ -510,7 +511,8 @@ function App() {
 The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
 
 useQuery (query for todos)
--------------------
+--------------------------
+
 ```js
 import { Provider, useQuery, useMutation } from 'use-http'
 
@@ -539,6 +541,7 @@ function QueryComponent() {
 
 useMutation (add a new todo)
 -------------------
+
 ```js
 function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
@@ -564,10 +567,11 @@ function MutationComponent() {
 }
 ```
 
-
 Adding the Provider
 -------------------
+
 These props are defaults used in every request inside the `<Provider />`. They can be overwritten individually
+
 ```js
 function App() {
 
@@ -584,11 +588,11 @@ function App() {
     <Provider/>
   )
 }
-
 ```
 
 Hooks
 =======
+
 | Option                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `useFetch` | The base hook |
@@ -602,6 +606,8 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
+| `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
+| `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
 | `onAbort` | Runs when the request is aborted. | empty function |
@@ -613,11 +619,17 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 
-
 ```jsx
 const options = {
   // accepts all `fetch` options such as headers, method, etc.
   
+  // Cache responses to improve speed and reduce amount of requests
+  // Only one request to the same endpoint will be initiated unless cacheLife expires for 'cache-first'.
+  cachePolicy: 'cache-first' // 'no-cache'
+
+  // The time in milliseconds that cache data remains fresh.
+  cacheLife: 0,
+
   // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
   url: 'https://example.com',
   
