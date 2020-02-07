@@ -1,18 +1,19 @@
-import { HTTPMethod, Interceptors, ValueOf, RouteAndOptions } from './types'
+import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs } from './types'
 import { invariant, isBrowser, isString, isBodyObject } from './utils'
 
 const { GET } = HTTPMethod
 
-export default async function makeRouteAndOptions(
+
+export default async function doFetchArgs(
   initialOptions: RequestInit,
-  url: string,
+  initialURL: string,
   path: string,
   method: HTTPMethod,
   controller: AbortController,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
   requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
-): Promise<RouteAndOptions> {
+): Promise<DoFetchArgs> {
   invariant(
     !(isBodyObject(routeOrBody) && isBodyObject(bodyAs2ndParam)),
     `If first argument of ${method.toLowerCase()}() is an object, you cannot have a 2nd argument. 😜`,
@@ -31,6 +32,8 @@ export default async function makeRouteAndOptions(
     if (isString(routeOrBody)) return routeOrBody as string
     return ''
   })()
+
+  const url = `${initialURL}${path}${route}`
 
   const body = ((): BodyInit | null => {
     if (isBodyObject(routeOrBody)) return JSON.stringify(routeOrBody)
@@ -80,8 +83,15 @@ export default async function makeRouteAndOptions(
     return opts
   })()
 
+  // TODO: if the body is a file, and this is a large file, it might exceed the size
+  // limit of the key size in the Map
+  // used to tell if a request has already been made
+  const requestID = Object.entries({ url, method, body: options.body || '' })
+    .map(([key, value]) => `${key}:${value}`).join('||')
+
   return {
-    route,
+    url,
     options,
+    requestID
   }
 }

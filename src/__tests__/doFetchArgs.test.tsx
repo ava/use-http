@@ -1,16 +1,16 @@
-import makeRouteAndOptions from '../makeRouteAndOptions'
+import doFetchArgs from '../doFetchArgs'
 import { HTTPMethod } from '../types'
 
-describe('makeRouteAndOptions: general usages', (): void => {
+describe('doFetchArgs: general usages', (): void => {
 
   it('should be defined', (): void => {
-    expect(makeRouteAndOptions).toBeDefined()
+    expect(doFetchArgs).toBeDefined()
   })
 
-  it('should form the correct Route', async (): Promise<void> => {
+  it('should form the correct URL', async (): Promise<void> => {
     const controller = new AbortController()
     const expectedRoute = '/test'
-    const { route, options } = await makeRouteAndOptions(
+    const { url, options } = await doFetchArgs(
       {},
       '',
       '',
@@ -19,7 +19,7 @@ describe('makeRouteAndOptions: general usages', (): void => {
       expectedRoute,
       {},
     )
-    expect(route).toBe(expectedRoute)
+    expect(url).toBe(expectedRoute)
     expect(options).toStrictEqual({
       body: '{}',
       headers: {
@@ -32,15 +32,16 @@ describe('makeRouteAndOptions: general usages', (): void => {
 
   it('should accept an array for the body of a request',  async (): Promise<void> => {
     const controller = new AbortController()
-    const { options } = await makeRouteAndOptions(
+    const { options, url } = await doFetchArgs(
       {},
-      '',
+      'https://example.com',
       '',
       HTTPMethod.POST,
       controller,
       '/test',
       [],
     )
+    expect(url).toBe('https://example.com/test')
     expect(options).toStrictEqual({
       body: '[]',
       headers: {
@@ -51,6 +52,20 @@ describe('makeRouteAndOptions: general usages', (): void => {
     })
   })
 
+  it('should correctly add `path` and `route` to the URL', async (): Promise<void> => {
+    const controller = new AbortController()
+    const { url } = await doFetchArgs(
+      {},
+      'https://example.com',
+      '/path',
+      HTTPMethod.POST,
+      controller,
+      '/route',
+      {},
+    )
+    expect(url).toBe('https://example.com/path/route')
+  })
+
   it('should correctly modify the options with the request interceptor', async (): Promise<void> => {
     const controller = new AbortController()
     const interceptors = {
@@ -59,7 +74,7 @@ describe('makeRouteAndOptions: general usages', (): void => {
         return options
       }
     }
-    const { options } = await makeRouteAndOptions(
+    const { options } = await doFetchArgs(
       {},
       '',
       '',
@@ -82,12 +97,12 @@ describe('makeRouteAndOptions: general usages', (): void => {
   })
 })
 
-describe('makeRouteAndOptions: Errors', (): void => {
+describe('doFetchArgs: Errors', (): void => {
   it('should error if 1st and 2nd arg of doFetch are both objects', async (): Promise<void> => {
     const controller = new AbortController()
-    // AKA, the last 2 arguments of makeRouteAndOptions are both objects
+    // AKA, the last 2 arguments of doFetchArgs are both objects
     try {
-      await makeRouteAndOptions({}, '', '', HTTPMethod.GET, controller, {}, {})
+      await doFetchArgs({}, '', '', HTTPMethod.GET, controller, {}, {})
     } catch(err) {
       expect(err.name).toBe('Invariant Violation')
       expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')
@@ -96,9 +111,9 @@ describe('makeRouteAndOptions: Errors', (): void => {
 
   it('should error if 1st and 2nd arg of doFetch are both arrays', async (): Promise<void> => {
     const controller = new AbortController()
-    // AKA, the last 2 arguments of makeRouteAndOptions are both arrays
+    // AKA, the last 2 arguments of doFetchArgs are both arrays
     try {
-      await makeRouteAndOptions({}, '', '', HTTPMethod.GET, controller, [], [])
+      await doFetchArgs({}, '', '', HTTPMethod.GET, controller, [], [])
     } catch(err) {
       expect(err.name).toBe('Invariant Violation')
       expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')

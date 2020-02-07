@@ -198,6 +198,36 @@ const App = () => (
 
 </details>
 
+<div align="center">
+	<br>
+	<br>
+	<hr>
+	<p>
+<!-- 		<p> -->
+			<sup>
+				<a href="https://github.com/sponsors/alex-cory">Consider sponsoring</a>
+			</sup>
+<!-- 		</p> -->
+		<!-- <sup>Special thanks to:</sup> -->
+		<br>
+		<br>
+		<a href="https://ava.inc">
+			<img src="public/ava-logo.png" width="130" alt="Ava">
+		</a>
+		<br>
+		<sub><b>Ava, Rapid Application Development</b></sub>
+		<br>
+    <sub>
+    Need a freelance software engineer with more than 5 years production experience at companies like Facebook, Discord, Best Buy, and Citrix?</br>
+    <a href="https://ava.inc">website</a> | <a href="mailto:alex@ava.inc">email</a> | <a href="https://twitter.com/@alexcory_">twitter</a>
+    </sub>
+	</p>
+	<hr>
+	<br>
+	<br>
+	<br>
+</div>
+
 <details open><summary><b>Pagination + <code>Provider</code></b></summary>
 
 The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below, we are appending the new todos to the end of the current todos.
@@ -646,6 +676,8 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
+| `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
+| `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
 | `onAbort` | Runs when the request is aborted. | empty function |
@@ -660,7 +692,14 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 ```jsx
 const options = {
   // accepts all `fetch` options such as headers, method, etc.
-  
+
+  // Cache responses to improve speed and reduce amount of requests
+  // Only one request to the same endpoint will be initiated unless cacheLife expires for 'cache-first'.
+  cachePolicy: 'cache-first' // 'no-cache'
+
+  // The time in milliseconds that cache data remains fresh.
+  cacheLife: 0,
+
   // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
   url: 'https://example.com',
   
@@ -708,15 +747,17 @@ Who's using use-http?
 
 Does your company use use-http? Consider sponsoring the project to fund new features, bug fixes, and more.
 
-<a href="https://ava.inc" style="margin-right: 2rem;" target="_blank">
-  <img width="200px" src="https://ava.inc/ava-logo-green.png" />
-</a>
-<a href="https://github.com/microsoft/DLWorkspace">
-  <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
-</a>
-<a href="https://github.com/mozilla/Spoke">
-  <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/mozilla.png" />
-</a>
+<p align="center">
+  <a href="https://ava.inc" style="margin-right: 2rem;" target="_blank">
+    <img width="110px" src="https://ava.inc/ava-logo-green.png" />
+  </a>
+  <a href="https://github.com/microsoft/DLWorkspace">
+    <img height="110px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
+  </a>
+  <a href="https://github.com/mozilla/Spoke">
+    <img height="110px" src="https://github.com/alex-cory/use-http/raw/master/public/mozilla.png" />
+  </a>
+</p>
 
 Feature Requests/Ideas
 ----------------------
@@ -743,11 +784,9 @@ Todos
  - [ ] make GraphQL examples in codesandbox
  - [ ] Documentation:
      - [ ] show comparison with Apollo
-       - [ ] figure out a good way to show side-by-side comparisonsf
+       - [ ] figure out a good way to show side-by-side comparisons
      - [ ] show comparison with Axios
      - [ ] how this cancels a request on unmount of a component to avoid the error "cannot update state during a state transition" or something like that due to an incomplete http request
- - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
- - [ ] Cache responses to improve speed and reduce amount of requests
  - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
 ```jsx
   const request = useFetch('https://example.com')
@@ -799,16 +838,7 @@ Todos
     perPage: 15,
     
     // these will be the exact same ones as Apollo's
-    // this will eventually default to 'cache-first'
-    cachePolicy: 'cache-first', // 'cache-first', 'cache-and-network', 'network-only', 'cache-only', 'no-cache'
-    
-    // The time in milliseconds that cache data remains fresh.
-    // After a successful cache update, that cache data will become stale after this duration
-    cacheTime: 10000,
-    
-    // The time in milliseconds that unused/inactive cache data remains in memory.
-    // When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
-    invalidateCacheTime: 10000,
+    cachePolicy: 'cache-and-network', 'network-only', 'cache-only', 'no-cache' // 'cache-first'
     
     // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     onServer: true,
@@ -906,5 +936,3 @@ const App = () => {
 }
 ```
 </details>
-
-

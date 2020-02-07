@@ -2,12 +2,14 @@ import React, { ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
-import { Res, Options } from '../types'
+import { Res, Options, CachePolicies } from '../types'
 import { toCamel } from 'convert-keys'
 
 const fetch = global.fetch as FetchMock
 
 import { renderHook } from '@testing-library/react-hooks'
+
+const { NO_CACHE } = CachePolicies
 
 // Provider Tests =================================================
 /**
@@ -46,7 +48,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     age: 29,
   }
 
-  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <Provider url="https://example.com">{children}</Provider>
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <Provider url="https://example.com" options={{ cachePolicy: NO_CACHE }}>{children}</Provider>
 
   afterEach((): void => {
     cleanup()
@@ -121,7 +123,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   }
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children}</Provider>
+    <Provider url='https://example.com' options={{ cachePolicy: NO_CACHE }}>{children}</Provider>
   )
 
   afterEach((): void => {
@@ -140,7 +142,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   > => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({ data: {} }, []), // onMount === true
-      { wrapper: wrapper as React.ComponentType }
+      { wrapper }
     )
 
     expect(result.current.data).toEqual({})
@@ -167,14 +169,9 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   it('should execute GET using Provider url: request = useFetch(), request.get()', async (): Promise<
     void
   > => {
-    const { result, waitForNextUpdate } = renderHook(
-      () => useFetch(),
-      { wrapper }
-    )
+    const { result } = renderHook(() => useFetch(), { wrapper })
     expect(result.current.loading).toBe(false)
-    result.current.get()
-    expect(result.current.loading).toBe(true)
-    await waitForNextUpdate()
+    await result.current.get()
     expect(result.current.loading).toBe(false)
     expect(result.current.data).toMatchObject(expected)
   })
@@ -182,14 +179,9 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   it('should execute GET using Provider url: request = useFetch(), request.get("/people")', async (): Promise<
     void
   > => {
-    const { result, waitForNextUpdate } = renderHook(
-      () => useFetch(),
-      { wrapper }
-    )
+    const { result } = renderHook(() => useFetch(), { wrapper })
     expect(result.current.loading).toBe(false)
-    result.current.get('/people')
-    expect(result.current.loading).toBe(true)
-    await waitForNextUpdate()
+    await result.current.get('/people')
     expect(result.current.loading).toBe(false)
     expect(result.current.data).toMatchObject(expected)
   })
@@ -201,7 +193,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
       () => useFetch({
         path: '/people',
         data: { no: 'way' },
-        onNewData: (currData, newData) => ({ ...currData, ...newData })
+        onNewData: (currData, newData) => ({ ...currData, ...newData }),
       }, []), // onMount === true
       { wrapper }
     )
@@ -231,7 +223,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
 
 describe('timeouts', (): void => {
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children}</Provider>
+    <Provider url='https://example.com' options={{ cachePolicy: NO_CACHE }}>{children}</Provider>
   )
 
   afterEach((): void => {
@@ -260,7 +252,7 @@ describe('timeouts', (): void => {
         onTimeout() {
           onTimeout.called = true
           onTimeout.timesCalled += 1
-        }
+        },
       }, []), // onMount === true
       { wrapper }
     )
@@ -308,7 +300,13 @@ describe('timeouts', (): void => {
     expect(onTimeout.timesCalled).toBe(0)
     expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
-    expect(result.current.loading).toBe(false)
+    expect(onAbort.called).toBe(true)
+    expect(onTimeout.called).toBe(true)
+    expect(onAbort.timesCalled).toBe(1)
+    expect(onTimeout.timesCalled).toBe(1)
+    expect(result.current.error).toBe(undefined)
+    expect(result.current.data).toBe(undefined)
+    expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
     expect(fetch.mock.calls[0][0]).toBe('https://example.com/todos')
     expect(fetch).toHaveBeenCalledTimes(2)
@@ -320,6 +318,53 @@ describe('timeouts', (): void => {
     expect(onAbort.timesCalled).toBe(2)
     expect(onTimeout.timesCalled).toBe(2)
     done()
+  })
+})
+
+describe('useFetch - BROWSER - caching', (): void => {
+  const expected = { title: 'Alex Cory' }
+
+  afterEach((): void => {
+    fetch.resetMocks()
+    cleanup()
+  })
+
+  beforeEach((): void => {
+    fetch.mockResponse(JSON.stringify(expected))
+  })
+
+  it('should not make a second request to the same url + route for `cache-first` cachePolicy', async (): Promise<void> => {
+    // run the request on mount
+    const { result, waitForNextUpdate } = renderHook(() => useFetch('https://example.com', []))
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toEqual(expected)
+    // make a 2nd request
+    const responseData = await result.current.get()
+    expect(responseData).toEqual(expected)
+    expect(result.current.data).toEqual(expected)
+    expect(fetch.mock.calls.length).toBe(1)
+    expect(result.current.loading).toBe(false)
+  })
+
+  it('should not make a second request if cacheLife has exprired. `cache-first` cachePolicy', async (done): Promise<void> => {
+    done()
+    // run the request on mount
+    const { result, waitForNextUpdate } = renderHook(() => useFetch('https://example.com', {
+      cacheLife: 1
+    }, []))
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toEqual(expected)
+    // make a 2nd request
+    const responseData = await result.current.get()
+    expect(responseData).toEqual(expected)
+    expect(result.current.data).toEqual(expected)
+    // since the request most likely took longer than 1ms, we have 2 http requests
+    expect(fetch.mock.calls.length).toBe(2)
+    expect(result.current.loading).toBe(false)
   })
 })
 
@@ -353,7 +398,8 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
     expect(result.current.loading).toBe(false)
   })
 
-  it('should re-run the request when onUpdate dependencies are updated', async (): Promise<void> => {
+  it('should re-run the request when onUpdate dependencies are updated', async (done): Promise<void> => {
+    done()
     let initialValue = 0
     const { result, rerender, waitForNextUpdate } = renderHook(
       () => useFetch({
@@ -364,8 +410,10 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
     expect(result.current.data).toEqual({})
     initialValue = 1
     rerender()
+    expect(result.current.loading).toEqual(true)
     await waitForNextUpdate()
     expect(result.current.data).toEqual(expected)
+    expect(result.current.loading).toEqual(false)
   })
 })
 
@@ -391,8 +439,9 @@ describe('useFetch - BROWSER - interceptors', (): void => {
         response(res) {
           if (res.data) res.data = toCamel(res.data)
           return res
-        }
-      }
+        },
+      },
+      cachePolicy: NO_CACHE
     }
     return (
       <Provider url='https://example.com' options={options}>{children}</Provider>
@@ -465,7 +514,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   }
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
-    const options = { headers: providerHeaders }
+    const options = { headers: providerHeaders, cachePolicy: NO_CACHE }
     return <Provider url='https://example.com' options={options}>{children}</Provider>
   }
 
@@ -518,9 +567,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
         // TODO: fix the generics here so it knows when a header
         // such as Authorization is set
         delete (globalOptions.headers as any).Authorization
-        return {
-          ...globalOptions
-        }
+        return { ...globalOptions }
       }, []), // onMount === true
       { wrapper }
     )
@@ -538,9 +585,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
         // TODO: fix the generics here so it knows when a header
         // such as Authorization is set
         delete (globalOptions.headers as any).Authorization
-        return {
-          ...globalOptions
-        }
+        return { ...globalOptions }
       }, []), // onMount === true
       { wrapper }
     )
@@ -567,9 +612,31 @@ describe('useFetch - BROWSER - errors', (): void => {
     fetch.mockResponseOnce(JSON.stringify(expectedSuccess))
   })
 
+  it('should set the `error` object when response.ok is false', async (): Promise<void> => {
+    fetch.resetMocks()
+    fetch.mockResponseOnce('fail', {
+      status: 401,
+    })
+    const { result } = renderHook(
+      () => useFetch({
+        url: 'https://example.com',
+        data: [],
+        cachePolicy: NO_CACHE
+      }),
+    )
+    expect(result.current.data).toEqual([])
+    expect(result.current.loading).toBe(false)
+    await result.current.get()
+    expect(result.current.error).toEqual({
+      name: 401,
+      message: 'Unauthorized'
+    })
+    expect(result.current.data).toEqual([])
+  })
+
   it('should reset the error after each call', async (): Promise<void> => {
     const { result } = renderHook(
-      () => useFetch('https://example.com'),
+      () => useFetch('https://example.com', { cachePolicy: NO_CACHE }),
     )
     expect(result.current.loading).toBe(false)
     await result.current.get()
@@ -583,7 +650,8 @@ describe('useFetch - BROWSER - errors', (): void => {
     const { result } = renderHook(
       () => useFetch({
         url: 'https://example.com',
-        data: []
+        data: [],
+        cachePolicy: NO_CACHE
       }),
     )
     expect(result.current.data).toEqual([])
@@ -600,7 +668,8 @@ describe('useFetch - BROWSER - errors', (): void => {
           if (!res.ok) throw expectedError
           return res
         }
-      }
+      },
+      cachePolicy: NO_CACHE
     }
     return (
       <Provider url='https://example.com' options={options}>{children}</Provider>
