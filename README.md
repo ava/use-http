@@ -788,6 +788,7 @@ Todos
   - [ ] show comparison with Axios
   - [ ] how this cancels a request on unmount of a component to avoid the error "cannot update state during a state transition" or something like that due to an incomplete http request
 - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
+
 ```jsx
   const request = useFetch('https://example.com')
   
@@ -800,20 +801,23 @@ Todos
     })
     .get()
 ```
+
 - [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
       convert all the keys in the response to camelCase.
       Not exactly sure how this syntax should look because what
       if you want to have this only go 1 layer deep into the response
       object. Or if this is just out of scope for this library.
+
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
+
 - [ ] potential option ideas
+
   ```jsx
   const request = useFetch({
     onSuccess: (/* idk what to put here */) => {},
     onError: (error) => {},
-    
     // can retry on certain http status codes
     retryOn: [503],
     // OR
@@ -824,7 +828,6 @@ Todos
         return true;
       }
     },
-    
     // This function receives a retryAttempt integer and returns the delay to apply before the next attempt in milliseconds
     retryDelay(attempt, error, response) {
       // applies exponential backoff
@@ -832,55 +835,50 @@ Todos
       // applies linear backoff
       return attempt * 1000
     },
-    
     // this will tell useFetch not to run the request if the list doesn't haveMore
     // i.e. if the last page fetched was < 15, don't run the request again
     perPage: 15,
-    
     // these will be the exact same ones as Apollo's
     cachePolicy: 'cache-and-network', 'network-only', 'cache-only', 'no-cache' // 'cache-first'
-    
     // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     onServer: true,
-    
     // if you would prefer to pass the query in the config
     query: `some graphql query`
-    
     // if you would prefer to pass the mutation in the config
     mutation: `some graphql mutation`
-    
     // enabled React Suspense mode
     suspense: false,
-    
     retryOnError: false,
-    
     refreshWhenHidden: false,
   })
   ```
-   - resources
-     - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
-     - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
-     - [zeit's swr](https://github.com/zeit/swr)
 
-  - [ ] potential option ideas for `GraphQL`
-  ```jsx
-  const request = useQuery({ onMount: true })`your graphql query`
-  
-  const request = useFetch(...)
-  const userID = 'some-user-uuid'
-  const res = await request.query({ userID })`
-    query Todos($userID string!) {
-      todos(userID: $userID) {
-        id
-        title
-      }
+- resources
+  - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
+  - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
+  - [zeit's swr](https://github.com/zeit/swr)
+
+- [ ] potential option ideas for `GraphQL`
+
+```jsx
+const request = useQuery({ onMount: true })`your graphql query`
+
+const request = useFetch(...)
+const userID = 'some-user-uuid'
+const res = await request.query({ userID })`
+  query Todos($userID string!) {
+    todos(userID: $userID) {
+      id
+      title
     }
-  `
-  ```
-  - [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
+  }
+`
+```
+
+- [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
 
 <details><summary><b>The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
-    
+
 ```jsx
 import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
 
