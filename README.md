@@ -77,6 +77,7 @@ Features
 - Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
 - React Native support
 - Aborts/Cancels pending http requests when a component unmounts
+- Built in caching
 
 Usage
 -----
@@ -199,30 +200,30 @@ const App = () => (
 </details>
 
 <div align="center">
-	<br>
-	<br>
-	<hr>
-	<p>
+  <br>
+  <br>
+  <hr>
+  <p>
     <sup>
       <a href="https://github.com/sponsors/alex-cory">Consider sponsoring</a>
     </sup>
-		<br>
-		<br>
-		<a href="https://ava.inc">
-			<img src="public/ava-logo.png" width="130" alt="Ava">
-		</a>
-		<br>
-		<sub><b>Ava, Rapid Application Development</b></sub>
-		<br>
+    <br>
+    <br>
+    <a href="https://ava.inc">
+      <img src="public/ava-logo.png" width="130" alt="Ava">
+    </a>
+    <br>
+    <sub><b>Ava, Rapid Application Development</b></sub>
+    <br>
     <sub>
     Need a freelance software engineer with more than 5 years production experience at companies like Facebook, Discord, Best Buy, and Citrix?</br>
     <a href="https://ava.inc">website</a> | <a href="mailto:alex@ava.inc">email</a> | <a href="https://twitter.com/@alexcory_">twitter</a>
     </sub>
-	</p>
-	<hr>
-	<br>
-	<br>
-	<br>
+  </p>
+  <hr>
+  <br>
+  <br>
+  <br>
 </div>
 
 <details open><summary><b>Pagination + <code>Provider</code></b></summary>
