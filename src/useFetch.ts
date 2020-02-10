@@ -41,6 +41,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     onTimeout,
     onAbort,
     onNewData,
+    perPage,
     cachePolicy, // 'cache-first' by default
     cacheLife,
   } = customOptions
@@ -53,6 +54,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const timedout = useRef(false)
   const attempts = useRef(retries)
   const error = useRef<any>()
+  const hasMore = useRef(true)
 
   const [loading, setLoading] = useState<boolean>(defaults.loading)
 
@@ -91,27 +93,30 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         }
       }
 
+      // don't perform the request if there is no more data to fetch (pagination)
+      if (perPage > 0 && !hasMore.current && !error.current) return data.current
+
       setLoading(true)
       error.current = undefined
 
       const timer = timeout > 0 && setTimeout(() => {
-        timedout.current = true;
+        timedout.current = true
         theController.abort()
         if (onTimeout) onTimeout()
       }, timeout)
 
       let newData
-      let theRes
+      let newRes
 
       try {
-        theRes = ((await fetch(url, options)) || {}) as Res<TData>
-        res.current = theRes.clone()
+        newRes = ((await fetch(url, options)) || {}) as Res<TData>
+        res.current = newRes.clone()
 
         try {
-          newData = await theRes.json()
+          newData = await newRes.json()
         } catch (er) {
           try {
-            newData = (await theRes.text()) as any // FIXME: should not be `any` type
+            newData = (await newRes.text()) as any // FIXME: should not be `any` type
           } catch (er) {}
         }
 
@@ -121,6 +126,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         res.current = interceptors.response ? interceptors.response(res.current) : res.current
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
         data.current = res.current.data as TData
+
+        if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
 
         if (cachePolicy === CACHE_FIRST) {
           cache.set(requestID, data.current)
@@ -133,7 +140,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (err.name !== 'AbortError') error.current = err
 
       } finally {
-        if (theRes && !theRes.ok && !error.current) error.current = { name: theRes.status, message: theRes.statusText }
+        if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
         if (attempts.current > 0) attempts.current -= 1
         timedout.current = false
         if (timer) clearTimeout(timer)

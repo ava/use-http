@@ -7,7 +7,7 @@ import { toCamel } from 'convert-keys'
 
 const fetch = global.fetch as FetchMock
 
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook, act } from '@testing-library/react-hooks'
 
 const { NO_CACHE } = CachePolicies
 
@@ -83,7 +83,6 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     expect(result.current.response.data).toEqual(expected)
     expect(result.current.request.loading).toBe(false)
     expect(result.current.loading).toBe(false)
-
 
     expect(typeof result.current.get).toBe('function')
     expect(typeof result.current.post).toBe('function')
@@ -206,6 +205,42 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     })
   })
 
+  it('should not make another request when there is no more data `perPage` pagination', async (done): Promise<
+    void
+  > => {
+    fetch.resetMocks()
+    const expected1 = [1, 2, 3]
+    fetch.mockResponse(
+      JSON.stringify(expected1),
+    )
+    let page = 1
+    const { result, rerender, waitForNextUpdate } = renderHook(
+      () => useFetch(`https://example.com?page=${page}`, {
+        data: [],
+        perPage: 3,
+        onNewData: (currData, newData) => {
+          // to imitate getting a response with less items
+          if (page === 2) return [...currData, 4]
+          return [...currData, ...newData]
+        },
+      }, [page]), // onMount === true
+    )
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toEqual(expected1)
+    page = 2
+    rerender()
+    await waitForNextUpdate()
+    expect(result.current.data).toEqual([...expected1, 4])
+    expect(fetch.mock.calls.length).toBe(2)
+    page = 3
+    rerender()
+    expect(result.current.data).toEqual([...expected1, 4])
+    expect(fetch.mock.calls.length).toBe(2)
+    done()
+  })
+
   it('should execute GET using Provider url: useFetch({ path: "/people" }, [])', async (): Promise<
     void
   > => {
@@ -244,7 +279,7 @@ describe('timeouts', (): void => {
     const onTimeout = { called: false, timesCalled: 0 }
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
-        timeout: 10,
+        timeout: 100,
         onAbort() {
           onAbort.called = true
           onAbort.timesCalled += 1
@@ -256,13 +291,13 @@ describe('timeouts', (): void => {
       }, []), // onMount === true
       { wrapper }
     )
+    expect(fetch).toHaveBeenCalledTimes(0)
     expect(onAbort.called).toBe(false)
     expect(onTimeout.called).toBe(false)
     expect(onAbort.timesCalled).toBe(0)
     expect(onTimeout.timesCalled).toBe(0)
     expect(result.current.loading).toBe(true)
-    await waitForNextUpdate()
-    done()
+    await waitForNextUpdate({ timeout: 101 })
     expect(fetch).toHaveBeenCalledTimes(1)
     expect(result.current.loading).toBe(false)
     expect(result.current.error.name).toBe('AbortError')
@@ -271,6 +306,7 @@ describe('timeouts', (): void => {
     expect(onTimeout.called).toBe(true)
     expect(onAbort.timesCalled).toBe(1)
     expect(onTimeout.timesCalled).toBe(1)
+    done()
   })
 
   it('should execute GET, fail, then retry 1 additional time', async (done): Promise<
@@ -321,7 +357,7 @@ describe('timeouts', (): void => {
   })
 })
 
-describe('useFetch - BROWSER - caching', (): void => {
+describe('caching - useFetch - BROWSER', (): void => {
   const expected = { title: 'Alex Cory' }
 
   afterEach((): void => {
@@ -333,38 +369,53 @@ describe('useFetch - BROWSER - caching', (): void => {
     fetch.mockResponse(JSON.stringify(expected))
   })
 
-  it('should not make a second request to the same url + route for `cache-first` cachePolicy', async (): Promise<void> => {
+  it('should not make a second request to the same url + route for `cache-first` cachePolicy', async (done): Promise<void> => {
     // run the request on mount
-    const { result, waitForNextUpdate } = renderHook(() => useFetch('https://example.com', []))
-    expect(result.current.loading).toBe(true)
-    await waitForNextUpdate()
-    expect(result.current.loading).toBe(false)
-    expect(result.current.data).toEqual(expected)
-    // make a 2nd request
-    const responseData = await result.current.get()
-    expect(responseData).toEqual(expected)
-    expect(result.current.data).toEqual(expected)
-    expect(fetch.mock.calls.length).toBe(1)
-    expect(result.current.loading).toBe(false)
+    const { result, waitForNextUpdate } = renderHook(() => useFetch('https://example.com/todos', []))
+    try {
+      expect(result.current.loading).toBe(true)
+      await waitForNextUpdate()
+      expect(result.current.loading).toBe(false)
+      expect(result.current.data).toEqual(expected)
+      // make a 2nd request
+      const responseData = await result.current.get()
+      expect(responseData).toEqual(expected)
+      expect(result.current.data).toEqual(expected)
+      expect(fetch.mock.calls.length).toBe(1)
+      expect(result.current.loading).toBe(false)
+      done()
+    } catch (err) {
+      done(err)
+    }
   })
 
-  it('should not make a second request if cacheLife has exprired. `cache-first` cachePolicy', async (done): Promise<void> => {
-    done()
+  it('should make a second request if cacheLife has exprired. `cache-first` cachePolicy', async (done): Promise<void> => {
+    // TODO: this test is extra brittle. I've tried many things.
+    // if it fails, try restarting your tests entirely.
+    fetch.resetMocks()
+    fetch.mockResponse(JSON.stringify(expected))
     // run the request on mount
     const { result, waitForNextUpdate } = renderHook(() => useFetch('https://example.com', {
-      cacheLife: 1
+      cacheLife: .01
     }, []))
-    expect(result.current.loading).toBe(true)
-    await waitForNextUpdate()
-    expect(result.current.loading).toBe(false)
-    expect(result.current.data).toEqual(expected)
-    // make a 2nd request
-    const responseData = await result.current.get()
-    expect(responseData).toEqual(expected)
-    expect(result.current.data).toEqual(expected)
-    // since the request most likely took longer than 1ms, we have 2 http requests
-    expect(fetch.mock.calls.length).toBe(2)
-    expect(result.current.loading).toBe(false)
+    try {
+      expect(result.current.loading).toBe(true)
+      await waitForNextUpdate({ timeout: 10 })
+      expect(result.current.loading).toBe(false)
+      expect(result.current.data).toEqual(expected)
+      expect(fetch.mock.calls.length).toEqual(1)
+      // make a 2nd request
+      await act(async () => {
+        await result.current.get()
+      })
+      expect(result.current.data).toEqual(expected)
+      // since the request most likely took longer than 1ms, we have 2 http requests
+      expect(fetch.mock.calls.length).toBe(2)
+      expect(result.current.loading).toBe(false)
+      done()
+    } catch (err) {
+      done(err)
+    }
   })
 })
 
