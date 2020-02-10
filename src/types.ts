@@ -165,6 +165,7 @@ export interface CustomOptions {
   onAbort?: () => void
   onTimeout?: () => void
   onNewData?: (currData: any, newData: any) => any
+  perPage?: number
   cachePolicy?: CachePolicies
   cacheLife?: number
 }

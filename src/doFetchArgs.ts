@@ -79,7 +79,7 @@ export default async function doFetchArgs(
 
     if (body !== null) opts.body = body
 
-    if (requestInterceptor) return await requestInterceptor(opts, url, path, route)
+    if (requestInterceptor) return await requestInterceptor(opts, initialURL, path, route)
     return opts
   })()
 

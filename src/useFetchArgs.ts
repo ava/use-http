@@ -15,6 +15,7 @@ type UseFetchArgsReturn = {
     onAbort: () => void
     onTimeout: () => void
     onNewData: (currData: any, newData: any) => any
+    perPage: number
     cachePolicy: CachePolicies
     cacheLife: number
   },
@@ -36,6 +37,7 @@ export const useFetchArgsDefaults = {
     onAbort: () => {},
     onTimeout: () => {},
     onNewData: (currData: any, newData: any) => newData,
+    perPage: 0,
     cachePolicy: CachePolicies.CACHE_FIRST,
     cacheLife: 0
   },
@@ -99,6 +101,7 @@ export default function useFetchArgs(
   const onAbort = useField<() => void>('onAbort', urlOrOptions, optionsNoURLs)
   const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
   const onNewData = useField<() => void>('onNewData', urlOrOptions, optionsNoURLs)
+  const perPage = useField<number>('perPage', urlOrOptions, optionsNoURLs)
   const cachePolicy = useField<CachePolicies>('cachePolicy', urlOrOptions, optionsNoURLs)
   const cacheLife = useField<number>('cacheLife', urlOrOptions, optionsNoURLs)
 
@@ -153,6 +156,7 @@ export default function useFetchArgs(
       onAbort,
       onTimeout,
       onNewData,
+      perPage,
       cachePolicy,
       cacheLife,
     },
