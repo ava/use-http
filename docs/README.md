@@ -221,6 +221,7 @@ const Todos = () => {
   const { data, loading } = useFetch({
     path: `/todos?page=${page}&amountPerPage=15`,
     onNewData: (currTodos, newTodos) => [...currTodos, ...newTodos], // appends newly fetched todos
+    perPage: 15, // stops making more requests if last todos fetched < 15
     data: []
   }, [page]) // runs onMount AND whenever the `page` updates (onUpdate)
 
@@ -637,6 +638,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
+| `perPage` | Stops making more requests if there is no more data to fetch. (i.e. if we have 25 todos, and the perPage is 10, after fetching 2 times, we will have 20 todos. The last 5 tells us we don't have any more to fetch because it's less than 10) For pagination. | `0` |
 | `onAbort` | Runs when the request is aborted. | empty function |
 | `onTimeout` | Called when the request times out. | empty function |
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
@@ -671,6 +673,10 @@ const options = {
     return [...currData, ...newData] 
   },
   
+  // this will tell useFetch not to run the request if the list doesn't haveMore. (pagination)
+  // i.e. if the last page fetched was < 15, don't run the request again
+  perPage: 15,
+
   // amount of times it should retry before erroring out
   retries: 3,
   
