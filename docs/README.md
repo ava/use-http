@@ -91,7 +91,7 @@ yarn add use-http    or    npm i -S use-http
     <br>
     <sub>
     Need a freelance software engineer with more than 5 years production experience at companies like Facebook, Discord, Best Buy, and Citrix?</br>
-    <a href="https://ava.inc">website</a> | <a href="mailto:alex@ava.inc">email</a> | <a href="https://twitter.com/@alexcory_">twitter</a>
+    <a href="https://ava.inc">website</a> | <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=alex@ava.inc">email</a> | <a href="https://twitter.com/@alexcory_">twitter</a>
     </sub>
   </p>
   <hr>
