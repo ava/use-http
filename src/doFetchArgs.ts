@@ -35,15 +35,15 @@ export default async function doFetchArgs(
 
   const url = `${initialURL}${path}${route}`
 
-  const body = ((): BodyInit | object | null => {
-    if (isBodyObject(routeOrBody)) return routeOrBody!
-    if (isBodyObject(bodyAs2ndParam)) return bodyAs2ndParam!
+  const body = ((): BodyInit | null => {
+    if (isBodyObject(routeOrBody)) return routeOrBody as BodyInit
+    if (isBodyObject(bodyAs2ndParam)) return bodyAs2ndParam as BodyInit
     if (
       isBrowser &&
       ((bodyAs2ndParam as any) instanceof FormData ||
         (bodyAs2ndParam as any) instanceof URLSearchParams)
     )
-      return bodyAs2ndParam!
+      return bodyAs2ndParam as string
     if (isBodyObject(initialOptions.body)) return initialOptions.body!
     return null
   })()
