@@ -11,7 +11,7 @@ import {
   UseFetchArgs,
   CachePolicies,
 } from './types'
-import { BodyOnly, FetchData, NoArgs } from './types'
+import { FetchData, NoArgs } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
 import { isEmpty, invariant } from './utils'
@@ -177,13 +177,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     if (dependencies && Array.isArray(dependencies)) {
       const methodName = requestInit.method || HTTPMethod.GET
       const methodLower = methodName.toLowerCase() as keyof ReqMethods
-      if (methodName !== HTTPMethod.GET) {
-        const req = request[methodLower] as BodyOnly
-        req(requestInit.body as BodyInit)
-      } else {
-        const req = request[methodLower] as NoArgs
-        req()
-      }
+      const req = request[methodLower] as NoArgs
+      req()
     }
   }, dependencies)
 
