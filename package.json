@@ -1,6 +1,6 @@
 {
   "name": "use-http",
-  "version": "0.2.0",
+  "version": "0.2.7",
   "homepage": "http://use-http.com",
   "main": "dist/index.js",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "https://github.com/alex-cory/use-http.git"
   },
   "dependencies": {
-    "use-ssr": "^1.0.19"
+    "use-ssr": "^1.0.22"
   },
   "peerDependencies": {
     "react": "^16.8.6",
@@ -21,14 +21,14 @@
     "@types/fetch-mock": "^7.2.3",
     "@types/jest": "^24.0.12",
     "@types/node": "^12.0.10",
-    "@types/react": "16.9.3",
+    "@types/react": "^16.9.3",
     "@types/react-dom": "^16.8.4",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
     "convert-keys": "^1.3.4",
     "eslint": "^6.0.1",
-    "eslint-config-prettier": "6.5.0",
-    "eslint-plugin-jest": "23.0.4",
+    "eslint-config-prettier": "6.6.0",
+    "eslint-plugin-jest": "23.0.5",
     "eslint-plugin-jest-formatting": "1.2.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-prettier": "^3.1.0",
@@ -54,8 +54,8 @@
     "tsc": "tsc -p . --noEmit && tsc -p ./src/__tests__",
     "test:browser": "yarn tsc && jest -c ./config/jest.config.js --env=jsdom",
     "test:browser:watch": "yarn tsc && jest --watch -c ./config/jest.config.js --env=jsdom",
-    "test:server": "yarn tsc && jest -c ./config/jest.config.js --env=node --testPathIgnorePatterns useFetch.test.tsx makeRouteAndOptions.test.tsx",
-    "test:server:watch": "yarn tsc && jest --watch -c ./config/jest.config.js --env=node --testPathIgnorePatterns useFetch.test.tsx makeRouteAndOptions.test.tsx",
+    "test:server": "yarn tsc && jest -c ./config/jest.config.js --env=node --testPathIgnorePatterns useFetch.test.tsx doFetchArgs.test.tsx",
+    "test:server:watch": "yarn tsc && jest --watch -c ./config/jest.config.js --env=node --testPathIgnorePatterns useFetch.test.tsx doFetchArgs.test.tsx",
     "test:watch": "yarn test:browser:watch && yarn test:server:watch",
     "test": "yarn test:browser && yarn test:server",
     "clean": "npm prune; yarn cache clean; rm -rf ./node_modules package-lock.json yarn.lock; yarn",

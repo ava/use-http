@@ -54,13 +54,15 @@ Features
 - Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
 - React Native support
 - Aborts/Cancels pending http requests when a component unmounts
-
+- Built in caching
 
 Examples
 =========
+
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'>useFetch + Provider</a>
+- <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg'>useFetch + Pagination + Provider</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'>useFetch + Request/Response Interceptors + Provider</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a>
 
@@ -70,6 +72,32 @@ Installation
 ```shell
 yarn add use-http    or    npm i -S use-http
 ```
+
+<div align="center">
+  <br>
+  <br>
+  <hr>
+  <p>
+    <sup>
+      <a href="https://github.com/sponsors/alex-cory">Consider sponsoring</a>
+    </sup>
+    <br>
+    <br>
+    <a href="https://ava.inc">
+      <img src="https://github.com/alex-cory/use-http/raw/caching/public/ava-logo.png" width="130" alt="Ava">
+    </a>
+    <br>
+    <sub><b>Ava, Rapid Application Development</b></sub>
+    <br>
+    <sub>
+    Need a freelance software engineer with more than 5 years production experience at companies like Facebook, Discord, Best Buy, and Citrix?</br>
+    <a href="https://ava.inc">website</a> | <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=alex@ava.inc">email</a> | <a href="https://twitter.com/@alexcory_">twitter</a>
+    </sub>
+  </p>
+  <hr>
+  <br>
+  <br>
+</div>
 
 Usage
 =============
@@ -193,6 +221,7 @@ const Todos = () => {
   const { data, loading } = useFetch({
     path: `/todos?page=${page}&amountPerPage=15`,
     onNewData: (currTodos, newTodos) => [...currTodos, ...newTodos], // appends newly fetched todos
+    perPage: 15, // stops making more requests if last todos fetched < 15
     data: []
   }, [page]) // runs onMount AND whenever the `page` updates (onUpdate)
 
@@ -213,6 +242,8 @@ const App = () => (
   </Provider>
 )
 ```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg)
 
 Destructured
 -------------
@@ -260,7 +291,9 @@ var {
 
 Relative routes
 ---------------
+
 ⚠️ `baseUrl` is no longer supported, it is now only `url`
+
 ```js
 var request = useFetch({ url: 'https://example.com' })
 // OR
@@ -275,7 +308,6 @@ Abort
 -----
 
 <img src="https://raw.githubusercontent.com/alex-cory/use-http/master/public/abort-example-1.gif" height="250" />
-
 
 ```js
 const githubRepos = useFetch({
@@ -298,7 +330,7 @@ Request/Response Interceptors with `Provider`
 ---------------------------------------------
 
 This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
-    
+
 ```js
 import { Provider } from 'use-http'
 import { toCamel } from 'convert-keys'
@@ -309,7 +341,9 @@ function App() {
   const options = {
     interceptors: {
       // every time we make an http request, this will run 1st before the request is made
-      request: async (options) => {
+      // url, path and route are supplied to the interceptor
+      // request options can be modified and must be returned
+      request: async (options, url, path, route) => {
         if (isExpired(token)) {
           token = await getNewToken()
           setToken(token)
@@ -336,11 +370,12 @@ function App() {
 }
 
 ```
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex)
 
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex)
 
 File Upload (FormData)
 ----------------------
+
 This example shows how we can upload a file using `useFetch`.
 
 ```js
@@ -399,10 +434,9 @@ const App = () => {
 
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-different-response-types-c6csw)
 
-
 Overwrite/Remove Options/Headers Set in Provider
 ------------------------------------------------
-    
+
 This example shows how to remove a header all together. Let's say you have `<Provider url='url.com' options={{ headers: { Authentication: 'Bearer MY_TOKEN' } }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that.
 
 ```js
@@ -441,9 +475,9 @@ const App = () => {
 }
 ```
 
-
 GraphQL Query
 ---------------
+
 ```js
 
 const QUERY = `
@@ -471,6 +505,7 @@ function App() {
 
 GraphQL Mutation
 -----------------
+
 ```js
 
 const MUTATION = `
@@ -504,7 +539,8 @@ function App() {
 The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
 
 useQuery (query for todos)
--------------------
+--------------------------
+
 ```js
 import { Provider, useQuery, useMutation } from 'use-http'
 
@@ -533,6 +569,7 @@ function QueryComponent() {
 
 useMutation (add a new todo)
 -------------------
+
 ```js
 function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
@@ -558,10 +595,11 @@ function MutationComponent() {
 }
 ```
 
-
 Adding the Provider
 -------------------
+
 These props are defaults used in every request inside the `<Provider />`. They can be overwritten individually
+
 ```js
 function App() {
 
@@ -578,11 +616,11 @@ function App() {
     <Provider/>
   )
 }
-
 ```
 
 Hooks
 =======
+
 | Option                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `useFetch` | The base hook |
@@ -596,8 +634,11 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
+| `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
+| `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
+| `perPage` | Stops making more requests if there is no more data to fetch. (i.e. if we have 25 todos, and the perPage is 10, after fetching 2 times, we will have 20 todos. The last 5 tells us we don't have any more to fetch because it's less than 10) For pagination. | `0` |
 | `onAbort` | Runs when the request is aborted. | empty function |
 | `onTimeout` | Called when the request times out. | empty function |
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
@@ -607,11 +648,17 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 
-
 ```jsx
 const options = {
   // accepts all `fetch` options such as headers, method, etc.
   
+  // Cache responses to improve speed and reduce amount of requests
+  // Only one request to the same endpoint will be initiated unless cacheLife expires for 'cache-first'.
+  cachePolicy: 'cache-first' // 'no-cache'
+
+  // The time in milliseconds that cache data remains fresh.
+  cacheLife: 0,
+
   // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
   url: 'https://example.com',
   
@@ -626,6 +673,10 @@ const options = {
     return [...currData, ...newData] 
   },
   
+  // this will tell useFetch not to run the request if the list doesn't haveMore. (pagination)
+  // i.e. if the last page fetched was < 15, don't run the request again
+  perPage: 15,
+
   // amount of times it should retry before erroring out
   retries: 3,
   
@@ -640,7 +691,7 @@ const options = {
   
   // typically, `interceptors` would be added as an option to the `<Provider />`
   interceptors: {
-    request: async (options) => { // `async` is not required
+    request: async (options, url, path, route) => { // `async` is not required
       return options              // returning the `options` is important
     },
     response: (response) => {
@@ -658,13 +709,16 @@ Who's using use-http?
 =====================
 <div style="display: flex; align-items: center; justify-content: center;">
   <a href="https://ava.inc">
-    <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/ava-logo.png" />
+    <img height="140px" src="https://github.com/alex-cory/use-http/raw/master/public/ava-logo.png" />
   </a>
   <a href="https://github.com/microsoft/DLWorkspace">
-    <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
+    <img height="140px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
+  </a>
+  <a href="https://github.com/mozilla/Spoke">
+    <img height="140px" src="https://github.com/alex-cory/use-http/raw/master/public/mozilla.png" />
   </a>
   <a href="https://beapte.com">
-    <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/apte-logo.png" />
+    <img height="140px" src="https://github.com/alex-cory/use-http/raw/master/public/apte-logo.png" />
   </a>
 </div>
 
