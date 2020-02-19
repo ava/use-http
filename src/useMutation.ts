@@ -12,7 +12,8 @@ type ArrayDestructure<TData = any> = [
 interface ObjectDestructure<TData = any> extends ReqBase<TData> {
   mutate: (variables?: object) => Promise<any>
 }
-type UseMutation<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TData>
+type UseMutation<TData = any> = ArrayDestructure<TData> &
+  ObjectDestructure<TData>
 
 export const useMutation = <TData = any>(
   urlOrMutation: string | TemplateStringsArray,
@@ -25,7 +26,7 @@ export const useMutation = <TData = any>(
     'useMutation',
   )
   useURLRequiredInvariant(
-    !!context.url || isString(urlOrMutation) && !mutationArg,
+    !!context.url || (isString(urlOrMutation) && !mutationArg),
     'useMutation',
     'OR you need to do useMutation("https://example.com", `your graphql mutation`)',
   )
@@ -56,7 +57,8 @@ export const useMutation = <TData = any>(
     [MUTATION, request],
   )
 
-  const data = (request.data as TData & { data: any } || { data: undefined }).data
+  const data = ((request.data as TData & { data: any }) || { data: undefined })
+    .data
 
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
     [data, loading, error, mutate],

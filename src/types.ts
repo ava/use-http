@@ -37,7 +37,7 @@ export enum CachePolicies {
   /**
    * This fetch policy will never return your initial data from the
    * cache. Instead it will always make a request using your network
-   * interface to the server. This fetch policy optimizes for data 
+   * interface to the server. This fetch policy optimizes for data
    * consistency with the server, but at the cost of an instant response
    * to the user when one is available.
    */
@@ -70,13 +70,13 @@ export interface DoFetchArgs {
 
 export interface FetchContextTypes {
   url: string
-  options: Options,
+  options: Options
   graphql?: boolean
 }
 
 export interface FetchProviderProps {
   url?: string
-  options?: Options,
+  options?: Options
   graphql?: boolean
   children: ReactNode
 }
@@ -131,7 +131,11 @@ export interface Res<TData> extends Response {
 
 export type Req<TData = any> = ReqMethods & ReqBase<TData>
 
-export type UseFetchArgs = [(string | OptionsMaybeURL | OverwriteGlobalOptions)?, (NoUrlOptions | OverwriteGlobalOptions | any[])?, any[]?]
+export type UseFetchArgs = [
+  (string | OptionsMaybeURL | OverwriteGlobalOptions)?,
+  (NoUrlOptions | OverwriteGlobalOptions | any[])?,
+  any[]?,
+]
 
 export type UseFetchArrayReturn<TData> = [
   Req<TData>,
@@ -150,7 +154,12 @@ export type UseFetch<TData> = UseFetchArrayReturn<TData> &
   UseFetchObjectReturn<TData>
 
 export type Interceptors = {
-  request?: (options: Options, url: string, path: string, route: string) => Promise<Options> | Options
+  request?: (
+    options: Options,
+    url: string,
+    path: string,
+    route: string,
+  ) => Promise<Options> | Options
   response?: (response: Res<any>) => Res<any>
 }
 
@@ -190,15 +199,16 @@ export type NonObjectKeysOf<T> = {
   [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
 }[keyof T]
 
-export type ObjectValuesOf<T extends Object> = Exclude<
+export type ObjectValuesOf<T extends Record<string, any>> = Exclude<
   Exclude<Extract<ValueOf<T>, object>, never>,
   Array<any>
 >
 
 export type UnionToIntersection<U> = (U extends any
-  ? (k: U) => void
-  : never) extends ((k: infer I) => void)
+? (k: U) => void
+: never) extends (k: infer I) => void
   ? I
   : never
 
-export type Flatten<T> = Pick<T, NonObjectKeysOf<T>> & UnionToIntersection<ObjectValuesOf<T>>
+export type Flatten<T> = Pick<T, NonObjectKeysOf<T>> &
+  UnionToIntersection<ObjectValuesOf<T>>

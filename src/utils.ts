@@ -2,19 +2,18 @@ import { useMemo, useEffect } from 'react'
 import useSSR from 'use-ssr'
 import { RequestInitJSON, OptionsMaybeURL } from './types'
 
-
 /**
  * Used for error checking. If the condition is false, throw an error
  */
 export function invariant(
   condition: boolean,
   format: string,
-  a: string = '',
-  b: string = '',
-  c: string = '',
-  d: string = '',
-  e: string = '',
-  f: string = '',
+  a = '',
+  b = '',
+  c = '',
+  d = '',
+  e = '',
+  f = '',
 ): void {
   if (process.env.NODE_ENV !== 'production') {
     if (format === undefined) {
@@ -77,9 +76,10 @@ export const isObject = (obj: any): obj is object => Object.prototype.toString.c
 /**
  * Determines if the given param is an object that can be used as a request body.
  * Returns true for native objects or arrays.
- * @param obj 
+ * @param obj
  */
-export const isBodyObject = (obj: any): boolean => isObject(obj) || Array.isArray(obj)
+export const isBodyObject = (obj: any): boolean =>
+  isObject(obj) || Array.isArray(obj)
 
 export const isFunction = (v: any): boolean => typeof v === 'function'
 

@@ -3,7 +3,6 @@ import { invariant, isBrowser, isString, isBodyObject } from './utils'
 
 const { GET } = HTTPMethod
 
-
 export default async function doFetchArgs(
   initialOptions: RequestInit,
   initialURL: string,
@@ -12,7 +11,7 @@ export default async function doFetchArgs(
   controller: AbortController,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
-  requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
+  requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>,
 ): Promise<DoFetchArgs> {
   invariant(
     !(isBodyObject(routeOrBody) && isBodyObject(bodyAs2ndParam)),
@@ -28,7 +27,8 @@ export default async function doFetchArgs(
   )
 
   const route = ((): string => {
-    if (isBrowser && routeOrBody instanceof URLSearchParams) return `?${routeOrBody}`
+    if (isBrowser && routeOrBody instanceof URLSearchParams)
+      return `?${routeOrBody}`
     if (isString(routeOrBody)) return routeOrBody as string
     return ''
   })()
@@ -44,13 +44,15 @@ export default async function doFetchArgs(
         (bodyAs2ndParam as any) instanceof URLSearchParams)
     )
       return bodyAs2ndParam as string
-    if (isBodyObject(initialOptions.body)) return JSON.stringify(initialOptions.body)
+    if (isBodyObject(initialOptions.body))
+      return JSON.stringify(initialOptions.body)
     return null
   })()
 
   const headers = ((): HeadersInit | null => {
     const contentType = ((initialOptions.headers || {}) as any)['Content-Type']
-    const shouldAddContentType = !!contentType || [HTTPMethod.POST, HTTPMethod.PUT].includes(method)
+    const shouldAddContentType =
+      !!contentType || [HTTPMethod.POST, HTTPMethod.PUT].includes(method)
     const headers: any = { ...initialOptions.headers }
     if (shouldAddContentType) {
       // default content types http://bit.ly/2N2ovOZ
@@ -79,7 +81,8 @@ export default async function doFetchArgs(
 
     if (body !== null) opts.body = body
 
-    if (requestInterceptor) return await requestInterceptor(opts, initialURL, path, route)
+    if (requestInterceptor)
+      return await requestInterceptor(opts, initialURL, path, route)
     return opts
   })()
 
@@ -87,11 +90,12 @@ export default async function doFetchArgs(
   // limit of the key size in the Map
   // used to tell if a request has already been made
   const requestID = Object.entries({ url, method, body: options.body || '' })
-    .map(([key, value]) => `${key}:${value}`).join('||')
+    .map(([key, value]) => `${key}:${value}`)
+    .join('||')
 
   return {
     url,
     options,
-    requestID
+    requestID,
   }
 }

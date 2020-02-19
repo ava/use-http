@@ -9,7 +9,7 @@ describe('useFetchArgs: general usages', (): void => {
   if (isServer) return
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
-    <Provider url='https://example.com'>{children}</Provider>
+    <Provider url="https://example.com">{children}</Provider>
   )
 
   it('should create custom options with `onMount: false` by default', (): void => {
@@ -21,15 +21,19 @@ describe('useFetchArgs: general usages', (): void => {
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
         url: 'https://example.com',
-      }
+      },
     })
   })
 
   it('should create custom options with 1st arg as config object with `onMount: true`', (): void => {
-    const { result } = renderHook((): any =>
-      useFetchArgs({
-        url: 'https://example.com',
-      }, []), // onMount === true
+    const { result } = renderHook(
+      (): any =>
+        useFetchArgs(
+          {
+            url: 'https://example.com',
+          },
+          [],
+        ), // onMount === true
     )
     expect(result.current).toEqual({
       ...useFetchArgsDefaults,
@@ -76,10 +80,9 @@ describe('useFetchArgs: general usages', (): void => {
   })
 
   it('should set default data === []', (): void => {
-    const { result } = renderHook(
-      (): any => useFetchArgs({ data: [] }),
-      { wrapper },
-    )
+    const { result } = renderHook((): any => useFetchArgs({ data: [] }), {
+      wrapper,
+    })
     expect(result.current).toStrictEqual({
       ...useFetchArgsDefaults,
       customOptions: {
@@ -89,7 +92,7 @@ describe('useFetchArgs: general usages', (): void => {
       defaults: {
         loading: false,
         data: [],
-      }
+      },
     })
   })
 
@@ -100,7 +103,9 @@ describe('useFetchArgs: general usages', (): void => {
       <Provider>{children}</Provider>
     )
 
-    const { result } = renderHook((): any => useFetchArgs(), { wrapper: wrapper2 })
+    const { result } = renderHook((): any => useFetchArgs(), {
+      wrapper: wrapper2,
+    })
 
     const expected = {
       ...useFetchArgsDefaults,
@@ -112,7 +117,9 @@ describe('useFetchArgs: general usages', (): void => {
     expect(result.current).toEqual(expected)
   })
 
-  it('should correctly execute request + response interceptors with Provider', async (): Promise<void> => {
+  it('should correctly execute request + response interceptors with Provider', async (): Promise<
+    void
+  > => {
     const interceptors = {
       request(options: any) {
         options.headers.Authorization = 'Bearer test'
@@ -121,18 +128,19 @@ describe('useFetchArgs: general usages', (): void => {
       response(response: any) {
         response.test = 'test'
         return response
-      }
+      },
     }
 
     const wrapper2 = ({ children }: { children?: ReactNode }): ReactElement => (
-      <Provider url='https://example.com' options={{ interceptors }}>{children}</Provider>
+      <Provider url="https://example.com" options={{ interceptors }}>
+        {children}
+      </Provider>
     )
 
-    const { result } = renderHook(
-      (): any => useFetchArgs(),
-      { wrapper: wrapper2 },
-    )
-    
+    const { result } = renderHook((): any => useFetchArgs(), {
+      wrapper: wrapper2,
+    })
+
     const { customOptions } = result.current
     const options = customOptions.interceptors.request({ headers: {} })
     expect(options.headers).toHaveProperty('Authorization')
@@ -146,7 +154,9 @@ describe('useFetchArgs: general usages', (): void => {
     expect(response).toEqual({ test: 'test' })
   })
 
-  it('should correctly execute request + response interceptors', async (): Promise<void> => {
+  it('should correctly execute request + response interceptors', async (): Promise<
+    void
+  > => {
     const interceptors = {
       request(options: any) {
         options.headers.Authorization = 'Bearer test'
@@ -155,11 +165,13 @@ describe('useFetchArgs: general usages', (): void => {
       response(response: any) {
         response.test = 'test'
         return response
-      }
+      },
     }
 
-    const { result } = renderHook((): any => useFetchArgs('https://example.com', { interceptors }))
-    
+    const { result } = renderHook((): any =>
+      useFetchArgs('https://example.com', { interceptors }),
+    )
+
     const { customOptions } = result.current
     const options = customOptions.interceptors.request({ headers: {} })
     expect(options.headers).toHaveProperty('Authorization')
@@ -172,7 +184,6 @@ describe('useFetchArgs: general usages', (): void => {
     expect(response).toHaveProperty('test')
     expect(response).toEqual({ test: 'test' })
   })
-
 
   it('should create custom options with `Content-Type: application/text`', (): void => {
     const options = { headers: { 'Content-Type': 'application/text' } }
@@ -181,11 +192,11 @@ describe('useFetchArgs: general usages', (): void => {
       ...useFetchArgsDefaults,
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
-        url: "https://example.com",
+        url: 'https://example.com',
       },
       requestInit: {
         ...options,
-      }
+      },
     })
   })
 
@@ -199,11 +210,11 @@ describe('useFetchArgs: general usages', (): void => {
       ...useFetchArgsDefaults,
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
-        url: "http://localhost",
+        url: 'http://localhost',
       },
       requestInit: {
         ...options,
-      }
+      },
     })
   })
 
@@ -229,11 +240,11 @@ describe('useFetchArgs: general usages', (): void => {
       ...useFetchArgsDefaults,
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
-        url: "http://localhost",
+        url: 'http://localhost',
       },
       requestInit: {
         ...overwriteProviderOptions,
-      }
+      },
     })
   })
 })
