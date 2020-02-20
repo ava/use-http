@@ -95,13 +95,17 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         const isCached = cache.has(requestID)
         const cachedData = cache.get(requestID)
         if (isCached && cachePolicy === CACHE_FIRST) {
+          setLoading(true)
           const whenCached = cache.get(requestID + ':ts')
           const age = Date.now() - whenCached
           if (cacheLife > 0 && age > cacheLife) {
             cache.delete(requestID)
             cache.delete(requestID + ':ts')
           } else {
-            return cachedData
+            res.current.data = cachedData
+            data.current = cachedData
+            setLoading(false)
+            return data.current
           }
         }
 
@@ -222,7 +226,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   // Cancel any running request when unmounting to avoid updating state after component has unmounted
   // This can happen if a request's promise resolves after component unmounts
   useEffect(() => request.abort, [request.abort])
-
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, makeResponseProxy(res), loading, error.current],
     { request, response: makeResponseProxy(res), ...request },
