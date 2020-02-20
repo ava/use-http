@@ -448,6 +448,7 @@ describe('caching - useFetch - BROWSER', (): void => {
 
 describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   const expected = { title: 'Alex Cory' }
+  const second = { title: 'Max Quinn' }
 
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
     <Provider url="https://example.com">{children}</Provider>
@@ -459,7 +460,7 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(JSON.stringify(expected))
+    fetch.once(JSON.stringify(expected)).once(JSON.stringify(second))
   })
 
   it('should return response data when awaiting. i.e. const todos = await get("/todos")', async (): Promise<
@@ -478,24 +479,76 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
   it('should re-run the request when onUpdate dependencies are updated', async (): Promise<
     void
   > => {
-    let initialValue = 0
-    const { result, rerender, waitForNextUpdate } = renderHook(
-      () =>
+    const { result, waitForNextUpdate, rerender } = renderHook(
+      ({ initialValue }) =>
         useFetch(
           {
+            path: `/${initialValue}`,
             data: {},
           },
           [initialValue],
         ), // (onMount && onUpdate) === true
-      { wrapper },
+      {
+        wrapper,
+        initialProps: {
+          initialValue: 0,
+        },
+      },
     )
+    // Default data
     expect(result.current.data).toEqual({})
-    initialValue = 1
-    rerender()
-    expect(result.current.loading).toEqual(true)
+
+    // Expected First Payload
     await waitForNextUpdate()
     expect(result.current.data).toEqual(expected)
-    expect(result.current.loading).toEqual(false)
+
+    // Expected Second Payload
+    rerender({
+      initialValue: 1,
+    })
+    await waitForNextUpdate()
+    expect(result.current.data).toEqual(second)
+  })
+
+  it('should fetch cached data when cached path is requested', async (): Promise<
+    void
+  > => {
+    const { result, waitForNextUpdate, rerender } = renderHook(
+      ({ initialValue }) =>
+        useFetch(
+          {
+            path: `/${initialValue}`,
+            data: {},
+          },
+          [initialValue],
+        ), // (onMount && onUpdate) === true
+      {
+        wrapper,
+        initialProps: {
+          initialValue: 0,
+        },
+      },
+    )
+    // Default data
+    expect(result.current.data).toEqual({})
+
+    // Expected First payload
+    await waitForNextUpdate()
+    expect(result.current.data).toEqual(expected)
+
+    // Expected second payload
+    rerender({
+      initialValue: 1,
+    })
+    await waitForNextUpdate()
+    expect(result.current.data).toEqual(second)
+
+    //Expected first payload again
+    rerender({
+      initialValue: 0,
+    })
+    await waitForNextUpdate()
+    expect(result.current.data).toEqual(expected)
   })
 })
 
