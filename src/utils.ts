@@ -116,9 +116,24 @@ export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInit => {
 
 export const isEmpty = (x: any) => x === undefined || x === null
 
-export const isBrowser = !!(
+export enum Device {
+  Browser = 'browser',
+  Server = 'server',
+  Native = 'native',
+}
+
+const { Browser, Server, Native } = Device
+
+const canUseDOM: boolean = !!(
   typeof window !== 'undefined' &&
   window.document &&
   window.document.createElement
 )
-export const isServer = !isBrowser
+
+const canUseNative: boolean = typeof navigator != 'undefined' && navigator.product == 'ReactNative'
+
+const device = canUseNative ? Native : canUseDOM ? Browser : Server
+
+export const isBrowser = device === Browser
+export const isServer = device === Server
+export const isNative = device === Native

@@ -1,5 +1,5 @@
 import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs } from './types'
-import { invariant, isBrowser, isString, isBodyObject } from './utils'
+import { invariant, isServer, isString, isBodyObject } from './utils'
 
 const { GET } = HTTPMethod
 
@@ -27,7 +27,7 @@ export default async function doFetchArgs(
   )
 
   const route = ((): string => {
-    if (isBrowser && routeOrBody instanceof URLSearchParams)
+    if (!isServer && routeOrBody instanceof URLSearchParams)
       return `?${routeOrBody}`
     if (isString(routeOrBody)) return routeOrBody as string
     return ''
@@ -37,13 +37,13 @@ export default async function doFetchArgs(
 
   const body = ((): BodyInit | null => {
     if (isBodyObject(routeOrBody)) return JSON.stringify(routeOrBody)
-    if (isBodyObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
     if (
-      isBrowser &&
+      !isServer &&
       ((bodyAs2ndParam as any) instanceof FormData ||
         (bodyAs2ndParam as any) instanceof URLSearchParams)
     )
       return bodyAs2ndParam as string
+    if (isBodyObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
     if (isBodyObject(initialOptions.body))
       return JSON.stringify(initialOptions.body)
     return null
