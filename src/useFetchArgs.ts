@@ -34,8 +34,8 @@ export const useFetchArgsDefaults = {
     path: '',
     url: '',
     interceptors: {},
-    onAbort: () => ({}),
-    onTimeout: () => ({}),
+    onAbort: () => {},
+    onTimeout: () => {},
     onNewData: (currData: any, newData: any) => newData,
     perPage: 0,
     cachePolicy: CachePolicies.CACHE_FIRST,
@@ -56,6 +56,27 @@ const defaults = Object.entries(useFetchArgsDefaults).reduce(
   },
   {} as Flatten<UseFetchArgsReturn>,
 )
+
+const useField = <DV = any>(
+  field: keyof OptionsMaybeURL | keyof NoUrlOptions,
+  urlOrOptions?: string | OptionsMaybeURL,
+  optionsNoURLs?: NoUrlOptions | any[],
+) => {
+  const context = useContext(FetchContext)
+  const contextOptions = context.options || {}
+  return useMemo((): DV => {
+    if (isObject(urlOrOptions) && urlOrOptions[field])
+      return urlOrOptions[field]
+    if (
+      isObject(optionsNoURLs) &&
+      (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]
+    ) {
+      return (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]
+    }
+    if (contextOptions[field]) return contextOptions[field]
+    return defaults[field]
+  }, [urlOrOptions, field, optionsNoURLs, contextOptions])
+}
 
 export default function useFetchArgs(
   urlOrOptionsOrOverwriteGlobal?:
@@ -109,27 +130,6 @@ export default function useFetchArgs(
     if (Array.isArray(deps)) return deps
     return defaults.dependencies
   }, [optionsNoURLsOrOverwriteGlobalOrDeps, deps])
-
-  const useField = <DV = any>(
-    field: keyof OptionsMaybeURL | keyof NoUrlOptions,
-    urlOrOptions?: string | OptionsMaybeURL,
-    optionsNoURLs?: NoUrlOptions | any[],
-  ) => {
-    const context = useContext(FetchContext)
-    const contextOptions = context.options || {}
-    return useMemo((): DV => {
-      if (isObject(urlOrOptions) && urlOrOptions[field])
-        return urlOrOptions[field]
-      if (
-        isObject(optionsNoURLs) &&
-        (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]
-      ) {
-        return (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]
-      }
-      if (contextOptions[field]) return contextOptions[field]
-      return defaults[field]
-    }, [urlOrOptions, field, optionsNoURLs, contextOptions])
-  }
 
   const data = useField('data', urlOrOptions, optionsNoURLs)
   const path = useField<string>('path', urlOrOptions, optionsNoURLs)
