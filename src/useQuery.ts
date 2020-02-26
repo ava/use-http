@@ -25,7 +25,7 @@ export const useQuery = <TData = any>(
     'useQuery',
   )
   useURLRequiredInvariant(
-    !!context.url || (isString(urlOrQuery) && !queryArg),
+    !!context.url || isString(urlOrQuery) && !queryArg,
     'useQuery',
     'OR you need to do useQuery("https://example.com", `your graphql query`)',
   )
@@ -56,8 +56,7 @@ export const useQuery = <TData = any>(
     [QUERY, request],
   )
 
-  const data = ((request.data as TData & { data: any }) || { data: undefined })
-    .data
+  const data = (request.data as TData & { data: any } || { data: undefined }).data
 
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
     [data, loading, error, query],
