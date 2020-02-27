@@ -10,8 +10,10 @@ import {
   UseFetchObjectReturn,
   UseFetchArgs,
   CachePolicies,
+  FetchData,
+  NoArgs
 } from './types'
-import { FetchData, NoArgs } from './types'
+
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
 import { isEmpty, invariant } from './utils'
@@ -29,8 +31,7 @@ const makeResponseProxy = (res = {}) => new Proxy(res, {
 
 const cache = new Map()
 
-
-function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
+function useFetch<TData = any> (...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
   const {
     url: initialURL,
@@ -43,7 +44,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     onNewData,
     perPage,
     cachePolicy, // 'cache-first' by default
-    cacheLife,
+    cacheLife
   } = customOptions
 
   const { isServer } = useSSR()
@@ -59,17 +60,16 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const [loading, setLoading] = useState<boolean>(defaults.loading)
 
   const makeFetch = useCallback((method: HTTPMethod): FetchData => {
-    
     const doFetch = async (
       routeOrBody?: string | BodyInit | object,
-      body?: BodyInit | object,
+      body?: BodyInit | object
     ): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
       controller.current = new AbortController()
       controller.current.signal.onabort = onAbort
       const theController = controller.current
 
-      let { url, options, requestID } = await doFetchArgs(
+      const { url, options, requestID } = await doFetchArgs(
         requestInit,
         initialURL,
         path,
@@ -77,14 +77,14 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         theController,
         routeOrBody,
         body,
-        interceptors.request,
+        interceptors.request
       )
 
       const isCached = cache.has(requestID)
       const cachedData = cache.get(requestID)
       if (isCached && cachePolicy === CACHE_FIRST) {
         const whenCached = cache.get(requestID + ':ts')
-        let age = Date.now() - whenCached
+        const age = Date.now() - whenCached
         if (cacheLife > 0 && age > cacheLife) {
           cache.delete(requestID)
           cache.delete(requestID + ':ts')
@@ -133,12 +133,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           cache.set(requestID, data.current)
           if (cacheLife > 0) cache.set(requestID + ':ts', Date.now())
         }
-
       } catch (err) {
         if (attempts.current > 0) return doFetch(routeOrBody, body)
         if (attempts.current < 1 && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
         if (err.name !== 'AbortError') error.current = err
-
       } finally {
         if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
         if (attempts.current > 0) attempts.current -= 1
@@ -151,8 +149,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     }
 
     return doFetch
-
-  }, [initialURL, requestInit, isServer])
+  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, cacheLife, onTimeout, defaults.data, onNewData])
 
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
@@ -169,7 +166,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     mutate: (mutation, variables) => post({ mutation, variables }),
     loading: loading,
     error: error.current,
-    data: data.current,
+    data: data.current
   }
 
   // onMount/onUpdate
@@ -180,15 +177,16 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const req = request[methodLower] as NoArgs
       req()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies)
 
   // Cancel any running request when unmounting to avoid updating state after component has unmounted
   // This can happen if a request's promise resolves after component unmounts
-  useEffect(() => request.abort, [])
+  useEffect(() => request.abort, [request.abort])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, makeResponseProxy(res), loading, error.current],
-    { request, response: makeResponseProxy(res), ...request },
+    { request, response: makeResponseProxy(res), ...request }
   )
 }
 

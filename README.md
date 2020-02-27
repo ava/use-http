@@ -29,6 +29,9 @@
     <a href="https://spectrum.chat/use-http">
         <img src="https://withspectrum.github.io/badge/badge.svg" />
     </a>
+    <a href="https://standardjs.com">
+        <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
+    </a>
 
 <!-- [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/next-js) -->
 <!--     <a href="https://bundlephobia.com/result?p=use-http">
