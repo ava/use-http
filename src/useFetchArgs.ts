@@ -1,5 +1,4 @@
 import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies, Interceptors, OverwriteGlobalOptions, Options } from './types'
-
 import { isString, isObject, invariant, pullOutRequestInit, isFunction } from './utils'
 import { useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'

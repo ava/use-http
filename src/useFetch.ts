@@ -13,7 +13,6 @@ import {
   FetchData,
   NoArgs
 } from './types'
-
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
 import { isEmpty, invariant } from './utils'
