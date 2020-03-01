@@ -83,17 +83,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const isCached = cache.has(requestID)
       const cachedData = cache.get(requestID)
       if (isCached && cachePolicy === CACHE_FIRST) {
-        setLoading(true)
         const whenCached = cache.get(requestID + ':ts')
         let age = Date.now() - whenCached
         if (cacheLife > 0 && age > cacheLife) {
           cache.delete(requestID)
           cache.delete(requestID + ':ts')
         } else {
-          res.current.data = cachedData
-          data.current = cachedData
-          setLoading(false)
-          return data.current
+          return cachedData
         }
       }
 
