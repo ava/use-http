@@ -32,12 +32,8 @@ export const useFetchArgsDefaults = {
     path: '',
     url: '',
     interceptors: {},
-    onAbort: () => {
-      // do nothing
-    },
-    onTimeout: () => {
-      // do nothing
-    },
+    onAbort: () => { /* do nothing */ },
+    onTimeout: () => { /* do nothing */ },
     onNewData: (currData: any, newData: any) => newData,
     perPage: 0,
     cachePolicy: CachePolicies.CACHE_FIRST,
@@ -73,7 +69,7 @@ const useField = <DV = any>(
   }, [urlOrOptions, field, optionsNoURLs, contextOptions])
 }
 
-export default function useFetchArgs (
+export default function useFetchArgs(
   urlOrOptionsOrOverwriteGlobal?: string | OptionsMaybeURL | OverwriteGlobalOptions,
   optionsNoURLsOrOverwriteGlobalOrDeps?: NoUrlOptions | OverwriteGlobalOptions | any[],
   deps?: any[]

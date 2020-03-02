@@ -58,7 +58,8 @@
     "jest-formatting/padding-before-describe-blocks": 2,
     "react/prop-types": 0,
     "prefer-const": "warn",
-    "no-var": "warn"
+    "no-var": "warn",
+    "space-before-function-paren": ["error", "never"]
   },
   "settings": {
     "react": {

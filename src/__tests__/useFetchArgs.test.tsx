@@ -112,13 +112,13 @@ describe('useFetchArgs: general usages', (): void => {
     expect(result.current).toEqual(expected)
   })
 
-  it('should correctly execute request + response interceptors with Provider', async (): Promise<void> => {
+  it('should correctly execute request + response interceptors with Provider', async(): Promise<void> => {
     const interceptors = {
-      request (options: any) {
+      request(options: any) {
         options.headers.Authorization = 'Bearer test'
         return options
       },
-      response (response: any) {
+      response(response: any) {
         response.test = 'test'
         return response
       }
@@ -146,13 +146,13 @@ describe('useFetchArgs: general usages', (): void => {
     expect(response).toEqual({ test: 'test' })
   })
 
-  it('should correctly execute request + response interceptors', async (): Promise<void> => {
+  it('should correctly execute request + response interceptors', async(): Promise<void> => {
     const interceptors = {
-      request (options: any) {
+      request(options: any) {
         options.headers.Authorization = 'Bearer test'
         return options
       },
-      response (response: any) {
+      response(response: any) {
         response.test = 'test'
         return response
       }

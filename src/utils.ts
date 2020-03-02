@@ -5,7 +5,7 @@ import { RequestInitJSON, OptionsMaybeURL } from './types'
 /**
  * Used for error checking. If the condition is false, throw an error
  */
-export function invariant (
+export function invariant(
   condition: boolean,
   format: string,
   a = '',
@@ -48,7 +48,7 @@ export const useExampleURL = (): string => {
   )
 }
 
-export function useURLRequiredInvariant (
+export function useURLRequiredInvariant(
   condition: boolean,
   method: string,
   optionalMessage?: string

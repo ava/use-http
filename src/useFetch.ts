@@ -30,7 +30,7 @@ const makeResponseProxy = (res = {}) => new Proxy(res, {
 
 const cache = new Map()
 
-function useFetch<TData = any> (...args: UseFetchArgs): UseFetch<TData> {
+function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
   const {
     url: initialURL,
@@ -59,7 +59,7 @@ function useFetch<TData = any> (...args: UseFetchArgs): UseFetch<TData> {
   const [loading, setLoading] = useState<boolean>(defaults.loading)
 
   const makeFetch = useCallback((method: HTTPMethod): FetchData => {
-    const doFetch = async (
+    const doFetch = async(
       routeOrBody?: string | BodyInit | object,
       body?: BodyInit | object
     ): Promise<any> => {

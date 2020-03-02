@@ -3,7 +3,7 @@ import { invariant, isServer, isString, isBodyObject } from './utils'
 
 const { GET } = HTTPMethod
 
-export default async function doFetchArgs (
+export default async function doFetchArgs(
   initialOptions: RequestInit,
   initialURL: string,
   path: string,
@@ -62,7 +62,7 @@ export default async function doFetchArgs (
     return headers
   })()
 
-  const options = await (async (): Promise<RequestInit> => {
+  const options = await (async(): Promise<RequestInit> => {
     const opts = {
       ...initialOptions,
       method,
