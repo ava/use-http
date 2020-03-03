@@ -264,95 +264,80 @@ describe('timeouts', (): void => {
   afterEach((): void => {
     fetch.resetMocks()
     cleanup()
+    jest.useRealTimers()
   })
 
   beforeEach((): void => {
-    fetch.mockResponse(
-      () => new Promise((resolve, reject) => setTimeout(() => reject({ name: 'AbortError', message: 'The user aborted a request.' }), 100))
-    )
+    fetch.resetMocks()
+    jest.useFakeTimers()
   })
 
   it('should execute GET and timeout after 1000ms, and fire `onTimeout` and `onAbort`', async (done): Promise<
     void
   > => {
-    const onAbort = { called: false, timesCalled: 0 }
-    const onTimeout = { called: false, timesCalled: 0 }
+    fetch.mockResponse(async () => jest.advanceTimersByTime(100))
+    const onAbort = jest.fn()
+    const onTimeout = jest.fn()
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
         timeout: 100,
-        onAbort() {
-          onAbort.called = true
-          onAbort.timesCalled += 1
-        },
-        onTimeout() {
-          onTimeout.called = true
-          onTimeout.timesCalled += 1
-        },
+        onAbort,
+        onTimeout,
       }, []), // onMount === true
       { wrapper }
     )
     expect(fetch).toHaveBeenCalledTimes(0)
-    expect(onAbort.called).toBe(false)
-    expect(onTimeout.called).toBe(false)
-    expect(onAbort.timesCalled).toBe(0)
-    expect(onTimeout.timesCalled).toBe(0)
+    expect(onAbort).not.toBeCalled()
+    expect(onTimeout).not.toBeCalled()
+    expect(onAbort).toHaveBeenCalledTimes(0)
+    expect(onTimeout).toHaveBeenCalledTimes(0)
     expect(result.current.loading).toBe(true)
-    await waitForNextUpdate({ timeout: 101 })
-    expect(fetch).toHaveBeenCalledTimes(1)
+    await waitForNextUpdate()
     expect(result.current.loading).toBe(false)
     expect(result.current.error.name).toBe('AbortError')
     expect(result.current.error.message).toBe('Timeout Error')
-    expect(onAbort.called).toBe(true)
-    expect(onTimeout.called).toBe(true)
-    expect(onAbort.timesCalled).toBe(1)
-    expect(onTimeout.timesCalled).toBe(1)
+    expect(onAbort).toBeCalled()
+    expect(onTimeout).toBeCalled()
+    expect(onAbort).toHaveBeenCalledTimes(1)
+    expect(onTimeout).toHaveBeenCalledTimes(1)
     done()
   })
 
   it('should execute GET, fail, then retry 1 additional time', async (done): Promise<
     void
   > => {
-    const onAbort = { called: false, timesCalled: 0 }
-    const onTimeout = { called: false, timesCalled: 0 }
-    const { result, waitForNextUpdate } = renderHook(
+    fetch.mockResponses(
+      [async () => jest.advanceTimersByTime(10)],
+      [async () => jest.advanceTimersByTime(10)],
+    )
+    const onAbort = jest.fn()
+    const onTimeout = jest.fn()
+    const { result, waitForNextUpdate, rerender } = renderHook(
       () => useFetch({
         retries: 1,
         timeout: 10,
         path: '/todos',
-        onAbort() {
-          onAbort.called = true
-          onAbort.timesCalled += 1
-        },
-        onTimeout() {
-          onTimeout.called = true
-          onTimeout.timesCalled += 1
-        }
+        onAbort,
+        onTimeout,
       }, []), // onMount === true
       { wrapper }
     )
-    expect(onAbort.called).toBe(false)
-    expect(onTimeout.called).toBe(false)
-    expect(onAbort.timesCalled).toBe(0)
-    expect(onTimeout.timesCalled).toBe(0)
+    expect(onAbort).not.toBeCalled()
+    expect(onTimeout).not.toBeCalled()
+    expect(onAbort).toHaveBeenCalledTimes(0)
+    expect(onTimeout).toHaveBeenCalledTimes(0)
     expect(result.current.loading).toBe(true)
-    await waitForNextUpdate()
-    expect(onAbort.called).toBe(true)
-    expect(onTimeout.called).toBe(true)
-    expect(onAbort.timesCalled).toBe(1)
-    expect(onTimeout.timesCalled).toBe(1)
-    expect(result.current.error).toBe(undefined)
-    expect(result.current.data).toBe(undefined)
-    expect(result.current.loading).toBe(true)
+
     await waitForNextUpdate()
     expect(fetch.mock.calls[0][0]).toBe('https://example.com/todos')
     expect(fetch).toHaveBeenCalledTimes(2)
     expect(result.current.loading).toBe(false)
     expect(result.current.error.name).toBe('AbortError')
     expect(result.current.error.message).toBe('Timeout Error')
-    expect(onAbort.called).toBe(true)
-    expect(onTimeout.called).toBe(true)
-    expect(onAbort.timesCalled).toBe(2)
-    expect(onTimeout.timesCalled).toBe(2)
+    expect(onAbort).toBeCalled()
+    expect(onTimeout).toBeCalled()
+    expect(onAbort).toHaveBeenCalledTimes(2)
+    expect(onTimeout).toHaveBeenCalledTimes(2)
     done()
   })
 })
@@ -366,6 +351,7 @@ describe('caching - useFetch - BROWSER', (): void => {
   })
 
   beforeEach((): void => {
+    jest.useRealTimers()
     fetch.mockResponse(JSON.stringify(expected))
   })
 
