@@ -572,7 +572,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
       { wrapper }
     )
     await result.current.get()
-    // expect(fetch.mock.calls[0][1].data).toEqual('path');
+    expect((fetch.mock.calls[0][1] as any).data).toEqual('path')
   })
 
   it ('should pass the proper route string to `interceptors.request`', async (): Promise<void> => {
@@ -581,7 +581,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
       { wrapper }
     )
     await result.current.get('/route')
-    // expect(fetch.mock.calls[0][1].data).toEqual('route');
+    expect((fetch.mock.calls[0][1] as any).data).toEqual('route');
   })
 
   it ('should pass the proper url string to `interceptors.request`', async (): Promise<void> => {
@@ -590,7 +590,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
       { wrapper }
     )
     await result.current.get()
-    // expect(fetch.mock.calls[0][1].data).toEqual('url');
+    expect((fetch.mock.calls[0][1] as any).data).toEqual('url');
   })
 })
 
