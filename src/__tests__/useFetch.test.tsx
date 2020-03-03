@@ -434,19 +434,13 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
 
   it('should re-run the request when onUpdate dependencies are updated', async (): Promise<void> => {
     const { result, waitForNextUpdate, rerender } = renderHook(
-      ({ initialValue }) =>
-        useFetch(
-          {
-            path: `/${initialValue}`,
-            data: {},
-          },
-          [initialValue],
-        ), // (onMount && onUpdate) === true
+      ({ initialValue }) => useFetch({
+        path: `/${initialValue}`,
+        data: {},
+      }, [initialValue]), // (onMount && onUpdate) === true
       {
         wrapper,
-        initialProps: {
-          initialValue: 0,
-        },
+        initialProps: { initialValue: 0 },
       },
     )
     // Default data
@@ -457,23 +451,17 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
     expect(result.current.data).toEqual(expected)
 
     // Expected Second Payload
-    rerender({
-      initialValue: 1,
-    })
+    rerender({ initialValue: 1 })
     await waitForNextUpdate()
     expect(result.current.data).toEqual(second)
   })
 
   it('should fetch cached data when cached path is requested', async (): Promise<void> => {
     const { result, waitForNextUpdate, rerender } = renderHook(
-      ({ initialValue }) =>
-        useFetch(
-          {
-            path: `/${initialValue}`,
-            data: {},
-          },
-          [initialValue],
-        ), // (onMount && onUpdate) === true
+      ({ initialValue }) => useFetch({
+        path: `/${initialValue}`,
+        data: {},
+      }, [initialValue]), // (onMount && onUpdate) === true
       {
         wrapper,
         initialProps: {
@@ -489,16 +477,12 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
     expect(result.current.data).toEqual(expected)
 
     // Expected second payload
-    rerender({
-      initialValue: 1,
-    })
+    rerender({ initialValue: 1 })
     await waitForNextUpdate()
     expect(result.current.data).toEqual(second)
 
     //Expected first payload again
-    rerender({
-      initialValue: 0,
-    })
+    rerender({ initialValue: 0 })
     await waitForNextUpdate()
     expect(result.current.data).toEqual(expected)
   })
