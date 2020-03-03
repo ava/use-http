@@ -49,6 +49,7 @@ export const useFetchArgsDefaults = {
   dependencies: undefined,
 }
 
+// TODO: see if `Object.entries` is supported for IE
 const defaults = Object.entries(useFetchArgsDefaults).reduce((acc, [key, value]) => {
   if (isObject(value)) return { ...acc, ...value }
   return { ...acc, [key]: value }

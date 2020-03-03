@@ -1,5 +1,8 @@
 import doFetchArgs from '../doFetchArgs'
-import { HTTPMethod } from '../types'
+import { HTTPMethod, CachePolicies } from '../types'
+
+const defaultCachePolicy = CachePolicies.CACHE_FIRST
+
 
 describe('doFetchArgs: general usages', (): void => {
 
@@ -10,12 +13,15 @@ describe('doFetchArgs: general usages', (): void => {
   it('should form the correct URL', async (): Promise<void> => {
     const controller = new AbortController()
     const expectedRoute = '/test'
+    const cache = new Map()
     const { url, options } = await doFetchArgs(
       {},
       '',
       '',
       HTTPMethod.POST,
       controller,
+      defaultCachePolicy,
+      cache,
       expectedRoute,
       {},
     )
@@ -32,12 +38,15 @@ describe('doFetchArgs: general usages', (): void => {
 
   it('should accept an array for the body of a request',  async (): Promise<void> => {
     const controller = new AbortController()
+    const cache = new Map()
     const { options, url } = await doFetchArgs(
       {},
       'https://example.com',
       '',
       HTTPMethod.POST,
       controller,
+      defaultCachePolicy,
+      cache,
       '/test',
       [],
     )
@@ -54,12 +63,15 @@ describe('doFetchArgs: general usages', (): void => {
 
   it('should correctly add `path` and `route` to the URL', async (): Promise<void> => {
     const controller = new AbortController()
+    const cache = new Map()
     const { url } = await doFetchArgs(
       {},
       'https://example.com',
       '/path',
       HTTPMethod.POST,
       controller,
+      defaultCachePolicy,
+      cache,
       '/route',
       {},
     )
@@ -68,6 +80,7 @@ describe('doFetchArgs: general usages', (): void => {
 
   it('should correctly modify the options with the request interceptor', async (): Promise<void> => {
     const controller = new AbortController()
+    const cache = new Map()
     const interceptors = {
       request(options: any) {
         options.headers.Authorization = 'Bearer test'
@@ -80,6 +93,8 @@ describe('doFetchArgs: general usages', (): void => {
       '',
       HTTPMethod.POST,
       controller,
+      defaultCachePolicy,
+      cache,
       '/test',
       {},
       interceptors.request,
@@ -100,9 +115,20 @@ describe('doFetchArgs: general usages', (): void => {
 describe('doFetchArgs: Errors', (): void => {
   it('should error if 1st and 2nd arg of doFetch are both objects', async (): Promise<void> => {
     const controller = new AbortController()
+    const cache = new Map()
     // AKA, the last 2 arguments of doFetchArgs are both objects
     try {
-      await doFetchArgs({}, '', '', HTTPMethod.GET, controller, {}, {})
+      await doFetchArgs(
+        {},
+        '',
+        '',
+        HTTPMethod.GET,
+        controller,
+        defaultCachePolicy,
+        cache,
+        {},
+        {}
+      )
     } catch(err) {
       expect(err.name).toBe('Invariant Violation')
       expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')
@@ -111,9 +137,20 @@ describe('doFetchArgs: Errors', (): void => {
 
   it('should error if 1st and 2nd arg of doFetch are both arrays', async (): Promise<void> => {
     const controller = new AbortController()
+    const cache = new Map()
     // AKA, the last 2 arguments of doFetchArgs are both arrays
     try {
-      await doFetchArgs({}, '', '', HTTPMethod.GET, controller, [], [])
+      await doFetchArgs(
+        {},
+        '',
+        '',
+        HTTPMethod.GET,
+        controller,
+        defaultCachePolicy,
+        cache,
+        [],
+        []
+      )
     } catch(err) {
       expect(err.name).toBe('Invariant Violation')
       expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')

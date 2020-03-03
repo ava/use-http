@@ -65,7 +65,13 @@ export enum CachePolicies {
 export interface DoFetchArgs {
   url: string
   options: RequestInit
-  requestID: string
+  response: {
+    isCached: boolean
+    id: string
+    cached?: Response
+    ageID: string
+    age: number
+  }
 }
 
 export interface FetchContextTypes {

@@ -260,6 +260,7 @@ describe('timeouts', (): void => {
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => (
     <Provider url='https://example.com' options={{ cachePolicy: NO_CACHE }}>{children}</Provider>
   )
+  const timeout = 100
 
   afterEach((): void => {
     fetch.resetMocks()
@@ -268,18 +269,18 @@ describe('timeouts', (): void => {
 
   beforeEach((): void => {
     fetch.mockResponse(
-      () => new Promise((resolve, reject) => setTimeout(() => reject({ name: 'AbortError', message: 'The user aborted a request.' }), 100))
+      () => new Promise((resolve, reject) => setTimeout(() => reject({ name: 'AbortError', message: 'The user aborted a request.' }), timeout))
     )
   })
 
-  it('should execute GET and timeout after 1000ms, and fire `onTimeout` and `onAbort`', async (done): Promise<
+  it('should execute GET and timeout after 100ms, and fire `onTimeout` and `onAbort`', async (): Promise<
     void
   > => {
     const onAbort = { called: false, timesCalled: 0 }
     const onTimeout = { called: false, timesCalled: 0 }
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
-        timeout: 100,
+        timeout,
         onAbort() {
           onAbort.called = true
           onAbort.timesCalled += 1
@@ -297,7 +298,7 @@ describe('timeouts', (): void => {
     expect(onAbort.timesCalled).toBe(0)
     expect(onTimeout.timesCalled).toBe(0)
     expect(result.current.loading).toBe(true)
-    await waitForNextUpdate({ timeout: 101 })
+    await waitForNextUpdate()
     expect(fetch).toHaveBeenCalledTimes(1)
     expect(result.current.loading).toBe(false)
     expect(result.current.error.name).toBe('AbortError')
@@ -306,10 +307,9 @@ describe('timeouts', (): void => {
     expect(onTimeout.called).toBe(true)
     expect(onAbort.timesCalled).toBe(1)
     expect(onTimeout.timesCalled).toBe(1)
-    done()
   })
 
-  it('should execute GET, fail, then retry 1 additional time', async (done): Promise<
+  it('should execute GET, fail, then retry 1 additional time', async (): Promise<
     void
   > => {
     const onAbort = { called: false, timesCalled: 0 }
@@ -317,7 +317,7 @@ describe('timeouts', (): void => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
         retries: 1,
-        timeout: 10,
+        timeout,
         path: '/todos',
         onAbort() {
           onAbort.called = true
@@ -336,6 +336,7 @@ describe('timeouts', (): void => {
     expect(onTimeout.timesCalled).toBe(0)
     expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
+    expect(fetch).toHaveBeenCalledTimes(1)
     expect(onAbort.called).toBe(true)
     expect(onTimeout.called).toBe(true)
     expect(onAbort.timesCalled).toBe(1)
@@ -353,7 +354,6 @@ describe('timeouts', (): void => {
     expect(onTimeout.called).toBe(true)
     expect(onAbort.timesCalled).toBe(2)
     expect(onTimeout.timesCalled).toBe(2)
-    done()
   })
 })
 

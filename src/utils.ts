@@ -83,6 +83,10 @@ export const isBodyObject = (obj: any): boolean => isObject(obj) || Array.isArra
 
 export const isFunction = (v: any): boolean => typeof v === 'function'
 
+// const requestFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Request('')))
+// const responseFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Response()))
+// export const customResponseFields = [...responseFields, 'data']
+
 // TODO: come back and fix the "anys" in this http://bit.ly/2Lm3OLi
 /**
  * Makes an object that will match the standards of a normal fetch's options
@@ -137,3 +141,18 @@ const device = canUseNative ? Native : canUseDOM ? Browser : Server
 export const isBrowser = device === Browser
 export const isServer = device === Server
 export const isNative = device === Native
+
+export const tryGetData = async (res: Response | undefined, defaultData: any) => {
+  if (typeof res === 'undefined') return
+  // if (!isEmpty(res) && res.constructor.name !== 'Response') return undefined
+  let data
+  try {
+    data = await res.json()
+  } catch (er) {
+    try {
+      data = (await res.text()) as any // FIXME: should not be `any` type
+    } catch (er) {}
+  }
+
+  return (defaultData && isEmpty(data)) ? defaultData : data
+}
