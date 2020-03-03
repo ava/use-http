@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 /* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/camelcase */
 import React, { ReactElement, ReactNode } from 'react'
@@ -103,12 +104,12 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
       () => useFetch('https://example.com', []), // onMount === true
       { wrapper: wrapper as React.ComponentType }
     )
-
     var [request, response, loading, error] = result.current
     expect(request.loading).toBe(true)
     expect(loading).toBe(true)
     expect(error).toBe(undefined)
     await waitForNextUpdate()
+    // eslint-disable-next-line no-redeclare
     var [request, response, loading] = result.current
     expect(response.data).toEqual(expected)
     expect(request.loading).toBe(false)
