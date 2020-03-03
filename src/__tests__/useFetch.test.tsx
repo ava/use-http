@@ -695,12 +695,13 @@ describe('useFetch - BROWSER - errors', (): void => {
   })
 
   it('should reset the error after each call', async(): Promise<void> => {
-    const { result } = renderHook(
+    const { result, rerender } = renderHook(
       () => useFetch('https://example.com', { cachePolicy: NO_CACHE })
     )
     expect(result.current.loading).toBe(false)
     await result.current.get()
     expect(result.current.error).toEqual(expectedError)
+    rerender()
     await result.current.get()
     expect(result.current.error).toBe(undefined)
     expect(result.current.data).toEqual(expectedSuccess)
