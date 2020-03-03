@@ -349,7 +349,6 @@ describe('caching - useFetch - BROWSER', (): void => {
   })
 
   beforeEach((): void => {
-    jest.useRealTimers()
     fetch.mockResponse(JSON.stringify(expected))
   })
 
