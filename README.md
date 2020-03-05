@@ -23,14 +23,11 @@
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
     </a>
-   <a href="http://packagequality.com/#?package=use-http">
-     <img src="https://npm.packagequality.com/shield/use-http.svg" />
-   </a>
-    <a href="https://spectrum.chat/use-http">
-        <img src="https://withspectrum.github.io/badge/badge.svg" />
+    <a href="http://packagequality.com/#?package=use-http">
+      <img src="https://npm.packagequality.com/shield/use-http.svg" />
     </a>
     <a href="https://standardjs.com">
-        <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
+      <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
     </a>
 
 <!-- [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/next-js) -->
