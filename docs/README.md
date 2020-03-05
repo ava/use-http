@@ -32,6 +32,10 @@
     <a href="https://greenkeeper.io/">
       <img alt="undefined" src="https://badges.greenkeeper.io/alex-cory/use-http.svg">
     </a>
+    <a href="https://standardjs.com">
+        <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
+    </a>
+
 </p>
 
 <img align="right" src="https://media.giphy.com/media/fAFg3xESCJyw/giphy.gif" />

@@ -3,7 +3,6 @@ import { invariant, isServer, isString, isBodyObject } from './utils'
 
 const { GET } = HTTPMethod
 
-
 export default async function doFetchArgs<TData = any>(
   initialOptions: RequestInit,
   initialURL: string,
@@ -14,19 +13,19 @@ export default async function doFetchArgs<TData = any>(
   cache: Map<string, Res<TData> | number>,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
-  requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>,
+  requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
 ): Promise<DoFetchArgs> {
   invariant(
     !(isBodyObject(routeOrBody) && isBodyObject(bodyAs2ndParam)),
-    `If first argument of ${method.toLowerCase()}() is an object, you cannot have a 2nd argument. 😜`,
+    `If first argument of ${method.toLowerCase()}() is an object, you cannot have a 2nd argument. 😜`
   )
   invariant(
     !(method === GET && isBodyObject(routeOrBody)),
-    `You can only have query params as 1st argument of request.get()`,
+    'You can only have query params as 1st argument of request.get()'
   )
   invariant(
     !(method === GET && bodyAs2ndParam !== undefined),
-    `You can only have query params as 1st argument of request.get()`,
+    'You can only have query params as 1st argument of request.get()'
   )
 
   const route = ((): string => {
@@ -43,8 +42,7 @@ export default async function doFetchArgs<TData = any>(
       !isServer &&
       ((bodyAs2ndParam as any) instanceof FormData ||
         (bodyAs2ndParam as any) instanceof URLSearchParams)
-    )
-      return bodyAs2ndParam as string
+    ) { return bodyAs2ndParam as string }
     if (isBodyObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
     if (isBodyObject(initialOptions.body)) return JSON.stringify(initialOptions.body)
     return null
@@ -70,7 +68,7 @@ export default async function doFetchArgs<TData = any>(
     const opts = {
       ...initialOptions,
       method,
-      signal: controller.signal,
+      signal: controller.signal
     }
 
     if (headers !== null) {
@@ -81,7 +79,10 @@ export default async function doFetchArgs<TData = any>(
 
     if (body !== null) opts.body = body
 
-    if (requestInterceptor) return await requestInterceptor(opts, initialURL, path, route)
+    if (requestInterceptor) {
+      const interceptor = await requestInterceptor(opts, initialURL, path, route)
+      return interceptor
+    }
     return opts
   })()
 

@@ -3,9 +3,7 @@ import { HTTPMethod, CachePolicies } from '../types'
 
 const defaultCachePolicy = CachePolicies.CACHE_FIRST
 
-
 describe('doFetchArgs: general usages', (): void => {
-
   it('should be defined', (): void => {
     expect(doFetchArgs).toBeDefined()
   })
@@ -23,20 +21,20 @@ describe('doFetchArgs: general usages', (): void => {
       defaultCachePolicy,
       cache,
       expectedRoute,
-      {},
+      {}
     )
     expect(url).toBe(expectedRoute)
     expect(options).toStrictEqual({
       body: '{}',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       method: 'POST',
-      signal: controller.signal,
+      signal: controller.signal
     })
   })
 
-  it('should accept an array for the body of a request',  async (): Promise<void> => {
+  it('should accept an array for the body of a request', async (): Promise<void> => {
     const controller = new AbortController()
     const cache = new Map()
     const { options, url } = await doFetchArgs(
@@ -48,16 +46,16 @@ describe('doFetchArgs: general usages', (): void => {
       defaultCachePolicy,
       cache,
       '/test',
-      [],
+      []
     )
     expect(url).toBe('https://example.com/test')
     expect(options).toStrictEqual({
       body: '[]',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       method: 'POST',
-      signal: controller.signal,
+      signal: controller.signal
     })
   })
 
@@ -73,7 +71,7 @@ describe('doFetchArgs: general usages', (): void => {
       defaultCachePolicy,
       cache,
       '/route',
-      {},
+      {}
     )
     expect(url).toBe('https://example.com/path/route')
   })
@@ -97,17 +95,17 @@ describe('doFetchArgs: general usages', (): void => {
       cache,
       '/test',
       {},
-      interceptors.request,
+      interceptors.request
     )
     expect(options.headers).toHaveProperty('Authorization')
     expect(options).toStrictEqual({
       body: '{}',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer test',
+        Authorization: 'Bearer test'
       },
       method: 'POST',
-      signal: controller.signal,
+      signal: controller.signal
     })
   })
 })
@@ -117,8 +115,24 @@ describe('doFetchArgs: Errors', (): void => {
     const controller = new AbortController()
     const cache = new Map()
     // AKA, the last 2 arguments of doFetchArgs are both objects
-    try {
-      await doFetchArgs(
+    // try {
+    //   await doFetchArgs(
+    //     {},
+    //     '',
+    //     '',
+    //     HTTPMethod.GET,
+    //     controller,
+    //     defaultCachePolicy,
+    //     cache,
+    //     {},
+    //     {}
+    //   )
+    // } catch (err) {
+    //   expect(err.name).toBe('Invariant Violation')
+    //   expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')
+    // }
+    await expect(
+      doFetchArgs(
         {},
         '',
         '',
@@ -129,18 +143,34 @@ describe('doFetchArgs: Errors', (): void => {
         {},
         {}
       )
-    } catch(err) {
-      expect(err.name).toBe('Invariant Violation')
-      expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')
-    }
+    ).rejects.toMatchObject({
+      name: 'Invariant Violation',
+      message: 'If first argument of get() is an object, you cannot have a 2nd argument. 😜'
+    })
   })
 
   it('should error if 1st and 2nd arg of doFetch are both arrays', async (): Promise<void> => {
     const controller = new AbortController()
     const cache = new Map()
     // AKA, the last 2 arguments of doFetchArgs are both arrays
-    try {
-      await doFetchArgs(
+    // try {
+    //   await doFetchArgs(
+    //     {},
+    //     '',
+    //     '',
+    //     HTTPMethod.GET,
+    //     controller,
+    //     defaultCachePolicy,
+    //     cache,
+    //     [],
+    //     []
+    //   )
+    // } catch (err) {
+    //   expect(err.name).toBe('Invariant Violation')
+    //   expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')
+    // }
+    await expect(
+      doFetchArgs(
         {},
         '',
         '',
@@ -151,10 +181,10 @@ describe('doFetchArgs: Errors', (): void => {
         [],
         []
       )
-    } catch(err) {
-      expect(err.name).toBe('Invariant Violation')
-      expect(err.message).toBe('If first argument of get() is an object, you cannot have a 2nd argument. 😜')
-    }
+    ).rejects.toMatchObject({
+      name: 'Invariant Violation',
+      message: 'If first argument of get() is an object, you cannot have a 2nd argument. 😜'
+    })
   })
 
   // ADD TESTS:
