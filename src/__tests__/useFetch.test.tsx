@@ -700,13 +700,13 @@ describe('useFetch - BROWSER - errors', (): void => {
     )
     expect(result.current.loading).toBe(false)
 
-    await act(async () => {
+    await act(async() => {
       await result.current.get()
     })
 
     expect(result.current.error).toEqual(expectedError)
 
-    await act(async () => {
+    await act(async() => {
       await result.current.get()
     })
 

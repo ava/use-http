@@ -270,14 +270,18 @@ describe('useFetchArgs: Errors', (): void => {
     )
   })
 
+  // TODO
   it('should error if 1st and 2nd arg are both strings', (): void => {
-    // const { result } = renderHook((): any => useCustomOptions('http://example.com', '?cool=sweet'))
+    expect(typeof useFetchArgs).toBe('function')
+    // const { result } = renderHook((): any => useFetchArgs('http://example.com', '?cool=sweet'))
     // expect(result.error.name).toBe('Invariant Violation')
     // expect(result.error.message).toBe('You cannot have a 2nd parameter of useFetch when your first argument is an object config.')
   })
 
+  // TODO
   it('should error if 1st arg is object and 2nd arg is string', (): void => {
-    // const { result } = renderHook((): any => useCustomOptions({}, '?cool=sweet'))
+    expect(typeof useFetchArgs).toBe('function')
+    // const { result } = renderHook((): any => useFetchArgs({}, '?cool=sweet'))
     // expect(result.error.name).toBe('Invariant Violation')
     // expect(result.error.message).toBe('You cannot have a 2nd parameter of useFetch when your first argument is an object config.')
   })
