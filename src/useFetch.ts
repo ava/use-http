@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 import useSSR from 'use-ssr'
 import {
   HTTPMethod,
@@ -10,25 +11,16 @@ import {
   UseFetchObjectReturn,
   UseFetchArgs,
   CachePolicies,
+  FetchData,
+  NoArgs
 } from './types'
-import { FetchData, NoArgs } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { isEmpty, invariant } from './utils'
+import { invariant, tryGetData, responseKeys, responseMethods, responseFields } from './utils'
 
 const { CACHE_FIRST } = CachePolicies
 
-const responseMethods = ['clone', 'error', 'redirect', 'arrayBuffer', 'blob', 'formData', 'json', 'text']
-
-const makeResponseProxy = (res = {}) => new Proxy(res, {
-  get: (httpResponse: any, key: string) => {
-    if (responseMethods.includes(key)) return () => httpResponse.current[key]()
-    return (httpResponse.current || {})[key]
-  }
-})
-
 const cache = new Map()
-
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
@@ -43,7 +35,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     onNewData,
     perPage,
     cachePolicy, // 'cache-first' by default
-    cacheLife,
+    cacheLife
   } = customOptions
 
   const { isServer } = useSSR()
@@ -59,37 +51,43 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const [loading, setLoading] = useState<boolean>(defaults.loading)
 
   const makeFetch = useCallback((method: HTTPMethod): FetchData => {
-    
     const doFetch = async (
       routeOrBody?: string | BodyInit | object,
-      body?: BodyInit | object,
+      body?: BodyInit | object
     ): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
       controller.current = new AbortController()
       controller.current.signal.onabort = onAbort
       const theController = controller.current
 
-      let { url, options, requestID } = await doFetchArgs(
+      const { url, options, response } = await doFetchArgs<TData>(
         requestInit,
         initialURL,
         path,
         method,
         theController,
+        cachePolicy,
+        cache,
         routeOrBody,
         body,
-        interceptors.request,
+        interceptors.request
       )
 
-      const isCached = cache.has(requestID)
-      const cachedData = cache.get(requestID)
-      if (isCached && cachePolicy === CACHE_FIRST) {
-        const whenCached = cache.get(requestID + ':ts')
-        let age = Date.now() - whenCached
-        if (cacheLife > 0 && age > cacheLife) {
-          cache.delete(requestID)
-          cache.delete(requestID + ':ts')
+      if (response.isCached && cachePolicy === CACHE_FIRST) {
+        setLoading(true)
+        if (cacheLife > 0 && response.age > cacheLife) {
+          cache.delete(response.id)
+          cache.delete(response.ageID)
         } else {
-          return cachedData
+          try {
+            res.current.data = await tryGetData(response.cached, defaults.data)
+            data.current = res.current.data as TData
+            setLoading(false)
+            return data.current
+          } catch (err) {
+            error.current = err
+            setLoading(false)
+          }
         }
       }
 
@@ -109,18 +107,15 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       let newRes
 
       try {
-        newRes = ((await fetch(url, options)) || {}) as Res<TData>
+        newRes = await fetch(url, options)
         res.current = newRes.clone()
 
-        try {
-          newData = await newRes.json()
-        } catch (er) {
-          try {
-            newData = (await newRes.text()) as any // FIXME: should not be `any` type
-          } catch (er) {}
+        if (cachePolicy === CACHE_FIRST) {
+          cache.set(response.id, newRes.clone())
+          if (cacheLife > 0) cache.set(response.ageID, Date.now())
         }
 
-        newData = (defaults.data && isEmpty(newData)) ? defaults.data : newData
+        newData = await tryGetData(newRes, defaults.data)
         res.current.data = onNewData(data.current, newData)
 
         res.current = interceptors.response ? interceptors.response(res.current) : res.current
@@ -128,31 +123,25 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         data.current = res.current.data as TData
 
         if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
-
-        if (cachePolicy === CACHE_FIRST) {
-          cache.set(requestID, data.current)
-          if (cacheLife > 0) cache.set(requestID + ':ts', Date.now())
-        }
-
       } catch (err) {
         if (attempts.current > 0) return doFetch(routeOrBody, body)
         if (attempts.current < 1 && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
         if (err.name !== 'AbortError') error.current = err
-
       } finally {
         if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
         if (attempts.current > 0) attempts.current -= 1
         timedout.current = false
         if (timer) clearTimeout(timer)
         controller.current = undefined
-        setLoading(false)
       }
+
+      setLoading(false)
+
       return data.current
     }
 
     return doFetch
-
-  }, [initialURL, requestInit, isServer])
+  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, cacheLife, onTimeout, defaults.data, onNewData])
 
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
@@ -169,8 +158,29 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     mutate: (mutation, variables) => post({ mutation, variables }),
     loading: loading,
     error: error.current,
-    data: data.current,
+    data: data.current
   }
+
+  const response = useMemo((): any => {
+    const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
+    return Object.defineProperties({}, responseKeys.reduce((acc: any, field: keyof Res<TData>) => {
+      if (responseFields.includes(field as any)) {
+        acc[field] = {
+          get: () => {
+            if (field === 'data') return data.current
+            return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
+          },
+          enumerable: true
+        }
+      } else if (responseMethods.includes(field as any)) {
+        acc[field] = {
+          value: () => clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>](),
+          enumerable: true
+        }
+      }
+      return acc
+    }, {}))
+  }, [res.current])
 
   // onMount/onUpdate
   useEffect((): any => {
@@ -180,15 +190,16 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const req = request[methodLower] as NoArgs
       req()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies)
 
   // Cancel any running request when unmounting to avoid updating state after component has unmounted
   // This can happen if a request's promise resolves after component unmounts
-  useEffect(() => request.abort, [])
+  useEffect(() => request.abort, [request.abort])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, makeResponseProxy(res), loading, error.current],
-    { request, response: makeResponseProxy(res), ...request },
+    [request, response, loading, error.current],
+    { request, response, ...request }
   )
 }
 

@@ -1,30 +1,31 @@
-import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs } from './types'
+import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs, CachePolicies, Res } from './types'
 import { invariant, isServer, isString, isBodyObject } from './utils'
 
 const { GET } = HTTPMethod
 
-
-export default async function doFetchArgs(
+export default async function doFetchArgs<TData = any>(
   initialOptions: RequestInit,
   initialURL: string,
   path: string,
   method: HTTPMethod,
   controller: AbortController,
+  cachePolicy: CachePolicies,
+  cache: Map<string, Res<TData> | number>,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
   requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
 ): Promise<DoFetchArgs> {
   invariant(
     !(isBodyObject(routeOrBody) && isBodyObject(bodyAs2ndParam)),
-    `If first argument of ${method.toLowerCase()}() is an object, you cannot have a 2nd argument. 😜`,
+    `If first argument of ${method.toLowerCase()}() is an object, you cannot have a 2nd argument. 😜`
   )
   invariant(
     !(method === GET && isBodyObject(routeOrBody)),
-    `You can only have query params as 1st argument of request.get()`,
+    'You can only have query params as 1st argument of request.get()'
   )
   invariant(
     !(method === GET && bodyAs2ndParam !== undefined),
-    `You can only have query params as 1st argument of request.get()`,
+    'You can only have query params as 1st argument of request.get()'
   )
 
   const route = ((): string => {
@@ -41,8 +42,7 @@ export default async function doFetchArgs(
       !isServer &&
       ((bodyAs2ndParam as any) instanceof FormData ||
         (bodyAs2ndParam as any) instanceof URLSearchParams)
-    )
-      return bodyAs2ndParam as string
+    ) { return bodyAs2ndParam as string }
     if (isBodyObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
     if (isBodyObject(initialOptions.body)) return JSON.stringify(initialOptions.body)
     return null
@@ -68,7 +68,7 @@ export default async function doFetchArgs(
     const opts = {
       ...initialOptions,
       method,
-      signal: controller.signal,
+      signal: controller.signal
     }
 
     if (headers !== null) {
@@ -79,19 +79,30 @@ export default async function doFetchArgs(
 
     if (body !== null) opts.body = body
 
-    if (requestInterceptor) return await requestInterceptor(opts, initialURL, path, route)
+    if (requestInterceptor) {
+      const interceptor = await requestInterceptor(opts, initialURL, path, route)
+      return interceptor
+    }
     return opts
   })()
 
+  // TODO: see if `Object.entries` is supported for IE
   // TODO: if the body is a file, and this is a large file, it might exceed the size
   // limit of the key size in the Map
   // used to tell if a request has already been made
-  const requestID = Object.entries({ url, method, body: options.body || '' })
+  const responseID = Object.entries({ url, method, body: options.body || '' })
     .map(([key, value]) => `${key}:${value}`).join('||')
+  const responseAgeID = `${responseID}:ts`
 
   return {
     url,
     options,
-    requestID
+    response: {
+      isCached: cache.has(responseID),
+      id: responseID,
+      cached: cache.get(responseID) as Response | undefined,
+      ageID: responseAgeID,
+      age: (cache.get(responseAgeID) || 0) as number
+    }
   }
 }

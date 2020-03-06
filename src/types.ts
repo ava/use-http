@@ -37,7 +37,7 @@ export enum CachePolicies {
   /**
    * This fetch policy will never return your initial data from the
    * cache. Instead it will always make a request using your network
-   * interface to the server. This fetch policy optimizes for data 
+   * interface to the server. This fetch policy optimizes for data
    * consistency with the server, but at the cost of an instant response
    * to the user when one is available.
    */
@@ -65,18 +65,24 @@ export enum CachePolicies {
 export interface DoFetchArgs {
   url: string
   options: RequestInit
-  requestID: string
+  response: {
+    isCached: boolean
+    id: string
+    cached?: Response
+    ageID: string
+    age: number
+  }
 }
 
 export interface FetchContextTypes {
   url: string
-  options: Options,
+  options: Options
   graphql?: boolean
 }
 
 export interface FetchProviderProps {
   url?: string
-  options?: Options,
+  options?: Options
   graphql?: boolean
   children: ReactNode
 }
@@ -190,7 +196,7 @@ export type NonObjectKeysOf<T> = {
   [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
 }[keyof T]
 
-export type ObjectValuesOf<T extends Object> = Exclude<
+export type ObjectValuesOf<T extends Record<string, any>> = Exclude<
   Exclude<Extract<ValueOf<T>, object>, never>,
   Array<any>
 >
