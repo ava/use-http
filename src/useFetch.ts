@@ -73,8 +73,9 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         interceptors.request
       )
 
+      setLoading(true)
+
       if (response.isCached && cachePolicy === CACHE_FIRST) {
-        setLoading(true)
         if (cacheLife > 0 && response.age > cacheLife) {
           cache.delete(response.id)
           cache.delete(response.ageID)
@@ -94,7 +95,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       // don't perform the request if there is no more data to fetch (pagination)
       if (perPage > 0 && !hasMore.current && !error.current) return data.current
 
-      setLoading(true)
       error.current = undefined
 
       const timer = timeout > 0 && setTimeout(() => {
