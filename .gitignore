@@ -36,3 +36,6 @@ package-lock.json
 *.iml
 /venv
 .vscode
+
+# Error reporting
+report.*.json
