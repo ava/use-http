@@ -8,6 +8,7 @@ import { FetchMock } from 'jest-fetch-mock'
 import { Res, Options, CachePolicies } from '../types'
 import { toCamel } from 'convert-keys'
 import { renderHook, act } from '@testing-library/react-hooks'
+import { emptyCustomResponse } from '../utils'
 
 const fetch = global.fetch as FetchMock
 
@@ -101,7 +102,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     void
   > => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('https://example.com', []), // onMount === true
+      () => useFetch('sweet', []), // onMount === true
       { wrapper: wrapper as React.ComponentType }
     )
     var [request, response, loading, error] = result.current
@@ -351,6 +352,7 @@ describe('caching - useFetch - BROWSER', (): void => {
   })
 
   beforeEach((): void => {
+    fetch.resetMocks()
     fetch.mockResponse(JSON.stringify(expected))
   })
 
@@ -369,17 +371,49 @@ describe('caching - useFetch - BROWSER', (): void => {
     expect(result.current.loading).toBe(false)
   })
 
+  it('should still have a `response` promise even when being cached. `cache-first` cachePolicy (object destructuring)', async (): Promise<void> => {
+    // run the request on mount
+    const { result, waitForNextUpdate } = renderHook(() => useFetch('url-cache/object', []))
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    const { response } = result.current
+    expect(result.current.loading).toBe(false)
+    let text
+    let json
+    await act(async () => {
+      json = await result.current.get()
+      text = await response.text()
+    })
+    expect(text).toBe(JSON.stringify(expected))
+    expect(json).toEqual(expected)
+  })
+
+  it('should still have a `response` promise even when being cached. `cache-first` cachePolicy (array destructuring)', async (): Promise<void> => {
+    // run the request on mount
+    const { result, waitForNextUpdate } = renderHook(() => useFetch('url-cache/array', []))
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    var [, response] = result.current
+    expect(result.current.loading).toBe(false)
+    let text
+    let json
+    await act(async () => {
+      json = await result.current.get()
+      text = await response.text()
+    })
+    expect(text).toBe(JSON.stringify(expected))
+    expect(json).toEqual(expected)
+  })
+
   it('should make a second request if cacheLife has exprired. `cache-first` cachePolicy', async (): Promise<void> => {
     // TODO: this test is extra brittle. I've tried many things.
     // if it fails, try restarting your tests entirely.
-    fetch.resetMocks()
-    fetch.mockResponse(JSON.stringify(expected))
     // run the request on mount
     const { result, waitForNextUpdate } = renderHook(() => useFetch('https://example.com', {
       cacheLife: 0.01
     }, []))
     expect(result.current.loading).toBe(true)
-    await waitForNextUpdate({ timeout: 10 })
+    await waitForNextUpdate()
     expect(result.current.loading).toBe(false)
     expect(result.current.data).toEqual(expected)
     expect(fetch.mock.calls.length).toEqual(1)
@@ -533,10 +567,12 @@ describe('useFetch - BROWSER - interceptors', (): void => {
 
   it('should have the `data` field correctly set when using a response interceptor', async (): Promise<void> => {
     const { result } = renderHook(
-      () => useFetch(),
+      () => useFetch('x'),
       { wrapper }
     )
-    await result.current.get()
+    await act(async () => {
+      await result.current.get()
+    })
     expect(result.current.response.ok).toBe(true)
     expect(result.current.data).toEqual(expected)
   })
@@ -749,9 +785,11 @@ describe('useFetch - BROWSER - errors', (): void => {
       () => useFetch(),
       { wrapper: wrapperCustomError }
     )
-    await result.current.get()
+    await act(async () => {
+      await result.current.get()
+    })
     expect(result.current.response.ok).toBe(undefined)
-    expect(result.current.response).toEqual({})
+    expect(JSON.stringify(result.current.response)).toEqual(JSON.stringify(emptyCustomResponse))
     expect(result.current.error).toEqual(expectedError)
   })
 

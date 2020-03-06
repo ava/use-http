@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 import useSSR from 'use-ssr'
 import {
   HTTPMethod,
@@ -15,11 +16,10 @@ import {
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData } from './utils'
+import { invariant, tryGetData, responseKeys, responseMethods, responseFields } from './utils'
 
 const { CACHE_FIRST } = CachePolicies
 
-const responseFields = [...Object.getOwnPropertyNames(Object.getPrototypeOf(new Response())), 'data']
 const cache = new Map()
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
@@ -107,7 +107,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       let newRes
 
       try {
-        newRes = await fetch(url, options)// as Res<TData>
+        newRes = await fetch(url, options)
         res.current = newRes.clone()
 
         if (cachePolicy === CACHE_FIRST) {
@@ -123,12 +123,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         data.current = res.current.data as TData
 
         if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
-
       } catch (err) {
         if (attempts.current > 0) return doFetch(routeOrBody, body)
         if (attempts.current < 1 && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
         if (err.name !== 'AbortError') error.current = err
-
       } finally {
         if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
         if (attempts.current > 0) attempts.current -= 1
@@ -163,6 +161,27 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     data: data.current
   }
 
+  const response = useMemo((): any => {
+    const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
+    return Object.defineProperties({}, responseKeys.reduce((acc: any, field: keyof Res<TData>) => {
+      if (responseFields.includes(field as any)) {
+        acc[field] = {
+          get: () => {
+            if (field === 'data') return data.current
+            return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
+          },
+          enumerable: true
+        }
+      } else if (responseMethods.includes(field as any)) {
+        acc[field] = {
+          value: () => clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>](),
+          enumerable: true
+        }
+      }
+      return acc
+    }, {}))
+  }, [res.current])
+
   // onMount/onUpdate
   useEffect((): any => {
     if (dependencies && Array.isArray(dependencies)) {
@@ -177,11 +196,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   // Cancel any running request when unmounting to avoid updating state after component has unmounted
   // This can happen if a request's promise resolves after component unmounts
   useEffect(() => request.abort, [request.abort])
-
-  const response = Object.defineProperties({}, responseFields.reduce((acc: any, field) => {
-    acc[field] = { get: () => res.current[field as keyof Res<TData>] }
-    return acc
-  }, {}))
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, response, loading, error.current],
