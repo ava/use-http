@@ -1,14 +1,16 @@
-import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs } from './types'
+import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs, CachePolicies, Res } from './types'
 import { invariant, isServer, isString, isBodyObject } from './utils'
 
 const { GET } = HTTPMethod
 
-export default async function doFetchArgs(
+export default async function doFetchArgs<TData = any>(
   initialOptions: RequestInit,
   initialURL: string,
   path: string,
   method: HTTPMethod,
   controller: AbortController,
+  cachePolicy: CachePolicies,
+  cache: Map<string, Res<TData> | number>,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
   requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
@@ -62,7 +64,7 @@ export default async function doFetchArgs(
     return headers
   })()
 
-  const options = await (async(): Promise<RequestInit> => {
+  const options = await (async (): Promise<RequestInit> => {
     const opts = {
       ...initialOptions,
       method,
@@ -84,15 +86,23 @@ export default async function doFetchArgs(
     return opts
   })()
 
+  // TODO: see if `Object.entries` is supported for IE
   // TODO: if the body is a file, and this is a large file, it might exceed the size
   // limit of the key size in the Map
   // used to tell if a request has already been made
-  const requestID = Object.entries({ url, method, body: options.body || '' })
+  const responseID = Object.entries({ url, method, body: options.body || '' })
     .map(([key, value]) => `${key}:${value}`).join('||')
+  const responseAgeID = `${responseID}:ts`
 
   return {
     url,
     options,
-    requestID
+    response: {
+      isCached: cache.has(responseID),
+      id: responseID,
+      cached: cache.get(responseID) as Response | undefined,
+      ageID: responseAgeID,
+      age: (cache.get(responseAgeID) || 0) as number
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { useMemo, useEffect } from 'react'
 import useSSR from 'use-ssr'
-import { RequestInitJSON, OptionsMaybeURL } from './types'
+import { RequestInitJSON, OptionsMaybeURL, Res } from './types'
+import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 
 /**
  * Used for error checking. If the condition is false, throw an error
@@ -82,6 +83,10 @@ export const isBodyObject = (obj: any): boolean => isObject(obj) || Array.isArra
 
 export const isFunction = (v: any): boolean => typeof v === 'function'
 
+// const requestFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Request('')))
+// const responseFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Response()))
+// export const customResponseFields = [...responseFields, 'data']
+
 // TODO: come back and fix the "anys" in this http://bit.ly/2Lm3OLi
 /**
  * Makes an object that will match the standards of a normal fetch's options
@@ -136,3 +141,49 @@ const device = canUseNative ? Native : canUseDOM ? Browser : Server
 export const isBrowser = device === Browser
 export const isServer = device === Server
 export const isNative = device === Native
+
+export const tryGetData = async (res: Response | undefined, defaultData: any) => {
+  if (typeof res === 'undefined') throw Error('Response cannot be undefined... 😵')
+  const response = res.clone()
+  let data
+  try {
+    data = await response.json()
+  } catch (er) {
+    try {
+      data = (await response.text()) as any // FIXME: should not be `any` type
+    } catch (er) {}
+  }
+  return (defaultData && isEmpty(data)) ? defaultData : data
+}
+
+/**
+ * TODO: missing some fields that are in the mozilla docs: https://developer.mozilla.org/en-US/docs/Web/API/Response#Properties
+ * 1. trailers (inconsistancy in the docs. Part says `trailers` another says `trailer`)
+ * 2. useFinalURL
+ */
+type ResponseFields = (NonFunctionKeys<Res<any>> | 'data')
+export const responseFields: ResponseFields[] = ['headers', 'ok', 'redirected', 'trailer', 'status', 'statusText', 'type', 'url', 'body', 'bodyUsed', 'data']
+/**
+ * TODO: missing some methods that are in the mozilla docs: https://developer.mozilla.org/en-US/docs/Web/API/Response#Methods
+ * 1. error
+ * 2. redirect
+ */
+type ResponseMethods = Exclude<FunctionKeys<Res<any>>, 'data'>
+export const responseMethods: ResponseMethods[] = ['clone', 'arrayBuffer', 'blob', 'formData', 'json', 'text']
+// const responseFields = [...Object.getOwnPropertyNames(Object.getPrototypeOf(new Response())), 'data'].filter(p => p !== 'constructor')
+type ResponseKeys = (keyof Res<any>)
+export const responseKeys: ResponseKeys[] = [...responseFields, ...responseMethods]
+export const emptyCustomResponse = Object.defineProperties({}, responseKeys.reduce((acc: any, field: ResponseKeys ) => {
+  if (responseFields.includes(field as any)) {
+    acc[field] = {
+      get: () => { /* undefined */ },
+      enumerable: true
+    }
+  } else if (responseMethods.includes(field as any)) {
+    acc[field] = {
+      value: () => { /* undefined */ },
+      enumerable: true
+    }
+  }
+  return acc
+}, {}))
