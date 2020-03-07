@@ -16,7 +16,8 @@ type UseFetchArgsReturn = {
     perPage: number
     cachePolicy: CachePolicies
     cacheLife: number
-  }
+    suspense: boolean
+  },
   requestInit: RequestInit
   defaults: {
     loading: boolean
@@ -37,7 +38,8 @@ export const useFetchArgsDefaults = {
     onNewData: (currData: any, newData: any) => newData,
     perPage: 0,
     cachePolicy: CachePolicies.CACHE_FIRST,
-    cacheLife: 0
+    cacheLife: 0,
+    suspense: false
   },
   requestInit: { headers: {} },
   defaults: {
@@ -119,6 +121,7 @@ export default function useFetchArgs(
   const perPage = useField<number>('perPage', urlOrOptions, optionsNoURLs)
   const cachePolicy = useField<CachePolicies>('cachePolicy', urlOrOptions, optionsNoURLs)
   const cacheLife = useField<number>('cacheLife', urlOrOptions, optionsNoURLs)
+  const suspense = useField<boolean>('suspense', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)
@@ -173,7 +176,8 @@ export default function useFetchArgs(
       onNewData,
       perPage,
       cachePolicy,
-      cacheLife
+      cacheLife,
+      suspense,
     },
     requestInit,
     defaults: {
