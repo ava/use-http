@@ -868,7 +868,6 @@ Todos
 - resources
   - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
   - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
-  - [zeit's swr](https://github.com/zeit/swr)
 
 - [ ] potential option ideas for `GraphQL`
 
