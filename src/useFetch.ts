@@ -151,7 +151,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     }
 
     return doFetch
-  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, cacheLife, onTimeout, defaults.data, onNewData])
+  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, persist, cacheLife, onTimeout, defaults.data, onNewData])
 
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
