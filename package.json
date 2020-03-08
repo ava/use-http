@@ -40,6 +40,7 @@
     "eslint-watch": "^5.1.2",
     "jest": "^24.7.1",
     "jest-fetch-mock": "^3.0.1",
+    "mockdate": "^2.0.5",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-hooks-testing-library": "^0.6.0",

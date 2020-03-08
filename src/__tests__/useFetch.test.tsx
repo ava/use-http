@@ -10,6 +10,8 @@ import { toCamel } from 'convert-keys'
 import { renderHook, act } from '@testing-library/react-hooks'
 import { emptyCustomResponse } from '../utils'
 
+import * as mockdate from 'mockdate'
+
 const fetch = global.fetch as FetchMock
 
 const { NO_CACHE } = CachePolicies
@@ -801,5 +803,72 @@ describe('useFetch - BROWSER - errors', (): void => {
     await waitForNextUpdate()
     expect(result.current.response.ok).toBe(undefined)
     expect(result.current.error).toEqual(expectedError)
+  })
+})
+
+describe('useFetch - BROWSER - persistence', (): void => {
+  const expected = {
+    name: 'Alex Cory',
+    age: 29
+  }
+
+  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <Provider url="https://example.com" options={{ cachePolicy: NO_CACHE }}>{children}</Provider>
+
+  afterAll((): void => {
+    cleanup()
+    fetch.resetMocks()
+    mockdate.reset()
+  })
+
+  beforeAll((): void => {
+    fetch.mockResponseOnce(
+      JSON.stringify(expected)
+    )
+    mockdate.set('2020-01-01')
+  })
+
+  afterEach((): void => {
+    fetch.resetMocks()
+  })
+
+  it('should fetch once', async (): Promise<
+    void
+  > => {
+    const { waitForNextUpdate } = renderHook(
+      () => useFetch({ persist: true }, []), // onMount === true
+      { wrapper: wrapper as React.ComponentType }
+    )
+
+    await waitForNextUpdate()
+
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not fetch again', async (): Promise<
+    void
+  > => {
+    const { waitForNextUpdate } = renderHook(
+      () => useFetch({ persist: true }, []), // onMount === true
+      { wrapper: wrapper as React.ComponentType }
+    )
+
+    await waitForNextUpdate()
+
+    expect(fetch).toHaveBeenCalledTimes(0)
+  })
+
+  it('should fetch again after 24h', async (): Promise<
+    void
+  > => {
+    mockdate.set('2020-01-02 01:00')
+
+    const { waitForNextUpdate } = renderHook(
+      () => useFetch({ persist: true }, []), // onMount === true
+      { wrapper: wrapper as React.ComponentType }
+    )
+
+    await waitForNextUpdate()
+
+    expect(fetch).toHaveBeenCalledTimes(1)
   })
 })

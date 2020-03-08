@@ -162,6 +162,7 @@ export type Interceptors = {
 
 export interface CustomOptions {
   retries?: number
+  persist?: boolean
   timeout?: number
   path?: string
   url?: string

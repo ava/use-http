@@ -6,6 +6,7 @@ import FetchContext from './FetchContext'
 type UseFetchArgsReturn = {
   customOptions: {
     retries: number
+    persist: boolean
     timeout: number
     path: string
     url: string
@@ -28,6 +29,7 @@ type UseFetchArgsReturn = {
 export const useFetchArgsDefaults = {
   customOptions: {
     retries: 0,
+    persist: false,
     timeout: 30000, // 30 seconds
     path: '',
     url: '',
@@ -113,6 +115,7 @@ export default function useFetchArgs(
   const path = useField<string>('path', urlOrOptions, optionsNoURLs)
   const timeout = useField<number>('timeout', urlOrOptions, optionsNoURLs)
   const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
+  const persist = useField<boolean>('persist', urlOrOptions, optionsNoURLs)
   const onAbort = useField<() => void>('onAbort', urlOrOptions, optionsNoURLs)
   const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
   const onNewData = useField<() => void>('onNewData', urlOrOptions, optionsNoURLs)
@@ -168,6 +171,7 @@ export default function useFetchArgs(
       interceptors,
       timeout,
       retries,
+      persist,
       onAbort,
       onTimeout,
       onNewData,

@@ -17,6 +17,7 @@ import {
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
 import { invariant, tryGetData, responseKeys, responseMethods, responseFields } from './utils'
+import { getPersistentData, hasPersistentData, setPersistentData } from './persistFetch'
 
 const { CACHE_FIRST } = CachePolicies
 
@@ -28,6 +29,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     url: initialURL,
     path,
     interceptors,
+    persist,
     timeout,
     retries,
     onTimeout,
@@ -106,33 +108,41 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       let newData
       let newRes
 
-      try {
-        newRes = await fetch(url, options)
-        res.current = newRes.clone()
+      if (persist && hasPersistentData(url)) {
+        data.current = getPersistentData(url) as TData
+      } else {
+        try {
+          newRes = await fetch(url, options)
+          res.current = newRes.clone()
 
-        if (cachePolicy === CACHE_FIRST) {
-          cache.set(response.id, newRes.clone())
-          if (cacheLife > 0) cache.set(response.ageID, Date.now())
+          if (cachePolicy === CACHE_FIRST) {
+            cache.set(response.id, newRes.clone())
+            if (cacheLife > 0) cache.set(response.ageID, Date.now())
+          }
+
+          newData = await tryGetData(newRes, defaults.data)
+          res.current.data = onNewData(data.current, newData)
+
+          res.current = interceptors.response ? interceptors.response(res.current) : res.current
+          invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
+          data.current = res.current.data as TData
+
+          if (persist) {
+            setPersistentData(url, data.current)
+          }
+
+          if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
+        } catch (err) {
+          if (attempts.current > 0) return doFetch(routeOrBody, body)
+          if (attempts.current < 1 && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
+          if (err.name !== 'AbortError') error.current = err
+        } finally {
+          if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
+          if (attempts.current > 0) attempts.current -= 1
+          timedout.current = false
+          if (timer) clearTimeout(timer)
+          controller.current = undefined
         }
-
-        newData = await tryGetData(newRes, defaults.data)
-        res.current.data = onNewData(data.current, newData)
-
-        res.current = interceptors.response ? interceptors.response(res.current) : res.current
-        invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
-        data.current = res.current.data as TData
-
-        if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
-      } catch (err) {
-        if (attempts.current > 0) return doFetch(routeOrBody, body)
-        if (attempts.current < 1 && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
-        if (err.name !== 'AbortError') error.current = err
-      } finally {
-        if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
-        if (attempts.current > 0) attempts.current -= 1
-        timedout.current = false
-        if (timer) clearTimeout(timer)
-        controller.current = undefined
       }
 
       setLoading(false)
