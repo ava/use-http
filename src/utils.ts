@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from 'react'
 import useSSR from 'use-ssr'
-import { RequestInitJSON, OptionsMaybeURL } from './types'
-
+import { RequestInitJSON, OptionsMaybeURL, Res } from './types'
+import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 
 /**
  * Used for error checking. If the condition is false, throw an error
@@ -9,12 +9,12 @@ import { RequestInitJSON, OptionsMaybeURL } from './types'
 export function invariant(
   condition: boolean,
   format: string,
-  a: string = '',
-  b: string = '',
-  c: string = '',
-  d: string = '',
-  e: string = '',
-  f: string = '',
+  a = '',
+  b = '',
+  c = '',
+  d = '',
+  e = '',
+  f = ''
 ): void {
   if (process.env.NODE_ENV !== 'production') {
     if (format === undefined) {
@@ -27,7 +27,7 @@ export function invariant(
     if (format === undefined) {
       error = new Error(
         'Minified exception occurred; use the non-minified dev environment ' +
-          'for the full error message and additional helpful warnings.',
+          'for the full error message and additional helpful warnings.'
       )
     } else {
       const args = [a, b, c, d, e, f]
@@ -45,14 +45,14 @@ export const useExampleURL = (): string => {
   return useMemo(
     (): string =>
       isBrowser ? (window.location.origin as string) : 'https://example.com',
-    [isBrowser],
+    [isBrowser]
   )
 }
 
 export function useURLRequiredInvariant(
   condition: boolean,
   method: string,
-  optionalMessage?: string,
+  optionalMessage?: string
 ): void {
   const exampleURL = useExampleURL()
   useEffect((): void => {
@@ -61,7 +61,7 @@ export function useURLRequiredInvariant(
       `${method} requires a URL to be set as the 1st argument,\n
       unless you wrap your app like:\n
       <Provider url="${exampleURL}"><App /></Provider>\n
-      ${optionalMessage}`,
+      ${optionalMessage}`
     )
   }, [condition, exampleURL, method, optionalMessage])
 }
@@ -77,11 +77,15 @@ export const isObject = (obj: any): obj is object => Object.prototype.toString.c
 /**
  * Determines if the given param is an object that can be used as a request body.
  * Returns true for native objects or arrays.
- * @param obj 
+ * @param obj
  */
 export const isBodyObject = (obj: any): boolean => isObject(obj) || Array.isArray(obj)
 
 export const isFunction = (v: any): boolean => typeof v === 'function'
+
+// const requestFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Request('')))
+// const responseFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Response()))
+// export const customResponseFields = [...responseFields, 'data']
 
 // TODO: come back and fix the "anys" in this http://bit.ly/2Lm3OLi
 /**
@@ -103,22 +107,83 @@ export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInit => {
     'referrer',
     'referrerPolicy',
     'signal',
-    'window',
+    'window'
   ] as (keyof RequestInitJSON)[]
   return requestInitFields.reduce(
     (acc: RequestInit, key: keyof RequestInit): RequestInit => {
       if (key in options) acc[key] = options[key]
       return acc
     },
-    {},
+    {}
   )
 }
 
 export const isEmpty = (x: any) => x === undefined || x === null
 
-export const isBrowser = !!(
+export enum Device {
+  Browser = 'browser',
+  Server = 'server',
+  Native = 'native',
+}
+
+const { Browser, Server, Native } = Device
+
+const canUseDOM = !!(
   typeof window !== 'undefined' &&
   window.document &&
   window.document.createElement
 )
-export const isServer = !isBrowser
+
+const canUseNative: boolean = typeof navigator !== 'undefined' && navigator.product === 'ReactNative'
+
+const device = canUseNative ? Native : canUseDOM ? Browser : Server
+
+export const isBrowser = device === Browser
+export const isServer = device === Server
+export const isNative = device === Native
+
+export const tryGetData = async (res: Response | undefined, defaultData: any) => {
+  if (typeof res === 'undefined') throw Error('Response cannot be undefined... 😵')
+  const response = res.clone()
+  let data
+  try {
+    data = await response.json()
+  } catch (er) {
+    try {
+      data = (await response.text()) as any // FIXME: should not be `any` type
+    } catch (er) {}
+  }
+  return (defaultData && isEmpty(data)) ? defaultData : data
+}
+
+/**
+ * TODO: missing some fields that are in the mozilla docs: https://developer.mozilla.org/en-US/docs/Web/API/Response#Properties
+ * 1. trailers (inconsistancy in the docs. Part says `trailers` another says `trailer`)
+ * 2. useFinalURL
+ */
+type ResponseFields = (NonFunctionKeys<Res<any>> | 'data')
+export const responseFields: ResponseFields[] = ['headers', 'ok', 'redirected', 'trailer', 'status', 'statusText', 'type', 'url', 'body', 'bodyUsed', 'data']
+/**
+ * TODO: missing some methods that are in the mozilla docs: https://developer.mozilla.org/en-US/docs/Web/API/Response#Methods
+ * 1. error
+ * 2. redirect
+ */
+type ResponseMethods = Exclude<FunctionKeys<Res<any>>, 'data'>
+export const responseMethods: ResponseMethods[] = ['clone', 'arrayBuffer', 'blob', 'formData', 'json', 'text']
+// const responseFields = [...Object.getOwnPropertyNames(Object.getPrototypeOf(new Response())), 'data'].filter(p => p !== 'constructor')
+type ResponseKeys = (keyof Res<any>)
+export const responseKeys: ResponseKeys[] = [...responseFields, ...responseMethods]
+export const emptyCustomResponse = Object.defineProperties({}, responseKeys.reduce((acc: any, field: ResponseKeys ) => {
+  if (responseFields.includes(field as any)) {
+    acc[field] = {
+      get: () => { /* undefined */ },
+      enumerable: true
+    }
+  } else if (responseMethods.includes(field as any)) {
+    acc[field] = {
+      value: () => { /* undefined */ },
+      enumerable: true
+    }
+  }
+  return acc
+}, {}))
