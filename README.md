@@ -23,11 +23,11 @@
     <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
       <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
     </a>
-   <a href="http://packagequality.com/#?package=use-http">
-     <img src="https://npm.packagequality.com/shield/use-http.svg" />
-   </a>
-    <a href="https://spectrum.chat/use-http">
-        <img src="https://withspectrum.github.io/badge/badge.svg" />
+    <a href="http://packagequality.com/#?package=use-http">
+      <img src="https://npm.packagequality.com/shield/use-http.svg" />
+    </a>
+    <a href="https://standardjs.com">
+      <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
     </a>
 
 <!-- [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/next-js) -->
@@ -77,6 +77,7 @@ Features
 - Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
 - React Native support
 - Aborts/Cancels pending http requests when a component unmounts
+- Built in caching
 
 Usage
 -----
@@ -198,6 +199,33 @@ const App = () => (
 
 </details>
 
+<div align="center">
+  <br>
+  <br>
+  <hr>
+  <p>
+    <sup>
+      <a href="https://github.com/sponsors/alex-cory">Consider sponsoring</a>
+    </sup>
+    <br>
+    <br>
+    <a href="https://ava.inc">
+      <img src="public/ava-logo.png" width="130" alt="Ava">
+    </a>
+    <br>
+    <sub><b>Ava, Rapid Application Development</b></sub>
+    <br>
+    <sub>
+    Need a freelance software engineer with more than 5 years production experience at companies like Facebook, Discord, Best Buy, and Citrix?</br>
+    <a href="https://ava.inc">website</a> | <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=alex@ava.inc">email</a> | <a href="https://twitter.com/@alexcory_">twitter</a>
+    </sub>
+  </p>
+  <hr>
+  <br>
+  <br>
+  <br>
+</div>
+
 <details open><summary><b>Pagination + <code>Provider</code></b></summary>
 
 The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below, we are appending the new todos to the end of the current todos.
@@ -211,6 +239,7 @@ const Todos = () => {
   const { data, loading } = useFetch({
     path: `/todos?page=${page}&amountPerPage=15`,
     onNewData: (currTodos, newTodos) => [...currTodos, ...newTodos], // appends newly fetched todos
+    perPage: 15, // stops making more requests if last todos fetched < 15
     data: []
   }, [page]) // runs onMount AND whenever the `page` updates (onUpdate)
 
@@ -646,8 +675,11 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
+| `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
+| `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 | `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
+| `perPage` | Stops making more requests if there is no more data to fetch. (i.e. if we have 25 todos, and the perPage is 10, after fetching 2 times, we will have 20 todos. The last 5 tells us we don't have any more to fetch because it's less than 10) For pagination. | `0` |
 | `onAbort` | Runs when the request is aborted. | empty function |
 | `onTimeout` | Called when the request times out. | empty function |
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
@@ -660,7 +692,14 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 ```jsx
 const options = {
   // accepts all `fetch` options such as headers, method, etc.
-  
+
+  // Cache responses to improve speed and reduce amount of requests
+  // Only one request to the same endpoint will be initiated unless cacheLife expires for 'cache-first'.
+  cachePolicy: 'cache-first' // 'no-cache'
+
+  // The time in milliseconds that cache data remains fresh.
+  cacheLife: 0,
+
   // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
   url: 'https://example.com',
   
@@ -675,6 +714,10 @@ const options = {
     return [...currData, ...newData] 
   },
   
+  // this will tell useFetch not to run the request if the list doesn't haveMore. (pagination)
+  // i.e. if the last page fetched was < 15, don't run the request again
+  perPage: 15,
+
   // amount of times it should retry before erroring out
   retries: 3,
   
@@ -708,45 +751,50 @@ Who's using use-http?
 
 Does your company use use-http? Consider sponsoring the project to fund new features, bug fixes, and more.
 
-<a href="https://ava.inc" style="margin-right: 2rem;" target="_blank">
-  <img width="200px" src="https://ava.inc/ava-logo-green.png" />
-</a>
-<a href="https://github.com/microsoft/DLWorkspace">
-  <img height="200px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
-</a>
-
+<p align="center">
+  <a href="https://ava.inc" style="margin-right: 2rem;" target="_blank">
+    <img width="110px" src="https://ava.inc/ava-logo-green.png" />
+  </a>
+  <a href="https://github.com/microsoft/DLWorkspace">
+    <img height="110px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
+  </a>
+  <a href="https://github.com/mozilla/Spoke">
+    <img height="110px" src="https://github.com/alex-cory/use-http/raw/master/public/mozilla.png" />
+  </a>
+</p>
 
 Feature Requests/Ideas
 ----------------------
+
 If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
 
 Todos
 ------
- - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
- - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
- - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
- - [ ] add sponsors [similar to this](https://github.com/carbon-app/carbon)
- - [ ] tests
-   - [ ] tests for SSR
-   - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
-   - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
-   - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
-   - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
-   - [ ] aborts fetch on unmount
- - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
- - [ ] make this a github package
- - [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
- - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
- - [ ] make GraphQL work with React Suspense
- - [ ] make GraphQL examples in codesandbox
- - [ ] Documentation:
-     - [ ] show comparison with Apollo
-       - [ ] figure out a good way to show side-by-side comparisonsf
-     - [ ] show comparison with Axios
-     - [ ] how this cancels a request on unmount of a component to avoid the error "cannot update state during a state transition" or something like that due to an incomplete http request
- - [ ] Dedupe requests done to the same endpoint. Only one request to the same endpoint will be initiated. [ref](https://www.npmjs.com/package/@bjornagh/use-fetch)
- - [ ] Cache responses to improve speed and reduce amount of requests
- - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
+
+- [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
+- [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
+- [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
+- [ ] add sponsors [similar to this](https://github.com/carbon-app/carbon)
+- [ ] tests
+  - [ ] tests for SSR
+  - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
+  - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
+  - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
+  - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
+  - [ ] aborts fetch on unmount
+- [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
+- [ ] make this a github package
+- [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
+- [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
+- [ ] make GraphQL work with React Suspense
+- [ ] make GraphQL examples in codesandbox
+- [ ] Documentation:
+  - [ ] show comparison with Apollo
+  - [ ] figure out a good way to show side-by-side comparisons
+  - [ ] show comparison with Axios
+  - [ ] how this cancels a request on unmount of a component to avoid the error "cannot update state during a state transition" or something like that due to an incomplete http request
+- [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
+
 ```jsx
   const request = useFetch('https://example.com')
   
@@ -759,20 +807,32 @@ Todos
     })
     .get()
 ```
-  - [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
-        convert all the keys in the response to camelCase.
-        Not exactly sure how this syntax should look because what
-        if you want to have this only go 1 layer deep into the response
-        object. Or if this is just out of scope for this library.
+
+- [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
+      convert all the keys in the response to camelCase.
+      Not exactly sure how this syntax should look because what
+      if you want to have this only go 1 layer deep into the response
+      object. Or if this is just out of scope for this library.
+
   ```jsx
   <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
   ```
-  - [ ] potential option ideas
+
+- [ ] potential option ideas
+
   ```jsx
   const request = useFetch({
-    onSuccess: (/* idk what to put here */) => {},
-    onError: (error) => {},
-    
+    // enabled React Suspense mode
+    suspense: false,
+    // allows caching to persist after page refresh
+    persist: true, // false by default
+    // Allows you to pass in your own cache to useFetch
+    // This is controversial though because `cache` is an option in the requestInit
+    // and it's value is a string. See: https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
+    // One possible solution is to move the default `fetch`'s `cache` to `cachePolicy`.
+    // I don't really like this solution though.
+    // Another solution is to only allow the `cache` option with the `<Provider cache={new Map()} />`
+    cache: new Map(),
     // can retry on certain http status codes
     retryOn: [503],
     // OR
@@ -783,7 +843,6 @@ Todos
         return true;
       }
     },
-    
     // This function receives a retryAttempt integer and returns the delay to apply before the next attempt in milliseconds
     retryDelay(attempt, error, response) {
       // applies exponential backoff
@@ -791,60 +850,46 @@ Todos
       // applies linear backoff
       return attempt * 1000
     },
-    
     // these will be the exact same ones as Apollo's
-    // this will eventually default to 'cache-first'
-    cachePolicy: 'cache-first', // 'cache-first', 'cache-and-network', 'network-only', 'cache-only', 'no-cache'
-    
-    // The time in milliseconds that cache data remains fresh.
-    // After a successful cache update, that cache data will become stale after this duration
-    cacheTime: 10000,
-    
-    // The time in milliseconds that unused/inactive cache data remains in memory.
-    // When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
-    invalidateCacheTime: 10000,
-    
+    cachePolicy: 'cache-and-network', 'network-only', 'cache-only', 'no-cache' // 'cache-first'
     // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     onServer: true,
-    
+    onSuccess: (/* idk what to put here */) => {},
+    onError: (error) => {},
     // if you would prefer to pass the query in the config
     query: `some graphql query`
-    
     // if you would prefer to pass the mutation in the config
     mutation: `some graphql mutation`
-    
-    // enabled React Suspense mode
-    suspense: false,
-    
     retryOnError: false,
-    
     refreshWhenHidden: false,
   })
   ```
-   - resources
-     - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
-     - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
-     - [zeit's swr](https://github.com/zeit/swr)
 
-  - [ ] potential option ideas for `GraphQL`
-  ```jsx
-  const request = useQuery({ onMount: true })`your graphql query`
-  
-  const request = useFetch(...)
-  const userID = 'some-user-uuid'
-  const res = await request.query({ userID })`
-    query Todos($userID string!) {
-      todos(userID: $userID) {
-        id
-        title
-      }
+- resources
+  - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
+  - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
+
+- [ ] potential option ideas for `GraphQL`
+
+```jsx
+const request = useQuery({ onMount: true })`your graphql query`
+
+const request = useFetch(...)
+const userID = 'some-user-uuid'
+const res = await request.query({ userID })`
+  query Todos($userID string!) {
+    todos(userID: $userID) {
+      id
+      title
     }
-  `
-  ```
-  - [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
+  }
+`
+```
+
+- [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
 
 <details><summary><b>The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
-    
+
 ```jsx
 import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
 
@@ -900,5 +945,3 @@ const App = () => {
 }
 ```
 </details>
-
-

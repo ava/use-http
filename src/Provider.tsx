@@ -7,7 +7,7 @@ export const Provider = ({
   url,
   options,
   graphql = false,
-  children,
+  children
 }: FetchProviderProps): ReactElement => {
   const { isBrowser } = useSSR()
 
@@ -15,9 +15,9 @@ export const Provider = ({
     (): FetchContextTypes => ({
       url: url || (isBrowser ? window.location.origin : ''),
       options: options || {},
-      graphql, // TODO: this will make it so useFetch(QUERY || MUTATION) will work
+      graphql // TODO: this will make it so useFetch(QUERY || MUTATION) will work
     }),
-    [options, graphql, isBrowser, url],
+    [options, graphql, isBrowser, url]
   )
 
   return (
