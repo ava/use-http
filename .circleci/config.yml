@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:8.10
+      - image: circleci/node:12.16.1
     environment:
       - NODE_ENV: test
     working_directory: ~/use-http
