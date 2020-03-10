@@ -67,6 +67,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         method,
         theController,
         cachePolicy,
+        cacheLife,
         cache,
         routeOrBody,
         body,
@@ -75,7 +76,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       if (response.isCached && cachePolicy === CACHE_FIRST) {
         setLoading(true)
-        if (cacheLife > 0 && Date.now() - response.age > cacheLife) {
+        if (response.isExpired) {
           cache.delete(response.id)
           cache.delete(response.ageID)
         } else {
