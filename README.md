@@ -775,6 +775,8 @@ Todos
 - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
 - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
 - [ ] add sponsors [similar to this](https://github.com/carbon-app/carbon)
+- [ ] Error handling
+  - [ ] if calling `response.json()` and there is no response yet
 - [ ] tests
   - [ ] doFetchArgs tests for `response.isExpired`
   - [ ] tests for SSR
