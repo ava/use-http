@@ -105,7 +105,7 @@ export default async function doFetchArgs<TData = any>(
       isExpired: cacheLife > 0 && responseAge > cacheLife,
       id: responseID,
       cached: cache.get(responseID) as Response | undefined,
-      ageID: responseAgeID,
+      ageID: responseAgeID
     }
   }
 }

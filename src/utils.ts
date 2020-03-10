@@ -173,7 +173,7 @@ export const responseMethods: ResponseMethods[] = ['clone', 'arrayBuffer', 'blob
 // const responseFields = [...Object.getOwnPropertyNames(Object.getPrototypeOf(new Response())), 'data'].filter(p => p !== 'constructor')
 type ResponseKeys = (keyof Res<any>)
 export const responseKeys: ResponseKeys[] = [...responseFields, ...responseMethods]
-export const emptyCustomResponse = Object.defineProperties({}, responseKeys.reduce((acc: any, field: ResponseKeys ) => {
+export const emptyCustomResponse = Object.defineProperties({}, responseKeys.reduce((acc: any, field: ResponseKeys) => {
   if (responseFields.includes(field as any)) {
     acc[field] = {
       get: () => { /* undefined */ },
