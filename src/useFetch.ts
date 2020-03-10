@@ -75,7 +75,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       if (response.isCached && cachePolicy === CACHE_FIRST) {
         setLoading(true)
-        if (cacheLife > 0 && response.age > cacheLife) {
+        if (cacheLife > 0 && Date.now() - response.age > cacheLife) {
           cache.delete(response.id)
           cache.delete(response.ageID)
         } else {
