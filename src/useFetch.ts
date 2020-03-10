@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 import useSSR from 'use-ssr'
 import {
@@ -69,6 +69,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         method,
         theController,
         cachePolicy,
+        cacheLife,
         cache,
         routeOrBody,
         body,
@@ -77,7 +78,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       if (response.isCached && cachePolicy === CACHE_FIRST) {
         setLoading(true)
-        if (cacheLife > 0 && response.age > cacheLife) {
+        if (response.isExpired) {
           cache.delete(response.id)
           cache.delete(response.ageID)
         } else {
@@ -171,26 +172,27 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     data: data.current
   }
 
-  const response = useMemo((): any => {
-    const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
-    return Object.defineProperties({}, responseKeys.reduce((acc: any, field: keyof Res<TData>) => {
-      if (responseFields.includes(field as any)) {
-        acc[field] = {
-          get: () => {
-            if (field === 'data') return data.current
-            return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
-          },
-          enumerable: true
-        }
-      } else if (responseMethods.includes(field as any)) {
-        acc[field] = {
-          value: () => clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>](),
-          enumerable: true
-        }
+  const response = Object.defineProperties({}, responseKeys.reduce((acc: any, field: keyof Res<TData>) => {
+    if (responseFields.includes(field as any)) {
+      acc[field] = {
+        get: () => {
+          if (field === 'data') return data.current
+          const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
+          return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
+        },
+        enumerable: true
       }
-      return acc
-    }, {}))
-  }, [res.current])
+    } else if (responseMethods.includes(field as any)) {
+      acc[field] = {
+        value: () => {
+          const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
+          return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
+        },
+        enumerable: true
+      }
+    }
+    return acc
+  }, {}))
 
   // onMount/onUpdate
   useEffect((): any => {
@@ -200,12 +202,15 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const req = request[methodLower] as NoArgs
       req()
     }
+  // TODO: need [request] in dependency array. Causing infinite loop though.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies)
 
   // Cancel any running request when unmounting to avoid updating state after component has unmounted
   // This can happen if a request's promise resolves after component unmounts
-  useEffect(() => request.abort, [request.abort])
+  // TODO: should have [request.abort] in dependency array. Causing every request to be aborted though...
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => request.abort, [])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, response, loading, error.current],

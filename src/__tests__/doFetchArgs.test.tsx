@@ -1,7 +1,6 @@
 import doFetchArgs from '../doFetchArgs'
-import { HTTPMethod, CachePolicies } from '../types'
-
-const defaultCachePolicy = CachePolicies.CACHE_FIRST
+import { HTTPMethod } from '../types'
+import { defaults } from '../useFetchArgs'
 
 describe('doFetchArgs: general usages', (): void => {
   it('should be defined', (): void => {
@@ -18,7 +17,8 @@ describe('doFetchArgs: general usages', (): void => {
       '',
       HTTPMethod.POST,
       controller,
-      defaultCachePolicy,
+      defaults.cachePolicy,
+      defaults.cacheLife,
       cache,
       expectedRoute,
       {}
@@ -43,7 +43,8 @@ describe('doFetchArgs: general usages', (): void => {
       '',
       HTTPMethod.POST,
       controller,
-      defaultCachePolicy,
+      defaults.cachePolicy,
+      defaults.cacheLife,
       cache,
       '/test',
       []
@@ -68,7 +69,8 @@ describe('doFetchArgs: general usages', (): void => {
       '/path',
       HTTPMethod.POST,
       controller,
-      defaultCachePolicy,
+      defaults.cachePolicy,
+      defaults.cacheLife,
       cache,
       '/route',
       {}
@@ -91,7 +93,8 @@ describe('doFetchArgs: general usages', (): void => {
       '',
       HTTPMethod.POST,
       controller,
-      defaultCachePolicy,
+      defaults.cachePolicy,
+      defaults.cacheLife,
       cache,
       '/test',
       {},
@@ -138,7 +141,8 @@ describe('doFetchArgs: Errors', (): void => {
         '',
         HTTPMethod.GET,
         controller,
-        defaultCachePolicy,
+        defaults.cachePolicy,
+        defaults.cacheLife,
         cache,
         {},
         {}
@@ -176,7 +180,8 @@ describe('doFetchArgs: Errors', (): void => {
         '',
         HTTPMethod.GET,
         controller,
-        defaultCachePolicy,
+        defaults.cachePolicy,
+        defaults.cacheLife,
         cache,
         [],
         []
