@@ -834,10 +834,16 @@ Todos
     // I don't really like this solution though.
     // Another solution is to only allow the `cache` option with the `<Provider cache={new Map()} />`
     cache: new Map(),
+    interceptors: {
+      // I think it's more scalable/clean to have this as an object.
+      // What if we only need the `route` and `options`?
+      request: async ({ options, url, path, route }) => {},
+      response: ({ response }) => {}
+    },
     // can retry on certain http status codes
     retryOn: [503],
     // OR
-    retryOn(attempt, error, response) {
+    retryOn({ attempt, error, response }) {
       // retry on any network error, or 4xx or 5xx status codes
       if (error !== null || response.status >= 400) {
         console.log(`retrying, attempt number ${attempt + 1}`);
@@ -845,7 +851,7 @@ Todos
       }
     },
     // This function receives a retryAttempt integer and returns the delay to apply before the next attempt in milliseconds
-    retryDelay(attempt, error, response) {
+    retryDelay({ attempt, error, response }) {
       // applies exponential backoff
       return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
       // applies linear backoff
