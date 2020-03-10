@@ -190,12 +190,15 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const req = request[methodLower] as NoArgs
       req()
     }
+  // TODO: need [request] in dependency array. Causing infinite loop though.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies)
 
   // Cancel any running request when unmounting to avoid updating state after component has unmounted
   // This can happen if a request's promise resolves after component unmounts
-  useEffect(() => request.abort, [request.abort])
+  // TODO: should have [request.abort] in dependency array. Causing every request to be aborted though...
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => request.abort, [])
 
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, response, loading, error.current],

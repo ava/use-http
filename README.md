@@ -822,8 +822,17 @@ Todos
 
   ```jsx
   const request = useFetch({
-    onSuccess: (/* idk what to put here */) => {},
-    onError: (error) => {},
+    // enabled React Suspense mode
+    suspense: false,
+    // allows caching to persist after page refresh
+    persist: true, // false by default
+    // Allows you to pass in your own cache to useFetch
+    // This is controversial though because `cache` is an option in the requestInit
+    // and it's value is a string. See: https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
+    // One possible solution is to move the default `fetch`'s `cache` to `cachePolicy`.
+    // I don't really like this solution though.
+    // Another solution is to only allow the `cache` option with the `<Provider cache={new Map()} />`
+    cache: new Map(),
     // can retry on certain http status codes
     retryOn: [503],
     // OR
@@ -845,12 +854,12 @@ Todos
     cachePolicy: 'cache-and-network', 'network-only', 'cache-only', 'no-cache' // 'cache-first'
     // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     onServer: true,
+    onSuccess: (/* idk what to put here */) => {},
+    onError: (error) => {},
     // if you would prefer to pass the query in the config
     query: `some graphql query`
     // if you would prefer to pass the mutation in the config
     mutation: `some graphql mutation`
-    // enabled React Suspense mode
-    suspense: false,
     retryOnError: false,
     refreshWhenHidden: false,
   })
@@ -859,7 +868,6 @@ Todos
 - resources
   - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
   - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
-  - [zeit's swr](https://github.com/zeit/swr)
 
 - [ ] potential option ideas for `GraphQL`
 
