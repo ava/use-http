@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 import useSSR from 'use-ssr'
 import {
@@ -67,6 +67,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         method,
         theController,
         cachePolicy,
+        cacheLife,
         cache,
         routeOrBody,
         body,
@@ -75,7 +76,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       if (response.isCached && cachePolicy === CACHE_FIRST) {
         setLoading(true)
-        if (cacheLife > 0 && response.age > cacheLife) {
+        if (response.isExpired) {
           cache.delete(response.id)
           cache.delete(response.ageID)
         } else {
@@ -161,26 +162,24 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     data: data.current
   }
 
-  const response = useMemo((): any => {
-    const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
-    return Object.defineProperties({}, responseKeys.reduce((acc: any, field: keyof Res<TData>) => {
-      if (responseFields.includes(field as any)) {
-        acc[field] = {
-          get: () => {
-            if (field === 'data') return data.current
-            return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
-          },
-          enumerable: true
-        }
-      } else if (responseMethods.includes(field as any)) {
-        acc[field] = {
-          value: () => clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>](),
-          enumerable: true
-        }
+  const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
+  const response = Object.defineProperties({}, responseKeys.reduce((acc: any, field: keyof Res<TData>) => {
+    if (responseFields.includes(field as any)) {
+      acc[field] = {
+        get: () => {
+          if (field === 'data') return data.current
+          return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
+        },
+        enumerable: true
       }
-      return acc
-    }, {}))
-  }, [res.current])
+    } else if (responseMethods.includes(field as any)) {
+      acc[field] = {
+        value: () => clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>](),
+        enumerable: true
+      }
+    }
+    return acc
+  }, {}))
 
   // onMount/onUpdate
   useEffect((): any => {
