@@ -59,6 +59,7 @@ Features
 - React Native support
 - Aborts/Cancels pending http requests when a component unmounts
 - Built in caching
+- Suspense<sup>(experimental)</sup> support
 
 Examples
 =========
@@ -252,7 +253,7 @@ const App = () => (
 Destructured
 -------------
 
-⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
+⚠️ Do not destructure the `response` object! Technically you can do it, but if you need to access the `response.ok` from, for example, within a component's onClick handler, it will be a stale value for `ok` where it will be correct for `response.ok`.  ️️⚠️
 
 ```js
 var [request, response, loading, error] = useFetch('https://example.com')
@@ -260,12 +261,11 @@ var [request, response, loading, error] = useFetch('https://example.com')
 // want to use object destructuring? You can do that too
 var {
   request,
-  // the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
-  // ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
-  response,
+  response, // 🚨 Do not destructure the `response` object!
   loading,
   error,
   data,
+  read,   // suspense (experimental)
   get,
   post,
   put,
@@ -277,10 +277,33 @@ var {
   abort
 } = useFetch('https://example.com')
 
+// 🚨 Do not destructure the `response` object!
+// 🚨 This just shows what fields are available in it.
+var {
+  ok,
+  status,
+  headers,
+  data,
+  type,
+  statusText,
+  url,
+  body,
+  bodyUsed,
+  redirected,
+  // methods
+  json,
+  text,
+  formData,
+  blob,
+  arrayBuffer,
+  clone
+} = response
+
 var {
   loading,
   error,
   data,
+  read,   // suspense (experimental)
   get,
   post,
   put,
@@ -638,6 +661,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
+| `suspense` | Enables React Suspense mode. [example]() | false |
 | `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
 | `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
@@ -656,6 +680,9 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 const options = {
   // accepts all `fetch` options such as headers, method, etc.
   
+  // enables React Suspense mode
+  suspense: true, // defaults to `false`
+
   // Cache responses to improve speed and reduce amount of requests
   // Only one request to the same endpoint will be initiated unless cacheLife expires for 'cache-first'.
   cachePolicy: 'cache-first' // 'no-cache'

@@ -37,9 +37,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     perPage,
     cachePolicy, // 'cache-first' by default
     cacheLife,
-    suspense
+    suspense: defaultSuspense
   } = customOptions
 
+  let suspense = defaultSuspense
   const { isServer } = useSSR()
   const forceUpdate = useReducer(() => ({}))[1]
 
@@ -173,6 +174,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     put: useCallback(makeFetch(HTTPMethod.PUT), [makeFetch]),
     del,
     delete: del,
+    read: (...args) => {
+      suspense = true
+      callSelf(...args)
+    },
     abort: () => controller.current && controller.current.abort(),
     query: (query, variables) => post({ query, variables }),
     mutate: (mutation, variables) => post({ mutation, variables }),
@@ -194,7 +199,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     } else if (responseMethods.includes(field as any)) {
       acc[field] = {
         value: () => {
-          const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
+          const clonedResponse = ('clone' in res.current ? res.current.clone() : { [field]: () => {/* noop */} }) as Res<TData>
           return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
         },
         enumerable: true
@@ -203,14 +208,17 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     return acc
   }, {}))
 
+  const callSelf = async (...args) => {
+    const methodName = requestInit.method || HTTPMethod.GET
+    const methodLower = methodName.toLowerCase() as keyof ReqMethods
+    const req = request[methodLower] as NoArgs
+    const final = await req(...args)
+    return final
+  }
+
   // onMount/onUpdate
   useEffect((): any => {
-    if (dependencies && Array.isArray(dependencies)) {
-      const methodName = requestInit.method || HTTPMethod.GET
-      const methodLower = methodName.toLowerCase() as keyof ReqMethods
-      const req = request[methodLower] as NoArgs
-      req()
-    }
+    if (Array.isArray(dependencies)) callSelf() 
   // TODO: need [request] in dependency array. Causing infinite loop though.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies)
@@ -234,8 +242,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           throw suspender.current
         case 'error':
           throw error.current
-        default:
-          return final
+        // default:
+        //   suspender.current = undefined
       } 
     }
   }
