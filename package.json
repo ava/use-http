@@ -9,7 +9,6 @@
     "url": "https://github.com/alex-cory/use-http.git"
   },
   "dependencies": {
-    "eslint-plugin-jest-formatting": "^1.2.0",
     "use-ssr": "^1.0.22"
   },
   "peerDependencies": {
@@ -31,6 +30,7 @@
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jest": "23.2.0",
+    "eslint-plugin-jest-formatting": "^1.2.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
