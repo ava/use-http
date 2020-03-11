@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+// @ts-nocheck
+import { useEffect, useState, useCallback, useRef, useReducer } from 'react'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 import useSSR from 'use-ssr'
 import {
@@ -35,10 +36,12 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     onNewData,
     perPage,
     cachePolicy, // 'cache-first' by default
-    cacheLife
+    cacheLife,
+    suspense
   } = customOptions
 
   const { isServer } = useSSR()
+  const forceUpdate = useReducer(() => ({}))[1]
 
   const controller = useRef<AbortController>()
   const res = useRef<Res<TData>>({} as Res<TData>)
@@ -47,6 +50,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const attempts = useRef(retries)
   const error = useRef<any>()
   const hasMore = useRef(true)
+  const suspenseStatus = useRef('pending')
+  const suspender = useRef()
 
   const [loading, setLoading] = useState<boolean>(defaults.loading)
 
@@ -74,7 +79,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         interceptors.request
       )
 
-      setLoading(true)
+      if (!suspense) setLoading(true)
       error.current = undefined
 
       if (response.isCached && cachePolicy === CACHE_FIRST) {
@@ -85,7 +90,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           try {
             res.current.data = await tryGetData(response.cached, defaults.data)
             data.current = res.current.data as TData
-            setLoading(false)
+            if (!suspense) setLoading(false)
             return data.current
           } catch (err) {
             error.current = err
@@ -135,17 +140,29 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         controller.current = undefined
       }
 
-      setLoading(false)
+      if (!suspense) setLoading(false)
 
       return data.current
     }
 
+    if (suspense) return () => {
+      suspender.current = doFetch().then(
+        () => {
+          suspenseStatus.current = 'success'
+        },
+        () => {
+          suspenseStatus.current = 'error'
+        },
+      )
+      forceUpdate()
+    }
+
     return doFetch
   }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, cacheLife, onTimeout, defaults.data, onNewData])
-
+  
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
-
+  
   const request: Req<TData> = {
     get: useCallback(makeFetch(HTTPMethod.GET), [makeFetch]),
     post,
@@ -201,10 +218,28 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => request.abort, [])
 
-  return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
+  const final = Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, response, loading, error.current],
     { request, response, ...request }
   )
+
+  if (suspense) {
+    if (isServer) throw new Error('Suspense on server side is not yet supported! 🙅‍♂️')
+    if (suspender.current) {
+      console.log('MADE IT')
+      switch (suspenseStatus.current) {
+        case 'pending':
+          // console.log('throwing suspender')
+          throw suspender.current
+        case 'error':
+          throw error.current
+        default:
+          suspender.current = undefined
+          return final
+      } 
+    }
+  }
+  return final
 }
 
 export { useFetch }
