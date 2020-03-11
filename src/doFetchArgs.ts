@@ -11,9 +11,9 @@ export default async function doFetchArgs<TData = any>(
   method: HTTPMethod,
   controller: AbortController,
   cachePolicy: CachePolicies,
+  cacheLife: number,
   cache: Map<string, Res<TData> | number>,
   persist: boolean,
-  cacheLife: number,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
   requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
@@ -97,11 +97,14 @@ export default async function doFetchArgs<TData = any>(
     .map(([key, value]) => `${key}:${value}`).join('||')
   const responseAgeID = `${responseID}:ts`
 
+  const responseAge = Date.now() - ((cache.get(responseAgeID) || 0) as number)
+
   return {
     url,
     options,
     response: {
       isCached: cache.has(responseID),
+      isExpired: cacheLife > 0 && responseAge > cacheLife,
       id: responseID,
       cached: cache.get(responseID) as Response | undefined,
       ageID: responseAgeID,

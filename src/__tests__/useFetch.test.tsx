@@ -408,17 +408,17 @@ describe('caching - useFetch - BROWSER', (): void => {
   })
 
   it('should make a second request if cacheLife has exprired. `cache-first` cachePolicy', async (): Promise<void> => {
-    // TODO: this test is extra brittle. I've tried many things.
-    // if it fails, try restarting your tests entirely.
     // run the request on mount
     const { result, waitForNextUpdate } = renderHook(() => useFetch('https://example.com', {
-      cacheLife: 0.01
+      cacheLife: 1
     }, []))
     expect(result.current.loading).toBe(true)
     await waitForNextUpdate()
     expect(result.current.loading).toBe(false)
     expect(result.current.data).toEqual(expected)
     expect(fetch.mock.calls.length).toEqual(1)
+    // wait ~20ms to allow cache to expire
+    await new Promise(resolve => setTimeout(resolve, 20))
     // make a 2nd request
     await act(async () => {
       await result.current.get()
@@ -837,7 +837,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
 
   it('should fetch once', async (): Promise<void> => {
     const { waitForNextUpdate } = renderHook(
-      () => useFetch({ url: 'https://example.com', persist: true }, [])
+      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
     )
 
     await waitForNextUpdate()
@@ -849,7 +849,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
     fetch.mockResponse(JSON.stringify(unexpected))
 
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ url: 'https://example.com', persist: true, cachePolicy: NO_CACHE }, [])
+      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
     )
 
     await waitForNextUpdate()
@@ -862,7 +862,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
     mockdate.set('2020-01-02 01:00')
 
     const { waitForNextUpdate } = renderHook(
-      () => useFetch({ url: 'https://example.com', persist: true, cachePolicy: NO_CACHE }, [])
+      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
     )
 
     await waitForNextUpdate()

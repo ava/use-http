@@ -67,6 +67,7 @@ export interface DoFetchArgs {
   options: RequestInit
   response: {
     isCached: boolean
+    isExpired: boolean
     id: string
     cached?: Response
     ageID: string
