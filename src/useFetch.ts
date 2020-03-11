@@ -145,16 +145,19 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       return data.current
     }
 
-    if (suspense) return () => {
+    if (suspense) return async () => {
       suspender.current = doFetch().then(
-        () => {
+        (newData) => {
           suspenseStatus.current = 'success'
+          return newData
         },
         () => {
           suspenseStatus.current = 'error'
         },
       )
       forceUpdate()
+      const newData = await suspender.current
+      return newData
     }
 
     return doFetch
@@ -226,15 +229,12 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   if (suspense) {
     if (isServer) throw new Error('Suspense on server side is not yet supported! 🙅‍♂️')
     if (suspender.current) {
-      console.log('MADE IT')
       switch (suspenseStatus.current) {
         case 'pending':
-          // console.log('throwing suspender')
           throw suspender.current
         case 'error':
           throw error.current
         default:
-          suspender.current = undefined
           return final
       } 
     }
