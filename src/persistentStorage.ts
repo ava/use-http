@@ -7,7 +7,7 @@ const hasPersistentData = (url: string): boolean => {
 
 const getPersistentData = (url: string): any => {
   const urlCache = JSON.parse(localStorage[cacheName] || '{}')
-  return urlCache[url].data
+  return urlCache[url] && urlCache[url].data
 }
 
 const setPersistentData = (url: string, data: any, ttl = 24 * 3600000): void => {

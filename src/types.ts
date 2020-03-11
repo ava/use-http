@@ -71,6 +71,8 @@ export interface DoFetchArgs {
     cached?: Response
     ageID: string
     age: number
+    isPersisted: boolean
+    persisted?: any
   }
 }
 

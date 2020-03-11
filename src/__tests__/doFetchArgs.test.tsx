@@ -2,6 +2,7 @@ import doFetchArgs from '../doFetchArgs'
 import { HTTPMethod, CachePolicies } from '../types'
 
 const defaultCachePolicy = CachePolicies.CACHE_FIRST
+const defaultCacheLife = 24 * 3600000
 
 describe('doFetchArgs: general usages', (): void => {
   it('should be defined', (): void => {
@@ -20,6 +21,8 @@ describe('doFetchArgs: general usages', (): void => {
       controller,
       defaultCachePolicy,
       cache,
+      false,
+      defaultCacheLife,
       expectedRoute,
       {}
     )
@@ -45,6 +48,8 @@ describe('doFetchArgs: general usages', (): void => {
       controller,
       defaultCachePolicy,
       cache,
+      false,
+      defaultCacheLife,
       '/test',
       []
     )
@@ -70,6 +75,8 @@ describe('doFetchArgs: general usages', (): void => {
       controller,
       defaultCachePolicy,
       cache,
+      false,
+      defaultCacheLife,
       '/route',
       {}
     )
@@ -93,6 +100,8 @@ describe('doFetchArgs: general usages', (): void => {
       controller,
       defaultCachePolicy,
       cache,
+      false,
+      defaultCacheLife,
       '/test',
       {},
       interceptors.request
@@ -140,6 +149,8 @@ describe('doFetchArgs: Errors', (): void => {
         controller,
         defaultCachePolicy,
         cache,
+        false,
+        defaultCacheLife,
         {},
         {}
       )
@@ -178,6 +189,8 @@ describe('doFetchArgs: Errors', (): void => {
         controller,
         defaultCachePolicy,
         cache,
+        false,
+        defaultCacheLife,
         [],
         []
       )

@@ -811,32 +811,33 @@ describe('useFetch - BROWSER - persistence', (): void => {
     name: 'Alex Cory',
     age: 29
   }
-
-  const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <Provider url="https://example.com" options={{ cachePolicy: NO_CACHE }}>{children}</Provider>
+  const unexpected = {
+    name: 'Mattias Rost',
+    age: 37
+  }
 
   afterAll((): void => {
-    cleanup()
-    fetch.resetMocks()
     mockdate.reset()
   })
 
   beforeAll((): void => {
-    fetch.mockResponseOnce(
-      JSON.stringify(expected)
-    )
     mockdate.set('2020-01-01')
   })
 
-  afterEach((): void => {
+  afterEach(() => {
+    cleanup()
     fetch.resetMocks()
   })
 
-  it('should fetch once', async (): Promise<
-    void
-  > => {
+  beforeEach((): void => {
+    fetch.mockResponse(
+      JSON.stringify(expected)
+    )
+  })
+
+  it('should fetch once', async (): Promise<void> => {
     const { waitForNextUpdate } = renderHook(
-      () => useFetch({ persist: true }, []), // onMount === true
-      { wrapper: wrapper as React.ComponentType }
+      () => useFetch({ url: 'https://example.com', persist: true }, [])
     )
 
     await waitForNextUpdate()
@@ -844,27 +845,24 @@ describe('useFetch - BROWSER - persistence', (): void => {
     expect(fetch).toHaveBeenCalledTimes(1)
   })
 
-  it('should not fetch again', async (): Promise<
-    void
-  > => {
-    const { waitForNextUpdate } = renderHook(
-      () => useFetch({ persist: true }, []), // onMount === true
-      { wrapper: wrapper as React.ComponentType }
+  it('should not fetch again', async (): Promise<void> => {
+    fetch.mockResponse(JSON.stringify(unexpected))
+
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({ url: 'https://example.com', persist: true, cachePolicy: NO_CACHE }, [])
     )
 
     await waitForNextUpdate()
 
     expect(fetch).toHaveBeenCalledTimes(0)
+    expect(result.current.data).toEqual(expected)
   })
 
-  it('should fetch again after 24h', async (): Promise<
-    void
-  > => {
+  it('should fetch again after 24h', async (): Promise<void> => {
     mockdate.set('2020-01-02 01:00')
 
     const { waitForNextUpdate } = renderHook(
-      () => useFetch({ persist: true }, []), // onMount === true
-      { wrapper: wrapper as React.ComponentType }
+      () => useFetch({ url: 'https://example.com', persist: true, cachePolicy: NO_CACHE }, [])
     )
 
     await waitForNextUpdate()

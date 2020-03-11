@@ -17,7 +17,7 @@ import {
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
 import { invariant, tryGetData, responseKeys, responseMethods, responseFields } from './utils'
-import { getPersistentData, hasPersistentData, setPersistentData } from './persistFetch'
+import { setPersistentData } from './persistentStorage'
 
 const { CACHE_FIRST } = CachePolicies
 
@@ -70,12 +70,19 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         theController,
         cachePolicy,
         cache,
+        persist,
+        cacheLife,
         routeOrBody,
         body,
         interceptors.request
       )
 
-      if (response.isCached && cachePolicy === CACHE_FIRST) {
+      if (response.isPersisted) {
+        res.current.data = response.persisted
+        data.current = res.current.data as TData
+        setLoading(false)
+        return data.current
+      } else if (response.isCached && cachePolicy === CACHE_FIRST) {
         setLoading(true)
         if (cacheLife > 0 && response.age > cacheLife) {
           cache.delete(response.id)
@@ -108,41 +115,38 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       let newData
       let newRes
 
-      if (persist && hasPersistentData(url)) {
-        data.current = getPersistentData(url) as TData
-      } else {
-        try {
-          newRes = await fetch(url, options)
-          res.current = newRes.clone()
+      try {
+        newRes = await fetch(url, options)
+        res.current = newRes.clone()
 
-          if (cachePolicy === CACHE_FIRST) {
-            cache.set(response.id, newRes.clone())
-            if (cacheLife > 0) cache.set(response.ageID, Date.now())
-          }
-
-          newData = await tryGetData(newRes, defaults.data)
-          res.current.data = onNewData(data.current, newData)
-
-          res.current = interceptors.response ? interceptors.response(res.current) : res.current
-          invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
-          data.current = res.current.data as TData
-
-          if (persist) {
-            setPersistentData(url, data.current)
-          }
-
-          if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
-        } catch (err) {
-          if (attempts.current > 0) return doFetch(routeOrBody, body)
-          if (attempts.current < 1 && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
-          if (err.name !== 'AbortError') error.current = err
-        } finally {
-          if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
-          if (attempts.current > 0) attempts.current -= 1
-          timedout.current = false
-          if (timer) clearTimeout(timer)
-          controller.current = undefined
+        if (cachePolicy === CACHE_FIRST) {
+          cache.set(response.id, newRes.clone())
+          if (cacheLife > 0) cache.set(response.ageID, Date.now())
         }
+
+        newData = await tryGetData(newRes, defaults.data)
+        res.current.data = onNewData(data.current, newData)
+
+        res.current = interceptors.response ? interceptors.response(res.current) : res.current
+        invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
+        data.current = res.current.data as TData
+
+        if (persist) {
+          const defaultPersistenceLength = 24 * 3600000
+          setPersistentData(response.id, data.current, cacheLife || defaultPersistenceLength)
+        }
+
+        if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
+      } catch (err) {
+        if (attempts.current > 0) return doFetch(routeOrBody, body)
+        if (attempts.current < 1 && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
+        if (err.name !== 'AbortError') error.current = err
+      } finally {
+        if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
+        if (attempts.current > 0) attempts.current -= 1
+        timedout.current = false
+        if (timer) clearTimeout(timer)
+        controller.current = undefined
       }
 
       setLoading(false)

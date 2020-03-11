@@ -1,5 +1,6 @@
 import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs, CachePolicies, Res } from './types'
 import { invariant, isServer, isString, isBodyObject } from './utils'
+import { hasPersistentData, getPersistentData } from './persistentStorage'
 
 const { GET } = HTTPMethod
 
@@ -11,6 +12,8 @@ export default async function doFetchArgs<TData = any>(
   controller: AbortController,
   cachePolicy: CachePolicies,
   cache: Map<string, Res<TData> | number>,
+  persist: boolean,
+  cacheLife: number,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
   requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
@@ -102,7 +105,9 @@ export default async function doFetchArgs<TData = any>(
       id: responseID,
       cached: cache.get(responseID) as Response | undefined,
       ageID: responseAgeID,
-      age: (cache.get(responseAgeID) || 0) as number
+      age: (cache.get(responseAgeID) || 0) as number,
+      isPersisted: persist && hasPersistentData(responseID),
+      persisted: persist ? getPersistentData(responseID) : undefined
     }
   }
 }
