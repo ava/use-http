@@ -99,6 +99,8 @@ export default async function doFetchArgs<TData = any>(
 
   const responseAge = Date.now() - ((cache.get(responseAgeID) || 0) as number)
 
+  const isPersisted = persist && hasPersistentData(responseID)
+
   return {
     url,
     options,
@@ -108,9 +110,8 @@ export default async function doFetchArgs<TData = any>(
       id: responseID,
       cached: cache.get(responseID) as Response | undefined,
       ageID: responseAgeID,
-      age: (cache.get(responseAgeID) || 0) as number,
-      isPersisted: persist && hasPersistentData(responseID),
-      persisted: persist ? getPersistentData(responseID) : undefined
+      isPersisted,
+      persisted: isPersisted ? getPersistentData(responseID) : undefined
     }
   }
 }
