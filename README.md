@@ -167,6 +167,40 @@ function Todos() {
 ```
 </details>
 
+
+<details open><summary><b>Basic Usage (auto managed state) with <code>Provider</code></b></summary>
+
+```js
+import useFetch, { Provider } from 'use-http'
+
+function Todos() {
+  const { loading, error, data } = useFetch({
+    path: '/todos',
+    data: []
+  }, []) // onMount
+
+  return (
+    <>
+      {error && 'Error!'}
+      {loading && 'Loading...'}
+      {data.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+    </>
+  )
+}
+
+const App = () => (
+  <Provider url='https://example.com'>
+    <Todos />
+  </Provider>
+)
+```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+
+</details>
+
 <details open><summary><b>Suspense Mode (auto managed state)</b></summary>
 
 ```js
@@ -201,7 +235,7 @@ const App = () => (
 )
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
 
 </details>
 
@@ -251,83 +285,7 @@ const App = () => (
 )
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
-
-</details>
-
-<details open><summary><b>Suspense Mode (managed state) .read()</b></summary>
-
-Here the `.read()` will perform a `GET` request unless the `method` option is set in `useFetch`.
-
-```js
-import useFetch, { Provider } from 'use-http'
-
-function Todos() {
-  const [todos, setTodos] = useState([])
-  const [request, response] = useFetch({ data: [] })
-
-  const loadInitialTodos = async () => {
-    // this .read() set's suspense mode to true. Defaults to GET request
-    const todos = await request.read('/todos')
-    if (response.ok) setTodos(todos)
-  }
-
-  const mounted = useRef(false)
-  useEffect(() => {
-    if (mounted.current) return
-    mounted.current = true
-    loadInitialTodos()
-  }, [])
-
-  return (
-    <>
-      {error && 'Error!'}
-      {todos.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
-    </>
-  )
-}
-
-const App = () => (
-  <Provider url='https://example.com'>
-    <Suspense fallback='Loading...'>
-      <Todos />
-    </Suspense>
-  </Provider>
-)
-```
-
-<details open><summary><b>Basic Usage (auto managed state) with <code>Provider</code></b></summary>
-
-```js
-import useFetch, { Provider } from 'use-http'
-
-function Todos() {
-  const { loading, error, data } = useFetch({
-    path: '/todos',
-    data: []
-  }, []) // onMount
-
-  return (
-    <>
-      {error && 'Error!'}
-      {loading && 'Loading...'}
-      {data.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
-    </>
-  )
-}
-
-const App = () => (
-  <Provider url='https://example.com'>
-    <Todos />
-  </Provider>
-)
-```
-
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
 
 </details>
 
@@ -1050,33 +1008,6 @@ const res = await request.query({ userID })`
 ```
 
 - [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
-
-<details><summary><b>The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
-
-```jsx
-import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
-
-function WithSuspense() {
-  const suspense = useFetch('https://example.com')
-
-  useEffect(() => {
-    suspense.read()
-  }, [])
-
-  if (!suspense.data) return null
-
-  return <pre>{suspense.data}</pre>
-}
-
-function App() (
-  <ConcurrentMode>
-    <Suspense fallback="Loading...">
-      <WithSuspense />
-    </Suspense>
-  </ConcurrentMode>
-)
-``` 
-</details>
 
 <details><summary><b>GraphQL with Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
     

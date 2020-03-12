@@ -37,10 +37,9 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     perPage,
     cachePolicy, // 'cache-first' by default
     cacheLife,
-    suspense: defaultSuspense
+    suspense
   } = customOptions
 
-  let suspense = defaultSuspense
   const { isServer } = useSSR()
   const forceUpdate = useReducer(() => ({}))[1]
 
@@ -146,8 +145,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       return data.current
     }
 
-    if (suspense) return async () => {
-      suspender.current = doFetch().then(
+    if (suspense) return async (...args) => {
+      suspender.current = doFetch(...args).then(
         (newData) => {
           suspenseStatus.current = 'success'
           return newData
@@ -174,10 +173,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     put: useCallback(makeFetch(HTTPMethod.PUT), [makeFetch]),
     del,
     delete: del,
-    read: (...args) => {
-      suspense = true
-      callSelf(...args)
-    },
     abort: () => controller.current && controller.current.abort(),
     query: (query, variables) => post({ query, variables }),
     mutate: (mutation, variables) => post({ mutation, variables }),
@@ -208,17 +203,14 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     return acc
   }, {}))
 
-  const callSelf = async (...args) => {
-    const methodName = requestInit.method || HTTPMethod.GET
-    const methodLower = methodName.toLowerCase() as keyof ReqMethods
-    const req = request[methodLower] as NoArgs
-    const final = await req(...args)
-    return final
-  }
-
   // onMount/onUpdate
   useEffect((): any => {
-    if (Array.isArray(dependencies)) callSelf() 
+    if (Array.isArray(dependencies)) {
+      const methodName = requestInit.method || HTTPMethod.GET
+      const methodLower = methodName.toLowerCase() as keyof ReqMethods
+      const req = request[methodLower] as NoArgs
+      req()
+    }
   // TODO: need [request] in dependency array. Causing infinite loop though.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies)

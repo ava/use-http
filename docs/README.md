@@ -107,7 +107,7 @@ yarn add use-http    or    npm i -S use-http
 Usage
 =============
 
-Basic Usage
+Basic Usage (auto managed state)
 -------------------
 
 This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). **If no method is specified, GET is the default**
@@ -180,8 +180,8 @@ function Todos() {
 }
 ```
 
-Basic Usage With Provider
----------------------------
+Basic Usage With Provider (auto managed state)
+---------------------------------------------
 
 ```js
 import useFetch, { Provider } from 'use-http'
@@ -211,6 +211,92 @@ const App = () => (
 ```
 
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+
+Suspense Mode (auto managed state)
+----------------------------------
+
+```js
+import useFetch, { Provider } from 'use-http'
+
+function Todos() {
+  const { error, data: todos } = useFetch({
+    path: '/todos',
+    data: [],
+    suspense: true // can put it in 2 places. Here or in Provider
+  }, []) // onMount
+
+  return (
+    <>
+      {error && 'Error!'}
+      {todos.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+    </>
+  )
+}
+
+const App = () => (
+  const options = {
+    suspense: true
+  }
+  <Provider url='https://example.com' options={options}>
+    <Suspense fallback='Loading...'>
+      <Todos />
+    </Suspense>
+  </Provider>
+)
+```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
+
+Suspense Mode (managed state)
+-----------------------------
+
+Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
+
+```js
+import useFetch, { Provider } from 'use-http'
+
+function Todos() {
+  const [todos, setTodos] = useState([])
+  // A. can put `suspense: true` here
+  const { get, response } = useFetch({ data: [], suspense: true })
+
+  const loadInitialTodos = async () => {
+    const todos = await get('/todos')
+    if (response.ok) setTodos(todos)
+  }
+
+  const mounted = useRef(false)
+  useEffect(() => {
+    if (mounted.current) return
+    mounted.current = true
+    loadInitialTodos()
+  }, [])
+
+  return (
+    <Fragment>
+      {error && 'Error!'}
+      {todos.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+    </Fragment>
+  )
+}
+
+const App = () => (
+  const options = {
+    suspense: true // B. can put `suspense: true` here too
+  }
+  <Provider url='https://example.com' options={options}>
+    <Suspense fallback='Loading...'>
+      <Todos />
+    </Suspense>
+  </Provider>
+)
+```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
 
 Pagination With Provider
 ---------------------------
@@ -756,33 +842,6 @@ Who's using use-http?
 Feature Requests/Ideas
 ======================
 If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
-
-
-The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
-==================
-```js
-import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
-
-function WithSuspense() {
-  const suspense = useFetch('https://example.com')
-
-  useEffect(() => {
-    suspense.read()
-  }, [])
-
-  if (!suspense.data) return null
-
-  return <pre>{suspense.data}</pre>
-}
-
-function App() (
-  <ConcurrentMode>
-    <Suspense fallback="Loading...">
-      <WithSuspense />
-    </Suspense>
-  </ConcurrentMode>
-)
-```
 
 Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ==================
