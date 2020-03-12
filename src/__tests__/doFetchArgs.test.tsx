@@ -1,6 +1,9 @@
 import doFetchArgs from '../doFetchArgs'
 import { HTTPMethod } from '../types'
 import { defaults } from '../useFetchArgs'
+import persistentStorage from '../persistentStorage'
+
+jest.mock('../persistentStorage')
 
 describe('doFetchArgs: general usages', (): void => {
   it('should be defined', (): void => {
@@ -114,6 +117,33 @@ describe('doFetchArgs: general usages', (): void => {
       method: 'POST',
       signal: controller.signal
     })
+  })
+
+  it('should return persistent data', async (): Promise<void> => {
+    const persistedData = {}
+    const getItemMock = persistentStorage.getItem as jest.MockedFunction<typeof persistentStorage.getItem>
+    const hasItemMock = persistentStorage.hasItem as jest.MockedFunction<typeof persistentStorage.hasItem>
+    getItemMock.mockResolvedValue(persistedData)
+    hasItemMock.mockResolvedValue(true)
+
+    const controller = new AbortController()
+    const expectedRoute = '/test'
+    const cache = new Map()
+    const { response: { isPersisted, persisted } } = await doFetchArgs(
+      {},
+      '',
+      '',
+      HTTPMethod.POST,
+      controller,
+      defaults.cachePolicy,
+      defaults.cacheLife,
+      cache,
+      true,
+      expectedRoute,
+      {}
+    )
+    expect(isPersisted).toBeTruthy()
+    expect(persisted).toBe(persistedData)
   })
 })
 
