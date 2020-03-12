@@ -9,17 +9,17 @@ const getCache = () => {
   }
 }
 
-const hasItem = (url: string): boolean => {
+const hasItem = (url: string): Promise<boolean> => {
   const urlCache = getCache()
-  return urlCache[url] && urlCache[url].timestamp > Date.now() - urlCache[url].ttl
+  return Promise.resolve(urlCache[url] && urlCache[url].timestamp > Date.now() - urlCache[url].ttl)
 }
 
-const getItem = (url: string): any => {
+const getItem = (url: string): Promise<any> => {
   const urlCache = getCache()
-  return urlCache[url] && urlCache[url].data
+  return Promise.resolve(urlCache[url] && urlCache[url].data)
 }
 
-const setItem = (url: string, data: any, ttl = 24 * 3600000): void => {
+const setItem = (url: string, data: any, ttl = 24 * 3600000): Promise<void> => {
   const urlCache = getCache()
   urlCache[url] = {
     url,
@@ -28,6 +28,7 @@ const setItem = (url: string, data: any, ttl = 24 * 3600000): void => {
     ttl
   }
   localStorage.setItem(cacheName, JSON.stringify(urlCache))
+  return Promise.resolve()
 }
 
 export default {

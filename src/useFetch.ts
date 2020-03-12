@@ -135,7 +135,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
         if (persist) {
           const defaultPersistenceLength = 24 * 3600000
-          persistentStorage.setItem(response.id, data.current, cacheLife || defaultPersistenceLength)
+          await persistentStorage.setItem(response.id, data.current, cacheLife || defaultPersistenceLength)
         }
 
         if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false

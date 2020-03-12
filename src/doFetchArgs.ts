@@ -99,7 +99,7 @@ export default async function doFetchArgs<TData = any>(
 
   const responseAge = Date.now() - ((cache.get(responseAgeID) || 0) as number)
 
-  const isPersisted = persist && persistentStorage.hasItem(responseID)
+  const isPersisted = persist && await persistentStorage.hasItem(responseID)
 
   return {
     url,
@@ -111,7 +111,7 @@ export default async function doFetchArgs<TData = any>(
       cached: cache.get(responseID) as Response | undefined,
       ageID: responseAgeID,
       isPersisted,
-      persisted: isPersisted ? persistentStorage.getItem(responseID) : undefined
+      persisted: isPersisted ? await persistentStorage.getItem(responseID) : undefined
     }
   }
 }
