@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react'
+import { useMemo, useEffect, MutableRefObject } from 'react'
 import useSSR from 'use-ssr'
 import { RequestInitJSON, OptionsMaybeURL, Res } from './types'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
@@ -173,17 +173,31 @@ export const responseMethods: ResponseMethods[] = ['clone', 'arrayBuffer', 'blob
 // const responseFields = [...Object.getOwnPropertyNames(Object.getPrototypeOf(new Response())), 'data'].filter(p => p !== 'constructor')
 type ResponseKeys = (keyof Res<any>)
 export const responseKeys: ResponseKeys[] = [...responseFields, ...responseMethods]
-export const emptyCustomResponse = Object.defineProperties({}, responseKeys.reduce((acc: any, field: ResponseKeys) => {
+export const toResponseObject = <TData = any>(res?: Response | MutableRefObject<Response>, data?: any) => Object.defineProperties(
+  {},
+  responseKeys.reduce((acc: any, field: ResponseKeys) => {
   if (responseFields.includes(field as any)) {
     acc[field] = {
-      get: () => { /* undefined */ },
+      get: () => {
+        const response = res instanceof Response ? res : res && res.current
+        if (!response) return
+        if (field === 'data') return data.current
+        const clonedResponse = ('clone' in response ? response.clone() : {}) as Res<TData>
+        return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
+      },
       enumerable: true
     }
   } else if (responseMethods.includes(field as any)) {
     acc[field] = {
-      value: () => { /* undefined */ },
+      value: () => {
+        const response = res instanceof Response ? res : res && res.current
+        if (!response) return
+        const clonedResponse = ('clone' in response ? response.clone() : {}) as Res<TData>
+        return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
+      },
       enumerable: true
     }
   }
   return acc
 }, {}))
+export const emptyCustomResponse = toResponseObject()

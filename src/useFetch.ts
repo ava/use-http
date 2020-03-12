@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 import useSSR from 'use-ssr'
 import {
   HTTPMethod,
@@ -16,12 +15,11 @@ import {
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData, responseKeys, responseMethods, responseFields } from './utils'
-import persistentStorage from './persistentStorage'
+import { invariant, tryGetData, toResponseObject } from './utils'
+import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
 
-const cache = new Map()
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
@@ -39,6 +37,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     cachePolicy, // 'cache-first' by default
     cacheLife
   } = customOptions
+
+  const cache = useCache({ persist, cacheLife })
 
   const { isBrowser, isServer } = useSSR()
 
@@ -79,12 +79,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         interceptors.request
       )
 
-      if (response.isPersisted) {
-        res.current.data = response.persisted
-        data.current = res.current.data as TData
-        setLoading(false)
-        return data.current
-      } else if (response.isCached && cachePolicy === CACHE_FIRST) {
+      if (response.isCached && cachePolicy === CACHE_FIRST) {
         setLoading(true)
         if (response.isExpired) {
           cache.delete(response.id)
@@ -177,27 +172,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     data: data.current
   }
 
-  const response = Object.defineProperties({}, responseKeys.reduce((acc: any, field: keyof Res<TData>) => {
-    if (responseFields.includes(field as any)) {
-      acc[field] = {
-        get: () => {
-          if (field === 'data') return data.current
-          const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
-          return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
-        },
-        enumerable: true
-      }
-    } else if (responseMethods.includes(field as any)) {
-      acc[field] = {
-        value: () => {
-          const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
-          return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
-        },
-        enumerable: true
-      }
-    }
-    return acc
-  }, {}))
+  const response = toResponseObject<TData>(res, data)
 
   // onMount/onUpdate
   useEffect((): any => {

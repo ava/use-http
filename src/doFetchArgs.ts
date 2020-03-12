@@ -97,21 +97,17 @@ export default async function doFetchArgs<TData = any>(
     .map(([key, value]) => `${key}:${value}`).join('||')
   const responseAgeID = `${responseID}:ts`
 
-  const responseAge = Date.now() - ((cache.get(responseAgeID) || 0) as number)
-
-  const isPersisted = persist && await persistentStorage.hasItem(responseID)
+  const responseAge = Date.now() - ((await cache.get(responseAgeID) || 0) as number)
 
   return {
     url,
     options,
     response: {
-      isCached: cache.has(responseID),
+      isCached: await cache.has(responseID),
       isExpired: cacheLife > 0 && responseAge > cacheLife,
       id: responseID,
       cached: cache.get(responseID) as Response | undefined,
       ageID: responseAgeID,
-      isPersisted,
-      persisted: isPersisted ? await persistentStorage.getItem(responseID) : undefined
     }
   }
 }
