@@ -17,7 +17,7 @@ import {
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
 import { invariant, tryGetData, responseKeys, responseMethods, responseFields } from './utils'
-import { setPersistentData } from './persistentStorage'
+import persistentStorage from './persistentStorage'
 
 const { CACHE_FIRST } = CachePolicies
 
@@ -135,7 +135,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
         if (persist) {
           const defaultPersistenceLength = 24 * 3600000
-          setPersistentData(response.id, data.current, cacheLife || defaultPersistenceLength)
+          persistentStorage.setItem(response.id, data.current, cacheLife || defaultPersistenceLength)
         }
 
         if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false

@@ -9,17 +9,17 @@ const getCache = () => {
   }
 }
 
-const hasPersistentData = (url: string): boolean => {
+const hasItem = (url: string): boolean => {
   const urlCache = getCache()
   return urlCache[url] && urlCache[url].timestamp > Date.now() - urlCache[url].ttl
 }
 
-const getPersistentData = (url: string): any => {
+const getItem = (url: string): any => {
   const urlCache = getCache()
   return urlCache[url] && urlCache[url].data
 }
 
-const setPersistentData = (url: string, data: any, ttl = 24 * 3600000): void => {
+const setItem = (url: string, data: any, ttl = 24 * 3600000): void => {
   const urlCache = getCache()
   urlCache[url] = {
     url,
@@ -30,8 +30,8 @@ const setPersistentData = (url: string, data: any, ttl = 24 * 3600000): void => 
   localStorage.setItem(cacheName, JSON.stringify(urlCache))
 }
 
-export {
-  hasPersistentData,
-  getPersistentData,
-  setPersistentData
+export default {
+  hasItem,
+  getItem,
+  setItem
 }
