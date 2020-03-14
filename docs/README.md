@@ -235,16 +235,18 @@ function Todos() {
   )
 }
 
-const App = () => (
+function App() {
   const options = {
     suspense: true
   }
-  <Provider url='https://example.com' options={options}>
-    <Suspense fallback='Loading...'>
-      <Todos />
-    </Suspense>
-  </Provider>
-)
+  return (
+    <Provider url='https://example.com' options={options}>
+      <Suspense fallback='Loading...'>
+        <Todos />
+      </Suspense>
+    </Provider>
+  )
+}
 ```
 
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
@@ -284,16 +286,18 @@ function Todos() {
   )
 }
 
-const App = () => (
+function App() {
   const options = {
     suspense: true // B. can put `suspense: true` here too
   }
-  <Provider url='https://example.com' options={options}>
-    <Suspense fallback='Loading...'>
-      <Todos />
-    </Suspense>
-  </Provider>
-)
+  return (
+    <Provider url='https://example.com' options={options}>
+      <Suspense fallback='Loading...'>
+        <Todos />
+      </Suspense>
+    </Provider>
+  )
+}
 ```
 
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
