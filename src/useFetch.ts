@@ -39,7 +39,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
   const cache = useCache({ persist, cacheLife })
 
-  const { isBrowser, isServer } = useSSR()
+  const { isServer } = useSSR()
 
   const controller = useRef<AbortController>()
   const res = useRef<Res<TData>>({} as Res<TData>)
@@ -50,8 +50,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const hasMore = useRef(true)
 
   const [loading, setLoading] = useState<boolean>(defaults.loading)
-
-  invariant(!persist || isBrowser, 'Persistence is only supported on browsers')
 
   const makeFetch = useCallback((method: HTTPMethod): FetchData => {
     const doFetch = async (
