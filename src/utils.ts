@@ -183,7 +183,6 @@ export const toResponseObject = <TData = any>(res?: Response | MutableRefObject<
           if (!response) return
           if (field === 'data') return data.current
           const clonedResponse = ('clone' in response ? response.clone() : {}) as Res<TData>
-          if (field === 'body' && clonedResponse.body) return clonedResponse.body.toString()
           return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
         },
         enumerable: true
@@ -203,3 +202,24 @@ export const toResponseObject = <TData = any>(res?: Response | MutableRefObject<
   }, {}))
 
 export const emptyCustomResponse = toResponseObject()
+
+const headersAsObject = (headers: Headers): object => {
+  const obj: any = {}
+  headers.forEach((value, key) => {
+    obj[key] = value
+  })
+  return obj
+}
+
+export const serialiseResponse = async (response: Response) => {
+  const body = await response.text()
+  const status = response.status
+  const statusText = response.statusText
+  const headers = headersAsObject(response.headers)
+  return {
+    body,
+    status,
+    statusText,
+    headers
+  }
+}

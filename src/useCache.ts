@@ -1,7 +1,6 @@
 import useSSR from 'use-ssr'
-import { invariant, toResponseObject, tryGetData } from './utils'
+import { invariant, serialiseResponse } from './utils'
 import { Cache } from './types'
-import { defaults } from './useFetchArgs'
 
 const cacheName = 'useHTTPcache'
 
@@ -78,7 +77,7 @@ const getLocalStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
 
   const set = async (responseID: string, response: Response): Promise<void> => {
     const cache = getCache()
-    const responseObject = toResponseObject(response, await tryGetData(response, defaults.data))
+    const responseObject = await serialiseResponse(response)
     cache[responseID] = {
       response: responseObject,
       expiration: Date.now() + cacheLife
