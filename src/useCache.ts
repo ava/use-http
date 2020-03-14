@@ -1,5 +1,7 @@
 import useSSR from 'use-ssr'
-import { invariant, toResponseObject } from "./utils"
+import { invariant, toResponseObject, tryGetData } from './utils'
+import { Cache } from './types'
+import { defaults } from './useFetchArgs'
 
 const cacheName = 'useHTTPcache'
 
@@ -12,35 +14,61 @@ const getCache = () => {
   }
 }
 
+const inMemoryStorage = new Map<string, Response | number>()
+const getMemoryStorage = ({ cacheLife }: { cacheLife: number }): Cache => ({
+  async get(name: string) {
+    const item = inMemoryStorage.get(name) as Response | undefined
+    if (!item) return
 
-/**
- * Eventually, this will be replaced by use-react-storage, so
- * having this as a hook allows us to have minimal changes in
- * the future when switching over.
- */
-type UseCacheArgs = { persist: boolean, cacheLife: number }
-const inMemoryCache = new Map()
-const useCache = ({ persist, cacheLife }: UseCacheArgs) => {
-  const { isNative, isServer, isBrowser } = useSSR()
-  invariant(!(isServer && persist), 'There is no persistant storage on the Server currently! 🙅‍♂️')
-  invariant(!(isNative && !isServer && !isBrowser), 'React Native support is not yet implemented!')
+    const expiration = inMemoryStorage.get(`${name}:ts`)
+    if (expiration && expiration > 0 && expiration < Date.now()) {
+      inMemoryStorage.delete(name)
+      inMemoryStorage.delete(`${name}:ts`)
+      return
+    }
 
-  // right now we're not worrying about react-native
-  if (persist) return useLocalStorage({ cacheLife })
-  return inMemoryCache
-}
+    return item
+  },
+  async set(name: string, data: Response) {
+    inMemoryStorage.set(name, data)
+    inMemoryStorage.set(`${name}:ts`, cacheLife > 0 ? Date.now() + cacheLife : 0)
+  },
+  async has(name: string) {
+    return inMemoryStorage.has(name)
+  },
+  async delete(name: string) {
+    inMemoryStorage.delete(name)
+    inMemoryStorage.delete(`${name}:ts`)
+  }
+})
 
-const useLocalStorage = ({ cacheLife }: { cacheLife: number }) => {
+const getLocalStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
   // there isn't state here now, but will be eventually
+
+  const remove = async (name: string) => {
+    const cache = getCache()
+    delete cache[name]
+    localStorage.setItem(cacheName, JSON.stringify(cache))
+  }
 
   const has = async (responseID: string): Promise<boolean> => {
     const cache = getCache()
     return !!(cache[responseID] && cache[responseID].response)
   }
 
-  const get = async (responseID: string): Promise<any> => {
+  const get = async (responseID: string): Promise<Response | undefined> => {
     const cache = getCache()
-    const { body, headers, status, statusText } = (cache[responseID] ? cache[responseID].response : {}) as any
+    if (!cache[responseID]) {
+      return
+    }
+
+    const { expiration, response: { body, headers, status, statusText } } = cache[responseID] as any
+    if (expiration < Date.now()) {
+      delete cache[name]
+      localStorage.setItem(cacheName, JSON.stringify(cache))
+      return
+    }
+
     return new Response(body, {
       status,
       statusText,
@@ -50,21 +78,31 @@ const useLocalStorage = ({ cacheLife }: { cacheLife: number }) => {
 
   const set = async (responseID: string, response: Response): Promise<void> => {
     const cache = getCache()
+    const responseObject = toResponseObject(response, await tryGetData(response, defaults.data))
     cache[responseID] = {
-      response: toResponseObject(response),
-      timestamp: Date.now(),
-      ttl: cacheLife || 24 * 3600000
+      response: responseObject,
+      expiration: Date.now() + cacheLife
     }
     localStorage.setItem(cacheName, JSON.stringify(cache))
   }
 
-  const remove = async (...responseIDs: string[]) => {
-    const cache = getCache()
-    responseIDs.forEach(id => delete cache[id])
-    localStorage.setItem(cacheName, cache)
-  }
-
   return { get, set, has, delete: remove }
+}
+
+/**
+ * Eventually, this will be replaced by use-react-storage, so
+ * having this as a hook allows us to have minimal changes in
+ * the future when switching over.
+ */
+type UseCacheArgs = { persist: boolean, cacheLife: number }
+const useCache = ({ persist, cacheLife }: UseCacheArgs): Cache => {
+  const { isNative, isServer, isBrowser } = useSSR()
+  invariant(!(isServer && persist), 'There is no persistant storage on the Server currently! 🙅‍♂️')
+  invariant(!(isNative && !isServer && !isBrowser), 'React Native support is not yet implemented!')
+
+  // right now we're not worrying about react-native
+  if (persist) return getLocalStorage({ cacheLife: cacheLife || (24 * 3600000) })
+  return getMemoryStorage({ cacheLife })
 }
 
 export default useCache

@@ -20,7 +20,6 @@ import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
 
-
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
   const {
@@ -70,30 +69,23 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         path,
         method,
         theController,
-        cachePolicy,
         cacheLife,
         cache,
-        persist,
         routeOrBody,
         body,
         interceptors.request
       )
 
-      if (response.isCached && cachePolicy === CACHE_FIRST) {
+      if (response.isCached && (persist || cachePolicy === CACHE_FIRST)) {
         setLoading(true)
-        if (response.isExpired) {
-          cache.delete(response.id)
-          cache.delete(response.ageID)
-        } else {
-          try {
-            res.current.data = await tryGetData(response.cached, defaults.data)
-            data.current = res.current.data as TData
-            setLoading(false)
-            return data.current
-          } catch (err) {
-            error.current = err
-            setLoading(false)
-          }
+        try {
+          res.current.data = await tryGetData(response.cached, defaults.data)
+          data.current = res.current.data as TData
+          setLoading(false)
+          return data.current
+        } catch (err) {
+          error.current = err
+          setLoading(false)
         }
       }
 
@@ -116,9 +108,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         newRes = await fetch(url, options)
         res.current = newRes.clone()
 
-        if (cachePolicy === CACHE_FIRST) {
-          cache.set(response.id, newRes.clone())
-          if (cacheLife > 0) cache.set(response.ageID, Date.now())
+        if (persist || cachePolicy === CACHE_FIRST) {
+          await cache.set(response.id, newRes.clone())
         }
 
         newData = await tryGetData(newRes, defaults.data)
@@ -127,11 +118,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         res.current = interceptors.response ? interceptors.response(res.current) : res.current
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
         data.current = res.current.data as TData
-
-        if (persist) {
-          const defaultPersistenceLength = 24 * 3600000
-          await persistentStorage.setItem(response.id, data.current, cacheLife || defaultPersistenceLength)
-        }
 
         if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
       } catch (err) {

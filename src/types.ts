@@ -67,11 +67,8 @@ export interface DoFetchArgs {
   options: RequestInit
   response: {
     isCached: boolean
-    isExpired: boolean
     id: string
     cached?: Response
-    ageID: string
-    persisted?: any
   }
 }
 
@@ -159,6 +156,13 @@ export type UseFetch<TData> = UseFetchArrayReturn<TData> &
 export type Interceptors = {
   request?: (options: Options, url: string, path: string, route: string) => Promise<Options> | Options
   response?: (response: Res<any>) => Res<any>
+}
+
+export type Cache = {
+  get: (name: string) => Promise<Response | undefined>
+  set: (name: string, data: Response) => Promise<void>
+  has: (name: string) => Promise<boolean>
+  delete: (...names: string[]) => Promise<void>
 }
 
 export interface CustomOptions {

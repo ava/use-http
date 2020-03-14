@@ -176,28 +176,30 @@ export const responseKeys: ResponseKeys[] = [...responseFields, ...responseMetho
 export const toResponseObject = <TData = any>(res?: Response | MutableRefObject<Response>, data?: any) => Object.defineProperties(
   {},
   responseKeys.reduce((acc: any, field: ResponseKeys) => {
-  if (responseFields.includes(field as any)) {
-    acc[field] = {
-      get: () => {
-        const response = res instanceof Response ? res : res && res.current
-        if (!response) return
-        if (field === 'data') return data.current
-        const clonedResponse = ('clone' in response ? response.clone() : {}) as Res<TData>
-        return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
-      },
-      enumerable: true
+    if (responseFields.includes(field as any)) {
+      acc[field] = {
+        get: () => {
+          const response = res instanceof Response ? res : res && res.current
+          if (!response) return
+          if (field === 'data') return data.current
+          const clonedResponse = ('clone' in response ? response.clone() : {}) as Res<TData>
+          if (field === 'body' && clonedResponse.body) return clonedResponse.body.toString()
+          return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
+        },
+        enumerable: true
+      }
+    } else if (responseMethods.includes(field as any)) {
+      acc[field] = {
+        value: () => {
+          const response = res instanceof Response ? res : res && res.current
+          if (!response) return
+          const clonedResponse = ('clone' in response ? response.clone() : {}) as Res<TData>
+          return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
+        },
+        enumerable: true
+      }
     }
-  } else if (responseMethods.includes(field as any)) {
-    acc[field] = {
-      value: () => {
-        const response = res instanceof Response ? res : res && res.current
-        if (!response) return
-        const clonedResponse = ('clone' in response ? response.clone() : {}) as Res<TData>
-        return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
-      },
-      enumerable: true
-    }
-  }
-  return acc
-}, {}))
+    return acc
+  }, {}))
+
 export const emptyCustomResponse = toResponseObject()

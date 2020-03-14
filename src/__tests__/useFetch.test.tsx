@@ -859,7 +859,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
   })
 
   it('should fetch again after 24h', async (): Promise<void> => {
-    mockdate.set('2020-01-02 01:00')
+    mockdate.set('2020-01-02 02:00:00')
 
     const { waitForNextUpdate } = renderHook(
       () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])

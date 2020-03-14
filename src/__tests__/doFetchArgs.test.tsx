@@ -1,9 +1,7 @@
 import doFetchArgs from '../doFetchArgs'
 import { HTTPMethod } from '../types'
 import { defaults } from '../useFetchArgs'
-import persistentStorage from '../persistentStorage'
-
-jest.mock('../persistentStorage')
+import useCache from '../useCache'
 
 describe('doFetchArgs: general usages', (): void => {
   it('should be defined', (): void => {
@@ -13,17 +11,18 @@ describe('doFetchArgs: general usages', (): void => {
   it('should form the correct URL', async (): Promise<void> => {
     const controller = new AbortController()
     const expectedRoute = '/test'
-    const cache = new Map()
+    const cache = useCache({
+      persist: false,
+      cacheLife: defaults.cacheLife
+    })
     const { url, options } = await doFetchArgs(
       {},
       '',
       '',
       HTTPMethod.POST,
       controller,
-      defaults.cachePolicy,
       defaults.cacheLife,
       cache,
-      false,
       expectedRoute,
       {}
     )
@@ -40,17 +39,18 @@ describe('doFetchArgs: general usages', (): void => {
 
   it('should accept an array for the body of a request', async (): Promise<void> => {
     const controller = new AbortController()
-    const cache = new Map()
+    const cache = useCache({
+      persist: false,
+      cacheLife: defaults.cacheLife
+    })
     const { options, url } = await doFetchArgs(
       {},
       'https://example.com',
       '',
       HTTPMethod.POST,
       controller,
-      defaults.cachePolicy,
       defaults.cacheLife,
       cache,
-      false,
       '/test',
       []
     )
@@ -67,17 +67,18 @@ describe('doFetchArgs: general usages', (): void => {
 
   it('should correctly add `path` and `route` to the URL', async (): Promise<void> => {
     const controller = new AbortController()
-    const cache = new Map()
+    const cache = useCache({
+      persist: false,
+      cacheLife: defaults.cacheLife
+    })
     const { url } = await doFetchArgs(
       {},
       'https://example.com',
       '/path',
       HTTPMethod.POST,
       controller,
-      defaults.cachePolicy,
       defaults.cacheLife,
       cache,
-      false,
       '/route',
       {}
     )
@@ -86,7 +87,10 @@ describe('doFetchArgs: general usages', (): void => {
 
   it('should correctly modify the options with the request interceptor', async (): Promise<void> => {
     const controller = new AbortController()
-    const cache = new Map()
+    const cache = useCache({
+      persist: false,
+      cacheLife: defaults.cacheLife
+    })
     const interceptors = {
       request(options: any) {
         options.headers.Authorization = 'Bearer test'
@@ -99,10 +103,8 @@ describe('doFetchArgs: general usages', (): void => {
       '',
       HTTPMethod.POST,
       controller,
-      defaults.cachePolicy,
       defaults.cacheLife,
       cache,
-      false,
       '/test',
       {},
       interceptors.request
@@ -118,39 +120,15 @@ describe('doFetchArgs: general usages', (): void => {
       signal: controller.signal
     })
   })
-
-  it('should return persistent data', async (): Promise<void> => {
-    const persistedData = {}
-    const getItemMock = persistentStorage.getItem as jest.MockedFunction<typeof persistentStorage.getItem>
-    const hasItemMock = persistentStorage.hasItem as jest.MockedFunction<typeof persistentStorage.hasItem>
-    getItemMock.mockResolvedValue(persistedData)
-    hasItemMock.mockResolvedValue(true)
-
-    const controller = new AbortController()
-    const expectedRoute = '/test'
-    const cache = new Map()
-    const { response: { isPersisted, persisted } } = await doFetchArgs(
-      {},
-      '',
-      '',
-      HTTPMethod.POST,
-      controller,
-      defaults.cachePolicy,
-      defaults.cacheLife,
-      cache,
-      true,
-      expectedRoute,
-      {}
-    )
-    expect(isPersisted).toBeTruthy()
-    expect(persisted).toBe(persistedData)
-  })
 })
 
 describe('doFetchArgs: Errors', (): void => {
   it('should error if 1st and 2nd arg of doFetch are both objects', async (): Promise<void> => {
     const controller = new AbortController()
-    const cache = new Map()
+    const cache = useCache({
+      persist: false,
+      cacheLife: defaults.cacheLife
+    })
     // AKA, the last 2 arguments of doFetchArgs are both objects
     // try {
     //   await doFetchArgs(
@@ -175,10 +153,8 @@ describe('doFetchArgs: Errors', (): void => {
         '',
         HTTPMethod.GET,
         controller,
-        defaults.cachePolicy,
         defaults.cacheLife,
         cache,
-        false,
         {},
         {}
       )
@@ -190,7 +166,10 @@ describe('doFetchArgs: Errors', (): void => {
 
   it('should error if 1st and 2nd arg of doFetch are both arrays', async (): Promise<void> => {
     const controller = new AbortController()
-    const cache = new Map()
+    const cache = useCache({
+      persist: false,
+      cacheLife: defaults.cacheLife
+    })
     // AKA, the last 2 arguments of doFetchArgs are both arrays
     // try {
     //   await doFetchArgs(
@@ -215,10 +194,8 @@ describe('doFetchArgs: Errors', (): void => {
         '',
         HTTPMethod.GET,
         controller,
-        defaults.cachePolicy,
         defaults.cacheLife,
         cache,
-        false,
         [],
         []
       )
