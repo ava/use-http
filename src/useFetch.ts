@@ -192,11 +192,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         },
         enumerable: true
       }
-    } else if (responseMethods.includes(field as Exclude<FunctionKeys<Res<any>>, 'data'>)) {
+    } else if (responseMethods.includes(field as any)) {
       acc[field] = {
         value: () => {
           const clonedResponse = ('clone' in res.current ? res.current.clone() : { [field]: () => { /* noop */ } }) as Res<TData>
-          return clonedResponse[field]()
+          return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
         },
         enumerable: true
       }
