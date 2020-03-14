@@ -10,7 +10,7 @@ import { toCamel } from 'convert-keys'
 import { renderHook, act } from '@testing-library/react-hooks'
 import { emptyCustomResponse } from '../utils'
 import * as test from '@testing-library/react'
-
+import ErrorBoundary from '../ErrorBoundary'
 
 const fetch = global.fetch as FetchMock
 
@@ -700,6 +700,7 @@ describe('useFetch - BROWSER - suspense', (): void => {
   afterEach((): void => {
     fetch.resetMocks()
     cleanup()
+
     test.cleanup()
   })
 
@@ -718,9 +719,9 @@ describe('useFetch - BROWSER - suspense', (): void => {
       </Suspense>
     )
 
-    expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
+    expect(container.textContent).toMatchInlineSnapshot('"fallback"')
     await test.act((): any => new Promise(res => setTimeout(res, 110)))
-    expect(container.textContent).toMatchInlineSnapshot(`"yay suspense"`)
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
   })
 
   it('should render multiple useFetch fallbacks', async () => {
@@ -736,11 +737,11 @@ describe('useFetch - BROWSER - suspense', (): void => {
     )
 
     // TODO: I believe it should work with the commented out code below
-    expect(container.textContent).toMatchInlineSnapshot(`" fallback"`)
+    expect(container.textContent).toMatchInlineSnapshot('" fallback"')
     // await test.act((): any => new Promise(res => setTimeout(res, 10))) // still suspending
     // expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
     await test.act((): any => new Promise(res => setTimeout(res, 100))) // should recover
-    expect(container.textContent).toMatchInlineSnapshot(`"yay suspense yay suspense"`)
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense yay suspense"')
   })
 
   it('should render multiple useFetch fallbacks', async () => {
@@ -756,35 +757,32 @@ describe('useFetch - BROWSER - suspense', (): void => {
     )
 
     // TODO
-    expect(container.textContent).toMatchInlineSnapshot(`" fallback"`)
+    expect(container.textContent).toMatchInlineSnapshot('" fallback"')
     // await test.act((): any => new Promise(res => setTimeout(res, 10))) // still suspending
     // expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
     await test.act((): any => new Promise(res => setTimeout(res, 100))) // should recover
-    expect(container.textContent).toMatchInlineSnapshot(`"yay suspense yay suspense"`)
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense yay suspense"')
   })
 
   // TODO:
-  // it('should throw errors', async () => {
-  //   function Section() {
-  //     const { data } = useFetch('https://a.co', { suspense: true }, [])
-  //     return <div>{data}</div>
-  //   }
-  //   // https://reactjs.org/docs/concurrent-mode-suspense.html#handling-errors
-  //   const { container } = test.render(
-  //     <ErrorBoundary fallback={<div>error boundary</div>}>
-  //       <Suspense fallback={<div>fallback</div>}>
-  //         <Section />
-  //       </Suspense>
-  //     </ErrorBoundary>
-  //   )
+  it('should throw errors', async () => {
+    function Section() {
+      const { data } = useFetch('https://a.co', { suspense: true }, [])
+      return <div>{data}</div>
+    }
+    // https://reactjs.org/docs/concurrent-mode-suspense.html#handling-errors
+    const { container } = test.render(
+      <ErrorBoundary fallback={<div>error boundary</div>}>
+        <Suspense fallback={<div>fallback</div>}>
+          <Section />
+        </Suspense>
+      </ErrorBoundary>
+    )
 
-  //   // hydration
-  //   expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
-  //   await act(() => new Promise(res => setTimeout(res, 150))) // still suspending
-  //   expect(container.textContent).toMatchInlineSnapshot(`"error boundary"`)
-
-  //   console.info('*The warning above can be ignored (caught by ErrorBoundary).')
-  // })
+    expect(container.textContent).toMatchInlineSnapshot('"fallback"')
+    await test.act((): any => new Promise(res => setTimeout(res, 150))) // still suspending
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
+  })
 })
 
 describe('useFetch - BROWSER - errors', (): void => {
