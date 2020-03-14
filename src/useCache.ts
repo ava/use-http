@@ -98,7 +98,7 @@ type UseCacheArgs = { persist: boolean, cacheLife: number }
 const useCache = ({ persist, cacheLife }: UseCacheArgs): Cache => {
   const { isNative, isServer, isBrowser } = useSSR()
   invariant(!(isServer && persist), 'There is no persistant storage on the Server currently! 🙅‍♂️')
-  invariant(!(isNative && !isServer && !isBrowser), 'React Native support is not yet implemented!')
+  invariant(!(isNative && !isServer && !isBrowser), 'React Native support for persistant cache is not yet implemented. 🙅‍♂️')
 
   // right now we're not worrying about react-native
   if (persist) return getLocalStorage({ cacheLife: cacheLife || (24 * 3600000) })
