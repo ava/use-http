@@ -720,7 +720,7 @@ describe('useFetch - BROWSER - suspense', (): void => {
     )
 
     expect(container.textContent).toMatchInlineSnapshot('"fallback"')
-    await test.act((): any => new Promise(res => setTimeout(res, 110)))
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 110)))
     expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
   })
 
@@ -740,31 +740,10 @@ describe('useFetch - BROWSER - suspense', (): void => {
     expect(container.textContent).toMatchInlineSnapshot('" fallback"')
     // await test.act((): any => new Promise(res => setTimeout(res, 10))) // still suspending
     // expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
-    await test.act((): any => new Promise(res => setTimeout(res, 100))) // should recover
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 100))) // should recover
     expect(container.textContent).toMatchInlineSnapshot('"yay suspense yay suspense"')
   })
 
-  it('should render multiple useFetch fallbacks', async () => {
-    function Section() {
-      const { data: d1 } = useFetch('https://a.co/1', { suspense: true }, [])
-      const { data: d2 } = useFetch('https://a.co/2', { suspense: true }, [])
-      return <div>{d1} {d2}</div>
-    }
-    const { container } = test.render(
-      <Suspense fallback={<div>fallback</div>}>
-        <Section />
-      </Suspense>
-    )
-
-    // TODO
-    expect(container.textContent).toMatchInlineSnapshot('" fallback"')
-    // await test.act((): any => new Promise(res => setTimeout(res, 10))) // still suspending
-    // expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
-    await test.act((): any => new Promise(res => setTimeout(res, 100))) // should recover
-    expect(container.textContent).toMatchInlineSnapshot('"yay suspense yay suspense"')
-  })
-
-  // TODO:
   it('should throw errors', async () => {
     function Section() {
       const { data } = useFetch('https://a.co', { suspense: true }, [])
@@ -780,7 +759,7 @@ describe('useFetch - BROWSER - suspense', (): void => {
     )
 
     expect(container.textContent).toMatchInlineSnapshot('"fallback"')
-    await test.act((): any => new Promise(res => setTimeout(res, 150))) // still suspending
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 150))) // still suspending
     expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
   })
 })
