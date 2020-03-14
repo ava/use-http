@@ -369,7 +369,6 @@ var {
   loading,
   error,
   data,
-  read,     // suspense (experimental)
   get,
   post,
   put,
@@ -407,7 +406,6 @@ var {
   loading,
   error,
   data,
-  read,   // suspense (experimental)
   get,
   post,
   put,
@@ -887,6 +885,12 @@ If you have feature requests, let's talk about them in [this issue](https://gith
 Todos
 ------
 
+- [ ] suspense
+  - [ ] triggering it from outside the `<Suspense />` component.
+    - add `.read()` to `request`
+    - or make it work with just the `suspense: true` option
+    - both of these options need to be thought out a lot more^
+  - [ ] tests for this^ (triggering outside)
 - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
 - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
 - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
@@ -901,9 +905,7 @@ Todos
   - [ ] aborts fetch on unmount
 - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
 - [ ] make this a github package
-- [ ] Make work with React Suspense [current example WIP](https://codesandbox.io/s/7ww5950no0)
 - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
-- [ ] make GraphQL work with React Suspense
 - [ ] make GraphQL examples in codesandbox
 - [ ] Documentation:
   - [ ] show comparison with Apollo

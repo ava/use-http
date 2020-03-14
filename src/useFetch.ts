@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useState, useCallback, useRef, useReducer } from 'react'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 import useSSR from 'use-ssr'
@@ -41,7 +40,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   } = customOptions
 
   const { isServer } = useSSR()
-  const forceUpdate = useReducer(() => ({}))[1]
 
   const controller = useRef<AbortController>()
   const res = useRef<Res<TData>>({} as Res<TData>)
@@ -51,9 +49,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const error = useRef<any>()
   const hasMore = useRef(true)
   const suspenseStatus = useRef('pending')
-  const suspender = useRef()
+  const suspender = useRef<Promise<any>>()
 
   const [loading, setLoading] = useState<boolean>(defaults.loading)
+  const forceUpdate = useReducer(() => ({}), [])[1]
 
   const makeFetch = useCallback((method: HTTPMethod): FetchData => {
     const doFetch = async (
@@ -143,29 +142,31 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       if (!suspense) setLoading(false)
 
       return data.current
-    }
+    } // end of doFetch()
 
-    if (suspense) return async (...args) => {
-      suspender.current = doFetch(...args).then(
-        (newData) => {
-          suspenseStatus.current = 'success'
-          return newData
-        },
-        () => {
-          suspenseStatus.current = 'error'
-        },
-      )
-      forceUpdate()
-      const newData = await suspender.current
-      return newData
+    if (suspense) {
+      return async (...args) => {
+        suspender.current = doFetch(...args).then(
+          (newData) => {
+            suspenseStatus.current = 'success'
+            return newData
+          },
+          () => {
+            suspenseStatus.current = 'error'
+          }
+        )
+        forceUpdate()
+        const newData = await suspender.current
+        return newData
+      }
     }
 
     return doFetch
-  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, cacheLife, onTimeout, defaults.data, onNewData])
-  
+  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, cacheLife, onTimeout, defaults.data, onNewData, forceUpdate, suspense])
+
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
-  
+
   const request: Req<TData> = {
     get: useCallback(makeFetch(HTTPMethod.GET), [makeFetch]),
     post,
@@ -191,11 +192,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         },
         enumerable: true
       }
-    } else if (responseMethods.includes(field as any)) {
+    } else if (responseMethods.includes(field as Exclude<FunctionKeys<Res<any>>, 'data'>)) {
       acc[field] = {
         value: () => {
-          const clonedResponse = ('clone' in res.current ? res.current.clone() : { [field]: () => {/* noop */} }) as Res<TData>
-          return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
+          const clonedResponse = ('clone' in res.current ? res.current.clone() : { [field]: () => { /* noop */ } }) as Res<TData>
+          return clonedResponse[field]()
         },
         enumerable: true
       }
@@ -226,17 +227,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     { request, response, ...request }
   )
 
-  if (suspense) {
+  if (suspense && suspender.current) {
     if (isServer) throw new Error('Suspense on server side is not yet supported! 🙅‍♂️')
-    if (suspender.current) {
-      switch (suspenseStatus.current) {
-        case 'pending':
-          throw suspender.current
-        case 'error':
-          throw error.current
-        // default:
-        //   suspender.current = undefined
-      } 
+    switch (suspenseStatus.current) {
+      case 'pending':
+        throw suspender.current
+      case 'error':
+        throw error.current
     }
   }
   return final

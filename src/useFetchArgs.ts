@@ -17,7 +17,7 @@ type UseFetchArgsReturn = {
     cachePolicy: CachePolicies
     cacheLife: number
     suspense: boolean
-  },
+  }
   requestInit: RequestInit
   defaults: {
     loading: boolean
@@ -177,7 +177,7 @@ export default function useFetchArgs(
       perPage,
       cachePolicy,
       cacheLife,
-      suspense,
+      suspense
     },
     requestInit,
     defaults: {
