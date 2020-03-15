@@ -837,7 +837,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
 
   it('should fetch once', async (): Promise<void> => {
     const { waitForNextUpdate } = renderHook(
-      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
+      () => useFetch({ url: 'https://persist.com', persist: true }, [])
     )
 
     await waitForNextUpdate()
@@ -849,7 +849,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
     fetch.mockResponse(JSON.stringify(unexpected))
 
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
+      () => useFetch({ url: 'https://persist.com', persist: true }, [])
     )
 
     await waitForNextUpdate()
@@ -862,7 +862,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
     mockdate.set('2020-01-02 02:00:00')
 
     const { waitForNextUpdate } = renderHook(
-      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
+      () => useFetch({ url: 'https://persist.com', persist: true }, [])
     )
 
     await waitForNextUpdate()
