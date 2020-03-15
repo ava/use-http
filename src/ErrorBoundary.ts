@@ -17,6 +17,7 @@ export default class ErrorBoundary extends Component<{ fallback: NonNullable<Rea
 
   render() {
     if (this.state.hasError) {
+      console.error(this.state.error)
       return this.props.fallback
     }
     return this.props.children
