@@ -219,20 +219,13 @@ Suspense Mode (auto managed state)
 import useFetch, { Provider } from 'use-http'
 
 function Todos() {
-  const { error, data: todos } = useFetch({
+  const { data: todos } = useFetch({
     path: '/todos',
     data: [],
     suspense: true // can put it in 2 places. Here or in Provider
   }, []) // onMount
-
-  return (
-    <>
-      {error && 'Error!'}
-      {todos.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
-    </>
-  )
+  
+  return todos.map(todo => <div key={todo.id}>{todo.title}</div>)
 }
 
 function App() {
@@ -276,14 +269,8 @@ function Todos() {
     loadInitialTodos()
   }, [])
 
-  return (
-    <Fragment>
-      {error && 'Error!'}
-      {todos.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
-    </Fragment>
-  )
+  
+  return todos.map(todo => <div key={todo.id}>{todo.title}</div>)
 }
 
 function App() {

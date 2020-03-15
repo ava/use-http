@@ -207,20 +207,13 @@ const App = () => (
 import useFetch, { Provider } from 'use-http'
 
 function Todos() {
-  const { error, data: todos } = useFetch({
+  const { data: todos } = useFetch({
     path: '/todos',
     data: [],
     suspense: true // can put it in 2 places. Here or in Provider
   }, []) // onMount
 
-  return (
-    <>
-      {error && 'Error!'}
-      {todos.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
-    </>
-  )
+  return todos.map(todo => <div key={todo.id}>{todo.title}</div>)
 }
 
 function App() {
@@ -241,7 +234,7 @@ function App() {
 
 </details>
 
-<details open><summary><b>Suspense Mode (managed state) flag</b></summary>
+<details open><summary><b>Suspense Mode (managed state)</b></summary>
 
 Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
 
@@ -265,14 +258,7 @@ function Todos() {
     loadInitialTodos()
   }, [])
 
-  return (
-    <Fragment>
-      {error && 'Error!'}
-      {todos.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
-    </Fragment>
-  )
+  return todos.map(todo => <div key={todo.id}>{todo.title}</div>)
 }
 
 function App() {
