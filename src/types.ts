@@ -180,6 +180,7 @@ export interface CustomOptions {
   perPage?: number
   cachePolicy?: CachePolicies
   cacheLife?: number
+  suspense?: boolean
 }
 
 export type Options = CustomOptions &

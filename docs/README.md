@@ -59,6 +59,7 @@ Features
 - React Native support
 - Aborts/Cancels pending http requests when a component unmounts
 - Built in caching
+- Suspense<sup>(experimental)</sup> support
 
 Examples
 =========
@@ -106,7 +107,7 @@ yarn add use-http    or    npm i -S use-http
 Usage
 =============
 
-Basic Usage
+Basic Usage (auto managed state)
 -------------------
 
 This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). **If no method is specified, GET is the default**
@@ -179,8 +180,8 @@ function Todos() {
 }
 ```
 
-Basic Usage With Provider
----------------------------
+Basic Usage With Provider (auto managed state)
+---------------------------------------------
 
 ```js
 import useFetch, { Provider } from 'use-http'
@@ -210,6 +211,83 @@ const App = () => (
 ```
 
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+
+Suspense Mode (auto managed state)
+----------------------------------
+
+```js
+import useFetch, { Provider } from 'use-http'
+
+function Todos() {
+  const { data: todos } = useFetch({
+    path: '/todos',
+    data: [],
+    suspense: true // can put it in 2 places. Here or in Provider
+  }, []) // onMount
+  
+  return todos.map(todo => <div key={todo.id}>{todo.title}</div>)
+}
+
+function App() {
+  const options = {
+    suspense: true
+  }
+  return (
+    <Provider url='https://example.com' options={options}>
+      <Suspense fallback='Loading...'>
+        <Todos />
+      </Suspense>
+    </Provider>
+  )
+}
+```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
+
+Suspense Mode (managed state)
+-----------------------------
+
+Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
+
+```js
+import useFetch, { Provider } from 'use-http'
+
+function Todos() {
+  const [todos, setTodos] = useState([])
+  // A. can put `suspense: true` here
+  const { get, response } = useFetch({ data: [], suspense: true })
+
+  const loadInitialTodos = async () => {
+    const todos = await get('/todos')
+    if (response.ok) setTodos(todos)
+  }
+
+  const mounted = useRef(false)
+  useEffect(() => {
+    if (mounted.current) return
+    mounted.current = true
+    loadInitialTodos()
+  }, [])
+
+  
+  return todos.map(todo => <div key={todo.id}>{todo.title}</div>)
+}
+
+function App() {
+  const options = {
+    suspense: true // B. can put `suspense: true` here too
+  }
+  return (
+    <Provider url='https://example.com' options={options}>
+      <Suspense fallback='Loading...'>
+        <Todos />
+      </Suspense>
+    </Provider>
+  )
+}
+```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
 
 Pagination With Provider
 ---------------------------
@@ -252,7 +330,7 @@ const App = () => (
 Destructured
 -------------
 
-⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
+⚠️ Do not destructure the `response` object! Technically you can do it, but if you need to access the `response.ok` from, for example, within a component's onClick handler, it will be a stale value for `ok` where it will be correct for `response.ok`.  ️️⚠️
 
 ```js
 var [request, response, loading, error] = useFetch('https://example.com')
@@ -260,12 +338,11 @@ var [request, response, loading, error] = useFetch('https://example.com')
 // want to use object destructuring? You can do that too
 var {
   request,
-  // the `response` is everything you would expect to be in a normal response from an http request with the `data` field added.
-  // ⚠️ The `response` object cannot be destructured! (at least not currently) ️️⚠️
-  response,
+  response, // 🚨 Do not destructure the `response` object!
   loading,
   error,
   data,
+  read,   // suspense (experimental)
   get,
   post,
   put,
@@ -277,10 +354,33 @@ var {
   abort
 } = useFetch('https://example.com')
 
+// 🚨 Do not destructure the `response` object!
+// 🚨 This just shows what fields are available in it.
+var {
+  ok,
+  status,
+  headers,
+  data,
+  type,
+  statusText,
+  url,
+  body,
+  bodyUsed,
+  redirected,
+  // methods
+  json,
+  text,
+  formData,
+  blob,
+  arrayBuffer,
+  clone
+} = response
+
 var {
   loading,
   error,
   data,
+  read,   // suspense (experimental)
   get,
   post,
   put,
@@ -638,6 +738,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
+| `suspense` | Enables React Suspense mode. [example]() | false |
 | `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
 | `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
@@ -657,6 +758,9 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 const options = {
   // accepts all `fetch` options such as headers, method, etc.
   
+  // enables React Suspense mode
+  suspense: true, // defaults to `false`
+
   // Cache responses to improve speed and reduce amount of requests
   // Only one request to the same endpoint will be initiated unless cacheLife expires for 'cache-first'.
   cachePolicy: 'cache-first' // 'no-cache'
@@ -733,33 +837,6 @@ Who's using use-http?
 Feature Requests/Ideas
 ======================
 If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
-
-
-The Goal With Suspense <sup><strong>(not implemented yet)</strong></sup>
-==================
-```js
-import React, { Suspense, unstable_ConcurrentMode as ConcurrentMode, useEffect } from 'react'
-
-function WithSuspense() {
-  const suspense = useFetch('https://example.com')
-
-  useEffect(() => {
-    suspense.read()
-  }, [])
-
-  if (!suspense.data) return null
-
-  return <pre>{suspense.data}</pre>
-}
-
-function App() (
-  <ConcurrentMode>
-    <Suspense fallback="Loading...">
-      <WithSuspense />
-    </Suspense>
-  </ConcurrentMode>
-)
-```
 
 Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ==================
