@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, useReducer } from 'react'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 import useSSR from 'use-ssr'
 import {
@@ -35,7 +35,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     onNewData,
     perPage,
     cachePolicy, // 'cache-first' by default
-    cacheLife
+    cacheLife,
+    suspense
   } = customOptions
 
   const { isServer } = useSSR()
@@ -47,8 +48,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const attempts = useRef(retries)
   const error = useRef<any>()
   const hasMore = useRef(true)
+  const suspenseStatus = useRef('pending')
+  const suspender = useRef<Promise<any>>()
 
   const [loading, setLoading] = useState<boolean>(defaults.loading)
+  const forceUpdate = useReducer(() => ({}), [])[1]
 
   const makeFetch = useCallback((method: HTTPMethod): FetchData => {
     const doFetch = async (
@@ -74,8 +78,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         interceptors.request
       )
 
+      if (!suspense) setLoading(true)
+      error.current = undefined
+
       if (response.isCached && cachePolicy === CACHE_FIRST) {
-        setLoading(true)
         if (response.isExpired) {
           cache.delete(response.id)
           cache.delete(response.ageID)
@@ -83,7 +89,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           try {
             res.current.data = await tryGetData(response.cached, defaults.data)
             data.current = res.current.data as TData
-            setLoading(false)
+            if (!suspense) setLoading(false)
             return data.current
           } catch (err) {
             error.current = err
@@ -94,9 +100,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       // don't perform the request if there is no more data to fetch (pagination)
       if (perPage > 0 && !hasMore.current && !error.current) return data.current
-
-      setLoading(true)
-      error.current = undefined
 
       const timer = timeout > 0 && setTimeout(() => {
         timedout.current = true
@@ -136,13 +139,30 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         controller.current = undefined
       }
 
-      setLoading(false)
+      if (!suspense) setLoading(false)
 
       return data.current
+    } // end of doFetch()
+
+    if (suspense) {
+      return async (...args) => {
+        suspender.current = doFetch(...args).then(
+          (newData) => {
+            suspenseStatus.current = 'success'
+            return newData
+          },
+          () => {
+            suspenseStatus.current = 'error'
+          }
+        )
+        forceUpdate()
+        const newData = await suspender.current
+        return newData
+      }
     }
 
     return doFetch
-  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, cacheLife, onTimeout, defaults.data, onNewData])
+  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, cacheLife, onTimeout, defaults.data, onNewData, forceUpdate, suspense])
 
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
@@ -175,7 +195,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     } else if (responseMethods.includes(field as any)) {
       acc[field] = {
         value: () => {
-          const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
+          const clonedResponse = ('clone' in res.current ? res.current.clone() : { [field]: () => { console.error("You haven't made a http request yet") } }) as Res<TData>
           return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
         },
         enumerable: true
@@ -186,7 +206,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
   // onMount/onUpdate
   useEffect((): any => {
-    if (dependencies && Array.isArray(dependencies)) {
+    if (Array.isArray(dependencies)) {
       const methodName = requestInit.method || HTTPMethod.GET
       const methodLower = methodName.toLowerCase() as keyof ReqMethods
       const req = request[methodLower] as NoArgs
@@ -202,10 +222,21 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => request.abort, [])
 
-  return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
+  const final = Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
     [request, response, loading, error.current],
     { request, response, ...request }
   )
+
+  if (suspense && suspender.current) {
+    if (isServer) throw new Error('Suspense on server side is not yet supported! 🙅‍♂️')
+    switch (suspenseStatus.current) {
+      case 'pending':
+        throw suspender.current
+      case 'error':
+        throw error.current
+    }
+  }
+  return final
 }
 
 export { useFetch }

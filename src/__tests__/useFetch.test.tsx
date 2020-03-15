@@ -1,7 +1,7 @@
 /* eslint-disable no-var */
 /* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/camelcase */
-import React, { ReactElement, ReactNode } from 'react'
+import React, { Suspense, ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
@@ -9,6 +9,8 @@ import { Res, Options, CachePolicies } from '../types'
 import { toCamel } from 'convert-keys'
 import { renderHook, act } from '@testing-library/react-hooks'
 import { emptyCustomResponse } from '../utils'
+import * as test from '@testing-library/react'
+import ErrorBoundary from '../ErrorBoundary'
 
 const fetch = global.fetch as FetchMock
 
@@ -691,6 +693,74 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
     expect(fetch.mock.calls[0][0]).toBe('https://example.com')
     expect((fetch.mock.calls[0][1] as any).headers).toEqual(expectedHeaders)
     expect(fetch).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('useFetch - BROWSER - suspense', (): void => {
+  afterEach((): void => {
+    fetch.resetMocks()
+    cleanup()
+
+    test.cleanup()
+  })
+
+  beforeEach((): void => {
+    fetch.mockResponse(JSON.stringify('yay suspense'))
+  })
+
+  it('should render useFetch fallback', async () => {
+    function Section() {
+      const { data } = useFetch('https://a.co', { suspense: true }, [])
+      return <div>{data}</div>
+    }
+    const { container } = test.render(
+      <Suspense fallback={<div>fallback</div>}>
+        <Section />
+      </Suspense>
+    )
+
+    expect(container.textContent).toMatchInlineSnapshot('"fallback"')
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 110)))
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
+  })
+
+  it('should render multiple useFetch fallbacks', async () => {
+    function Section() {
+      const { data: d1 } = useFetch('https://a.co/1', { suspense: true }, [])
+      const { data: d2 } = useFetch('https://a.co/2', { suspense: true }, [])
+      return <div>{d1} {d2}</div>
+    }
+    const { container } = test.render(
+      <Suspense fallback={<div>fallback</div>}>
+        <Section />
+      </Suspense>
+    )
+
+    // TODO: I believe it should work with the commented out code below
+    expect(container.textContent).toMatchInlineSnapshot('" fallback"')
+    // await test.act((): any => new Promise(res => setTimeout(res, 10))) // still suspending
+    // expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 100))) // should recover
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense yay suspense"')
+  })
+
+  it('should throw errors', async () => {
+    function Section() {
+      const { data } = useFetch('https://a.co', { suspense: true }, [])
+      return <div>{data}</div>
+    }
+    // https://reactjs.org/docs/concurrent-mode-suspense.html#handling-errors
+    const { container } = test.render(
+      <ErrorBoundary fallback={<div>error boundary</div>}>
+        <Suspense fallback={<div>fallback</div>}>
+          <Section />
+        </Suspense>
+      </ErrorBoundary>
+    )
+
+    expect(container.textContent).toMatchInlineSnapshot('"fallback"')
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 150))) // still suspending
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
   })
 })
 
