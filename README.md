@@ -805,7 +805,7 @@ const options = {
   // The time in milliseconds that cache data remains fresh.
   cacheLife: 0,
 
-  // Sets whether to persist the cache after page refresh. Only available in Browser.
+  // Allows caching to persist after page refresh. Only supported in the Browser currently.
   persist: false,
 
   // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument

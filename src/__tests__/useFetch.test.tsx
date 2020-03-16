@@ -722,7 +722,7 @@ describe('useFetch - BROWSER - suspense', (): void => {
     )
 
     expect(container.textContent).toMatchInlineSnapshot('"fallback"')
-    await test.act((): any => new Promise(resolve => setTimeout(resolve, 110)))
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 210)))
     expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
   })
 

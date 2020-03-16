@@ -83,6 +83,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       if (response.isCached && (persist || cachePolicy === CACHE_FIRST)) {
         try {
+          res.current = response.cached as Res<TData>
           res.current.data = await tryGetData(response.cached, defaults.data)
           data.current = res.current.data as TData
           if (!suspense) setLoading(false)
@@ -196,11 +197,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => request.abort, [])
 
-  const final = Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, response, loading, error.current],
-    { request, response, ...request }
-  )
-
   if (suspense && suspender.current) {
     if (isServer) throw new Error('Suspense on server side is not yet supported! 🙅‍♂️')
     switch (suspenseStatus.current) {
@@ -210,7 +206,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         throw error.current
     }
   }
-  return final
+  return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
+    [request, response, loading, error.current],
+    { request, response, ...request }
+  )
 }
 
 export { useFetch }
