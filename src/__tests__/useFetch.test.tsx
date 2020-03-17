@@ -702,7 +702,6 @@ describe('useFetch - BROWSER - suspense', (): void => {
   afterEach((): void => {
     fetch.resetMocks()
     cleanup()
-
     test.cleanup()
   })
 

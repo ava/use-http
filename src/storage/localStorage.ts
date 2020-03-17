@@ -1,4 +1,4 @@
-import { serialiseResponse } from '../utils'
+import { serializeResponse } from '../utils'
 import { Cache } from '../types'
 
 const cacheName = 'useHTTPcache'
@@ -47,7 +47,7 @@ const getLocalStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
 
   const set = async (responseID: string, response: Response): Promise<void> => {
     const cache = getCache()
-    const responseObject = await serialiseResponse(response)
+    const responseObject = await serializeResponse(response)
     cache[responseID] = {
       response: responseObject,
       expiration: Date.now() + cacheLife
@@ -55,7 +55,11 @@ const getLocalStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
     localStorage.setItem(cacheName, JSON.stringify(cache))
   }
 
-  return { get, set, has, delete: remove }
+  const clear = async () => {
+    localStorage.setItem(cacheName, JSON.stringify({}))
+  }
+
+  return { get, set, has, delete: remove, clear }
 }
 
 export default getLocalStorage

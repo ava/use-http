@@ -25,7 +25,10 @@ const getMemoryStorage = ({ cacheLife }: { cacheLife: number }): Cache => ({
   async delete(name: string) {
     inMemoryStorage.delete(name)
     inMemoryStorage.delete(`${name}:ts`)
-  }
+  },
+  async clear() {
+    return inMemoryStorage.clear()
+  } 
 })
 
 export default getMemoryStorage

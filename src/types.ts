@@ -127,6 +127,7 @@ export interface ReqBase<TData> {
   data: TData | undefined
   loading: boolean
   error: Error
+  cache: Cache
 }
 
 export interface Res<TData> extends Response {
@@ -163,6 +164,7 @@ export type Cache = {
   set: (name: string, data: Response) => Promise<void>
   has: (name: string) => Promise<boolean>
   delete: (...names: string[]) => Promise<void>
+  clear: () => void
 }
 
 export interface CustomOptions {

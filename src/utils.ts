@@ -211,7 +211,7 @@ const headersAsObject = (headers: Headers): object => {
   return obj
 }
 
-export const serialiseResponse = async (response: Response) => {
+export const serializeResponse = async (response: Response) => {
   const body = await response.text()
   const status = response.status
   const statusText = response.statusText

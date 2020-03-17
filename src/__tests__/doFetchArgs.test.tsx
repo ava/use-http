@@ -13,7 +13,8 @@ describe('doFetchArgs: general usages', (): void => {
     const expectedRoute = '/test'
     const cache = useCache({
       persist: false,
-      cacheLife: defaults.cacheLife
+      cacheLife: defaults.cacheLife,
+      cachePolicy: defaults.cachePolicy
     })
     const { url, options } = await doFetchArgs(
       {},
@@ -41,7 +42,8 @@ describe('doFetchArgs: general usages', (): void => {
     const controller = new AbortController()
     const cache = useCache({
       persist: false,
-      cacheLife: defaults.cacheLife
+      cacheLife: defaults.cacheLife,
+      cachePolicy: defaults.cachePolicy
     })
     const { options, url } = await doFetchArgs(
       {},
@@ -69,7 +71,8 @@ describe('doFetchArgs: general usages', (): void => {
     const controller = new AbortController()
     const cache = useCache({
       persist: false,
-      cacheLife: defaults.cacheLife
+      cacheLife: defaults.cacheLife,
+      cachePolicy: defaults.cachePolicy
     })
     const { url } = await doFetchArgs(
       {},
@@ -89,7 +92,8 @@ describe('doFetchArgs: general usages', (): void => {
     const controller = new AbortController()
     const cache = useCache({
       persist: false,
-      cacheLife: defaults.cacheLife
+      cacheLife: defaults.cacheLife,
+      cachePolicy: defaults.cachePolicy
     })
     const interceptors = {
       request(options: any) {
@@ -127,7 +131,8 @@ describe('doFetchArgs: Errors', (): void => {
     const controller = new AbortController()
     const cache = useCache({
       persist: false,
-      cacheLife: defaults.cacheLife
+      cacheLife: defaults.cacheLife,
+      cachePolicy: defaults.cachePolicy
     })
     // AKA, the last 2 arguments of doFetchArgs are both objects
     // try {
@@ -168,7 +173,8 @@ describe('doFetchArgs: Errors', (): void => {
     const controller = new AbortController()
     const cache = useCache({
       persist: false,
-      cacheLife: defaults.cacheLife
+      cacheLife: defaults.cacheLife,
+      cachePolicy: defaults.cachePolicy
     })
     // AKA, the last 2 arguments of doFetchArgs are both arrays
     // try {

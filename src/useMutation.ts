@@ -49,7 +49,7 @@ export const useMutation = <TData = any>(
     MUTATION = urlOrMutation as string
   }
 
-  const { loading, error, ...request } = useFetch<TData>(url as string)
+  const { loading, error, cache, ...request } = useFetch<TData>(url as string)
 
   const mutate = useCallback(
     (inputs?: object): Promise<any> => request.mutate(MUTATION, inputs),
@@ -60,6 +60,6 @@ export const useMutation = <TData = any>(
 
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
     [data, loading, error, mutate],
-    { data, loading, error, mutate }
+    { data, loading, error, mutate, cache }
   )
 }

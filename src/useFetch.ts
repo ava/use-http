@@ -38,7 +38,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     suspense
   } = customOptions
 
-  const cache = useCache({ persist, cacheLife })
+  const cache = useCache({ persist, cacheLife, cachePolicy })
 
   const { isServer } = useSSR()
 
@@ -81,7 +81,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       if (!suspense) setLoading(true)
       error.current = undefined
 
-      if (response.isCached && (persist || cachePolicy === CACHE_FIRST)) {
+      if (response.isCached && cachePolicy === CACHE_FIRST) {
         try {
           res.current = response.cached as Res<TData>
           res.current.data = await tryGetData(response.cached, defaults.data)
@@ -174,7 +174,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     mutate: (mutation, variables) => post({ mutation, variables }),
     loading: loading,
     error: error.current,
-    data: data.current
+    data: data.current,
+    cache
   }
 
   const response = toResponseObject<TData>(res, data)

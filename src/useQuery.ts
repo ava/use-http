@@ -49,7 +49,7 @@ export const useQuery = <TData = any>(
     QUERY = urlOrQuery as string
   }
 
-  const { loading, error, ...request } = useFetch<TData>(url as string)
+  const { loading, error, cache, ...request } = useFetch<TData>(url as string)
 
   const query = useCallback(
     (variables?: object): Promise<any> => request.query(QUERY, variables),
@@ -60,6 +60,6 @@ export const useQuery = <TData = any>(
 
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
     [data, loading, error, query],
-    { data, loading, error, query }
+    { data, loading, error, query, cache }
   )
 }
