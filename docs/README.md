@@ -59,6 +59,7 @@ Features
 - React Native support
 - Aborts/Cancels pending http requests when a component unmounts
 - Built in caching
+- Persistent caching support
 - Suspense<sup>(experimental)</sup> support
 
 Examples
@@ -67,6 +68,7 @@ Examples
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch + Next.js</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch + create-react-app</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'>useFetch + Provider</a>
+- <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'>useFetch + Suspense</a></li>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg'>useFetch + Pagination + Provider</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'>useFetch + Request/Response Interceptors + Provider</a>
 - <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a>
@@ -89,7 +91,7 @@ yarn add use-http    or    npm i -S use-http
     <br>
     <br>
     <a href="https://ava.inc">
-      <img src="https://github.com/alex-cory/use-http/raw/caching/public/ava-logo.png" width="130" alt="Ava">
+      <img src="https://github.com/alex-cory/use-http/raw/master/public/ava-logo.png" width="130" alt="Ava">
     </a>
     <br>
     <sub><b>Ava, Rapid Application Development</b></sub>
@@ -752,7 +754,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
-| `persist` | Persists data for the duration of cacheLife. If cacheLife is not set it defaults to 24h. Only available in Browser. | `false` |
+| `persist` | Persists data for the duration of `cacheLife`. If `cacheLife` is not set it defaults to 24h. Currently only available in Browser. | `false` |
 
 ```jsx
 const options = {
@@ -838,7 +840,7 @@ Feature Requests/Ideas
 ======================
 If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
 
-Mutations with Suspense <sup>(Not Implemented Yet)</sup>
+<!-- Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ==================
 ```js
 const App = () => {
@@ -866,4 +868,4 @@ const App = () => {
     </>
   )
 }
-```
+``` -->

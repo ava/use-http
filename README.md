@@ -78,6 +78,7 @@ Features
 - React Native support
 - Aborts/Cancels pending http requests when a component unmounts
 - Built in caching
+- Persistent caching support
 - Suspense<sup>(experimental)</sup> support
 
 Usage
@@ -791,7 +792,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
-| `persist` | Persists data for the duration of cacheLife. If cacheLife is not set it defaults to 24h. Only available in Browser. | `false` |
+| `persist` | Persists data for the duration of `cacheLife`. If `cacheLife` is not set it defaults to 24h. Currently only available in Browser. | `false` |
 
 ```jsx
 const options = {
