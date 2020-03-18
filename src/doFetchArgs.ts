@@ -1,4 +1,4 @@
-import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs, CachePolicies, Res } from './types'
+import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs, Cache } from './types'
 import { invariant, isServer, isString, isBodyObject } from './utils'
 
 const { GET } = HTTPMethod
@@ -9,9 +9,8 @@ export default async function doFetchArgs<TData = any>(
   path: string,
   method: HTTPMethod,
   controller: AbortController,
-  cachePolicy: CachePolicies,
   cacheLife: number,
-  cache: Map<string, Res<TData> | number>,
+  cache: Cache,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
   requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
@@ -93,19 +92,14 @@ export default async function doFetchArgs<TData = any>(
   // used to tell if a request has already been made
   const responseID = Object.entries({ url, method, body: options.body || '' })
     .map(([key, value]) => `${key}:${value}`).join('||')
-  const responseAgeID = `${responseID}:ts`
-
-  const responseAge = Date.now() - ((cache.get(responseAgeID) || 0) as number)
 
   return {
     url,
     options,
     response: {
-      isCached: cache.has(responseID),
-      isExpired: cacheLife > 0 && responseAge > cacheLife,
+      isCached: await cache.has(responseID),
       id: responseID,
-      cached: cache.get(responseID) as Response | undefined,
-      ageID: responseAgeID
+      cached: await cache.get(responseID) as Response | undefined
     }
   }
 }

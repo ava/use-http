@@ -380,7 +380,7 @@ var {
   loading,
   error,
   data,
-  read,   // suspense (experimental)
+  cache,   // .has(), .clear(), .delete(), .get(), .set()    (similar to JS Map)
   get,
   post,
   put,
@@ -752,6 +752,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
+| `persist` | Persists data for the duration of cacheLife. If cacheLife is not set it defaults to 24h. Only available in Browser. | `false` |
 
 ```jsx
 const options = {
@@ -766,6 +767,9 @@ const options = {
 
   // The time in milliseconds that cache data remains fresh.
   cacheLife: 0,
+
+  // Allows caching to persist after page refresh. Only supported in the Browser currently.
+  persist: false,
 
   // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
   url: 'https://example.com',

@@ -12,9 +12,11 @@ import { emptyCustomResponse } from '../utils'
 import * as test from '@testing-library/react'
 import ErrorBoundary from '../ErrorBoundary'
 
+import * as mockdate from 'mockdate'
+
 const fetch = global.fetch as FetchMock
 
-const { NO_CACHE } = CachePolicies
+const { NO_CACHE, NETWORK_ONLY } = CachePolicies
 
 // Provider Tests =================================================
 /**
@@ -61,9 +63,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(
-      JSON.stringify(expected)
-    )
+    fetch.mockResponseOnce(JSON.stringify(expected))
   })
 
   it('should execute GET command with object destructuring', async (): Promise<
@@ -136,9 +136,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(
-      JSON.stringify(expected)
-    )
+    fetch.mockResponseOnce(JSON.stringify(expected))
   })
 
   it('should work correctly: useFetch({ onMount: true, data: [] })', async (): Promise<
@@ -700,7 +698,6 @@ describe('useFetch - BROWSER - suspense', (): void => {
   afterEach((): void => {
     fetch.resetMocks()
     cleanup()
-
     test.cleanup()
   })
 
@@ -720,7 +717,7 @@ describe('useFetch - BROWSER - suspense', (): void => {
     )
 
     expect(container.textContent).toMatchInlineSnapshot('"fallback"')
-    await test.act((): any => new Promise(resolve => setTimeout(resolve, 110)))
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 210)))
     expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
   })
 
@@ -871,5 +868,109 @@ describe('useFetch - BROWSER - errors', (): void => {
     await waitForNextUpdate()
     expect(result.current.response.ok).toBe(undefined)
     expect(result.current.error).toEqual(expectedError)
+  })
+})
+
+describe('useFetch - BROWSER - persistence', (): void => {
+  const expected = {
+    name: 'Alex Cory',
+    age: 29
+  }
+  const unexpected = {
+    name: 'Mattias Rost',
+    age: 37
+  }
+
+  afterAll((): void => {
+    mockdate.reset()
+  })
+
+  beforeAll((): void => {
+    mockdate.set('2020-01-01')
+  })
+
+  afterEach(() => {
+    cleanup()
+    fetch.resetMocks()
+  })
+
+  beforeEach((): void => {
+    fetch.mockResponse(JSON.stringify(expected))
+  })
+
+  it('should fetch once', async (): Promise<void> => {
+    const { waitForNextUpdate } = renderHook(
+      () => useFetch({ url: 'https://persist.com', persist: true }, [])
+    )
+
+    await waitForNextUpdate()
+
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not fetch again', async (): Promise<void> => {
+    fetch.mockResponse(JSON.stringify(unexpected))
+
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch({ url: 'https://persist.com', persist: true }, [])
+    )
+
+    await waitForNextUpdate()
+
+    expect(fetch).toHaveBeenCalledTimes(0)
+    expect(result.current.data).toEqual(expected)
+    expect(result.current.response.ok).toBe(true)
+    expect(result.current.response.status).toEqual(200)
+    expect(result.current.response).toHaveProperty('json')
+    expect(result.current.response).toHaveProperty('text')
+    expect(result.current.response).toHaveProperty('formData')
+    expect(result.current.response).toHaveProperty('blob')
+  })
+
+  it('should fetch again after 24h', async (): Promise<void> => {
+    mockdate.set('2020-01-02 02:00:00')
+
+    const { waitForNextUpdate } = renderHook(
+      () => useFetch({ url: 'https://persist.com', persist: true }, [])
+    )
+
+    await waitForNextUpdate()
+
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+
+  it('should have `cache` in the return of useFetch', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch({ url: 'https://persist.com', persist: true }, [])
+    )
+    expect(result.current.cache).toBeDefined()
+    expect(result.current.cache.get).toBeInstanceOf(Function)
+    expect(result.current.cache.set).toBeInstanceOf(Function)
+    expect(result.current.cache.has).toBeInstanceOf(Function)
+    expect(result.current.cache.delete).toBeInstanceOf(Function)
+    expect(result.current.cache.clear).toBeInstanceOf(Function)
+  })
+
+  it('should error if passing wrong cachePolicy with persist: true', async (): Promise<void> => {
+    try {
+      const { result } = renderHook(
+        () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
+      )
+      expect(result.current.error).toBe(undefined)
+    } catch (err) {
+      expect(err.name).toBe('Invariant Violation')
+      expect(err.message).toBe(`You cannot use option 'persist' with cachePolicy: no-cache 🙅‍♂️`)
+    }
+
+    try {
+      const { result } = renderHook(
+        () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NETWORK_ONLY }, [])
+      )
+      expect(result.current.error).toBe(undefined)
+    } catch (err) {
+      expect(err.name).toBe('Invariant Violation')
+      expect(err.message).toBe(`You cannot use option 'persist' with cachePolicy: network-only 🙅‍♂️`)
+    }
   })
 })

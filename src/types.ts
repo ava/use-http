@@ -67,10 +67,8 @@ export interface DoFetchArgs {
   options: RequestInit
   response: {
     isCached: boolean
-    isExpired: boolean
     id: string
     cached?: Response
-    ageID: string
   }
 }
 
@@ -129,6 +127,7 @@ export interface ReqBase<TData> {
   data: TData | undefined
   loading: boolean
   error: Error
+  cache: Cache
 }
 
 export interface Res<TData> extends Response {
@@ -160,8 +159,17 @@ export type Interceptors = {
   response?: (response: Res<any>) => Res<any>
 }
 
+export type Cache = {
+  get: (name: string) => Promise<Response | undefined>
+  set: (name: string, data: Response) => Promise<void>
+  has: (name: string) => Promise<boolean>
+  delete: (...names: string[]) => Promise<void>
+  clear: () => void
+}
+
 export interface CustomOptions {
   retries?: number
+  persist?: boolean
   timeout?: number
   path?: string
   url?: string

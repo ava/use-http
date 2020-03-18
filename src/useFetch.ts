@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback, useRef, useReducer } from 'react'
-import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 import useSSR from 'use-ssr'
 import {
   HTTPMethod,
@@ -16,11 +15,10 @@ import {
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData, responseKeys, responseMethods, responseFields } from './utils'
+import { invariant, tryGetData, toResponseObject } from './utils'
+import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
-
-const cache = new Map()
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
@@ -28,6 +26,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     url: initialURL,
     path,
     interceptors,
+    persist,
     timeout,
     retries,
     onTimeout,
@@ -38,6 +37,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     cacheLife,
     suspense
   } = customOptions
+
+  const cache = useCache({ persist, cacheLife, cachePolicy })
 
   const { isServer } = useSSR()
 
@@ -70,31 +71,26 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         path,
         method,
         theController,
-        cachePolicy,
         cacheLife,
         cache,
         routeOrBody,
         body,
         interceptors.request
       )
-
+      
       if (!suspense) setLoading(true)
       error.current = undefined
 
       if (response.isCached && cachePolicy === CACHE_FIRST) {
-        if (response.isExpired) {
-          cache.delete(response.id)
-          cache.delete(response.ageID)
-        } else {
-          try {
-            res.current.data = await tryGetData(response.cached, defaults.data)
-            data.current = res.current.data as TData
-            if (!suspense) setLoading(false)
-            return data.current
-          } catch (err) {
-            error.current = err
-            setLoading(false)
-          }
+        try {
+          res.current = response.cached as Res<TData>
+          res.current.data = await tryGetData(response.cached, defaults.data)
+          data.current = res.current.data as TData
+          if (!suspense) setLoading(false)
+          return data.current
+        } catch (err) {
+          error.current = err
+          setLoading(false)
         }
       }
 
@@ -115,8 +111,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         res.current = newRes.clone()
 
         if (cachePolicy === CACHE_FIRST) {
-          cache.set(response.id, newRes.clone())
-          if (cacheLife > 0) cache.set(response.ageID, Date.now())
+          await cache.set(response.id, newRes.clone())
         }
 
         newData = await tryGetData(newRes, defaults.data)
@@ -162,7 +157,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     }
 
     return doFetch
-  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, cacheLife, onTimeout, defaults.data, onNewData, forceUpdate, suspense])
+  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, persist, cacheLife, onTimeout, defaults.data, onNewData, forceUpdate, suspense])
 
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
@@ -179,30 +174,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     mutate: (mutation, variables) => post({ mutation, variables }),
     loading: loading,
     error: error.current,
-    data: data.current
+    data: data.current,
+    cache
   }
 
-  const response = Object.defineProperties({}, responseKeys.reduce((acc: any, field: keyof Res<TData>) => {
-    if (responseFields.includes(field as any)) {
-      acc[field] = {
-        get: () => {
-          if (field === 'data') return data.current
-          const clonedResponse = ('clone' in res.current ? res.current.clone() : {}) as Res<TData>
-          return clonedResponse[field as (NonFunctionKeys<Res<any>> | 'data')]
-        },
-        enumerable: true
-      }
-    } else if (responseMethods.includes(field as any)) {
-      acc[field] = {
-        value: () => {
-          const clonedResponse = ('clone' in res.current ? res.current.clone() : { [field]: () => { console.error("You haven't made a http request yet") } }) as Res<TData>
-          return clonedResponse[field as Exclude<FunctionKeys<Res<any>>, 'data'>]()
-        },
-        enumerable: true
-      }
-    }
-    return acc
-  }, {}))
+  const response = toResponseObject<TData>(res, data)
 
   // onMount/onUpdate
   useEffect((): any => {
@@ -222,11 +198,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => request.abort, [])
 
-  const final = Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, response, loading, error.current],
-    { request, response, ...request }
-  )
-
   if (suspense && suspender.current) {
     if (isServer) throw new Error('Suspense on server side is not yet supported! 🙅‍♂️')
     switch (suspenseStatus.current) {
@@ -236,7 +207,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         throw error.current
     }
   }
-  return final
+  return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
+    [request, response, loading, error.current],
+    { request, response, ...request }
+  )
 }
 
 export { useFetch }

@@ -397,6 +397,7 @@ var {
   loading,
   error,
   data,
+  cache, // methods: get, set, has, delete, clear (like `new Map()`)
   get,
   post,
   put,
@@ -790,6 +791,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
+| `persist` | Persists data for the duration of cacheLife. If cacheLife is not set it defaults to 24h. Only available in Browser. | `false` |
 
 ```jsx
 const options = {
@@ -804,6 +806,9 @@ const options = {
 
   // The time in milliseconds that cache data remains fresh.
   cacheLife: 0,
+
+  // Allows caching to persist after page refresh. Only supported in the Browser currently.
+  persist: false,
 
   // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
   url: 'https://example.com',
@@ -882,6 +887,9 @@ Todos
     - or make it work with just the `suspense: true` option
     - both of these options need to be thought out a lot more^
   - [ ] tests for this^ (triggering outside)
+  - [ ] cleanup tests in general. Snapshot tests are unpredictably not working for some reason.
+    - snapshot test resources: [swr](https://github.com/zeit/swr/blob/master/test/use-swr.test.tsx#L1083), [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks/blob/master/src/__tests__/useQuery-test.tsx#L218)
+    - basic test resources: [fetch-suspense](https://github.com/CharlesStover/fetch-suspense/blob/master/tests/create-use-fetch.test.ts), [@testing-library/react-hooks suspense PR](https://github.com/testing-library/react-hooks-testing-library/pull/35/files)
 - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
 - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
 - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
@@ -934,8 +942,6 @@ Todos
 
   ```jsx
   const request = useFetch({
-    // allows caching to persist after page refresh
-    persist: true, // false by default
     // Allows you to pass in your own cache to useFetch
     // This is controversial though because `cache` is an option in the requestInit
     // and it's value is a string. See: https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
