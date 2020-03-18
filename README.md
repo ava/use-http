@@ -396,6 +396,7 @@ var {
   loading,
   error,
   data,
+  cache, // methods: get, set, has, delete, clear (like `new Map()`)
   get,
   post,
   put,

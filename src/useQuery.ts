@@ -1,6 +1,6 @@
 import useFetch, { FetchContext } from '.'
 import { useContext, useCallback } from 'react'
-import { ReqBase } from './types'
+import { ReqBase, Cache } from './types'
 import { invariant, isString, useURLRequiredInvariant } from './utils'
 
 type ArrayDestructure<TData = any> = [
@@ -11,6 +11,7 @@ type ArrayDestructure<TData = any> = [
 ]
 interface ObjectDestructure<TData = any> extends ReqBase<TData> {
   query: (variables?: object) => Promise<any>
+  cache: Cache
 }
 type UseQuery<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TData>
 
