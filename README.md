@@ -885,6 +885,9 @@ Todos
     - or make it work with just the `suspense: true` option
     - both of these options need to be thought out a lot more^
   - [ ] tests for this^ (triggering outside)
+  - [ ] cleanup tests in general. Snapshot tests are unpredictably not working for some reason.
+    - snapshot test resources: [swr](https://github.com/zeit/swr/blob/master/test/use-swr.test.tsx#L1083), [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks/blob/master/src/__tests__/useQuery-test.tsx#L218)
+    - basic test resources: [fetch-suspense](https://github.com/CharlesStover/fetch-suspense/blob/master/tests/create-use-fetch.test.ts), [@testing-library/react-hooks suspense PR](https://github.com/testing-library/react-hooks-testing-library/pull/35/files)
 - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
 - [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
 - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)

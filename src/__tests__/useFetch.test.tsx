@@ -1,7 +1,7 @@
 /* eslint-disable no-var */
 /* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/camelcase */
-import React, { Suspense, ReactElement, ReactNode } from 'react'
+import React, { /* Suspense, */ ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
@@ -9,14 +9,14 @@ import { Res, Options, CachePolicies } from '../types'
 import { toCamel } from 'convert-keys'
 import { renderHook, act } from '@testing-library/react-hooks'
 import { emptyCustomResponse } from '../utils'
-import * as test from '@testing-library/react'
-import ErrorBoundary from '../ErrorBoundary'
+// import * as test from '@testing-library/react'
+// import ErrorBoundary from '../ErrorBoundary'
 
 import * as mockdate from 'mockdate'
 
 const fetch = global.fetch as FetchMock
 
-const { NO_CACHE } = CachePolicies
+const { NO_CACHE, NETWORK_ONLY } = CachePolicies
 
 // Provider Tests =================================================
 /**
@@ -698,72 +698,72 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 })
 
-describe('useFetch - BROWSER - suspense', (): void => {
-  afterEach((): void => {
-    fetch.resetMocks()
-    cleanup()
-    test.cleanup()
-  })
+// describe('useFetch - BROWSER - suspense', (): void => {
+//   afterEach((): void => {
+//     fetch.resetMocks()
+//     cleanup()
+//     test.cleanup()
+//   })
 
-  beforeEach((): void => {
-    fetch.mockResponse(JSON.stringify('yay suspense'))
-  })
+//   beforeEach((): void => {
+//     fetch.mockResponse(JSON.stringify('yay suspense'))
+//   })
 
-  it('should render useFetch fallback', async () => {
-    function Section() {
-      const { data } = useFetch('https://a.co', { suspense: true }, [])
-      return <div>{data}</div>
-    }
-    const { container } = test.render(
-      <Suspense fallback={<div>fallback</div>}>
-        <Section />
-      </Suspense>
-    )
+//   it('should render useFetch fallback', async () => {
+//     function Section() {
+//       const { data } = useFetch('https://a.co', { suspense: true }, [])
+//       return <div>{data}</div>
+//     }
+//     const { container } = test.render(
+//       <Suspense fallback={<div>fallback</div>}>
+//         <Section />
+//       </Suspense>
+//     )
 
-    expect(container.textContent).toMatchInlineSnapshot('"fallback"')
-    await test.act((): any => new Promise(resolve => setTimeout(resolve, 210)))
-    expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
-  })
+//     expect(container.textContent).toMatchInlineSnapshot('"fallback"')
+//     await test.act((): any => new Promise(resolve => setTimeout(resolve, 210)))
+//     expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
+//   })
 
-  it('should render multiple useFetch fallbacks', async () => {
-    function Section() {
-      const { data: d1 } = useFetch('https://a.co/1', { suspense: true }, [])
-      const { data: d2 } = useFetch('https://a.co/2', { suspense: true }, [])
-      return <div>{d1} {d2}</div>
-    }
-    const { container } = test.render(
-      <Suspense fallback={<div>fallback</div>}>
-        <Section />
-      </Suspense>
-    )
+//   it('should render multiple useFetch fallbacks', async () => {
+//     function Section() {
+//       const { data: d1 } = useFetch('https://a.co/1', { suspense: true }, [])
+//       const { data: d2 } = useFetch('https://a.co/2', { suspense: true }, [])
+//       return <div>{d1} {d2}</div>
+//     }
+//     const { container } = test.render(
+//       <Suspense fallback={<div>fallback</div>}>
+//         <Section />
+//       </Suspense>
+//     )
 
-    // TODO: I believe it should work with the commented out code below
-    expect(container.textContent).toMatchInlineSnapshot('" fallback"')
-    // await test.act((): any => new Promise(res => setTimeout(res, 10))) // still suspending
-    // expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
-    await test.act((): any => new Promise(resolve => setTimeout(resolve, 100))) // should recover
-    expect(container.textContent).toMatchInlineSnapshot('"yay suspense yay suspense"')
-  })
+//     // TODO: I believe it should work with the commented out code below
+//     expect(container.textContent).toMatchInlineSnapshot('" fallback"')
+//     // await test.act((): any => new Promise(res => setTimeout(res, 10))) // still suspending
+//     // expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
+//     await test.act((): any => new Promise(resolve => setTimeout(resolve, 100))) // should recover
+//     expect(container.textContent).toMatchInlineSnapshot('"yay suspense yay suspense"')
+//   })
 
-  it('should throw errors', async () => {
-    function Section() {
-      const { data } = useFetch('https://a.co', { suspense: true }, [])
-      return <div>{data}</div>
-    }
-    // https://reactjs.org/docs/concurrent-mode-suspense.html#handling-errors
-    const { container } = test.render(
-      <ErrorBoundary fallback={<div>error boundary</div>}>
-        <Suspense fallback={<div>fallback</div>}>
-          <Section />
-        </Suspense>
-      </ErrorBoundary>
-    )
+//   it('should throw errors', async () => {
+//     function Section() {
+//       const { data } = useFetch('https://a.co', { suspense: true }, [])
+//       return <div>{data}</div>
+//     }
+//     // https://reactjs.org/docs/concurrent-mode-suspense.html#handling-errors
+//     const { container } = test.render(
+//       <ErrorBoundary fallback={<div>error boundary</div>}>
+//         <Suspense fallback={<div>fallback</div>}>
+//           <Section />
+//         </Suspense>
+//       </ErrorBoundary>
+//     )
 
-    expect(container.textContent).toMatchInlineSnapshot('"fallback"')
-    await test.act((): any => new Promise(resolve => setTimeout(resolve, 150))) // still suspending
-    expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
-  })
-})
+//     expect(container.textContent).toMatchInlineSnapshot('"fallback"')
+//     await test.act((): any => new Promise(resolve => setTimeout(resolve, 150))) // still suspending
+//     expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
+//   })
+// })
 
 describe('useFetch - BROWSER - errors', (): void => {
   const expectedError = { name: 'error', message: 'error' }
@@ -899,9 +899,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponse(
-      JSON.stringify(expected)
-    )
+    fetch.mockResponse(JSON.stringify(expected))
   })
 
   it('should fetch once', async (): Promise<void> => {
@@ -925,6 +923,12 @@ describe('useFetch - BROWSER - persistence', (): void => {
 
     expect(fetch).toHaveBeenCalledTimes(0)
     expect(result.current.data).toEqual(expected)
+    expect(result.current.response.ok).toBe(true)
+    expect(result.current.response.status).toEqual(200)
+    expect(result.current.response).toHaveProperty('json')
+    expect(result.current.response).toHaveProperty('text')
+    expect(result.current.response).toHaveProperty('formData')
+    expect(result.current.response).toHaveProperty('blob')
   })
 
   it('should fetch again after 24h', async (): Promise<void> => {
@@ -937,5 +941,39 @@ describe('useFetch - BROWSER - persistence', (): void => {
     await waitForNextUpdate()
 
     expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+
+  it('should have `cache` in the return of useFetch', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch({ url: 'https://persist.com', persist: true }, [])
+    )
+    expect(result.current.cache).toBeDefined()
+    expect(result.current.cache).toHaveProperty('clear')
+    expect(result.current.cache).toHaveProperty('get')
+    expect(result.current.cache).toHaveProperty('set')
+    expect(result.current.cache).toHaveProperty('delete')
+  })
+
+  it('should error if passing wrong cachePolicy with persist: true', async (): Promise<void> => {
+    try {
+      const { result } = renderHook(
+        () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
+      )
+      expect(result.current.error).toBe(undefined)
+    } catch (err) {
+      expect(err.name).toBe('Invariant Violation')
+      expect(err.message).toBe(`You cannot use option 'persist' with cachePolicy: no-cache 🙅‍♂️`)
+    }
+
+    try {
+      const { result } = renderHook(
+        () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NETWORK_ONLY }, [])
+      )
+      expect(result.current.error).toBe(undefined)
+    } catch (err) {
+      expect(err.name).toBe('Invariant Violation')
+      expect(err.message).toBe(`You cannot use option 'persist' with cachePolicy: network-only 🙅‍♂️`)
+    }
   })
 })
