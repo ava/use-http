@@ -361,6 +361,7 @@ var {
   loading,
   error,
   data,
+  cache,    // methods: get, set, has, delete, clear (like `new Map()`)
   get,
   post,
   put,
@@ -398,7 +399,7 @@ var {
   loading,
   error,
   data,
-  cache, // methods: get, set, has, delete, clear (like `new Map()`)
+  cache,  // methods: get, set, has, delete, clear (like `new Map()`)
   get,
   post,
   put,
@@ -778,7 +779,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
-| `suspense` | Enables React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | false |
+| `suspense` | Enables Experimental React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | false |
 | `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
 | `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
@@ -798,7 +799,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 const options = {
   // accepts all `fetch` options such as headers, method, etc.
 
-  // enables React Suspense mode
+  // enables experimental React Suspense mode
   suspense: true, // defaults to `false`
 
   // Cache responses to improve speed and reduce amount of requests

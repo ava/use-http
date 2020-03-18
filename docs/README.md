@@ -344,7 +344,7 @@ var {
   loading,
   error,
   data,
-  read,   // suspense (experimental)
+  cache,   // .has(), .clear(), .delete(), .get(), .set()    (similar to JS Map)
   get,
   post,
   put,
