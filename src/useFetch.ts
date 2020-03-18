@@ -110,7 +110,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         newRes = await fetch(url, options)
         res.current = newRes.clone()
 
-        if (persist || cachePolicy === CACHE_FIRST) {
+        if (cachePolicy === CACHE_FIRST) {
           await cache.set(response.id, newRes.clone())
         }
 
