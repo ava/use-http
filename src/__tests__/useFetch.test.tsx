@@ -698,6 +698,7 @@ describe('useFetch - BROWSER - suspense', (): void => {
   afterEach((): void => {
     fetch.resetMocks()
     cleanup()
+
     test.cleanup()
   })
 
@@ -939,7 +940,6 @@ describe('useFetch - BROWSER - persistence', (): void => {
     expect(fetch).toHaveBeenCalledTimes(1)
   })
 
-
   it('should have `cache` in the return of useFetch', async (): Promise<void> => {
     const { result } = renderHook(
       () => useFetch({ url: 'https://persist.com', persist: true }, [])
@@ -953,6 +953,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
   })
 
   it('should error if passing wrong cachePolicy with persist: true', async (): Promise<void> => {
+    
     try {
       const { result } = renderHook(
         () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
@@ -960,7 +961,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
       expect(result.current.error).toBe(undefined)
     } catch (err) {
       expect(err.name).toBe('Invariant Violation')
-      expect(err.message).toBe(`You cannot use option 'persist' with cachePolicy: no-cache 🙅‍♂️`)
+      expect(err.message).toBe('You cannot use option \'persist\' with cachePolicy: no-cache 🙅‍♂️')
     }
 
     try {
@@ -970,7 +971,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
       expect(result.current.error).toBe(undefined)
     } catch (err) {
       expect(err.name).toBe('Invariant Violation')
-      expect(err.message).toBe(`You cannot use option 'persist' with cachePolicy: network-only 🙅‍♂️`)
+      expect(err.message).toBe('You cannot use option \'persist\' with cachePolicy: network-only 🙅‍♂️')
     }
   })
 })

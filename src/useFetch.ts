@@ -51,6 +51,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const hasMore = useRef(true)
   const suspenseStatus = useRef('pending')
   const suspender = useRef<Promise<any>>()
+  const mounted = useRef(false)
 
   const [loading, setLoading] = useState<boolean>(defaults.loading)
   const forceUpdate = useReducer(() => ({}), [])[1]
@@ -78,7 +79,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         interceptors.request
       )
       
-      if (!suspense) setLoading(true)
+      if (!suspense && mounted.current) setLoading(true)
       error.current = undefined
 
       if (response.isCached && cachePolicy === CACHE_FIRST) {
@@ -86,11 +87,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           res.current = response.cached as Res<TData>
           res.current.data = await tryGetData(response.cached, defaults.data)
           data.current = res.current.data as TData
-          if (!suspense) setLoading(false)
+          if (!suspense && mounted.current) setLoading(false)
           return data.current
         } catch (err) {
           error.current = err
-          setLoading(false)
+          if (mounted.current) setLoading(false)
         }
       }
 
@@ -134,7 +135,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         controller.current = undefined
       }
 
-      if (!suspense) setLoading(false)
+      if (!suspense && mounted.current) setLoading(false)
 
       return data.current
     } // end of doFetch()
@@ -182,12 +183,14 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
   // onMount/onUpdate
   useEffect((): any => {
+    mounted.current = true
     if (Array.isArray(dependencies)) {
       const methodName = requestInit.method || HTTPMethod.GET
       const methodLower = methodName.toLowerCase() as keyof ReqMethods
       const req = request[methodLower] as NoArgs
       req()
     }
+    return () => mounted.current = false
   // TODO: need [request] in dependency array. Causing infinite loop though.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies)
