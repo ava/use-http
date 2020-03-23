@@ -1,4 +1,4 @@
-<img src="https://github.com/alex-cory/use-http/raw/master/public/dog.png" />
+![use-http logo][3]
 
 <p align="center">
     <h1 align="center">useFetch</h1>
@@ -821,6 +821,7 @@ useFetch(options)
 
 Who's using use-http?
 =====================
+
 <div style="display: flex; align-items: center; justify-content: center;">
   <a href="https://ava.inc">
     <img height="140px" src="https://github.com/alex-cory/use-http/raw/master/public/ava-logo.png" />
@@ -836,11 +837,23 @@ Who's using use-http?
   </a>
 </div>
 
+Browser Support
+===============
+
+If you need support for IE, you will need to add additional polyfills.  The React docs suggest [these polyfills][4], but from [this issue][2] we have found it to work fine with the [`react-app-polyfill`]. If you have any updates to this browser list, please submit a PR!
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />]()<br/>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />]()<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />]()<br/>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />]()<br/>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />]()<br/>Opera |
+| --------- | --------- | --------- | --------- | --------- | --------- | --------- |
+| 12+ | last 2 versions| last 2 versions| last 2 versions| last 2 versions| last 2 versions| last 2 versions
+
 Feature Requests/Ideas
 ======================
-If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
 
-<!-- Mutations with Suspense <sup>(Not Implemented Yet)</sup>
+If you have feature requests, [submit an issue][1] to let us know what you would like to see!
+
+<!--
+
+Mutations with Suspense <sup>(Not Implemented Yet)</sup>
 ==================
 ```js
 const App = () => {
@@ -868,4 +881,12 @@ const App = () => {
     </>
   )
 }
-``` -->
+``` 
+
+-->
+
+[1]: https://github.com/alex-cory/use-http/issues/new?title=[Feature%20Request]%20YOUR_FEATURE_NAME
+[2]: https://github.com/alex-cory/use-http/issues/93#issuecomment-600896722
+[3]: https://github.com/alex-cory/use-http/raw/master/public/dog.png
+[4]: https://reactjs.org/docs/javascript-environment-requirements.html
+[`react-app-polyfill`]: https://www.npmjs.com/package/react-app-polyfill

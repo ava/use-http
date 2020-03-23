@@ -159,6 +159,7 @@ export type Interceptors = {
   response?: (response: Res<any>) => Res<any>
 }
 
+// this also holds the response keys. It mimics js Map
 export type Cache = {
   get: (name: string) => Promise<Response | undefined>
   set: (name: string, data: Response) => Promise<void>

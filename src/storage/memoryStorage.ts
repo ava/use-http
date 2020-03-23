@@ -1,34 +1,44 @@
 import { Cache } from '../types'
 
-const inMemoryStorage = new Map<string, Response | number>()
-const getMemoryStorage = ({ cacheLife }: { cacheLife: number }): Cache => ({
-  async get(name: string) {
-    const item = inMemoryStorage.get(name) as Response | undefined
-    if (!item) return
-
-    const expiration = inMemoryStorage.get(`${name}:ts`)
-    if (expiration && expiration > 0 && expiration < Date.now()) {
-      inMemoryStorage.delete(name)
-      inMemoryStorage.delete(`${name}:ts`)
-      return
-    }
-
-    return item
-  },
-  async set(name: string, data: Response) {
-    inMemoryStorage.set(name, data)
-    inMemoryStorage.set(`${name}:ts`, cacheLife > 0 ? Date.now() + cacheLife : 0)
-  },
-  async has(name: string) {
-    return inMemoryStorage.has(name)
-  },
-  async delete(name: string) {
-    inMemoryStorage.delete(name)
-    inMemoryStorage.delete(`${name}:ts`)
-  },
-  async clear() {
-    return inMemoryStorage.clear()
+var inMemoryStorage: any = {}
+var getMemoryStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
+  const isExpired = (responseID: string) => {
+    const expiration = inMemoryStorage[`${responseID}:ts`]
+    const expired = expiration > 0 && expiration < Date.now()
+    if (expired) remove(responseID)
+    return expired
   }
-})
+
+  const get = async (responseID: string) => {
+    if (isExpired(responseID)) return
+    return inMemoryStorage[responseID] as Response
+  }
+
+  const set = async (responseID: string, res: Response) => {
+    inMemoryStorage[responseID] = res
+    inMemoryStorage[`${responseID}:ts`] = cacheLife > 0 ? Date.now() + cacheLife : 0
+  }
+
+  const has = async (responseID: string) => !isExpired(responseID)
+
+  const remove = async (...responseIDs: string[]) => {
+    for (const responseID of responseIDs) {
+      delete inMemoryStorage[responseID]
+      delete inMemoryStorage[`${responseID}:ts`]
+    }
+  }
+
+  const clear = async () => {
+    inMemoryStorage = {}
+  }
+
+  return Object.defineProperties(inMemoryStorage, {
+    get: { value: get, writable: false, configurable: true },
+    set: { value: set, writable: false, configurable: true },
+    has: { value: has, writable: false, configurable: true },
+    delete: { value: remove, writable: false, configurable: true },
+    clear: { value: clear, writable: false, configurable: true }
+  })
+}
 
 export default getMemoryStorage

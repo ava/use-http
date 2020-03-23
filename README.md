@@ -1,6 +1,4 @@
-<a href="http://use-http.com">
-    <img src="https://github.com/alex-cory/use-http/raw/master/public/dog.png" />
-</a>
+[![use-http logo][3]][5]
 
 <br/>
 
@@ -875,10 +873,19 @@ Does your company use use-http? Consider sponsoring the project to fund new feat
   </a>
 </p>
 
+Browser Support
+---------------
+
+If you need support for IE, you will need to add additional polyfills.  The React docs suggest [these polyfills][4], but from [this issue][2] we have found it to work fine with the [`react-app-polyfill`]. If you have any updates to this browser list, please submit a PR!
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />]()<br/>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />]()<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />]()<br/>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />]()<br/>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />]()<br/>Opera |
+| --------- | --------- | --------- | --------- | --------- | --------- | --------- |
+| 12+ | last 2 versions| last 2 versions| last 2 versions| last 2 versions| last 2 versions| last 2 versions
+
 Feature Requests/Ideas
 ----------------------
 
-If you have feature requests, let's talk about them in [this issue](https://github.com/alex-cory/use-http/issues/13)!
+If you have feature requests, [submit an issue][1] to let us know what you would like to see!
 
 Todos
 ------
@@ -893,7 +900,6 @@ Todos
     - snapshot test resources: [swr](https://github.com/zeit/swr/blob/master/test/use-swr.test.tsx#L1083), [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks/blob/master/src/__tests__/useQuery-test.tsx#L218)
     - basic test resources: [fetch-suspense](https://github.com/CharlesStover/fetch-suspense/blob/master/tests/create-use-fetch.test.ts), [@testing-library/react-hooks suspense PR](https://github.com/testing-library/react-hooks-testing-library/pull/35/files)
 - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
-- [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
 - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
 - [ ] add sponsors [similar to this](https://github.com/carbon-app/carbon)
 - [ ] Error handling
@@ -908,6 +914,7 @@ Todos
   - [ ] aborts fetch on unmount
 - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
 - [ ] make this a github package
+  - [see ava packages](https://github.com/orgs/ava/packages)
 - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
 - [ ] make GraphQL examples in codesandbox
 - [ ] Documentation:
@@ -929,16 +936,6 @@ Todos
     })
     .get()
 ```
-
-- [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
-      convert all the keys in the response to camelCase.
-      Not exactly sure how this syntax should look because what
-      if you want to have this only go 1 layer deep into the response
-      object. Or if this is just out of scope for this library.
-
-  ```jsx
-  <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
-  ```
 
 - [ ] potential option ideas
 
@@ -1042,3 +1039,11 @@ const App = () => {
 }
 ```
 </details>
+
+
+[1]: https://github.com/alex-cory/use-http/issues/new?title=[Feature%20Request]%20YOUR_FEATURE_NAME
+[2]: https://github.com/alex-cory/use-http/issues/93#issuecomment-600896722
+[3]: https://github.com/alex-cory/use-http/raw/master/public/dog.png
+[4]: https://reactjs.org/docs/javascript-environment-requirements.html
+[5]: http://use-http.com
+[`react-app-polyfill`]: https://www.npmjs.com/package/react-app-polyfill
