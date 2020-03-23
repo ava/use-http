@@ -914,6 +914,7 @@ Todos
   - [ ] aborts fetch on unmount
 - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
 - [ ] make this a github package
+  - [see ava packages](https://github.com/orgs/ava/packages)
 - [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
 - [ ] make GraphQL examples in codesandbox
 - [ ] Documentation:

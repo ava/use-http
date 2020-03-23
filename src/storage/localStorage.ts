@@ -29,8 +29,8 @@ const getLocalStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
   const has = async (responseID: string) => !isExpired(responseID)
 
   const get = async (responseID: string) => {
-    const cache = getCache()
     if (isExpired(responseID)) return
+    const cache = getCache()
     const { body, headers, status, statusText } = cache[responseID].response
     return new Response(body, {
       status,
