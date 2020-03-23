@@ -12,32 +12,26 @@ const getCache = () => {
   }
 }
 const getLocalStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
-  // there isn't state here now, but will be eventually
-
-  const remove = async (name: string) => {
+  const isExpired = (responseID: string) => {
     const cache = getCache()
-    delete cache[name]
+    const { expiration, response } = (cache[responseID] || {})
+    const expired = expiration > 0 && expiration < Date.now()
+    if (expired) remove(responseID)
+    return expired || !response
+  }
+
+  const remove = async (...responseIDs: string[]) => {
+    const cache = getCache()
+    responseIDs.forEach(id => delete cache[id])
     localStorage.setItem(cacheName, JSON.stringify(cache))
   }
 
-  const has = async (responseID: string): Promise<boolean> => {
+  const has = async (responseID: string) => !isExpired(responseID)
+
+  const get = async (responseID: string) => {
     const cache = getCache()
-    return !!(cache[responseID] && cache[responseID].response)
-  }
-
-  const get = async (responseID: string): Promise<Response | undefined> => {
-    const cache = getCache()
-    if (!cache[responseID]) {
-      return
-    }
-
-    const { expiration, response: { body, headers, status, statusText } } = cache[responseID] as any
-    if (expiration < Date.now()) {
-      delete cache[responseID]
-      localStorage.setItem(cacheName, JSON.stringify(cache))
-      return
-    }
-
+    if (isExpired(responseID)) return
+    const { body, headers, status, statusText } = cache[responseID].response
     return new Response(body, {
       status,
       statusText,
@@ -47,9 +41,8 @@ const getLocalStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
 
   const set = async (responseID: string, response: Response): Promise<void> => {
     const cache = getCache()
-    const responseObject = await serializeResponse(response)
     cache[responseID] = {
-      response: responseObject,
+      response: await serializeResponse(response),
       expiration: Date.now() + cacheLife
     }
     localStorage.setItem(cacheName, JSON.stringify(cache))
@@ -59,7 +52,13 @@ const getLocalStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
     localStorage.setItem(cacheName, JSON.stringify({}))
   }
 
-  return { get, set, has, delete: remove, clear }
+  return Object.defineProperties(getCache(), {
+    get: { value: get, writable: false },
+    set: { value: set, writable: false },
+    has: { value: has, writable: false },
+    delete: { value: remove, writable: false },
+    clear: { value: clear, writable: false }
+  })
 }
 
 export default getLocalStorage

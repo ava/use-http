@@ -900,7 +900,6 @@ Todos
     - snapshot test resources: [swr](https://github.com/zeit/swr/blob/master/test/use-swr.test.tsx#L1083), [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks/blob/master/src/__tests__/useQuery-test.tsx#L218)
     - basic test resources: [fetch-suspense](https://github.com/CharlesStover/fetch-suspense/blob/master/tests/create-use-fetch.test.ts), [@testing-library/react-hooks suspense PR](https://github.com/testing-library/react-hooks-testing-library/pull/35/files)
 - [ ] maybe add translations [like this one](https://github.com/jamiebuilds/unstated-next)
-- [ ] add browser support to docs [1](https://github.com/godban/browsers-support-badges) [2](https://gist.github.com/danbovey/b468c2f810ae8efe09cb5a6fac3eaee5) (currently does not support ie 11)
 - [ ] maybe add contributors [all-contributors](https://github.com/all-contributors/all-contributors)
 - [ ] add sponsors [similar to this](https://github.com/carbon-app/carbon)
 - [ ] Error handling
@@ -936,16 +935,6 @@ Todos
     })
     .get()
 ```
-
-- [ ] maybe add snake_case -> camelCase option to `<Provider />`. This would
-      convert all the keys in the response to camelCase.
-      Not exactly sure how this syntax should look because what
-      if you want to have this only go 1 layer deep into the response
-      object. Or if this is just out of scope for this library.
-
-  ```jsx
-  <Provider responseKeys={{ case: 'camel' }}><App /></Provider>
-  ```
 
 - [ ] potential option ideas
 
