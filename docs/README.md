@@ -453,12 +453,10 @@ function App() {
         return options
       },
       // every time we make an http request, before getting the response back, this will run
-      response: (response) => {
-        // unfortunately, because this is a JS Response object, we have to modify it directly.
-        // It shouldn't have any negative affect since this is getting reset on each request.
-        // use "eslint-disable-next-line" if you're getting linting errors.
-        if (response.data) response.data = toCamel(response.data)
-        return response
+      response: async (response) => {
+        const res = response
+        if (res.data) res.data = toCamel(res.data)
+        return res
       }
     }
   }
@@ -801,10 +799,11 @@ const options = {
   // typically, `interceptors` would be added as an option to the `<Provider />`
   interceptors: {
     request: async (options, url, path, route) => { // `async` is not required
-      return options              // returning the `options` is important
+      return options // returning the `options` is important
     },
-    response: (response) => {
-      return response             // returning the `response` is important
+    response: async (response) => { // `async` is not required
+      // note: `response.data` is equivalent to `await response.json()`
+      return response // returning the `response` is important
     }
   }
 }
