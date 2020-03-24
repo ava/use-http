@@ -1,12 +1,19 @@
 import { Cache } from '../types'
 
-var inMemoryStorage: any = {}
-var getMemoryStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
+let inMemoryStorage: any = {}
+const getMemoryStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
+  const remove = async (...responseIDs: string[]) => {
+    for (const responseID of responseIDs) {
+      delete inMemoryStorage[responseID]
+      delete inMemoryStorage[`${responseID}:ts`]
+    }
+  }
+
   const isExpired = (responseID: string) => {
     const expiration = inMemoryStorage[`${responseID}:ts`]
     const expired = expiration > 0 && expiration < Date.now()
     if (expired) remove(responseID)
-    return expired
+    return expired || !inMemoryStorage[responseID]
   }
 
   const get = async (responseID: string) => {
@@ -20,13 +27,6 @@ var getMemoryStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
   }
 
   const has = async (responseID: string) => !isExpired(responseID)
-
-  const remove = async (...responseIDs: string[]) => {
-    for (const responseID of responseIDs) {
-      delete inMemoryStorage[responseID]
-      delete inMemoryStorage[`${responseID}:ts`]
-    }
-  }
 
   const clear = async () => {
     inMemoryStorage = {}
