@@ -627,12 +627,12 @@ function App() {
         return options
       },
       // every time we make an http request, before getting the response back, this will run
-      response: (response) => {
+      response: async (response) => {
         // unfortunately, because this is a JS Response object, we have to modify it directly.
         // It shouldn't have any negative affect since this is getting reset on each request.
-        // use "eslint-disable-next-line" if you're getting linting errors.
-        if (response.data) response.data = toCamel(response.data)
-        return response
+        const res = response
+        if (res.data) res.data = toCamel(res.data)
+        return res
       }
     }
   }
@@ -838,10 +838,11 @@ const options = {
   // typically, `interceptors` would be added as an option to the `<Provider />`
   interceptors: {
     request: async (options, url, path, route) => { // `async` is not required
-      return options              // returning the `options` is important
+      return options // returning the `options` is important
     },
-    response: (response) => {
-      return response             // returning the `response` is important
+    response: async (response) => {
+      // note: `response.data` is equivalent to `await response.json()`
+      return response // returning the `response` is important
     }
   }
 }
@@ -900,12 +901,13 @@ Todos
 - [ ] Error handling
   - [ ] if calling `response.json()` and there is no response yet
 - [ ] tests
-  - [ ] doFetchArgs tests for `response.isExpired`
   - [ ] tests for SSR
   - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
   - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
   - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
   - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
+  - [ ] the `onMount` works properly with all variants of passing `useEffect(fn, [request.get])` and not causing an infinite loop
+  - [ ] `async` tests for `interceptors.response`
   - [ ] aborts fetch on unmount
 - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
 - [ ] make this a github package
@@ -947,7 +949,7 @@ Todos
       // I think it's more scalable/clean to have this as an object.
       // What if we only need the `route` and `options`?
       request: async ({ options, url, path, route }) => {},
-      response: ({ response }) => {}
+      response: async ({ response }) => {}
     },
     // can retry on certain http status codes
     retryOn: [503],
