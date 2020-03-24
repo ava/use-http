@@ -12,18 +12,18 @@ const getCache = () => {
   }
 }
 const getLocalStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
+  const remove = async (...responseIDs: string[]) => {
+    const cache = getCache()
+    responseIDs.forEach(id => delete cache[id])
+    localStorage.setItem(cacheName, JSON.stringify(cache))
+  }
+
   const isExpired = (responseID: string) => {
     const cache = getCache()
     const { expiration, response } = (cache[responseID] || {})
     const expired = expiration > 0 && expiration < Date.now()
     if (expired) remove(responseID)
     return expired || !response
-  }
-
-  const remove = async (...responseIDs: string[]) => {
-    const cache = getCache()
-    responseIDs.forEach(id => delete cache[id])
-    localStorage.setItem(cacheName, JSON.stringify(cache))
   }
 
   const has = async (responseID: string) => !isExpired(responseID)

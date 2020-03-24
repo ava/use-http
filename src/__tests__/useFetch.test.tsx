@@ -532,7 +532,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
           }
           return opts
         },
-        response(res) {
+        async response(res) {
           if (res.data) res.data = toCamel(res.data)
           return res
         }
@@ -836,7 +836,7 @@ describe('useFetch - BROWSER - errors', (): void => {
   const wrapperCustomError = ({ children }: { children?: ReactNode }): ReactElement => {
     const options = {
       interceptors: {
-        response(res: Res<any>): Res<any> {
+        async response(res: Res<any>): Promise<Res<any>> {
           if (!res.ok) throw expectedError
           return res
         }
@@ -953,7 +953,6 @@ describe('useFetch - BROWSER - persistence', (): void => {
   })
 
   it('should error if passing wrong cachePolicy with persist: true', async (): Promise<void> => {
-    
     try {
       const { result } = renderHook(
         () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])

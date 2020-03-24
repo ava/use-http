@@ -15,10 +15,11 @@ import {
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData, toResponseObject } from './utils'
+import { invariant, tryGetData, toResponseObject, useDeepCallback } from './utils'
 import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
+
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
@@ -56,7 +57,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const [loading, setLoading] = useState<boolean>(defaults.loading)
   const forceUpdate = useReducer(() => ({}), [])[1]
 
-  const makeFetch = useCallback((method: HTTPMethod): FetchData => {
+  const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
     const doFetch = async (
       routeOrBody?: string | BodyInit | object,
       body?: BodyInit | object
@@ -118,7 +119,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         newData = await tryGetData(newRes, defaults.data)
         res.current.data = onNewData(data.current, newData)
 
-        res.current = interceptors.response ? interceptors.response(res.current) : res.current
+        res.current = interceptors.response ? await interceptors.response(res.current) : res.current
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
         data.current = res.current.data as TData
 
@@ -190,16 +191,14 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       const req = request[methodLower] as NoArgs
       req()
     }
-    return () => mounted.current = false
-  // TODO: need [request] in dependency array. Causing infinite loop though.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // onUnmount
+    return () => {
+      // Cancel any running request when unmounting to avoid updating state after component has unmounted
+      // This can happen if a request's promise resolves after component unmounts
+      request.abort()
+      mounted.current = false
+    }
   }, dependencies)
-
-  // Cancel any running request when unmounting to avoid updating state after component has unmounted
-  // This can happen if a request's promise resolves after component unmounts
-  // TODO: should have [request.abort] in dependency array. Causing every request to be aborted though...
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => request.abort, [])
 
   if (suspense && suspender.current) {
     if (isServer) throw new Error('Suspense on server side is not yet supported! 🙅‍♂️')
