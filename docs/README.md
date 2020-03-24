@@ -150,12 +150,9 @@ function Todos() {
   const [request, response] = useFetch('https://example.com')
 
   // componentDidMount
-  const mounted = useRef(false)
   useEffect(() => {
-    if (mounted.current) return
-    mounted.current= true
     initializeTodos()
-  })
+  }, [])
   
   async function initializeTodos() {
     const initialTodos = await request.get('/todos')
@@ -264,10 +261,8 @@ function Todos() {
     if (response.ok) setTodos(todos)
   }
 
-  const mounted = useRef(false)
+  // componentDidMount
   useEffect(() => {
-    if (mounted.current) return
-    mounted.current = true
     loadInitialTodos()
   }, [])
 

@@ -1,6 +1,6 @@
-import { useMemo, useEffect, MutableRefObject } from 'react'
+import { useMemo, useEffect, MutableRefObject, useRef, useCallback, DependencyList } from 'react'
 import useSSR from 'use-ssr'
-import { RequestInitJSON, OptionsMaybeURL, Res } from './types'
+import { RequestInitJSON, OptionsMaybeURL, Res, HTTPMethod } from './types'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 
 /**
@@ -223,3 +223,11 @@ export const serializeResponse = async (response: Response) => {
     headers
   }
 }
+
+function useDeepCompareMemoize(value: DependencyList) {
+  const ref = useRef<DependencyList>()
+  if (JSON.stringify(value) !== JSON.stringify(ref.current)) ref.current = value
+  return ref.current as DependencyList
+}
+
+export const useDeepCallback = (cb: (method: HTTPMethod) => (...args: any) => any, deps: DependencyList) => useCallback(cb, useDeepCompareMemoize(deps))
