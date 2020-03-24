@@ -36,7 +36,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     perPage,
     cachePolicy, // 'cache-first' by default
     cacheLife,
-    suspense
+    suspense,
+    // retryOn,
   } = customOptions
 
   const cache = useCache({ persist, cacheLife, cachePolicy })

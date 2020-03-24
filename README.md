@@ -805,6 +805,17 @@ const options = {
   // Allows caching to persist after page refresh. Only supported in the Browser currently.
   persist: false,
 
+  // can retry on certain http status codes
+  retryOn: [503],
+  // OR
+  retryOn({ attempt, error, response }) {
+    // retry on any network error, or 4xx or 5xx status codes
+    if (error !== null || response.status >= 400) {
+      console.log(`retrying, attempt number ${attempt + 1}`);
+      return true;
+    }
+  },
+
   // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
   url: 'https://example.com',
   
@@ -950,16 +961,6 @@ Todos
       // What if we only need the `route` and `options`?
       request: async ({ options, url, path, route }) => {},
       response: async ({ response }) => {}
-    },
-    // can retry on certain http status codes
-    retryOn: [503],
-    // OR
-    retryOn({ attempt, error, response }) {
-      // retry on any network error, or 4xx or 5xx status codes
-      if (error !== null || response.status >= 400) {
-        console.log(`retrying, attempt number ${attempt + 1}`);
-        return true;
-      }
     },
     // This function receives a retryAttempt integer and returns the delay to apply before the next attempt in milliseconds
     retryDelay({ attempt, error, response }) {
