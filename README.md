@@ -944,19 +944,18 @@ Todos
   - [ ] figure out a good way to show side-by-side comparisons
   - [ ] show comparison with Axios
 - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
-
-```jsx
-  const request = useFetch('https://example.com')
-  
-  request
-    .headers({
-      auth: jwt      // this would inline add the `auth` header
-    })
-    .query({         // might have to use .params({ }) since we're using .query() for GraphQL
-      no: 'way'      // this would inline make the url: https://example.com?no=way
-    })
-    .get()
-```
+  ```jsx
+    const request = useFetch('https://example.com')
+    
+    request
+      .headers({
+        auth: jwt      // this would inline add the `auth` header
+      })
+      .query({         // might have to use .params({ }) since we're using .query() for GraphQL
+        no: 'way'      // this would inline make the url: https://example.com?no=way
+      })
+      .get()
+  ```
 
 - [ ] potential option ideas
 
@@ -990,21 +989,20 @@ Todos
   })
   ```
 - [ ] potential option ideas for `GraphQL`
+  ```jsx
+  const request = useQuery({ onMount: true })`your graphql query`
 
-```jsx
-const request = useQuery({ onMount: true })`your graphql query`
-
-const request = useFetch(...)
-const userID = 'some-user-uuid'
-const res = await request.query({ userID })`
-  query Todos($userID string!) {
-    todos(userID: $userID) {
-      id
-      title
+  const request = useFetch(...)
+  const userID = 'some-user-uuid'
+  const res = await request.query({ userID })`
+    query Todos($userID string!) {
+      todos(userID: $userID) {
+        id
+        title
+      }
     }
-  }
-`
-```
+  `
+  ```
 
 - [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
 
