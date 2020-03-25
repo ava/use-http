@@ -943,7 +943,6 @@ Todos
   - [ ] show comparison with Apollo
   - [ ] figure out a good way to show side-by-side comparisons
   - [ ] show comparison with Axios
-  - [ ] how this cancels a request on unmount of a component to avoid the error "cannot update state during a state transition" or something like that due to an incomplete http request
 - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
 
 ```jsx
@@ -990,11 +989,6 @@ Todos
     refreshWhenHidden: false,
   })
   ```
-
-- resources
-  - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
-  - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
-
 - [ ] potential option ideas for `GraphQL`
 
 ```jsx
