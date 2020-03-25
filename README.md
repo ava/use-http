@@ -978,13 +978,6 @@ Todos
       request: async ({ options, url, path, route }) => {},
       response: async ({ response }) => {}
     },
-    // This function receives a retryAttempt integer and returns the delay to apply before the next attempt in milliseconds
-    retryDelay({ attempt, error, response }) {
-      // applies exponential backoff
-      return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
-      // applies linear backoff
-      return attempt * 1000
-    },
     // these will be the exact same ones as Apollo's
     cachePolicy: 'cache-and-network', 'network-only', 'cache-only', 'no-cache' // 'cache-first'
     // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
