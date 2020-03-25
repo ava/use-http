@@ -829,9 +829,9 @@ const options = {
   // Can be a function which is used if we want change the time
   // in between each retry
   retryDelay({ attempt, error, response }) {
-    // applies exponential backoff
+    // exponential backoff
     return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
-    // applies linear backoff
+    // linear backoff
     return attempt * 1000
   },
 
@@ -939,8 +939,6 @@ Todos
 - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
 - [ ] make this a github package
   - [see ava packages](https://github.com/orgs/ava/packages)
-- [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
-- [ ] make GraphQL examples in codesandbox
 - [ ] Documentation:
   - [ ] show comparison with Apollo
   - [ ] figure out a good way to show side-by-side comparisons
