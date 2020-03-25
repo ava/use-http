@@ -169,7 +169,6 @@ export type Cache = {
 }
 
 export interface CustomOptions {
-  retries?: number
   persist?: boolean
   timeout?: number
   path?: string
@@ -184,6 +183,9 @@ export interface CustomOptions {
   cachePolicy?: CachePolicies
   cacheLife?: number
   suspense?: boolean
+  retries?: number
+  retryOn?: Retry
+  retryDelay?: Retry
 }
 
 export type Options = CustomOptions &
@@ -196,6 +198,8 @@ export type OptionsMaybeURL = NoUrlOptions &
 
 // TODO: this is still yet to be implemented
 export type OverwriteGlobalOptions = (options: Options) => Options
+
+export type Retry = <TData = any>({ attempt, error, response }: { attempt: number, error: Error, response: Res<TData> }) => boolean
 
 /**
  * Helpers

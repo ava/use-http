@@ -1,11 +1,11 @@
-import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies, Interceptors, OverwriteGlobalOptions, Options } from './types'
+// @ts-nocheck
+import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, Retry } from './types'
 import { isString, isObject, invariant, pullOutRequestInit, isFunction } from './utils'
 import { useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
 
 type UseFetchArgsReturn = {
   customOptions: {
-    retries: number
     persist: boolean
     timeout: number
     path: string
@@ -18,6 +18,9 @@ type UseFetchArgsReturn = {
     cachePolicy: CachePolicies
     cacheLife: number
     suspense: boolean
+    retries: number
+    retryOn: Retry
+    retryDelay: Retry
   }
   requestInit: RequestInit
   defaults: {
@@ -29,9 +32,8 @@ type UseFetchArgsReturn = {
 
 export const useFetchArgsDefaults = {
   customOptions: {
-    retries: 0,
     persist: false,
-    timeout: 30000, // 30 seconds
+    timeout: undefined,
     path: '',
     url: '',
     interceptors: {},
@@ -41,7 +43,10 @@ export const useFetchArgsDefaults = {
     perPage: 0,
     cachePolicy: CachePolicies.CACHE_FIRST,
     cacheLife: 0,
-    suspense: false
+    suspense: false,
+    retries: 3,
+    retryOn: undefined,
+    retryDelay: undefined
   },
   requestInit: { headers: {} },
   defaults: {
@@ -51,7 +56,6 @@ export const useFetchArgsDefaults = {
   dependencies: undefined
 }
 
-// TODO: see if `Object.entries` is supported for IE
 export const defaults = Object.entries(useFetchArgsDefaults).reduce((acc, [key, value]) => {
   if (isObject(value)) return { ...acc, ...value }
   return { ...acc, [key]: value }
@@ -116,7 +120,6 @@ export default function useFetchArgs(
   const data = useField('data', urlOrOptions, optionsNoURLs)
   const path = useField<string>('path', urlOrOptions, optionsNoURLs)
   const timeout = useField<number>('timeout', urlOrOptions, optionsNoURLs)
-  const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
   const persist = useField<boolean>('persist', urlOrOptions, optionsNoURLs)
   const onAbort = useField<() => void>('onAbort', urlOrOptions, optionsNoURLs)
   const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
@@ -125,6 +128,9 @@ export default function useFetchArgs(
   const cachePolicy = useField<CachePolicies>('cachePolicy', urlOrOptions, optionsNoURLs)
   const cacheLife = useField<number>('cacheLife', urlOrOptions, optionsNoURLs)
   const suspense = useField<boolean>('suspense', urlOrOptions, optionsNoURLs)
+  const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
+  const retryOn = useField<Retry>('retryOn', urlOrOptions, optionsNoURLs)
+  const retryDelay = useField<Retry>('retryDelay', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)
@@ -181,7 +187,9 @@ export default function useFetchArgs(
       perPage,
       cachePolicy,
       cacheLife,
-      suspense
+      suspense,
+      retryOn,
+      retryDelay
     },
     requestInit,
     defaults: {

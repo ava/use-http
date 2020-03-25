@@ -742,6 +742,8 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `onAbort` | Runs when the request is aborted. | empty function |
 | `onTimeout` | Called when the request times out. | empty function |
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
+| `retryOn` | You can retry on certain http status codes or have a custom logic to decide whether to retry or not. | `undefined` |
+| `retryDelay` | You can retry with certain intervals i.e. 30 seconds `30000` or with custom logic (i.e. to increase retry intervals). | `10000` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**       | `30000` </br> (30 seconds) |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
@@ -766,6 +768,32 @@ const options = {
   // Allows caching to persist after page refresh. Only supported in the Browser currently.
   persist: false,
 
+  // amount of times it should retry before erroring out
+  retries: 3,
+
+  // can retry on certain http status codes
+  retryOn: [503],
+  // OR
+  retryOn({ attempt, error, response }) {
+    // retry on any network error, or 4xx or 5xx status codes
+    if (error !== null || response.status >= 400) {
+      console.log(`retrying, attempt number ${attempt + 1}`);
+      return true;
+    }
+  },
+
+  // The time between retries
+  retryDelay: 10000,
+  // OR
+  // Can be a function which is used if we want change the time
+  // in between each retry
+  retryDelay({ attempt, error, response }) {
+    // exponential backoff
+    return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
+    // linear backoff
+    return attempt * 1000
+  },
+
   // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
   url: 'https://example.com',
   
@@ -783,9 +811,6 @@ const options = {
   // this will tell useFetch not to run the request if the list doesn't haveMore. (pagination)
   // i.e. if the last page fetched was < 15, don't run the request again
   perPage: 15,
-
-  // amount of times it should retry before erroring out
-  retries: 3,
   
   // amount of time before the request (or request(s) for each retry) errors out.
   timeout: 10000,

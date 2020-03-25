@@ -83,6 +83,8 @@ export const isBodyObject = (obj: any): boolean => isObject(obj) || Array.isArra
 
 export const isFunction = (v: any): boolean => typeof v === 'function'
 
+export const isNumber = (v: any): boolean => Object.prototype.toString.call(v) === '[object Number]'
+
 // const requestFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Request('')))
 // const responseFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Response()))
 // export const customResponseFields = [...responseFields, 'data']
