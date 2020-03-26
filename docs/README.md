@@ -61,6 +61,7 @@ Features
 - Built in caching
 - Persistent caching support
 - Suspense<sup>(experimental)</sup> support
+- Retry functionality
 
 Examples
 =========
@@ -786,8 +787,7 @@ const options = {
   // The time between retries
   retryDelay: 10000,
   // OR
-  // Can be a function which is used if we want change the time
-  // in between each retry
+  // Can be a function which is used if we want change the time in between each retry
   retryDelay({ attempt, error, response }) {
     // exponential backoff
     return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)

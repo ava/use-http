@@ -78,6 +78,7 @@ Features
 - Built in caching
 - Persistent caching support
 - Suspense<sup>(experimental)</sup> support
+- Retry functionality
 
 Usage
 -----
@@ -827,8 +828,7 @@ const options = {
   // The time between retries
   retryDelay: 10000,
   // OR
-  // Can be a function which is used if we want change the time
-  // in between each retry
+  // Can be a function which is used if we want change the time in between each retry
   retryDelay({ attempt, error, response }) {
     // exponential backoff
     return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
@@ -936,7 +936,6 @@ Todos
 - [ ] add sponsors [similar to this](https://github.com/carbon-app/carbon)
 - [ ] Error handling
   - [ ] if calling `response.json()` and there is no response yet
-  - [ ] if a number is not returned from `retryDelay()`
 - [ ] tests
   - [ ] tests for SSR
   - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
