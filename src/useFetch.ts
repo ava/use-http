@@ -11,7 +11,7 @@ import {
   UseFetchArgs,
   CachePolicies,
   FetchData,
-  NoArgs
+  NoArgs,
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
@@ -24,21 +24,21 @@ const { CACHE_FIRST } = CachePolicies
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
   const {
-    url: initialURL,
-    path,
+    cacheLife,
+    cachePolicy, // 'cache-first' by default
     interceptors,
+    path,
+    perPage,
     persist,
-    timeout,
-    onTimeout,
     onAbort,
     onNewData,
-    perPage,
-    cachePolicy, // 'cache-first' by default
-    cacheLife,
-    suspense,
+    onTimeout,
     retries,
-    retryOn,
     retryDelay,
+    retryOn,
+    suspense,
+    timeout,
+    url: initialURL,
   } = customOptions
 
   const cache = useCache({ persist, cacheLife, cachePolicy })
@@ -128,14 +128,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
       } catch (err) {
         const opts = { attempt: attempt.current, error: err, response: null }
-        const delay = (isFunction(retryDelay) ? retryDelay(opts) : retryDelay) as number
-        invariant(isNumber(delay), 'retryDelay must be a number! If you\'re using it as a function, it must return a number.')
-
-        let shouldRetry = (
+        const shouldRetry = (
           Array.isArray(retryOn) && retryOn.includes(res.current.status)
-          || isFunction(retryOn) && retryOn(opts)
+          || isFunction(retryOn) && (retryOn as Function)(opts)
           || retries > 0
         ) && retries > attempt.current
+        const delay = (isFunction(retryDelay) ? (retryDelay as Function)(opts) : retryDelay) as number
+        invariant(isNumber(delay), 'retryDelay must be a number! If you\'re using it as a function, it must return a number.')
 
         if (shouldRetry) {
           attempt.current++

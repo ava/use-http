@@ -205,6 +205,7 @@ export const toResponseObject = <TData = any>(res?: Response | MutableRefObject<
 
 export const emptyCustomResponse = toResponseObject()
 
+// TODO: switch this to .reduce()
 const headersAsObject = (headers: Headers): object => {
   const obj: any = {}
   headers.forEach((value, key) => {
@@ -215,8 +216,7 @@ const headersAsObject = (headers: Headers): object => {
 
 export const serializeResponse = async (response: Response) => {
   const body = await response.text()
-  const status = response.status
-  const statusText = response.statusText
+  const { status, statusText } = response
   const headers = headersAsObject(response.headers)
   return {
     body,

@@ -199,8 +199,8 @@ export type OptionsMaybeURL = NoUrlOptions &
 // TODO: this is still yet to be implemented
 export type OverwriteGlobalOptions = (options: Options) => Options
 
-export type RetryOn = <TData = any>({ attempt, error, response }: { attempt: number, error: Error, response: Res<TData> | null }) => boolean | number[]
-export type RetryDelay = <TData = any>({ attempt, error, response }: { attempt: number, error: Error, response: Res<TData> | null }) => number | number
+export type RetryOn = (<TData = any>({ attempt, error, response }: { attempt: number, error: Error, response: Res<TData> | null }) => boolean) | number[]
+export type RetryDelay = (<TData = any>({ attempt, error, response }: { attempt: number, error: Error, response: Res<TData> | null }) => number) | number
 
 /**
  * Helpers

@@ -762,6 +762,44 @@ describe('useFetch - BROWSER - suspense', (): void => {
   })
 })
 
+describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
+  const expectedError = { name: 'TypeError', message: 'Failed to fetch' }
+  // const expectedSuccess = { name: 'Alex Cory' }
+
+  afterEach((): void => {
+    fetch.resetMocks()
+    cleanup()
+  })
+
+  beforeEach((): void => {
+    fetch.mockReject(expectedError)
+  })
+
+  it('should retryOn specific error codes', async (): Promise<void> => {
+    expect(true).toBe(true)
+  })
+
+  it('should retryOn custom function', async (): Promise<void> => {
+    expect(true).toBe(true)
+  })
+
+  it('should retry with a `retryDelay` as a number', async (): Promise<void> => {
+    expect(true).toBe(true)
+  })
+
+  it('should retry with a `retryDelay` with an exponential backoff', async (): Promise<void> => {
+    expect(true).toBe(true)
+  })
+
+  it('should error if `retryDelay` is not a function returning a number or a number', async (): Promise<void> => {
+    expect(true).toBe(true)
+  })
+
+  it('error if `retryOn` is not a function or an array of http status codes', async (): Promise<void> => {
+    expect(true).toBe(true)
+  })
+})
+
 describe('useFetch - BROWSER - errors', (): void => {
   const expectedError = { name: 'error', message: 'error' }
   const expectedSuccess = { name: 'Alex Cory' }

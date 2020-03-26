@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, RetryOn, RetryDelay } from './types'
 import { isString, isObject, invariant, pullOutRequestInit, isFunction } from './utils'
 import { useContext, useMemo } from 'react'
@@ -6,21 +5,21 @@ import FetchContext from './FetchContext'
 
 type UseFetchArgsReturn = {
   customOptions: {
-    persist: boolean
-    timeout: number
-    path: string
-    url: string
-    interceptors: Interceptors
-    onAbort: () => void
-    onTimeout: () => void
-    onNewData: (currData: any, newData: any) => any
-    perPage: number
-    cachePolicy: CachePolicies
     cacheLife: number
-    suspense: boolean
+    cachePolicy: CachePolicies
+    interceptors: Interceptors
+    path: string
+    perPage: number
+    persist: boolean
+    onAbort: () => void
+    onNewData: (currData: any, newData: any) => any
+    onTimeout: () => void
     retries: number
-    retryOn: RetryOn
     retryDelay: RetryDelay
+    retryOn: RetryOn | undefined
+    suspense: boolean
+    timeout: number
+    url: string
   }
   requestInit: RequestInit
   defaults: {
@@ -32,21 +31,21 @@ type UseFetchArgsReturn = {
 
 export const useFetchArgsDefaults = {
   customOptions: {
-    persist: false,
-    timeout: 0,
-    path: '',
-    url: '',
-    interceptors: {},
-    onAbort: () => { /* do nothing */ },
-    onTimeout: () => { /* do nothing */ },
-    onNewData: (currData: any, newData: any) => newData,
-    perPage: 0,
-    cachePolicy: CachePolicies.CACHE_FIRST,
     cacheLife: 0,
-    suspense: false,
+    cachePolicy: CachePolicies.CACHE_FIRST,
+    interceptors: {},
+    path: '',
+    perPage: 0,
+    persist: false,
+    onAbort: () => { /* do nothing */ },
+    onNewData: (currData: any, newData: any) => newData,
+    onTimeout: () => { /* do nothing */ },
     retries: 3,
+    retryDelay: 1000,
     retryOn: undefined,
-    retryDelay: undefined
+    suspense: false,
+    timeout: 0,
+    url: '',
   },
   requestInit: { headers: {} },
   defaults: {
