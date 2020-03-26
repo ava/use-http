@@ -169,23 +169,23 @@ export type Cache = {
 }
 
 export interface CustomOptions {
-  persist?: boolean
-  timeout?: number
-  path?: string
-  url?: string
-  loading?: boolean
+  cacheLife?: number
+  cachePolicy?: CachePolicies
   data?: any
   interceptors?: Interceptors
+  loading?: boolean
   onAbort?: () => void
-  onTimeout?: () => void
   onNewData?: (currData: any, newData: any) => any
+  onTimeout?: () => void
+  path?: string
+  persist?: boolean
   perPage?: number
-  cachePolicy?: CachePolicies
-  cacheLife?: number
-  suspense?: boolean
   retries?: number
   retryOn?: RetryOn
   retryDelay?: RetryDelay
+  suspense?: boolean
+  timeout?: number
+  url?: string
 }
 
 export type Options = CustomOptions &

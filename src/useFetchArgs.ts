@@ -8,12 +8,12 @@ type UseFetchArgsReturn = {
     cacheLife: number
     cachePolicy: CachePolicies
     interceptors: Interceptors
-    path: string
-    perPage: number
-    persist: boolean
     onAbort: () => void
     onNewData: (currData: any, newData: any) => any
     onTimeout: () => void
+    path: string
+    perPage: number
+    persist: boolean
     retries: number
     retryDelay: RetryDelay
     retryOn: RetryOn | undefined
@@ -34,12 +34,12 @@ export const useFetchArgsDefaults = {
     cacheLife: 0,
     cachePolicy: CachePolicies.CACHE_FIRST,
     interceptors: {},
-    path: '',
-    perPage: 0,
-    persist: false,
     onAbort: () => { /* do nothing */ },
     onNewData: (currData: any, newData: any) => newData,
     onTimeout: () => { /* do nothing */ },
+    path: '',
+    perPage: 0,
+    persist: false,
     retries: 3,
     retryDelay: 1000,
     retryOn: undefined,
