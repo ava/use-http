@@ -746,6 +746,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `retryDelay` | You can retry with certain intervals i.e. 30 seconds `30000` or with custom logic (i.e. to increase retry intervals). | `10000` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**       | `30000` </br> (30 seconds) |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
+| `path` | When using a global `url` set in the `Provider`, this is useful for adding onto it       | `''` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
@@ -814,6 +815,9 @@ const options = {
   
   // amount of time before the request (or request(s) for each retry) errors out.
   timeout: 10000,
+  
+  // if you have a global `url` set up, this is how you can add to it
+  path: '/path/to/your/api',
   
   // set's the default for the `data` field
   data: [],

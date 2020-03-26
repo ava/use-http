@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, Retry } from './types'
+import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, RetryOn, RetryDelay } from './types'
 import { isString, isObject, invariant, pullOutRequestInit, isFunction } from './utils'
 import { useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
@@ -19,8 +19,8 @@ type UseFetchArgsReturn = {
     cacheLife: number
     suspense: boolean
     retries: number
-    retryOn: Retry
-    retryDelay: Retry
+    retryOn: RetryOn
+    retryDelay: RetryDelay
   }
   requestInit: RequestInit
   defaults: {
@@ -33,7 +33,7 @@ type UseFetchArgsReturn = {
 export const useFetchArgsDefaults = {
   customOptions: {
     persist: false,
-    timeout: undefined,
+    timeout: 0,
     path: '',
     url: '',
     interceptors: {},
@@ -129,8 +129,8 @@ export default function useFetchArgs(
   const cacheLife = useField<number>('cacheLife', urlOrOptions, optionsNoURLs)
   const suspense = useField<boolean>('suspense', urlOrOptions, optionsNoURLs)
   const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
-  const retryOn = useField<Retry>('retryOn', urlOrOptions, optionsNoURLs)
-  const retryDelay = useField<Retry>('retryDelay', urlOrOptions, optionsNoURLs)
+  const retryOn = useField<RetryOn>('retryOn', urlOrOptions, optionsNoURLs)
+  const retryDelay = useField<RetryDelay>('retryDelay', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)

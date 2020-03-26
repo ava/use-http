@@ -15,7 +15,7 @@ import {
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, isNumber } from './utils'
+import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, isNumber, sleep } from './utils'
 import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
@@ -101,21 +101,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       // don't perform the request if there is no more data to fetch (pagination)
       if (perPage > 0 && !hasMore.current && !error.current) return data.current
 
-      const opts = { attempt: attempt.current, error: error.current, response: res.current }
-
-      const delay = (isFunction(retryDelay) ? retryDelay(opts) : isNumber(retryDelay) ? retryDelay : (timeout || 0)) as number
-
-      const shouldRetry = (
-        Array.isArray(retryOn) && retryOn.includes(res.current.status)
-        || isFunction(retryOn) && retryOn(opts)
-        || retries > 0
-      ) && delay > 0
-
-      const timer = shouldRetry && setTimeout(() => {
+      const timer = timeout && setTimeout(() => {
         timedout.current = true
         theController.abort()
         if (onTimeout) onTimeout()
-      }, delay)
+      }, timeout)
 
       let newData
       let newRes
@@ -137,24 +127,26 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
         if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
       } catch (err) {
+        const opts = { attempt: attempt.current, error: err, response: null }
+        const delay = (isFunction(retryDelay) ? retryDelay(opts) : retryDelay) as number
+        invariant(isNumber(delay), 'retryDelay must be a number! If you\'re using it as a function, it must return a number.')
+
+        let shouldRetry = (
+          Array.isArray(retryOn) && retryOn.includes(res.current.status)
+          || isFunction(retryOn) && retryOn(opts)
+          || retries > 0
+        ) && retries > attempt.current
+
+        if (shouldRetry) {
+          attempt.current++
+          if (delay) await sleep(delay)
+          return doFetch(routeOrBody, body)
+        }
         if (attempt.current >= retries && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
         if (err.name !== 'AbortError') error.current = err
       } finally {
-        if (shouldRetry) {
-          console.log('retries', retries)
-          return doFetch(routeOrBody, body)
-          // console.log('retryOn', retryOn)
-          // console.log('res.current.status', res.current.status)
-          // infinite retries
-          // if (retries === 0) return doFetch(routeOrBody, body)
-          // retry until we are out of retries
-          // if (retries > 0 && attempt.current < retries) return doFetch(routeOrBody, body)
-        }
-        if (retries > 0 && attempt.current < retries) {
-          return doFetch(routeOrBody, body)
-        }
+        // if (attempt.current === retries) attempt.current = 0
         if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
-        if (retries > 0 && attempt.current < retries) attempt.current += 1
         timedout.current = false
         if (timer) clearTimeout(timer)
         controller.current = undefined
