@@ -68,11 +68,11 @@ const useField = <DV = any>(
   const context = useContext(FetchContext)
   const contextOptions = context.options || {}
   return useMemo((): DV => {
-    if (isObject(urlOrOptions) && urlOrOptions[field]) return urlOrOptions[field]
-    if (isObject(optionsNoURLs) && (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]) {
+    if (isObject(urlOrOptions) && field in urlOrOptions) return urlOrOptions[field]
+    if (isObject(optionsNoURLs) && field in optionsNoURLs) {
       return (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]
     }
-    if (contextOptions[field]) return contextOptions[field]
+    if (field in contextOptions) return contextOptions[field]
     return defaults[field]
   }, [urlOrOptions, field, optionsNoURLs, contextOptions])
 }

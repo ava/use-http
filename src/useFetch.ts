@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useState, useCallback, useRef, useReducer } from 'react'
 import useSSR from 'use-ssr'
 import {
@@ -133,15 +134,25 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           || isFunction(retryOn) && (retryOn as Function)(opts)
           || retries > 0
         ) && retries > attempt.current
-        const delay = (isFunction(retryDelay) ? (retryDelay as Function)(opts) : retryDelay) as number
-        invariant(isNumber(delay), 'retryDelay must be a number! If you\'re using it as a function, it must return a number.')
 
         if (shouldRetry) {
+          const delay = (isFunction(retryDelay) ? (retryDelay as Function)(opts) : retryDelay) as number
+          invariant(isNumber(delay), 'retryDelay must be a number! If you\'re using it as a function, it must return a number.')
+          if (timer) clearTimeout(timer)
+          if (initialURL.includes('Z')) {
+            console.log('retries', retries)
+            console.log('attempt.current', attempt.current)
+            console.log('err', err)
+            console.log('shouldRetry', shouldRetry)
+            console.log('delay', delay)
+          }
           attempt.current++
           if (delay) await sleep(delay)
           return doFetch(routeOrBody, body)
         }
-        if (attempt.current >= retries && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
+        if (attempt.current >= retries && timedout.current) {
+          error.current = { name: 'AbortError', message: 'Timeout Error' }
+        }
         if (err.name !== 'AbortError') error.current = err
       } finally {
         // if (attempt.current === retries) attempt.current = 0
