@@ -183,9 +183,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   > => {
     fetch.resetMocks()
     const expected1 = [1, 2, 3]
-    fetch.mockResponse(
-      JSON.stringify(expected1)
-    )
+    fetch.mockResponse(JSON.stringify(expected1))
     let page = 1
     const { result, rerender, waitForNextUpdate } = renderHook(
       () => useFetch(`https://example.com?page=${page}`, {
@@ -455,7 +453,7 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
       ({ initialValue }) => useFetch({
         path: `/a/${initialValue}`,
         data: {},
-        retries: 0
+        retries: 0 // TODO: I believe this should work with `retries > 0`
       }, [initialValue]), // (onMount && onUpdate) === true
       {
         wrapper,
@@ -520,9 +518,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(
-      JSON.stringify(snake_case)
-    )
+    fetch.mockResponseOnce(JSON.stringify(snake_case))
   })
 
   it('should pass the proper response object for `interceptors.response`', async (): Promise<void> => {
@@ -537,6 +533,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
 
   it('should have the `data` field correctly set when using a response interceptor', async (): Promise<void> => {
     const { result } = renderHook(
+      // TODO: should this work with `retries > 0`?
       () => useFetch({ retries: 0 }),
       { wrapper }
     )
@@ -744,27 +741,145 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
   })
 
   it('should retryOn specific error codes', async (): Promise<void> => {
-    expect(true).toBe(true)
+    fetch.resetMocks()
+    fetch.mockResponseOnce('fail', {
+      status: 401
+    }).mockResponseOnce('fail', {
+      status: 400
+    })
+    // should fail, then retry on 401, fail again, but not retry on 400
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('url', {
+        retryOn: [401]
+      }, [])
+    )
+    await waitForNextUpdate()
+    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(fetch.mock.calls.length).toBe(2)
   })
 
   it('should retryOn custom function', async (): Promise<void> => {
-    expect(true).toBe(true)
+    fetch.resetMocks()
+    fetch.mockResponseOnce('fail', {
+      status: 401
+    }).mockResponseOnce('fail', {
+      status: 400
+    })
+    // should fail, then retry on 401, fail again, but not retry on 400
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('url-2', {
+        retryOn({ response }) {
+          return !!(response && response.status === 401)
+        },
+      }, [])
+    )
+    await waitForNextUpdate()
+    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(fetch.mock.calls.length).toBe(2)
+  })
+
+  it('should retry 3 times, fail all 3, then retry 3 more times when called again', async (): Promise<void> => {
+    fetch.resetMocks()
+    fetch.mockResponse('fail', {
+      status: 400
+    })
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('url-12', {
+        retryOn({ response }) {
+          return !!(response && response.status === 400)
+        },
+        cachePolicy: CachePolicies.NO_CACHE,
+      }, [])
+    )
+    await waitForNextUpdate()
+    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(fetch.mock.calls.length).toBe(3)
+    await result.current.get()
+    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(fetch.mock.calls.length).toBe(6)
+  })
+
+  it('should retry with a `retryDelay` as a positive number 2', async (): Promise<void> => {
+    fetch.resetMocks()
+    fetch.mockResponseOnce('fail', {
+      status: 401
+    }).mockResponseOnce('fail', {
+      status: 400
+    }).mockResponseOnce(JSON.stringify({ no: 'way' }))
+
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('url-5', {
+        retryOn: [401, 400],
+        retryDelay: 100
+      }, [])
+    )
+    await waitForNextUpdate()
+    expect(result.current.error).toEqual(undefined)
+    expect(result.current.data).toEqual({ no: 'way' })
+    expect(fetch.mock.calls.length).toBe(3)
   })
 
   it('should retry with a `retryDelay` as a positive number', async (): Promise<void> => {
-    expect(true).toBe(true)
+    fetch.resetMocks()
+    fetch.mockResponseOnce('fail', {
+      status: 401
+    }).mockResponseOnce('fail', {
+      status: 400
+    })
+
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('url-4', {
+        retryOn: [401, 400],
+        retryDelay: 100,
+        retries: 1
+      }, [])
+    )
+    await waitForNextUpdate()
+    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(fetch.mock.calls.length).toBe(2)
   })
 
-  it('should retry with a `retryDelay` with an exponential backoff', async (): Promise<void> => {
+  // TODO: there is an issue with error testing some things
+  // see more detail here: https://github.com/testing-library/react-hooks-testing-library/issues/308
+  it('should error with a `retryDelay` that is not a postive # or a function returning a positive #', async (): Promise<void> => {
     expect(true).toBe(true)
+    console.log('TODO: react-hooks-testing-library not handling errors properly')
+    // fetch.resetMocks()
+    // fetch.mockResponse('fail', {
+    //   status: 400
+    // })
+    // let caughtError = null
+    // class ErrorBoundary extends React.Component {
+    //   state = { hasError: false }
+    //   componentDidCatch(error: any) {
+    //     console.log('RUN')
+    //     this.setState({ hasError: true })
+    //     // console.log('error', error)
+    //     caughtError = error
+    //   }
+    //   render = () => !this.state.hasError && this.props.children
+    // }
+  
+    // const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <ErrorBoundary>{children}</ErrorBoundary>
+  
+    // const { result, waitForNextUpdate } = renderHook(() => useFetch('Z', { retryDelay: -1000 }, []), { wrapper })
+
+    // await waitForNextUpdate()
+    // console.log('result.error', result.error)
+    // console.log('caughtError', caughtError)
   })
 
   it('should error if `retryDelay` is not a function returning a positive number', async (): Promise<void> => {
     expect(true).toBe(true)
+    console.log('TODO: react-hooks-testing-library not handling errors properly')
   })
 
-  it('error if `retryOn` is not a function or an array of http status codes', async (): Promise<void> => {
+  it('should error if `retryOn` is not a function or an array of positive numbers', async (): Promise<void> => {
+    // TODO: should we check to see if they are valid http status codes?
+    // - regex: /^[1-5][0-9][0-9]$/
+    // - ts HttpStatusCodes enum: https://gist.github.com/RWOverdijk/6cef816cfdf5722228e01cc05fd4b094
     expect(true).toBe(true)
+    console.log('TODO: react-hooks-testing-library not handling errors properly')
   })
 })
 
@@ -784,7 +899,7 @@ describe('useFetch - BROWSER - errors', (): void => {
 
   it('should set the `error` object when response.ok is false', async (): Promise<void> => {
     fetch.resetMocks()
-    fetch.mockResponseOnce('fail', {
+    fetch.mockResponse('fail', {
       status: 401
     })
     const { result } = renderHook(

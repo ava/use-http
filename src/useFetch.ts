@@ -16,7 +16,7 @@ import {
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, isNumber, sleep } from './utils'
+import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, sleep } from './utils'
 import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
@@ -61,11 +61,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const forceUpdate = useReducer(() => ({}), [])[1]
 
   const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
-    const doFetch = async (
-      routeOrBody?: string | BodyInit | object,
-      body?: BodyInit | object
-    ): Promise<any> => {
+    type DoFetch = [string | BodyInit | object, BodyInit | object | undefined]
+
+    const doFetch = async (...args: DoFetch): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
+      const [routeOrBody, body] = args
       controller.current = new AbortController()
       controller.current.signal.onabort = onAbort
       const theController = controller.current
@@ -113,11 +113,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       try {
         newRes = await fetch(url, options)
-        res.current = newRes.clone()
+        const opts = { attempt: attempt.current, response: newRes }
+        const shouldRetry = (
+          Array.isArray(retryOn) && retryOn.includes(newRes.status)
+          || isFunction(retryOn) && (retryOn as Function)(opts)
+        ) && retries > 0 && retries > attempt.current
 
-        if (cachePolicy === CACHE_FIRST) {
-          await cache.set(response.id, newRes.clone())
-        }
+        res.current = newRes.clone()
 
         newData = await tryGetData(newRes, defaults.data)
         res.current.data = onNewData(data.current, newData)
@@ -126,46 +128,51 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
         data.current = res.current.data as TData
 
+        if (shouldRetry) {
+          const data = await retry(args, opts)
+          return data
+        }
+
+        if (cachePolicy === CACHE_FIRST) {
+          await cache.set(response.id, newRes.clone())
+        }
+
         if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
       } catch (err) {
-        const opts = { attempt: attempt.current, error: err, response: null }
+        if (attempt.current >= retries && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
+        const opts = { attempt: attempt.current, error: err }
         const shouldRetry = (
-          Array.isArray(retryOn) && retryOn.includes(res.current.status)
-          || isFunction(retryOn) && (retryOn as Function)(opts)
-          || retries > 0
+          retries > 0 || isFunction(retryOn) && (retryOn as Function)(opts)
         ) && retries > attempt.current
-
         if (shouldRetry) {
-          const delay = (isFunction(retryDelay) ? (retryDelay as Function)(opts) : retryDelay) as number
-          invariant(isNumber(delay), 'retryDelay must be a number! If you\'re using it as a function, it must return a number.')
-          if (timer) clearTimeout(timer)
-          if (initialURL.includes('Z')) {
-            console.log('retries', retries)
-            console.log('attempt.current', attempt.current)
-            console.log('err', err)
-            console.log('shouldRetry', shouldRetry)
-            console.log('delay', delay)
-          }
-          attempt.current++
-          if (delay) await sleep(delay)
-          return doFetch(routeOrBody, body)
-        }
-        if (attempt.current >= retries && timedout.current) {
-          error.current = { name: 'AbortError', message: 'Timeout Error' }
+          const temp = await retry(args, opts)
+          return temp
         }
         if (err.name !== 'AbortError') error.current = err
       } finally {
-        // if (attempt.current === retries) attempt.current = 0
-        if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
         timedout.current = false
         if (timer) clearTimeout(timer)
         controller.current = undefined
       }
 
+      if (!(newRes && newRes.ok) && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
       if (!suspense && mounted.current) setLoading(false)
+      if (attempt.current === retries) attempt.current = 0
 
       return data.current
     } // end of doFetch()
+
+    const retry = async (args, opts) => {
+      const delay = (isFunction(retryDelay) ? (retryDelay as Function)(opts) : retryDelay) as number
+      // invariant(Number.isInteger(delay) && delay >= 0, 'retryDelay must be a positive number! If you\'re using it as a function, it must also return a positive number.')
+      if (!(Number.isInteger(delay) && delay >= 0)) {
+        console.error('retryDelay must be a positive number! If you\'re using it as a function, it must also return a positive number.')
+      }
+      attempt.current++
+      if (delay) await sleep(delay)
+      const d = await doFetch(...args)
+      return d
+    }
 
     if (suspense) {
       return async (...args) => {

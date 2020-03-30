@@ -29,7 +29,7 @@ type UseFetchArgsReturn = {
   dependencies?: any[]
 }
 
-export const useFetchArgsDefaults = {
+export const useFetchArgsDefaults: UseFetchArgsReturn = {
   customOptions: {
     cacheLife: 0,
     cachePolicy: CachePolicies.CACHE_FIRST,
@@ -40,9 +40,9 @@ export const useFetchArgsDefaults = {
     path: '',
     perPage: 0,
     persist: false,
-    retries: 3,
+    retries: 2,
     retryDelay: 1000,
-    retryOn: undefined,
+    retryOn: [],
     suspense: false,
     timeout: 0,
     url: '',
