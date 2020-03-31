@@ -16,7 +16,7 @@ import {
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, sleep } from './utils'
+import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, sleep, isPositiveNumber } from './utils'
 import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
@@ -164,8 +164,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
     const retry = async (args, opts) => {
       const delay = (isFunction(retryDelay) ? (retryDelay as Function)(opts) : retryDelay) as number
-      // invariant(Number.isInteger(delay) && delay >= 0, 'retryDelay must be a positive number! If you\'re using it as a function, it must also return a positive number.')
-      if (!(Number.isInteger(delay) && delay >= 0)) {
+      if (!isPositiveNumber(delay)) {
         console.error('retryDelay must be a positive number! If you\'re using it as a function, it must also return a positive number.')
       }
       attempt.current++

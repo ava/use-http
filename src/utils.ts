@@ -235,3 +235,5 @@ function useDeepCompareMemoize(value: DependencyList) {
 export const useDeepCallback = (cb: (method: HTTPMethod) => (...args: any) => any, deps: DependencyList) => useCallback(cb, useDeepCompareMemoize(deps))
 
 export const sleep = (ms: number) => new Promise((resolve: any) => setTimeout(resolve, ms))
+
+export const isPositiveNumber = (n: number) => Number.isInteger(n) && n > 0

@@ -1,5 +1,5 @@
 import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, RetryOn, RetryDelay } from './types'
-import { isString, isObject, invariant, pullOutRequestInit, isFunction } from './utils'
+import { isString, isObject, invariant, pullOutRequestInit, isFunction, isPositiveNumber } from './utils'
 import { useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
 
@@ -129,7 +129,12 @@ export default function useFetchArgs(
   const suspense = useField<boolean>('suspense', urlOrOptions, optionsNoURLs)
   const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
   const retryOn = useField<RetryOn>('retryOn', urlOrOptions, optionsNoURLs)
+  invariant(
+    isFunction(retryOn) || (Array.isArray(retryOn) && retryOn.every(isPositiveNumber)),
+    '`retryOn` must be an array of positive numbers or a function returning a boolean.'
+  )
   const retryDelay = useField<RetryDelay>('retryDelay', urlOrOptions, optionsNoURLs)
+  invariant(isFunction(retryDelay) || Number.isInteger(retryDelay as number) && retryDelay >= 0, '`retryDelay` must be a positive number or a function returning a positive number.')
 
   const loading = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)
