@@ -167,7 +167,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       if (!(Number.isInteger(delay) && delay >= 0)) {
         console.error('retryDelay must be a number >= 0! If you\'re using it as a function, it must also return a number >= 0.')
       }
-      attempt.current++
+      ++attempt.current
       if (delay) await sleep(delay)
       const d = await doFetch(...args)
       return d

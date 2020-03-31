@@ -91,6 +91,7 @@ Usage
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'>useFetch + Suspense</a></li>
 <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg'>useFetch + Pagination + Provider</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'>useFetch + Request/Response Interceptors + Provider</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9'>useFetch + retryOn, retryDelay</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a></li>
   </ul>
 
@@ -754,6 +755,44 @@ const App = () => {
 
 </details>
 
+<details><summary><b>retryOn & retryDelay</b></summary>
+
+In this example you can see how `retryOn` will retry on a status code of `305`, or if we choose the `retryOn()` function, it returns a boolean to decide if we will retry. With `retryDelay` we can either have a fixed delay, or a dynamic one by using `retryDelay()`.
+
+```js
+import useFetch from 'use-http'
+
+const TestRetry = () => {
+  const { response, get } = useFetch('https://httpbin.org/status/305', {
+    retryOn: [305]
+    // OR
+    retryOn: ({ attempt, error, response }) => {
+      // returns true or false to determine whether to retry
+      return error || response && response.status >= 300
+    },
+
+    retryDelay: 3000,
+    // OR
+    retryDelay: ({ attempt, error, response }) => {
+      // exponential backoff
+      return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
+      // linear backoff
+      return attempt * 1000
+    }
+  })
+
+  return (
+    <>
+      <button onClick={() => get()}>CLICK</button>
+      <pre>{JSON.stringify(response, null, 2)}</pre>
+    </>
+  )
+}
+```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9)
+
+</details>
 
 Overview
 --------

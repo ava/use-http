@@ -628,9 +628,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
       () => useFetch(),
       { wrapper }
     )
-    await act(async () => {
-      await result.current.get()
-    })
+    await act(result.current.get)
     expect(fetch.mock.calls[0][0]).toBe('https://example.com')
     expect((fetch.mock.calls[0][1] as any).headers).toEqual(expectedHeaders)
     expect(fetch).toHaveBeenCalledTimes(1)
@@ -801,9 +799,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
     await waitForNextUpdate()
     expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
     expect(fetch.mock.calls.length).toBe(3)
-    await act(async () => {
-      await result.current.get()
-    })
+    await act(result.current.get)
     expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
     expect(fetch.mock.calls.length).toBe(6)
   })
