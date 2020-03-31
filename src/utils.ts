@@ -237,3 +237,9 @@ export const useDeepCallback = (cb: (method: HTTPMethod) => (...args: any) => an
 export const sleep = (ms: number) => new Promise((resolve: any) => setTimeout(resolve, ms))
 
 export const isPositiveNumber = (n: number) => Number.isInteger(n) && n > 0
+
+export const makeError = (name: string | number, message: string) => {
+  const error = new Error(message)
+  error.name = name + ''
+  return error
+}

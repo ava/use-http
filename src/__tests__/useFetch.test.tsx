@@ -6,15 +6,15 @@ import React, { Suspense, ReactElement, ReactNode } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
-import { Res, Options, CachePolicies } from '../types'
 import { toCamel } from 'convert-keys'
 import { renderHook, act } from '@testing-library/react-hooks'
-import { emptyCustomResponse, sleep } from '../utils'
 import * as test from '@testing-library/react'
-import ErrorBoundary from '../ErrorBoundary'
 import mockConsole from 'jest-mock-console'
-
 import * as mockdate from 'mockdate'
+
+import { Res, Options, CachePolicies } from '../types'
+import { emptyCustomResponse, sleep, makeError } from '../utils'
+import ErrorBoundary from '../ErrorBoundary'
 
 const fetch = global.fetch as FetchMock
 
@@ -764,7 +764,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       }, [])
     )
     await waitForNextUpdate()
-    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
     expect(fetch.mock.calls.length).toBe(2)
   })
 
@@ -781,7 +781,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       }, [])
     )
     await waitForNextUpdate()
-    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
     expect(fetch.mock.calls.length).toBe(2)
   })
 
@@ -797,10 +797,10 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       }, [])
     )
     await waitForNextUpdate()
-    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
     expect(fetch.mock.calls.length).toBe(3)
     await act(result.current.get)
-    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
     expect(fetch.mock.calls.length).toBe(6)
   })
 
@@ -834,7 +834,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       }, [])
     )
     await waitForNextUpdate()
-    expect(result.current.error).toEqual({ name: 400, message: 'Bad Request' })
+    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
     expect(fetch.mock.calls.length).toBe(3)
   })
 
@@ -886,7 +886,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
 })
 
 describe('useFetch - BROWSER - errors', (): void => {
-  const expectedError = { name: 'error', message: 'error' }
+  const expectedError = makeError('error', 'error')
   const expectedSuccess = { name: 'Alex Cory' }
 
   afterEach((): void => {
@@ -914,10 +914,7 @@ describe('useFetch - BROWSER - errors', (): void => {
     expect(result.current.data).toEqual([])
     expect(result.current.loading).toBe(false)
     await act(result.current.get)
-    expect(result.current.error).toEqual({
-      name: 401,
-      message: 'Unauthorized'
-    })
+    expect(result.current.error).toEqual(makeError(401, 'Unauthorized'))
     expect(result.current.data).toEqual([])
   })
 

@@ -94,6 +94,10 @@ export type RouteAndBodyOnly = (
   body: BodyInit | object,
 ) => Promise<any>
 
+export type RouteOrBody = string | BodyInit | object
+export type Body = BodyInit | object
+export type RetryOpts = { attempt: number, error?: Error, response?: Response }
+
 export type NoArgs = () => Promise<any>
 
 export type FetchData = (
