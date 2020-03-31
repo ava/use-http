@@ -164,8 +164,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
     const retry = async (args, opts) => {
       const delay = (isFunction(retryDelay) ? (retryDelay as Function)(opts) : retryDelay) as number
-      if (!isPositiveNumber(delay)) {
-        console.error('retryDelay must be a positive number! If you\'re using it as a function, it must also return a positive number.')
+      if (!(Number.isInteger(delay) && delay >= 0)) {
+        console.error('retryDelay must be a number >= 0! If you\'re using it as a function, it must also return a number >= 0.')
       }
       attempt.current++
       if (delay) await sleep(delay)
