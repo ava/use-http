@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useReducer } from 'react'
+import { useEffect, useState, useCallback, useRef, useReducer, useMemo } from 'react'
 import useSSR from 'use-ssr'
 import {
   HTTPMethod,
@@ -86,7 +86,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         interceptors.request
       )
       
-      if (!suspense && mounted.current) setLoading(true)
       error.current = undefined
 
       if (response.isCached && cachePolicy === CACHE_FIRST) {
@@ -94,13 +93,15 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           res.current = response.cached as Res<TData>
           res.current.data = await tryGetData(response.cached, defaults.data)
           data.current = res.current.data as TData
-          if (!suspense && mounted.current) setLoading(false)
+          if (!suspense && mounted.current) forceUpdate()
           return data.current
         } catch (err) {
           error.current = err
-          if (mounted.current) setLoading(false)
+          if (mounted.current) forceUpdate()
         }
       }
+
+      if (!suspense && mounted.current) setLoading(true)
 
       // don't perform the request if there is no more data to fetch (pagination)
       if (perPage > 0 && !hasMore.current && !error.current) return data.current
@@ -225,7 +226,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     cache
   }
 
-  const response = toResponseObject<TData>(res, data)
+  const response = useMemo(() => toResponseObject<TData>(res, data), [])
 
   // onMount/onUpdate
   useEffect((): any => {
