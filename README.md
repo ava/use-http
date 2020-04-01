@@ -764,7 +764,7 @@ import useFetch from 'use-http'
 
 const TestRetry = () => {
   const { response, get } = useFetch('https://httpbin.org/status/305', {
-    // you need to make sure `retries` is set otherwise it won't retry
+    // make sure `retries` is set otherwise it won't retry
     retries: 1,
     retryOn: [305],
     // OR
@@ -898,7 +898,7 @@ const options = {
     return attempt * 1000
   },
 
-  // you need to make sure `retries` is set otherwise it won't retry
+  // make sure `retries` is set otherwise it won't retry
   // can retry on certain http status codes
   retryOn: [503],
   // OR
@@ -947,9 +947,13 @@ Browser Support
 
 If you need support for IE, you will need to add additional polyfills.  The React docs suggest [these polyfills][4], but from [this issue][2] we have found it to work fine with the [`react-app-polyfill`]. If you have any updates to this browser list, please submit a PR!
 
+<p align="center">
+
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />]()<br/>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />]()<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />]()<br/>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />]()<br/>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />]()<br/>Opera |
 | --------- | --------- | --------- | --------- | --------- |
 | 12+ | last 2 versions| last 2 versions| last 2 versions| last 2 versions |
+
+</p>
 
 Feature Requests/Ideas
 ----------------------

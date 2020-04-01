@@ -586,7 +586,7 @@ import useFetch from 'use-http'
 
 const TestRetry = () => {
   const { response, get } = useFetch('https://httpbin.org/status/305', {
-    // you need to make sure `retries` is set otherwise it won't retry
+    // make sure `retries` is set otherwise it won't retry
     retries: 1,
     retryOn: [305],
     // OR
@@ -858,7 +858,7 @@ const options = {
   },
 
 
-  // you need to make sure `retries` is set otherwise it won't retry
+  // make sure `retries` is set otherwise it won't retry
   // can retry on certain http status codes
   retryOn: [503],
   // OR
