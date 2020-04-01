@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable no-var */
 /* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/camelcase */
@@ -37,9 +36,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     fetch.mockResponseOnce(JSON.stringify(expected))
   })
 
-  it('should execute GET command with object destructuring', async (): Promise<
-    void
-  > => {
+  it('should execute GET command with object destructuring', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch('https://example.com', []), // onMount === true
       { wrapper: wrapper as React.ComponentType }
@@ -89,12 +86,12 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
   })
 
   it('should not be content-type: application/json by default if using FormData for request body', async (): Promise<void> => {
-    const { result, waitForNextUpdate } = renderHook(
+    const { result } = renderHook(
       () => useFetch('url-1234567Z'),
       { wrapper: wrapper as React.ComponentType }
     )
     await act(async () => {
-      var formData = new FormData();
+      var formData = new FormData()
       formData.append('username', 'AlexCory')
       await result.current.post(formData)
       const options = fetch.mock.calls[0][1] || {}
@@ -184,38 +181,38 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     })
   })
 
-  // TODO: causing `act` warning
-  // potintial solution: use `initialProps`
-  // it('should not make another request when there is no more data `perPage` pagination', async (): Promise<void> => {
-  //   fetch.resetMocks()
-  //   const expected1 = [1, 2, 3]
-  //   fetch.mockResponse(JSON.stringify(expected1))
-  //   let page = 1
-  //   const { result, rerender, waitForNextUpdate } = renderHook(
-  //     () => useFetch(`https://example.com?page=${page}`, {
-  //       data: [],
-  //       perPage: 3,
-  //       onNewData: (currData, newData) => {
-  //         // to imitate getting a response with less items
-  //         if (page === 2) return [...currData, 4]
-  //         return [...currData, ...newData]
-  //       }
-  //     }, [page]) // onMount === true
-  //   )
-  //   expect(result.current.loading).toBe(true)
-  //   await waitForNextUpdate()
-  //   expect(result.current.loading).toBe(false)
-  //   expect(result.current.data).toEqual(expected1)
-  //   page = 2
-  //   rerender()
-  //   await waitForNextUpdate()
-  //   expect(result.current.data).toEqual([...expected1, 4])
-  //   expect(fetch.mock.calls.length).toBe(2)
-  //   page = 3
-  //   rerender()
-  //   expect(result.current.data).toEqual([...expected1, 4])
-  //   expect(fetch.mock.calls.length).toBe(2)
-  // })
+  it('should not make another request when there is no more data `perPage` pagination', async (): Promise<void> => {
+    fetch.resetMocks()
+    const expected1 = [1, 2, 3]
+    fetch.mockResponse(JSON.stringify(expected1))
+    const { result, rerender, waitForNextUpdate } = renderHook(
+      ({ page }) => useFetch(`https://example.com?page=${page}`, {
+        data: [],
+        perPage: 3,
+        onNewData: (currData, newData) => {
+          // to imitate getting a response with less items
+          if (page === 2) return [...currData, 4]
+          return [...currData, ...newData]
+        }
+      }, [page]), // onMount === true
+      {
+        initialProps: { page: 1 },
+        wrapper
+      }
+    )
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toEqual(expected1)
+    act(() => rerender({ page: 2 }))
+    await waitForNextUpdate()
+    expect(result.current.data).toEqual([...expected1, 4])
+    expect(fetch.mock.calls.length).toBe(2)
+    act(() => rerender({ page: 3 }))
+    await waitForNextUpdate()
+    expect(result.current.data).toEqual([...expected1, 4])
+    expect(fetch.mock.calls.length).toBe(2)
+  })
 
   it('should execute GET using Provider url: useFetch({ path: "/people" }, [])', async (): Promise<
     void
@@ -254,9 +251,7 @@ describe('timeouts', (): void => {
     jest.useFakeTimers()
   })
 
-  it(`should execute GET and timeout after ${timeout}ms, and fire 'onTimeout' and 'onAbort'`, async (): Promise<
-    void
-  > => {
+  it(`should execute GET and timeout after ${timeout}ms, and fire 'onTimeout' and 'onAbort'`, async (): Promise<void> => {
     const onAbort = jest.fn()
     const onTimeout = jest.fn()
     const { result, waitForNextUpdate } = renderHook(
@@ -284,9 +279,7 @@ describe('timeouts', (): void => {
     expect(onTimeout).toHaveBeenCalledTimes(1)
   })
 
-  it(`should execute GET, fail after ${timeout}ms, then retry 1 additional time`, async (): Promise<
-    void
-  > => {
+  it(`should execute GET, fail after ${timeout}ms, then retry 1 additional time`, async (): Promise<void> => {
     const onAbort = jest.fn()
     const onTimeout = jest.fn()
     const { result, waitForNextUpdate } = renderHook(
@@ -307,7 +300,6 @@ describe('timeouts', (): void => {
     expect(onTimeout).toHaveBeenCalledTimes(0)
     expect(result.current.loading).toBe(true)
 
-    // jest.advanceTimersByTime(defaults.retryDelay)
     await waitForNextUpdate()
     expect(fetch.mock.calls[0][0]).toBe('https://example.com/todos')
     expect(fetch).toHaveBeenCalledTimes(2)
@@ -318,7 +310,6 @@ describe('timeouts', (): void => {
     expect(onTimeout).toBeCalled()
     expect(onAbort).toHaveBeenCalledTimes(2)
     expect(onTimeout).toHaveBeenCalledTimes(2)
-    // jest.runAllTimers()
   })
 })
 
@@ -675,216 +666,265 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 })
 
-// describe('useFetch - BROWSER - suspense', (): void => {
-//   afterEach((): void => {
-//     fetch.resetMocks()
-//     cleanup()
-
-//     test.cleanup()
-//   })
-
-//   beforeEach((): void => {
-//     fetch.mockResponse(JSON.stringify('yay suspense'))
-//   })
-
-//   it('should render useFetch fallback', async () => {
-//     function Section() {
-//       const { data } = useFetch('https://a.co', { suspense: true }, [])
-//       return <div>{data}</div>
-//     }
-//     const { container } = test.render(
-//       <Suspense fallback={<div>fallback</div>}>
-//         <Section />
-//       </Suspense>
-//     )
-
-//     expect(container.textContent).toMatchInlineSnapshot('"fallback"')
-//     await test.act((): any => new Promise(resolve => setTimeout(resolve, 210)))
-//     expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
-//   })
-
-//   it('should render multiple useFetch fallbacks', async () => {
-//     function Section() {
-//       const { data: d1 } = useFetch('https://a.co/1', { suspense: true }, [])
-//       const { data: d2 } = useFetch('https://a.co/2', { suspense: true }, [])
-//       return <div>{d1} {d2}</div>
-//     }
-//     const { container } = test.render(
-//       <Suspense fallback={<div>fallback</div>}>
-//         <Section />
-//       </Suspense>
-//     )
-
-//     // TODO: I believe it should work with the commented out code below
-//     expect(container.textContent).toMatchInlineSnapshot('" fallback"')
-//     // await test.act((): any => new Promise(res => setTimeout(res, 10))) // still suspending
-//     // expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
-//     await test.act((): any => new Promise(resolve => setTimeout(resolve, 100))) // should recover
-//     expect(container.textContent).toMatchInlineSnapshot('"yay suspense yay suspense"')
-//   })
-
-//   it('should throw errors', async () => {
-//     function Section() {
-//       const { data } = useFetch('https://a.co', { suspense: true }, [])
-//       return <div>{data}</div>
-//     }
-//     // https://reactjs.org/docs/concurrent-mode-suspense.html#handling-errors
-//     const { container } = test.render(
-//       <ErrorBoundary fallback={<div>error boundary</div>}>
-//         <Suspense fallback={<div>fallback</div>}>
-//           <Section />
-//         </Suspense>
-//       </ErrorBoundary>
-//     )
-
-//     expect(container.textContent).toMatchInlineSnapshot('"fallback"')
-//     await test.act((): any => new Promise(resolve => setTimeout(resolve, 150))) // still suspending
-//     expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
-//   })
-// })
-
-describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
-  const expectedError = { name: 'TypeError', message: 'Failed to fetch' }
-  // const expectedSuccess = { name: 'Alex Cory' }
-
+describe('useFetch - BROWSER - suspense', (): void => {
   afterEach((): void => {
     fetch.resetMocks()
     cleanup()
+
+    test.cleanup()
   })
 
   beforeEach((): void => {
-    fetch.mockReject(expectedError)
+    fetch.mockResponse(JSON.stringify('yay suspense'))
   })
 
-  it('should retryOn specific error codes', async (): Promise<void> => {
-    fetch.resetMocks()
-    fetch.mockResponseOnce('fail', { status: 401 })
-      .mockResponseOnce('fail', { status: 400 })
-    // should fail, then retry on 401, fail again, but not retry on 400
-    const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('url', {
-        retryOn: [401]
-      }, [])
+  it('should render useFetch fallback', async () => {
+    function Section() {
+      const { data } = useFetch('https://a.co', { suspense: true }, [])
+      return <div>{data}</div>
+    }
+    const { container } = test.render(
+      <Suspense fallback={<div>fallback</div>}>
+        <Section />
+      </Suspense>
     )
-    await waitForNextUpdate()
-    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
-    expect(fetch.mock.calls.length).toBe(2)
+
+    expect(container.textContent).toMatchInlineSnapshot('"fallback"')
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 210)))
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
   })
 
-  it('should retryOn custom function', async (): Promise<void> => {
-    fetch.resetMocks()
-    fetch.mockResponseOnce('fail', { status: 401 })
-      .mockResponseOnce('fail', { status: 400 })
-    // should fail, then retry on 401, fail again, but not retry on 400
-    const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('url-2', {
-        retryOn({ response }) {
-          return !!(response && response.status === 401)
-        }
-      }, [])
+  it('should render multiple useFetch fallbacks', async () => {
+    function Section() {
+      const { data: d1 } = useFetch('https://a.co/1', { suspense: true }, [])
+      const { data: d2 } = useFetch('https://a.co/2', { suspense: true }, [])
+      return <div>{d1} {d2}</div>
+    }
+    const { container } = test.render(
+      <Suspense fallback={<div>fallback</div>}>
+        <Section />
+      </Suspense>
     )
-    await waitForNextUpdate()
-    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
-    expect(fetch.mock.calls.length).toBe(2)
+
+    // TODO: I believe it should work with the commented out code below
+    expect(container.textContent).toMatchInlineSnapshot('" fallback"')
+    // await test.act((): any => new Promise(res => setTimeout(res, 10))) // still suspending
+    // expect(container.textContent).toMatchInlineSnapshot(`"fallback"`)
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 100))) // should recover
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense yay suspense"')
   })
 
-  it('should retry 3 times, fail all 3, then retry 3 more times when called again', async (): Promise<void> => {
-    fetch.resetMocks()
-    fetch.mockResponse('fail', { status: 400 })
-    const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('url-12', {
-        retryOn({ response }) {
-          return !!(response && response.status === 400)
-        },
-        cachePolicy: CachePolicies.NO_CACHE
-      }, [])
+  it('should throw errors', async () => {
+    function Section() {
+      const { data } = useFetch('https://a.co', { suspense: true }, [])
+      return <div>{data}</div>
+    }
+    // https://reactjs.org/docs/concurrent-mode-suspense.html#handling-errors
+    const { container } = test.render(
+      <ErrorBoundary fallback={<div>error boundary</div>}>
+        <Suspense fallback={<div>fallback</div>}>
+          <Section />
+        </Suspense>
+      </ErrorBoundary>
     )
-    await waitForNextUpdate()
-    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
-    expect(fetch.mock.calls.length).toBe(3)
-    await act(result.current.get)
-    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
-    expect(fetch.mock.calls.length).toBe(6)
+
+    expect(container.textContent).toMatchInlineSnapshot('"fallback"')
+    await test.act((): any => new Promise(resolve => setTimeout(resolve, 150))) // still suspending
+    expect(container.textContent).toMatchInlineSnapshot('"yay suspense"')
+  })
+})
+
+describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
+  describe('no network causing retry', () => {
+    // `retryOn` as an array I don't *think* needs to be tested here
+    const expectedError = makeError('TypeError', 'Failed to fetch')
+
+    afterEach((): void => {
+      fetch.resetMocks()
+      cleanup()
+    })
+
+    beforeEach((): void => {
+      fetch.mockReject(expectedError)
+    })
+
+    it('should retryOn custom function', async (): Promise<void> => {
+      // should fail, then retry on error, fail again the retry 1 more time
+      const { result, waitForNextUpdate } = renderHook(
+        () => useFetch('url-2', {
+          retryOn({ error }) {
+            return !!error
+          }
+        }, [])
+      )
+      await waitForNextUpdate()
+      expect(result.current.error).toEqual(expectedError)
+      expect(fetch.mock.calls.length).toBe(3)
+    })
+
+    it('should retry with a `retryDelay` as a positive number', async (): Promise<void> => {
+      const { result, waitForNextUpdate } = renderHook(
+        () => useFetch('url-5', {
+          retryOn({ error }) {
+            return !!error
+          },
+          retryDelay: 100
+        }, [])
+      )
+      await waitForNextUpdate()
+      expect(result.current.error).toEqual(expectedError)
+      expect(fetch.mock.calls.length).toBe(3)
+    })
+
+    it('should retry with a `retryDelay` as a function', async (): Promise<void> => {
+      const { result, waitForNextUpdate } = renderHook(
+        () => useFetch('url-7', {
+          retryOn({ error }) {
+            return !!error
+          },
+          retryDelay() {
+            return 100
+          }
+        }, [])
+      )
+      await waitForNextUpdate()
+      expect(result.current.error).toEqual(expectedError)
+      expect(fetch.mock.calls.length).toBe(3)
+    })
   })
 
-  it('should retry with a `retryDelay` as a positive number', async (): Promise<void> => {
-    fetch.resetMocks()
-    fetch.mockResponseOnce('fail', { status: 401 })
-      .mockResponseOnce('fail', { status: 400 })
-      .mockResponseOnce(JSON.stringify({ no: 'way' }))
+  // still `retryDelay` and `retryOn`
+  describe('has network but fails by something like a status code > 299', () => {
+    const expectedSuccess = { no: 'way' }
+    afterEach((): void => {
+      fetch.resetMocks()
+      cleanup()
+    })
 
-    const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('url-5', {
-        retryOn: [401, 400],
-        retryDelay: 100
-      }, [])
-    )
-    await waitForNextUpdate()
-    expect(result.current.error).toEqual(undefined)
-    expect(result.current.data).toEqual({ no: 'way' })
-    expect(fetch.mock.calls.length).toBe(3)
-  })
+    beforeEach((): void => {
+      fetch.resetMocks()
+      fetch.mockResponseOnce('fail', { status: 401 })
+        .mockResponseOnce('fail', { status: 400 })
+        .mockResponseOnce(JSON.stringify(expectedSuccess))
+    })
 
-  it('should retry with a `retryDelay` as a function', async (): Promise<void> => {
-    fetch.resetMocks()
-    fetch.mockResponse('fail', { status: 400 })
-    const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('url-7', {
-        retryOn: [401, 400],
+    it('should retryOn specific error codes', async (): Promise<void> => {
+      const { result, waitForNextUpdate } = renderHook(
+        () => useFetch('url', {
+          retryOn: [401]
+        }, [])
+      )
+      await waitForNextUpdate()
+      expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
+      expect(fetch.mock.calls.length).toBe(2)
+    })
+
+    it('should retryOn custom function', async (): Promise<void> => {
+      // should fail, then retry on 401, fail again, but not retry on 400
+      const { result, waitForNextUpdate } = renderHook(
+        () => useFetch('url-2', {
+          retryOn({ response }) {
+            return !!(response && response.status === 401)
+          }
+        }, [])
+      )
+      await waitForNextUpdate()
+      expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
+      expect(fetch.mock.calls.length).toBe(2)
+    })
+
+    it('should retry 3 times, fail all 3, then retry 3 more times when called again', async (): Promise<void> => {
+      fetch.resetMocks()
+      fetch.mockResponse('fail', { status: 400 })
+      const { result, waitForNextUpdate } = renderHook(
+        () => useFetch('url-12', {
+          retryOn({ response }) {
+            return !!(response && response.status === 400)
+          },
+          cachePolicy: CachePolicies.NO_CACHE
+        }, [])
+      )
+      await waitForNextUpdate()
+      expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
+      expect(fetch.mock.calls.length).toBe(3)
+      await act(result.current.get)
+      expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
+      expect(fetch.mock.calls.length).toBe(6)
+    })
+
+    it('should retry with a `retryDelay` as a positive number', async (): Promise<void> => {
+      const { result, waitForNextUpdate } = renderHook(
+        () => useFetch('url-5', {
+          retryOn: [401, 400],
+          retryDelay: 100
+        }, [])
+      )
+      await waitForNextUpdate()
+      expect(result.current.error).toEqual(undefined)
+      expect(result.current.data).toEqual(expectedSuccess)
+      expect(fetch.mock.calls.length).toBe(3)
+    })
+
+    it('should retry with a `retryDelay` as a function', async (): Promise<void> => {
+      const { result, waitForNextUpdate } = renderHook(
+        () => useFetch('url-7', {
+          retryOn: [401, 400],
+          retryDelay() {
+            return 100
+          }
+        }, [])
+      )
+      await waitForNextUpdate()
+      expect(result.current.error).toEqual(undefined)
+      expect(result.current.data).toEqual(expectedSuccess)
+      expect(fetch.mock.calls.length).toBe(3)
+    })
+
+    it('should error with a `retryDelay` that is not a postive # or a function returning a positive #', async (): Promise<void> => {
+      fetch.resetMocks()
+      fetch.mockResponse('fail', { status: 400 })
+      const { result } = renderHook(() => useFetch('some-url-122', { retryDelay: -1000, retryOn: [400] }, []))
+      expect(result.error.name).toBe('Invariant Violation')
+
+      // TODO: there is an issue with error testing some things
+      // see more detail here: https://github.com/testing-library/react-hooks-testing-library/issues/308
+      // we basically want to test if when we call the `retry` function, if the `delay` is >= 0
+      // Not catching invariant from the `retry` function
+      // let caughtError = null
+      // class ErrorBoundary extends React.Component {
+      //   state = { hasError: false }
+      //   componentDidCatch(error: any) {
+      //     console.log('RUN')
+      //     this.setState({ hasError: true })
+      //     // console.log('error', error)
+      //     caughtError = error
+      //   }
+      //   render = () => !this.state.hasError && this.props.children
+      // }
+      // const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <ErrorBoundary>{children}</ErrorBoundary>
+      // const { result } = renderHook(() => useFetch('Z', { retryDelay: -1000 }, []), { wrapper })
+      const restoreConsole = mockConsole('error')
+      const { waitForNextUpdate } = renderHook(() => useFetch('some-url-12', {
+        retryOn: [400],
         retryDelay() {
-          return 100
+          return -1000
         }
-      }, [])
-    )
-    await waitForNextUpdate()
-    expect(result.current.error).toEqual(makeError(400, 'Bad Request'))
-    expect(fetch.mock.calls.length).toBe(3)
-  })
+      }, []))
+      await waitForNextUpdate()
+      expect(console.error).toHaveBeenCalledTimes(2)
+      restoreConsole()
+    })
 
-  it('should error with a `retryDelay` that is not a postive # or a function returning a positive #', async (): Promise<void> => {
-    fetch.resetMocks()
-    fetch.mockResponse('fail', { status: 400 })
-    const { result } = renderHook(() => useFetch('some-url-122', { retryDelay: -1000, retryOn: [400] }, []))
-    expect(result.error.name).toBe('Invariant Violation')
-
-    // TODO: there is an issue with error testing some things
-    // see more detail here: https://github.com/testing-library/react-hooks-testing-library/issues/308
-    // we basically want to test if when we call the `retry` function, if the `delay` is >= 0
-    // Not catching invariant from the `retry` function
-    // let caughtError = null
-    // class ErrorBoundary extends React.Component {
-    //   state = { hasError: false }
-    //   componentDidCatch(error: any) {
-    //     console.log('RUN')
-    //     this.setState({ hasError: true })
-    //     // console.log('error', error)
-    //     caughtError = error
-    //   }
-    //   render = () => !this.state.hasError && this.props.children
-    // }
-    // const wrapper = ({ children }: { children?: ReactNode }): ReactElement => <ErrorBoundary>{children}</ErrorBoundary>
-    // const { result } = renderHook(() => useFetch('Z', { retryDelay: -1000 }, []), { wrapper })
-    const restoreConsole = mockConsole('error')
-    const { waitForNextUpdate } = renderHook(() => useFetch('some-url-12', {
-      retryOn: [400],
-      retryDelay() {
-        return -1000
-      }
-    }, []))
-    await waitForNextUpdate()
-    expect(console.error).toHaveBeenCalledTimes(2)
-    restoreConsole()
-  })
-
-  it('should error if `retryOn` is not a function or an array of positive numbers', async (): Promise<void> => {
-    // TODO: should we check to see if they are valid http status codes?
-    // - regex: /^[1-5][0-9][0-9]$/
-    // - ts HttpStatusCodes enum: https://gist.github.com/RWOverdijk/6cef816cfdf5722228e01cc05fd4b094
-    var { result } = renderHook(() => useFetch('url-11211', { retryOn: 1000 as any }, []))
-    expect(result.error.name).toBe('Invariant Violation')
-    // eslint-disable-next-line
-    var { result } = renderHook(() => useFetch('url-111211', { retryOn: ['c'] as any }, []))
-    expect(result.error.name).toBe('Invariant Violation')
+    it('should error if `retryOn` is not a function or an array of positive numbers', async (): Promise<void> => {
+      // TODO: should we check to see if they are valid http status codes?
+      // - regex: /^[1-5][0-9][0-9]$/
+      // - ts HttpStatusCodes enum: https://gist.github.com/RWOverdijk/6cef816cfdf5722228e01cc05fd4b094
+      var { result } = renderHook(() => useFetch('url-11211', { retryOn: 1000 as any }, []))
+      expect(result.error.name).toBe('Invariant Violation')
+      // eslint-disable-next-line
+      var { result } = renderHook(() => useFetch('url-111211', { retryOn: ['c'] as any }, []))
+      expect(result.error.name).toBe('Invariant Violation')
+    })
   })
 })
 
