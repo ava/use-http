@@ -38,6 +38,7 @@ export default async function doFetchArgs<TData = any>(
 
   const body = ((): BodyInit | null => {
     if (isBodyObject(routeOrBody)) return JSON.stringify(routeOrBody)
+    if (routeOrBody instanceof FormData) return routeOrBody
     if (
       !isServer &&
       ((bodyAs2ndParam as any) instanceof FormData ||
@@ -50,7 +51,7 @@ export default async function doFetchArgs<TData = any>(
 
   const headers = ((): HeadersInit | null => {
     const contentType = ((initialOptions.headers || {}) as any)['Content-Type']
-    const shouldAddContentType = !!contentType || ([HTTPMethod.POST, HTTPMethod.PUT].includes(method)) && !(body instanceof FormData)
+    const shouldAddContentType = !!contentType || [HTTPMethod.POST, HTTPMethod.PUT].includes(method) && !(body instanceof FormData)
     const headers: any = { ...initialOptions.headers }
     if (shouldAddContentType) {
       // default content types http://bit.ly/2N2ovOZ

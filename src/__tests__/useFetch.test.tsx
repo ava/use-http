@@ -71,9 +71,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     expect(typeof result.current.mutate).toBe('function')
   })
 
-  it('should execute GET command with arrray destructuring', async (): Promise<
-    void
-  > => {
+  it('should execute GET command with arrray destructuring', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch('sweet', []), // onMount === true
       { wrapper: wrapper as React.ComponentType }
@@ -88,6 +86,21 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
     expect(response.data).toEqual(expected)
     expect(request.loading).toBe(false)
     expect(loading).toBe(false)
+  })
+
+  it('should not be content-type: application/json by default if using FormData for request body', async (): Promise<void> => {
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('url-1234567Z'),
+      { wrapper: wrapper as React.ComponentType }
+    )
+    await act(async () => {
+      var formData = new FormData();
+      formData.append('username', 'AlexCory')
+      await result.current.post(formData)
+      const options = fetch.mock.calls[0][1] || {}
+      expect(options.method).toBe('POST')
+      expect(options.headers).toBeUndefined()
+    })
   })
 })
 
@@ -110,9 +123,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     fetch.mockResponseOnce(JSON.stringify(expected))
   })
 
-  it('should work correctly: useFetch({ onMount: true, data: [] })', async (): Promise<
-    void
-  > => {
+  it('should work correctly: useFetch({ onMount: true, data: [] })', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({ data: {} }, []), // onMount === true
       { wrapper }
@@ -125,9 +136,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
   })
 
-  it('should execute GET using Provider url', async (): Promise<
-    void
-  > => {
+  it('should execute GET using Provider url', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({ data: {} }, []), // onMount === true
       { wrapper }
@@ -139,9 +148,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
   })
 
-  it('should execute GET using Provider url: request = useFetch(), request.get()', async (): Promise<
-    void
-  > => {
+  it('should execute GET using Provider url: request = useFetch(), request.get()', async (): Promise<void> => {
     const { result } = renderHook(() => useFetch(), { wrapper })
     expect(result.current.loading).toBe(false)
     await act(result.current.get)
@@ -149,9 +156,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
   })
 
-  it('should execute GET using Provider url: request = useFetch(), request.get("/people")', async (): Promise<
-    void
-  > => {
+  it('should execute GET using Provider url: request = useFetch(), request.get("/people")', async (): Promise<void> => {
     const { result } = renderHook(() => useFetch(), { wrapper })
     expect(result.current.loading).toBe(false)
     await act(async () => {
@@ -161,9 +166,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toMatchObject(expected)
   })
 
-  it('should merge the data onNewData for pagination', async (): Promise<
-    void
-  > => {
+  it('should merge the data onNewData for pagination', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
         path: '/people',
