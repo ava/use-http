@@ -87,7 +87,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
 
   it('should not be content-type: application/json by default if using FormData for request body', async (): Promise<void> => {
     const { result } = renderHook(
-      () => useFetch('url-1234567Z'),
+      () => useFetch('url-1234567'),
       { wrapper: wrapper as React.ComponentType }
     )
     await act(async () => {
@@ -258,8 +258,7 @@ describe('timeouts', (): void => {
       () => useFetch({
         timeout,
         onAbort,
-        onTimeout,
-        retries: 0 // TODO: IMPORTANT!! this times out when we don't have this set to 0
+        onTimeout
       }, []), // onMount === true
       { wrapper }
     )
@@ -285,7 +284,8 @@ describe('timeouts', (): void => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({
         retries: 1,
-        // TODO: IMPORTANT!! this test fails if `retryDelay > 0`
+        // TODO: this test times out if `retryDelay > 0`
+        // works in apps, not sure how to advance the timers correctly
         retryDelay: 0,
         timeout,
         path: '/todos',
@@ -455,8 +455,7 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
     const { result, waitForNextUpdate, rerender } = renderHook(
       ({ initialValue }) => useFetch({
         path: `/a/${initialValue}`,
-        data: {},
-        retries: 0 // TODO: I believe this should work with `retries > 0`
+        data: {}
       }, [initialValue]), // (onMount && onUpdate) === true
       {
         wrapper,
@@ -536,8 +535,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
 
   it('should have the `data` field correctly set when using a response interceptor', async (): Promise<void> => {
     const { result } = renderHook(
-      // TODO: should this work with `retries > 0`?
-      () => useFetch({ retries: 0 }),
+      () => useFetch(),
       { wrapper }
     )
     await act(result.current.get)
@@ -752,6 +750,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       // should fail, then retry on error, fail again the retry 1 more time
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-2', {
+          retries: 2,
           retryOn({ error }) {
             return !!error
           }
@@ -765,6 +764,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
     it('should retry with a `retryDelay` as a positive number', async (): Promise<void> => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-5', {
+          retries: 2,
           retryOn({ error }) {
             return !!error
           },
@@ -779,6 +779,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
     it('should retry with a `retryDelay` as a function', async (): Promise<void> => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-7', {
+          retries: 2,
           retryOn({ error }) {
             return !!error
           },
@@ -811,6 +812,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
     it('should retryOn specific error codes', async (): Promise<void> => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url', {
+          retries: 2,
           retryOn: [401]
         }, [])
       )
@@ -823,6 +825,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       // should fail, then retry on 401, fail again, but not retry on 400
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-2', {
+          retries: 2,
           retryOn({ response }) {
             return !!(response && response.status === 401)
           }
@@ -838,6 +841,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       fetch.mockResponse('fail', { status: 400 })
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-12', {
+          retries: 2,
           retryOn({ response }) {
             return !!(response && response.status === 400)
           },
@@ -855,6 +859,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
     it('should retry with a `retryDelay` as a positive number', async (): Promise<void> => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-5', {
+          retries: 2,
           retryOn: [401, 400],
           retryDelay: 100
         }, [])
@@ -868,6 +873,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
     it('should retry with a `retryDelay` as a function', async (): Promise<void> => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-7', {
+          retries: 2,
           retryOn: [401, 400],
           retryDelay() {
             return 100
@@ -883,7 +889,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
     it('should error with a `retryDelay` that is not a postive # or a function returning a positive #', async (): Promise<void> => {
       fetch.resetMocks()
       fetch.mockResponse('fail', { status: 400 })
-      const { result } = renderHook(() => useFetch('some-url-122', { retryDelay: -1000, retryOn: [400] }, []))
+      const { result } = renderHook(() => useFetch('some-url-122', { retryDelay: -1000, retryOn: [400], retries: 2 }, []))
       expect(result.error.name).toBe('Invariant Violation')
 
       // TODO: there is an issue with error testing some things
@@ -905,6 +911,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       // const { result } = renderHook(() => useFetch('Z', { retryDelay: -1000 }, []), { wrapper })
       const restoreConsole = mockConsole('error')
       const { waitForNextUpdate } = renderHook(() => useFetch('some-url-12', {
+        retries: 2,
         retryOn: [400],
         retryDelay() {
           return -1000
@@ -919,10 +926,10 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       // TODO: should we check to see if they are valid http status codes?
       // - regex: /^[1-5][0-9][0-9]$/
       // - ts HttpStatusCodes enum: https://gist.github.com/RWOverdijk/6cef816cfdf5722228e01cc05fd4b094
-      var { result } = renderHook(() => useFetch('url-11211', { retryOn: 1000 as any }, []))
+      var { result } = renderHook(() => useFetch('url-11211', { retryOn: 1000 as any, retries: 2 }, []))
       expect(result.error.name).toBe('Invariant Violation')
       // eslint-disable-next-line
-      var { result } = renderHook(() => useFetch('url-111211', { retryOn: ['c'] as any }, []))
+      var { result } = renderHook(() => useFetch('url-111211', { retryOn: ['c'] as any, retries: 2 }, []))
       expect(result.error.name).toBe('Invariant Violation')
     })
   })

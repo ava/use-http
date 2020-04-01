@@ -116,12 +116,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       try {
         newRes = await fetch(url, options)
-        const opts = { attempt: attempt.current, response: newRes }
-        const shouldRetry = (
-          Array.isArray(retryOn) && retryOn.includes(newRes.status)
-          || isFunction(retryOn) && (retryOn as Function)(opts)
-        ) && retries > 0 && retries > attempt.current
-
         res.current = newRes.clone()
 
         newData = await tryGetData(newRes, defaults.data)
@@ -130,6 +124,16 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         res.current = interceptors.response ? await interceptors.response(res.current) : res.current
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
         data.current = res.current.data as TData
+
+        const opts = { attempt: attempt.current, response: newRes }
+        const shouldRetry = (
+          // if we just have `retries` set without `retryOn` then
+          // automatically retry on fail until attempts run out
+          !isFunction(retryOn) && Array.isArray(retryOn) && retryOn.length < 1 && !newRes?.ok
+          // otherwise only retry when is specified
+          || Array.isArray(retryOn) && retryOn.includes(newRes.status)
+          || isFunction(retryOn) && (retryOn as Function)(opts)
+        ) && retries > 0 && retries > attempt.current
 
         if (shouldRetry) {
           const data = await retry(opts, routeOrBody, body)
@@ -145,8 +149,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (attempt.current >= retries && timedout.current) error.current = makeError('AbortError', 'Timeout Error')
         const opts = { attempt: attempt.current, error: err }
         const shouldRetry = (
-          retries > 0 || isFunction(retryOn) && (retryOn as Function)(opts)
-        ) && retries > attempt.current
+          // if we just have `retries` set without `retryOn` then
+          // automatically retry on fail until attempts run out
+          !isFunction(retryOn) && Array.isArray(retryOn) && retryOn.length < 1
+          // otherwise only retry when is specified
+          || isFunction(retryOn) && (retryOn as Function)(opts)
+        ) && retries > 0 && retries > attempt.current
+
         if (shouldRetry) {
           const temp = await retry(opts, routeOrBody, body)
           return temp
@@ -159,7 +168,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         controller.current = undefined
       }
 
-      if (!(newRes && newRes.ok) && !error.current) error.current = makeError((newRes as any).status, (newRes as any).statusText)
+      if (newRes && !newRes.ok && !error.current) error.current = makeError(newRes.status, newRes.statusText)
       if (!suspense && mounted.current) setLoading(false)
       if (attempt.current === retries) attempt.current = 0
 
@@ -171,7 +180,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       if (!(Number.isInteger(delay) && delay >= 0)) {
         console.error('retryDelay must be a number >= 0! If you\'re using it as a function, it must also return a number >= 0.')
       }
-      ++attempt.current
+      attempt.current++
       if (delay) await sleep(delay)
       const d = await doFetch(routeOrBody, body)
       return d

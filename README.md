@@ -757,14 +757,16 @@ const App = () => {
 
 <details><summary><b>retryOn & retryDelay</b></summary>
 
-In this example you can see how `retryOn` will retry on a status code of `305`, or if we choose the `retryOn()` function, it returns a boolean to decide if we will retry. With `retryDelay` we can either have a fixed delay, or a dynamic one by using `retryDelay()`.
+In this example you can see how `retryOn` will retry on a status code of `305`, or if we choose the `retryOn()` function, it returns a boolean to decide if we will retry. With `retryDelay` we can either have a fixed delay, or a dynamic one by using `retryDelay()`. Make sure `retries` is set to at minimum `1` otherwise it won't retry the request.
 
 ```js
 import useFetch from 'use-http'
 
 const TestRetry = () => {
   const { response, get } = useFetch('https://httpbin.org/status/305', {
-    retryOn: [305]
+    // you need to make sure `retries` is set otherwise it won't retry
+    retries: 1,
+    retryOn: [305],
     // OR
     retryOn: ({ attempt, error, response }) => {
       // returns true or false to determine whether to retry
@@ -826,9 +828,9 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `path` | When using a global `url` set in the `Provider`, this is useful for adding onto it       | `''` |
 | `persist` | Persists data for the duration of `cacheLife`. If `cacheLife` is not set it defaults to 24h. Currently only available in Browser. | `false` |
 | `perPage` | Stops making more requests if there is no more data to fetch. (i.e. if we have 25 todos, and the perPage is 10, after fetching 2 times, we will have 20 todos. The last 5 tells us we don't have any more to fetch because it's less than 10) For pagination. | `0` |
-| `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `2` |
+| `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
 | `retryDelay` | You can retry with certain intervals i.e. 30 seconds `30000` or with custom logic (i.e. to increase retry intervals). | `1000` |
-| `retryOn` | You can retry on certain http status codes or have custom logic to decide whether to retry or not via a function. | `[]` |
+| `retryOn` | You can retry on certain http status codes or have custom logic to decide whether to retry or not via a function. Make sure `retries > 0` otherwise it won't retry. | `[]` |
 | `suspense` | Enables Experimental React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | `false` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**. If set to `0`, it will not timeout except for browser defaults.       | `0` |
 | `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
@@ -896,6 +898,7 @@ const options = {
     return attempt * 1000
   },
 
+  // you need to make sure `retries` is set otherwise it won't retry
   // can retry on certain http status codes
   retryOn: [503],
   // OR
@@ -984,6 +987,9 @@ Todos
   - [ ] the `onMount` works properly with all variants of passing `useEffect(fn, [request.get])` and not causing an infinite loop
   - [ ] `async` tests for `interceptors.response`
   - [ ] aborts fetch on unmount
+  - [ ] does not abort fetch on every rerender
+  - [ ] `retryDelay` and `timeout` are both set. It works, but is annoying to deal with timers in tests. [resource](https://github.com/fac-13/HP-game/issues/9)
+  - [ ] `timeout` with `retries > 0`. (also do `retires > 1`) Need to figure out how to advance timers properly to write this and the test above
 - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
 - [ ] make this a github package
   - [see ava packages](https://github.com/orgs/ava/packages)
@@ -1010,6 +1016,11 @@ Todos
 
   ```jsx
   const request = useFetch({
+    graphql: {
+      // all options can also be put in here
+      // to overwrite those of `useFetch` for
+      // `useMutation` and `useQuery`
+    },
     // Allows you to pass in your own cache to useFetch
     // This is controversial though because `cache` is an option in the requestInit
     // and it's value is a string. See: https://developer.mozilla.org/en-US/docs/Web/API/Request/cache

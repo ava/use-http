@@ -40,7 +40,7 @@ export const useFetchArgsDefaults: UseFetchArgsReturn = {
     path: '',
     perPage: 0,
     persist: false,
-    retries: 2,
+    retries: 0,
     retryDelay: 1000,
     retryOn: [],
     suspense: false,
@@ -126,13 +126,13 @@ export default function useFetchArgs(
   const perPage = useField<number>('perPage', urlOrOptions, optionsNoURLs)
   const cachePolicy = useField<CachePolicies>('cachePolicy', urlOrOptions, optionsNoURLs)
   const cacheLife = useField<number>('cacheLife', urlOrOptions, optionsNoURLs)
+  invariant(Number.isInteger(cacheLife) && cacheLife >= 0, '`cacheLife` must be a number >= 0')
   const suspense = useField<boolean>('suspense', urlOrOptions, optionsNoURLs)
   const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
+  invariant(Number.isInteger(retries) && retries >= 0, '`retries` must be a number >= 0')
   const retryOn = useField<RetryOn>('retryOn', urlOrOptions, optionsNoURLs)
-  invariant(
-    isFunction(retryOn) || (Array.isArray(retryOn) && retryOn.every(isPositiveNumber)),
-    '`retryOn` must be an array of positive numbers or a function returning a boolean.'
-  )
+  const isValidRetryOn = isFunction(retryOn) || (Array.isArray(retryOn) && retryOn.every(isPositiveNumber))
+  invariant(isValidRetryOn, '`retryOn` must be an array of positive numbers or a function returning a boolean.')
   const retryDelay = useField<RetryDelay>('retryDelay', urlOrOptions, optionsNoURLs)
   invariant(isFunction(retryDelay) || Number.isInteger(retryDelay as number) && retryDelay >= 0, '`retryDelay` must be a positive number or a function returning a positive number.')
 
