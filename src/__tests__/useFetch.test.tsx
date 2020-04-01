@@ -1111,24 +1111,17 @@ describe('useFetch - BROWSER - persistence', (): void => {
   })
 
   it('should error if passing wrong cachePolicy with persist: true', async (): Promise<void> => {
-    try {
-      const { result } = renderHook(
-        () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
-      )
-      expect(result.current.error).toBe(undefined)
-    } catch (err) {
-      expect(err.name).toBe('Invariant Violation')
-      expect(err.message).toBe('You cannot use option \'persist\' with cachePolicy: no-cache 🙅‍♂️')
-    }
+    var { result } = renderHook(
+      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
+    )
+    expect(result.error.name).toBe('Invariant Violation')
+    expect(result.error.message).toBe('You cannot use option \'persist\' with cachePolicy: no-cache 🙅‍♂️')
 
-    try {
-      const { result } = renderHook(
-        () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NETWORK_ONLY }, [])
-      )
-      expect(result.current.error).toBe(undefined)
-    } catch (err) {
-      expect(err.name).toBe('Invariant Violation')
-      expect(err.message).toBe('You cannot use option \'persist\' with cachePolicy: network-only 🙅‍♂️')
-    }
+    // eslint-disable-next-line
+    var { result } = renderHook(
+      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NETWORK_ONLY }, [])
+    )
+    expect(result.error.name).toBe('Invariant Violation')
+    expect(result.error.message).toBe('You cannot use option \'persist\' with cachePolicy: network-only 🙅‍♂️')
   })
 })
