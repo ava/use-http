@@ -78,6 +78,7 @@ Features
 - Built in caching
 - Persistent caching support
 - Suspense<sup>(experimental)</sup> support
+- Retry functionality
 
 Usage
 -----
@@ -90,6 +91,7 @@ Usage
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'>useFetch + Suspense</a></li>
 <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg'>useFetch + Pagination + Provider</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'>useFetch + Request/Response Interceptors + Provider</a></li>
+    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9'>useFetch + retryOn, retryDelay</a></li>
     <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a></li>
   </ul>
 
@@ -200,6 +202,8 @@ const App = () => (
 
 <details open><summary><b>Suspense Mode (auto managed state)</b></summary>
 
+Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
+
 ```js
 import useFetch, { Provider } from 'use-http'
 
@@ -207,7 +211,7 @@ function Todos() {
   const { data: todos } = useFetch({
     path: '/todos',
     data: [],
-    suspense: true // can put it in 2 places. Here or in Provider
+    suspense: true // A. can put `suspense: true` here
   }, []) // onMount
 
   return todos.map(todo => <div key={todo.id}>{todo.title}</div>)
@@ -215,7 +219,7 @@ function Todos() {
 
 function App() {
   const options = {
-    suspense: true
+    suspense: true // B. can put `suspense: true` here too
   }
   return (
     <Provider url='https://example.com' options={options}>
@@ -231,7 +235,7 @@ function App() {
 
 </details>
 
-<details open><summary><b>Suspense Mode (managed state)</b></summary>
+<details><summary><b>Suspense Mode (managed state)</b></summary>
 
 Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
 
@@ -301,7 +305,7 @@ function App() {
   <br>
 </div>
 
-<details open><summary><b>Pagination + <code>Provider</code></b></summary>
+<details><summary><b>Pagination + <code>Provider</code></b></summary>
 
 The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below, we are appending the new todos to the end of the current todos.
 
@@ -751,6 +755,46 @@ const App = () => {
 
 </details>
 
+<details><summary><b>Retries retryOn & retryDelay</b></summary>
+
+In this example you can see how `retryOn` will retry on a status code of `305`, or if we choose the `retryOn()` function, it returns a boolean to decide if we will retry. With `retryDelay` we can either have a fixed delay, or a dynamic one by using `retryDelay()`. Make sure `retries` is set to at minimum `1` otherwise it won't retry the request. If `retries > 0` without `retryOn` then by default we always retry if there's an error or if `!response.ok`. If `retryOn: [400]` and `retries > 0` then we only retry on a response status of `400`.
+
+```js
+import useFetch from 'use-http'
+
+const TestRetry = () => {
+  const { response, get } = useFetch('https://httpbin.org/status/305', {
+    // make sure `retries` is set otherwise it won't retry
+    retries: 1,
+    retryOn: [305],
+    // OR
+    retryOn: ({ attempt, error, response }) => {
+      // returns true or false to determine whether to retry
+      return error || response && response.status >= 300
+    },
+
+    retryDelay: 3000,
+    // OR
+    retryDelay: ({ attempt, error, response }) => {
+      // exponential backoff
+      return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
+      // linear backoff
+      return attempt * 1000
+    }
+  })
+
+  return (
+    <>
+      <button onClick={() => get()}>CLICK</button>
+      <pre>{JSON.stringify(response, null, 2)}</pre>
+    </>
+  )
+}
+```
+
+[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9)
+
+</details>
 
 Overview
 --------
@@ -772,69 +816,39 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
-| `suspense` | Enables Experimental React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | false |
-| `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
 | `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
-| `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
-| `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
-| `perPage` | Stops making more requests if there is no more data to fetch. (i.e. if we have 25 todos, and the perPage is 10, after fetching 2 times, we will have 20 todos. The last 5 tells us we don't have any more to fetch because it's less than 10) For pagination. | `0` |
-| `onAbort` | Runs when the request is aborted. | empty function |
-| `onTimeout` | Called when the request times out. | empty function |
-| `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
-| `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**       | `30000` </br> (30 seconds) |
+| `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
-| `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
+| `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
+| `onAbort` | Runs when the request is aborted. | empty function |
+| `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
+| `onTimeout` | Called when the request times out. | empty function |
+| `path` | When using a global `url` set in the `Provider`, this is useful for adding onto it       | `''` |
 | `persist` | Persists data for the duration of `cacheLife`. If `cacheLife` is not set it defaults to 24h. Currently only available in Browser. | `false` |
+| `perPage` | Stops making more requests if there is no more data to fetch. (i.e. if we have 25 todos, and the perPage is 10, after fetching 2 times, we will have 20 todos. The last 5 tells us we don't have any more to fetch because it's less than 10) For pagination. | `0` |
+| `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
+| `retryDelay` | You can retry with certain intervals i.e. 30 seconds `30000` or with custom logic (i.e. to increase retry intervals). | `1000` |
+| `retryOn` | You can retry on certain http status codes or have custom logic to decide whether to retry or not via a function. Make sure `retries > 0` otherwise it won't retry. | `[]` |
+| `suspense` | Enables Experimental React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | `false` |
+| `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**. If set to `0`, it will not timeout except for browser defaults.       | `0` |
+| `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 
 ```jsx
 const options = {
   // accepts all `fetch` options such as headers, method, etc.
 
-  // enables experimental React Suspense mode
-  suspense: true, // defaults to `false`
+  // The time in milliseconds that cache data remains fresh.
+  cacheLife: 0,
 
   // Cache responses to improve speed and reduce amount of requests
   // Only one request to the same endpoint will be initiated unless cacheLife expires for 'cache-first'.
   cachePolicy: 'cache-first' // 'no-cache'
-
-  // The time in milliseconds that cache data remains fresh.
-  cacheLife: 0,
-
-  // Allows caching to persist after page refresh. Only supported in the Browser currently.
-  persist: false,
-
-  // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
-  url: 'https://example.com',
-  
-  // called when the request times out
-  onTimeout: () => {},
-  
-  // called when aborting the request
-  onAbort: () => {},
-  
-  // this will allow you to merge the data however you choose. Used for Pagination
-  onNewData: (currData, newData) => {
-    return [...currData, ...newData] 
-  },
-  
-  // this will tell useFetch not to run the request if the list doesn't haveMore. (pagination)
-  // i.e. if the last page fetched was < 15, don't run the request again
-  perPage: 15,
-
-  // amount of times it should retry before erroring out
-  retries: 3,
-  
-  // amount of time before the request (or request(s) for each retry) errors out.
-  timeout: 10000,
   
   // set's the default for the `data` field
   data: [],
-  
-  // set's the default for `loading` field
-  loading: false,
-  
+
   // typically, `interceptors` would be added as an option to the `<Provider />`
   interceptors: {
     request: async (options, url, path, route) => { // `async` is not required
@@ -844,7 +858,66 @@ const options = {
       // note: `response.data` is equivalent to `await response.json()`
       return response // returning the `response` is important
     }
-  }
+  },
+
+  // set's the default for `loading` field
+  loading: false,
+  
+  // called when aborting the request
+  onAbort: () => {},
+  
+  // this will allow you to merge the `data` for pagination.
+  onNewData: (currData, newData) => {
+    return [...currData, ...newData] 
+  },
+  
+  // called when the request times out
+  onTimeout: () => {},
+  
+  // if you have a global `url` set up, this is how you can add to it
+  path: '/path/to/your/api',
+  
+  // this will tell useFetch not to run the request if the list doesn't haveMore. (pagination)
+  // i.e. if the last page fetched was < 15, don't run the request again
+  perPage: 15,
+
+  // Allows caching to persist after page refresh. Only supported in the Browser currently.
+  persist: false,
+
+  // amount of times it should retry before erroring out
+  retries: 3,
+
+  // The time between retries
+  retryDelay: 10000,
+  // OR
+  // Can be a function which is used if we want change the time in between each retry
+  retryDelay({ attempt, error, response }) {
+    // exponential backoff
+    return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
+    // linear backoff
+    return attempt * 1000
+  },
+
+  // make sure `retries` is set otherwise it won't retry
+  // can retry on certain http status codes
+  retryOn: [503],
+  // OR
+  retryOn({ attempt, error, response }) {
+    // retry on any network error, or 4xx or 5xx status codes
+    if (error !== null || response.status >= 400) {
+      console.log(`retrying, attempt number ${attempt + 1}`);
+      return true;
+    }
+  },
+
+  // enables experimental React Suspense mode
+  suspense: true, // defaults to `false`
+  
+  // amount of time before the request get's canceled/aborted
+  timeout: 10000,
+
+  // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
+  url: 'https://example.com',
 }
 
 useFetch(options)
@@ -886,6 +959,11 @@ If you have feature requests, [submit an issue][1] to let us know what you would
 Todos
 ------
 
+- [ ] dynamically check content-type to get data. [Common mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types)
+  - .arrayBuffer() []
+  - .json() ['application/json']
+  - .text() ['text/plain']
+  - .blob() ['image/png', 'application/octet-stream']
 - [ ] suspense
   - [ ] triggering it from outside the `<Suspense />` component.
     - add `.read()` to `request`
@@ -909,35 +987,40 @@ Todos
   - [ ] the `onMount` works properly with all variants of passing `useEffect(fn, [request.get])` and not causing an infinite loop
   - [ ] `async` tests for `interceptors.response`
   - [ ] aborts fetch on unmount
+  - [ ] does not abort fetch on every rerender
+  - [ ] `retryDelay` and `timeout` are both set. It works, but is annoying to deal with timers in tests. [resource](https://github.com/fac-13/HP-game/issues/9)
+  - [ ] `timeout` with `retries > 0`. (also do `retires > 1`) Need to figure out how to advance timers properly to write this and the test above
 - [ ] take a look at how [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) work. Maybe ad `useSubscription` and `const request = useFetch(); request.subscribe()` or something along those lines
 - [ ] make this a github package
   - [see ava packages](https://github.com/orgs/ava/packages)
-- [ ] get it all working on a SSR codesandbox, this way we can have api to call locally
-- [ ] make GraphQL examples in codesandbox
 - [ ] Documentation:
   - [ ] show comparison with Apollo
   - [ ] figure out a good way to show side-by-side comparisons
   - [ ] show comparison with Axios
-  - [ ] how this cancels a request on unmount of a component to avoid the error "cannot update state during a state transition" or something like that due to an incomplete http request
 - [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
 
-```jsx
-  const request = useFetch('https://example.com')
-  
-  request
-    .headers({
-      auth: jwt      // this would inline add the `auth` header
-    })
-    .query({         // might have to use .params({ }) since we're using .query() for GraphQL
-      no: 'way'      // this would inline make the url: https://example.com?no=way
-    })
-    .get()
-```
+  ```jsx
+    const request = useFetch('https://example.com')
+
+    request
+      .headers({
+        auth: jwt      // this would inline add the `auth` header
+      })
+      .query({         // might have to use .params({ }) since we're using .query() for GraphQL
+        no: 'way'      // this would inline make the url: https://example.com?no=way
+      })
+      .get()
+  ```
 
 - [ ] potential option ideas
 
   ```jsx
   const request = useFetch({
+    graphql: {
+      // all options can also be put in here
+      // to overwrite those of `useFetch` for
+      // `useMutation` and `useQuery`
+    },
     // Allows you to pass in your own cache to useFetch
     // This is controversial though because `cache` is an option in the requestInit
     // and it's value is a string. See: https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
@@ -950,23 +1033,6 @@ Todos
       // What if we only need the `route` and `options`?
       request: async ({ options, url, path, route }) => {},
       response: async ({ response }) => {}
-    },
-    // can retry on certain http status codes
-    retryOn: [503],
-    // OR
-    retryOn({ attempt, error, response }) {
-      // retry on any network error, or 4xx or 5xx status codes
-      if (error !== null || response.status >= 400) {
-        console.log(`retrying, attempt number ${attempt + 1}`);
-        return true;
-      }
-    },
-    // This function receives a retryAttempt integer and returns the delay to apply before the next attempt in milliseconds
-    retryDelay({ attempt, error, response }) {
-      // applies exponential backoff
-      return Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)
-      // applies linear backoff
-      return attempt * 1000
     },
     // these will be the exact same ones as Apollo's
     cachePolicy: 'cache-and-network', 'network-only', 'cache-only', 'no-cache' // 'cache-first'
@@ -983,60 +1049,24 @@ Todos
   })
   ```
 
-- resources
-  - [retryOn/retryDelay (fetch-retry)](https://www.npmjs.com/package/fetch-retry#example-retry-on-503-service-unavailable)
-  - [retryDelay (react-query)](https://github.com/tannerlinsley/react-query)
-
 - [ ] potential option ideas for `GraphQL`
 
-```jsx
-const request = useQuery({ onMount: true })`your graphql query`
+  ```jsx
+  const request = useQuery({ onMount: true })`your graphql query`
 
-const request = useFetch(...)
-const userID = 'some-user-uuid'
-const res = await request.query({ userID })`
-  query Todos($userID string!) {
-    todos(userID: $userID) {
-      id
-      title
-    }
-  }
-`
-```
-
-- [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
-
-<details><summary><b>GraphQL with Suspense <sup><strong>(not implemented yet)</strong></sup></b></summary>
-    
-```jsx
-const App = () => {
-  const [todoTitle, setTodoTitle] = useState('')
-  // if there's no <Provider /> used, useMutation works this way
-  const mutation = useMutation('http://example.com', `
-    mutation CreateTodo($todoTitle string) {
-      todo(title: $todoTitle) {
+  const request = useFetch(...)
+  const userID = 'some-user-uuid'
+  const res = await request.query({ userID })`
+    query Todos($userID string!) {
+      todos(userID: $userID) {
         id
         title
       }
     }
-  `)
+  `
+  ```
 
-  // ideally, I think it should be mutation.write({ todoTitle }) since mutation ~= POST
-  const createTodo = () => mutation.read({ todoTitle })
-  
-  if (!request.data) return null
-
-  return (
-    <>
-      <input onChange={e => setTodoTitle(e.target.value)} />
-      <button onClick={createTodo}>Create Todo</button>
-      <pre>{mutation.data}</pre>
-    </>
-  )
-}
-```
-</details>
-
+- [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
 
 [1]: https://github.com/alex-cory/use-http/issues/new?title=[Feature%20Request]%20YOUR_FEATURE_NAME
 [2]: https://github.com/alex-cory/use-http/issues/93#issuecomment-600896722

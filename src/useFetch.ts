@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useReducer } from 'react'
+import { useEffect, useState, useCallback, useRef, useReducer, useMemo } from 'react'
 import useSSR from 'use-ssr'
 import {
   HTTPMethod,
@@ -11,11 +11,14 @@ import {
   UseFetchArgs,
   CachePolicies,
   FetchData,
-  NoArgs
+  NoArgs,
+  RouteOrBody,
+  Body,
+  RetryOpts
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData, toResponseObject, useDeepCallback } from './utils'
+import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, sleep, makeError } from './utils'
 import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
@@ -24,19 +27,21 @@ const { CACHE_FIRST } = CachePolicies
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
   const {
-    url: initialURL,
-    path,
+    cacheLife,
+    cachePolicy, // 'cache-first' by default
     interceptors,
-    persist,
-    timeout,
-    retries,
-    onTimeout,
     onAbort,
     onNewData,
+    onTimeout,
+    path,
     perPage,
-    cachePolicy, // 'cache-first' by default
-    cacheLife,
-    suspense
+    persist,
+    retries,
+    retryDelay,
+    retryOn,
+    suspense,
+    timeout,
+    url: initialURL,
   } = customOptions
 
   const cache = useCache({ persist, cacheLife, cachePolicy })
@@ -47,7 +52,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const res = useRef<Res<TData>>({} as Res<TData>)
   const data = useRef<TData>(defaults.data)
   const timedout = useRef(false)
-  const attempts = useRef(retries)
+  const attempt = useRef(0)
   const error = useRef<any>()
   const hasMore = useRef(true)
   const suspenseStatus = useRef('pending')
@@ -58,9 +63,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const forceUpdate = useReducer(() => ({}), [])[1]
 
   const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
+
     const doFetch = async (
-      routeOrBody?: string | BodyInit | object,
-      body?: BodyInit | object
+      routeOrBody?: RouteOrBody,
+      body?: Body
     ): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
       controller.current = new AbortController()
@@ -80,7 +86,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         interceptors.request
       )
       
-      if (!suspense && mounted.current) setLoading(true)
       error.current = undefined
 
       if (response.isCached && cachePolicy === CACHE_FIRST) {
@@ -88,18 +93,20 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           res.current = response.cached as Res<TData>
           res.current.data = await tryGetData(response.cached, defaults.data)
           data.current = res.current.data as TData
-          if (!suspense && mounted.current) setLoading(false)
+          if (!suspense && mounted.current) forceUpdate()
           return data.current
         } catch (err) {
           error.current = err
-          if (mounted.current) setLoading(false)
+          if (mounted.current) forceUpdate()
         }
       }
+
+      if (!suspense && mounted.current) setLoading(true)
 
       // don't perform the request if there is no more data to fetch (pagination)
       if (perPage > 0 && !hasMore.current && !error.current) return data.current
 
-      const timer = timeout > 0 && setTimeout(() => {
+      const timer = timeout && setTimeout(() => {
         timedout.current = true
         theController.abort()
         if (onTimeout) onTimeout()
@@ -112,10 +119,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         newRes = await fetch(url, options)
         res.current = newRes.clone()
 
-        if (cachePolicy === CACHE_FIRST) {
-          await cache.set(response.id, newRes.clone())
-        }
-
         newData = await tryGetData(newRes, defaults.data)
         res.current.data = onNewData(data.current, newData)
 
@@ -123,23 +126,66 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
         data.current = res.current.data as TData
 
+        const opts = { attempt: attempt.current, response: newRes }
+        const shouldRetry = (
+          // if we just have `retries` set with NO `retryOn` then
+          // automatically retry on fail until attempts run out
+          !isFunction(retryOn) && Array.isArray(retryOn) && retryOn.length < 1 && newRes?.ok === false
+          // otherwise only retry when is specified
+          || Array.isArray(retryOn) && retryOn.includes(newRes.status)
+          || isFunction(retryOn) && (retryOn as Function)(opts)
+        ) && retries > 0 && retries > attempt.current
+
+        if (shouldRetry) {
+          const data = await retry(opts, routeOrBody, body)
+          return data
+        }
+
+        if (cachePolicy === CACHE_FIRST) {
+          await cache.set(response.id, newRes.clone())
+        }
+
         if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
       } catch (err) {
-        if (attempts.current > 0) return doFetch(routeOrBody, body)
-        if (attempts.current < 1 && timedout.current) error.current = { name: 'AbortError', message: 'Timeout Error' }
-        if (err.name !== 'AbortError') error.current = err
+        if (attempt.current >= retries && timedout.current) error.current = makeError('AbortError', 'Timeout Error')
+        const opts = { attempt: attempt.current, error: err }
+        const shouldRetry = (
+          // if we just have `retries` set with NO `retryOn` then
+          // automatically retry on fail until attempts run out
+          !isFunction(retryOn) && Array.isArray(retryOn) && retryOn.length < 1
+          // otherwise only retry when is specified
+          || isFunction(retryOn) && (retryOn as Function)(opts)
+        ) && retries > 0 && retries > attempt.current
+
+        if (shouldRetry) {
+          const temp = await retry(opts, routeOrBody, body)
+          return temp
+        }
+        if (err.name !== 'AbortError') error.current = makeError(err.name, err.message)
+ 
       } finally {
-        if (newRes && !newRes.ok && !error.current) error.current = { name: newRes.status, message: newRes.statusText }
-        if (attempts.current > 0) attempts.current -= 1
         timedout.current = false
         if (timer) clearTimeout(timer)
         controller.current = undefined
       }
 
+      if (newRes && !newRes.ok && !error.current) error.current = makeError(newRes.status, newRes.statusText)
       if (!suspense && mounted.current) setLoading(false)
+      if (attempt.current === retries) attempt.current = 0
 
       return data.current
     } // end of doFetch()
+
+    const retry = async (opts: RetryOpts, routeOrBody?: RouteOrBody, body?: Body) => {
+      const delay = (isFunction(retryDelay) ? (retryDelay as Function)(opts) : retryDelay) as number
+      if (!(Number.isInteger(delay) && delay >= 0)) {
+        console.error('retryDelay must be a number >= 0! If you\'re using it as a function, it must also return a number >= 0.')
+      }
+      attempt.current++
+      if (delay) await sleep(delay)
+      const d = await doFetch(routeOrBody, body)
+      return d
+    }
 
     if (suspense) {
       return async (...args) => {
@@ -174,13 +220,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     abort: () => controller.current && controller.current.abort(),
     query: (query, variables) => post({ query, variables }),
     mutate: (mutation, variables) => post({ mutation, variables }),
-    loading: loading,
+    loading,
     error: error.current,
     data: data.current,
     cache
   }
 
-  const response = toResponseObject<TData>(res, data)
+  const response = useMemo(() => toResponseObject<TData>(res, data), [])
 
   // onMount/onUpdate
   useEffect((): any => {
