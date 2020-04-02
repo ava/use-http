@@ -94,6 +94,10 @@ export type RouteAndBodyOnly = (
   body: BodyInit | object,
 ) => Promise<any>
 
+export type RouteOrBody = string | BodyInit | object
+export type Body = BodyInit | object
+export type RetryOpts = { attempt: number, error?: Error, response?: Response }
+
 export type NoArgs = () => Promise<any>
 
 export type FetchData = (
@@ -169,21 +173,23 @@ export type Cache = {
 }
 
 export interface CustomOptions {
-  retries?: number
-  persist?: boolean
-  timeout?: number
-  path?: string
-  url?: string
-  loading?: boolean
+  cacheLife?: number
+  cachePolicy?: CachePolicies
   data?: any
   interceptors?: Interceptors
+  loading?: boolean
   onAbort?: () => void
-  onTimeout?: () => void
   onNewData?: (currData: any, newData: any) => any
+  onTimeout?: () => void
+  path?: string
+  persist?: boolean
   perPage?: number
-  cachePolicy?: CachePolicies
-  cacheLife?: number
+  retries?: number
+  retryOn?: RetryOn
+  retryDelay?: RetryDelay
   suspense?: boolean
+  timeout?: number
+  url?: string
 }
 
 export type Options = CustomOptions &
@@ -196,6 +202,9 @@ export type OptionsMaybeURL = NoUrlOptions &
 
 // TODO: this is still yet to be implemented
 export type OverwriteGlobalOptions = (options: Options) => Options
+
+export type RetryOn = (<TData = any>({ attempt, error, response }: { attempt: number, error: Error, response: Res<TData> | null }) => boolean) | number[]
+export type RetryDelay = (<TData = any>({ attempt, error, response }: { attempt: number, error: Error, response: Res<TData> | null }) => number) | number
 
 /**
  * Helpers

@@ -83,6 +83,8 @@ export const isBodyObject = (obj: any): boolean => isObject(obj) || Array.isArra
 
 export const isFunction = (v: any): boolean => typeof v === 'function'
 
+export const isNumber = (v: any): boolean => Object.prototype.toString.call(v) === '[object Number]'
+
 // const requestFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Request('')))
 // const responseFields = Object.getOwnPropertyNames(Object.getPrototypeOf(new Response()))
 // export const customResponseFields = [...responseFields, 'data']
@@ -203,6 +205,7 @@ export const toResponseObject = <TData = any>(res?: Response | MutableRefObject<
 
 export const emptyCustomResponse = toResponseObject()
 
+// TODO: switch this to .reduce()
 const headersAsObject = (headers: Headers): object => {
   const obj: any = {}
   headers.forEach((value, key) => {
@@ -213,8 +216,7 @@ const headersAsObject = (headers: Headers): object => {
 
 export const serializeResponse = async (response: Response) => {
   const body = await response.text()
-  const status = response.status
-  const statusText = response.statusText
+  const { status, statusText } = response
   const headers = headersAsObject(response.headers)
   return {
     body,
@@ -231,3 +233,13 @@ function useDeepCompareMemoize(value: DependencyList) {
 }
 
 export const useDeepCallback = (cb: (method: HTTPMethod) => (...args: any) => any, deps: DependencyList) => useCallback(cb, useDeepCompareMemoize(deps))
+
+export const sleep = (ms: number) => new Promise((resolve: any) => setTimeout(resolve, ms))
+
+export const isPositiveNumber = (n: number) => Number.isInteger(n) && n > 0
+
+export const makeError = (name: string | number, message: string) => {
+  const error = new Error(message)
+  error.name = name + ''
+  return error
+}

@@ -38,11 +38,12 @@ export default async function doFetchArgs<TData = any>(
 
   const body = ((): BodyInit | null => {
     if (isBodyObject(routeOrBody)) return JSON.stringify(routeOrBody)
+    if (routeOrBody instanceof FormData) return routeOrBody
     if (
       !isServer &&
       ((bodyAs2ndParam as any) instanceof FormData ||
         (bodyAs2ndParam as any) instanceof URLSearchParams)
-    ) { return bodyAs2ndParam as string }
+    ) return bodyAs2ndParam as any
     if (isBodyObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
     if (isBodyObject(initialOptions.body)) return JSON.stringify(initialOptions.body)
     return null
@@ -50,7 +51,7 @@ export default async function doFetchArgs<TData = any>(
 
   const headers = ((): HeadersInit | null => {
     const contentType = ((initialOptions.headers || {}) as any)['Content-Type']
-    const shouldAddContentType = !!contentType || [HTTPMethod.POST, HTTPMethod.PUT].includes(method)
+    const shouldAddContentType = !!contentType || [HTTPMethod.POST, HTTPMethod.PUT].includes(method) && !(body instanceof FormData)
     const headers: any = { ...initialOptions.headers }
     if (shouldAddContentType) {
       // default content types http://bit.ly/2N2ovOZ
@@ -81,12 +82,11 @@ export default async function doFetchArgs<TData = any>(
 
     if (requestInterceptor) {
       const interceptor = await requestInterceptor(opts, initialURL, path, route)
-      return interceptor
+      return interceptor as any
     }
     return opts
   })()
 
-  // TODO: see if `Object.entries` is supported for IE
   // TODO: if the body is a file, and this is a large file, it might exceed the size
   // limit of the key size. Potential solution: base64 the body
   // used to tell if a request has already been made
