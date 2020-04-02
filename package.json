@@ -52,8 +52,9 @@
     "watch": "^1.0.2"
   },
   "scripts": {
-    "prepublishOnly": "yarn build # runs before publish",
+    "prepublishOnly": "yarn build:production # runs before publish",
     "build": "rm -rf dist && tsc --module CommonJS",
+    "build:production": "yarn build -p tsconfig.production.json",
     "build:watch": "rm -rf dist && tsc -w --module CommonJS",
     "tsc": "tsc -p . --noEmit && tsc -p ./src/__tests__",
     "test:browser": "yarn tsc && jest -c ./config/jest.config.js --env=jsdom",
