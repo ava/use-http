@@ -128,9 +128,9 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
         const opts = { attempt: attempt.current, response: newRes }
         const shouldRetry = (
-          // if we just have `retries` set without `retryOn` then
+          // if we just have `retries` set with NO `retryOn` then
           // automatically retry on fail until attempts run out
-          !isFunction(retryOn) && Array.isArray(retryOn) && retryOn.length < 1 && !newRes?.ok
+          !isFunction(retryOn) && Array.isArray(retryOn) && retryOn.length < 1 && newRes?.ok === false
           // otherwise only retry when is specified
           || Array.isArray(retryOn) && retryOn.includes(newRes.status)
           || isFunction(retryOn) && (retryOn as Function)(opts)
@@ -150,7 +150,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (attempt.current >= retries && timedout.current) error.current = makeError('AbortError', 'Timeout Error')
         const opts = { attempt: attempt.current, error: err }
         const shouldRetry = (
-          // if we just have `retries` set without `retryOn` then
+          // if we just have `retries` set with NO `retryOn` then
           // automatically retry on fail until attempts run out
           !isFunction(retryOn) && Array.isArray(retryOn) && retryOn.length < 1
           // otherwise only retry when is specified
