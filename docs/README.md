@@ -29,9 +29,6 @@
     <a href="https://github.com/ava/use-http/blob/master/license.md">
       <img alt="undefined" src="https://img.shields.io/github/license/ava/use-http.svg">
     </a>
-    <a href="https://greenkeeper.io/">
-      <img alt="undefined" src="https://badges.greenkeeper.io/ava/use-http.svg">
-    </a>
     <a href="https://standardjs.com">
         <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
     </a>
