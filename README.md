@@ -9,17 +9,17 @@
 <br />
 
 <p align="center">
-    <a href="https://github.com/alex-cory/use-http/pulls">
+    <a href="https://github.com/ava/use-http/pulls">
       <img src="https://camo.githubusercontent.com/d4e0f63e9613ee474a7dfdc23c240b9795712c96/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e2e737667" />
     </a>
-    <a href="https://circleci.com/gh/alex-cory/use-http">
-      <img src="https://img.shields.io/circleci/project/github/alex-cory/use-http/master.svg" />
+    <a href="https://circleci.com/gh/ava/use-http">
+      <img src="https://img.shields.io/circleci/project/github/ava/use-http/master.svg" />
     </a>
     <a href="https://www.npmjs.com/package/use-http">
       <img src="https://img.shields.io/npm/dt/use-http.svg" />
     </a>
-    <a href="https://lgtm.com/projects/g/alex-cory/use-http/context:javascript">
-      <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/alex-cory/use-http.svg?logo=lgtm&logoWidth=18"/>
+    <a href="https://lgtm.com/projects/g/ava/use-http/context:javascript">
+      <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/ava/use-http.svg?logo=lgtm&logoWidth=18"/>
     </a>
     <a href="http://packagequality.com/#?package=use-http">
       <img src="https://npm.packagequality.com/shield/use-http.svg" />
@@ -32,17 +32,17 @@
 <!--     <a href="https://bundlephobia.com/result?p=use-http">
       <img alt="undefined" src="https://img.shields.io/bundlephobia/minzip/use-http.svg">
     </a> -->
-<!--     <a href="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json">
-      <img src="https://snyk.io/test/github/alex-cory/use-http/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
+<!--     <a href="https://snyk.io/test/github/ava/use-http?targetFile=package.json">
+      <img src="https://snyk.io/test/github/ava/use-http/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/ava/use-http?targetFile=package.json" style="max-width:100%;">
     </a> -->
 <!--     <a href="https://www.npmjs.com/package/use-http">
-      <img src="https://img.shields.io/npm/v/use-http.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/alex-cory/use-http?targetFile=package.json" style="max-width:100%;">
+      <img src="https://img.shields.io/npm/v/use-http.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/ava/use-http?targetFile=package.json" style="max-width:100%;">
     </a> -->
-<!--     <a href="https://github.com/alex-cory/use-http/blob/master/license.md">
-      <img alt="undefined" src="https://img.shields.io/github/license/alex-cory/use-http.svg">
+<!--     <a href="https://github.com/ava/use-http/blob/master/license.md">
+      <img alt="undefined" src="https://img.shields.io/github/license/ava/use-http.svg">
     </a> -->
 <!--     <a href="https://greenkeeper.io/">
-      <img alt="undefined" src="https://badges.greenkeeper.io/alex-cory/use-http.svg">
+      <img alt="undefined" src="https://badges.greenkeeper.io/ava/use-http.svg">
     </a> -->
 </p>
 
@@ -72,7 +72,7 @@ Features
 - 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
-- Request/response interceptors <!--https://github.com/alex-cory/use-http#user-content-interceptors-->
+- Request/response interceptors <!--https://github.com/ava/use-http#user-content-interceptors-->
 - React Native support
 - Aborts/Cancels pending http requests when a component unmounts
 - Built in caching
@@ -935,10 +935,10 @@ Does your company use use-http? Consider sponsoring the project to fund new feat
     <img width="110px" src="https://ava.inc/ava-logo-green.png" />
   </a>
   <a href="https://github.com/microsoft/DLWorkspace">
-    <img height="110px" src="https://github.com/alex-cory/use-http/raw/master/public/microsoft-logo.png" />
+    <img height="110px" src="https://github.com/ava/use-http/raw/master/public/microsoft-logo.png" />
   </a>
   <a href="https://github.com/mozilla/Spoke">
-    <img height="110px" src="https://github.com/alex-cory/use-http/raw/master/public/mozilla.png" />
+    <img height="110px" src="https://github.com/ava/use-http/raw/master/public/mozilla.png" />
   </a>
 </p>
 
@@ -982,7 +982,7 @@ Todos
   - [ ] tests for SSR
   - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
   - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
-  - [ ] tests for stale `response` see this [PR](https://github.com/alex-cory/use-http/pull/119/files)
+  - [ ] tests for stale `response` see this [PR](https://github.com/ava/use-http/pull/119/files)
   - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
   - [ ] the `onMount` works properly with all variants of passing `useEffect(fn, [request.get])` and not causing an infinite loop
   - [ ] `async` tests for `interceptors.response`
@@ -1068,9 +1068,9 @@ Todos
 
 - [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
 
-[1]: https://github.com/alex-cory/use-http/issues/new?title=[Feature%20Request]%20YOUR_FEATURE_NAME
-[2]: https://github.com/alex-cory/use-http/issues/93#issuecomment-600896722
-[3]: https://github.com/alex-cory/use-http/raw/master/public/dog.png
+[1]: https://github.com/ava/use-http/issues/new?title=[Feature%20Request]%20YOUR_FEATURE_NAME
+[2]: https://github.com/ava/use-http/issues/93#issuecomment-600896722
+[3]: https://github.com/ava/use-http/raw/master/public/dog.png
 [4]: https://reactjs.org/docs/javascript-environment-requirements.html
 [5]: http://use-http.com
 [`react-app-polyfill`]: https://www.npmjs.com/package/react-app-polyfill
