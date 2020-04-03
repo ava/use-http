@@ -1,6 +1,6 @@
 import doFetchArgs from '../doFetchArgs'
 import { HTTPMethod } from '../types'
-import { defaults } from '../useFetchArgs'
+import defaults from '../defaults'
 import useCache from '../useCache'
 
 describe('doFetchArgs: general usages', (): void => {

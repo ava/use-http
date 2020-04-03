@@ -1,64 +1,9 @@
-import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, RetryOn, RetryDelay } from './types'
+import { OptionsMaybeURL, NoUrlOptions, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, RetryOn, RetryDelay, UseFetchArgsReturn } from './types'
 import { isString, isObject, invariant, pullOutRequestInit, isFunction, isPositiveNumber } from './utils'
 import { useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
+import defaults from './defaults'
 
-type UseFetchArgsReturn = {
-  customOptions: {
-    cacheLife: number
-    cachePolicy: CachePolicies
-    interceptors: Interceptors
-    onAbort: () => void
-    onNewData: (currData: any, newData: any) => any
-    onTimeout: () => void
-    path: string
-    perPage: number
-    persist: boolean
-    retries: number
-    retryDelay: RetryDelay
-    retryOn: RetryOn | undefined
-    suspense: boolean
-    timeout: number
-    url: string
-  }
-  requestInit: RequestInit
-  defaults: {
-    loading: boolean
-    data?: any
-  }
-  dependencies?: any[]
-}
-
-export const useFetchArgsDefaults: UseFetchArgsReturn = {
-  customOptions: {
-    cacheLife: 0,
-    cachePolicy: CachePolicies.CACHE_FIRST,
-    interceptors: {},
-    onAbort: () => { /* do nothing */ },
-    onNewData: (currData: any, newData: any) => newData,
-    onTimeout: () => { /* do nothing */ },
-    path: '',
-    perPage: 0,
-    persist: false,
-    retries: 0,
-    retryDelay: 1000,
-    retryOn: [],
-    suspense: false,
-    timeout: 0,
-    url: '',
-  },
-  requestInit: { headers: {} },
-  defaults: {
-    data: undefined,
-    loading: false
-  },
-  dependencies: undefined
-}
-
-export const defaults = Object.entries(useFetchArgsDefaults).reduce((acc, [key, value]) => {
-  if (isObject(value)) return { ...acc, ...value }
-  return { ...acc, [key]: value }
-}, {} as Flatten<UseFetchArgsReturn>)
 
 const useField = <DV = any>(
   field: keyof OptionsMaybeURL | keyof NoUrlOptions,
@@ -171,6 +116,7 @@ export default function useFetchArgs(
       ...contextRequestInit,
       ...requestInit,
       headers: {
+        ...defaults.headers,
         ...contextRequestInit.headers,
         ...requestInit.headers
       }
