@@ -8,6 +8,9 @@
     "type": "git",
     "url": "https://github.com/alex-cory/use-http.git"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "dependencies": {
     "use-ssr": "^1.0.22"
   },

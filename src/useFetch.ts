@@ -64,10 +64,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
   const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
 
-    const doFetch = async (
-      routeOrBody?: RouteOrBody,
-      body?: Body
-    ): Promise<any> => {
+    const doFetch = async (routeOrBody?: RouteOrBody, body?: Body): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
       controller.current = new AbortController()
       controller.current.signal.onabort = onAbort

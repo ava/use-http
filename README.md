@@ -964,6 +964,7 @@ Todos
   - .json() ['application/json']
   - .text() ['text/plain']
   - .blob() ['image/png', 'application/octet-stream']
+- [ ] is making a [gitpod](https://www.gitpod.io/docs/configuration/) useful here? 🤔
 - [ ] suspense
   - [ ] triggering it from outside the `<Suspense />` component.
     - add `.read()` to `request`
