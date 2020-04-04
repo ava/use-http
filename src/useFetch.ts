@@ -88,8 +88,9 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       if (response.isCached && cachePolicy === CACHE_FIRST) {
         try {
           res.current = response.cached as Res<TData>
-          res.current.data = await tryGetData(response.cached, defaults.data)
-          data.current = res.current.data as TData
+          const d = await tryGetData(response.cached, defaults.data)
+          res.current.data = d
+          data.current = d
           if (!suspense && mounted.current) forceUpdate()
           return data.current
         } catch (err) {
@@ -207,11 +208,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
 
-  const request: Req<TData> = {
-    get: useCallback(makeFetch(HTTPMethod.GET), [makeFetch]),
+  const request: Req<TData> = useMemo(() => ({
+    get: makeFetch(HTTPMethod.GET),
     post,
-    patch: useCallback(makeFetch(HTTPMethod.PATCH), [makeFetch]),
-    put: useCallback(makeFetch(HTTPMethod.PUT), [makeFetch]),
+    patch: makeFetch(HTTPMethod.PATCH),
+    put: makeFetch(HTTPMethod.PUT),
     del,
     delete: del,
     abort: () => controller.current && controller.current.abort(),
@@ -221,7 +222,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     error: error.current,
     data: data.current,
     cache
-  }
+  }), [])
 
   const response = useMemo(() => toResponseObject<TData>(res, data), [])
 

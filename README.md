@@ -998,21 +998,6 @@ Todos
   - [ ] show comparison with Apollo
   - [ ] figure out a good way to show side-by-side comparisons
   - [ ] show comparison with Axios
-- [ ] maybe add syntax for middle helpers for inline `headers` or `queries` like this:
-
-  ```jsx
-    const request = useFetch('https://example.com')
-
-    request
-      .headers({
-        auth: jwt      // this would inline add the `auth` header
-      })
-      .query({         // might have to use .params({ }) since we're using .query() for GraphQL
-        no: 'way'      // this would inline make the url: https://example.com?no=way
-      })
-      .get()
-  ```
-
 - [ ] potential option ideas
 
   ```jsx
@@ -1022,6 +1007,14 @@ Todos
       // to overwrite those of `useFetch` for
       // `useMutation` and `useQuery`
     },
+    responseType: 'json', // similar to axios
+    // OR can be an array. We will try to get the `data`
+    // by attempting to extract it via these body interface
+    // methods, one by one in this order
+    responseType: ['json', 'text', 'blob', 'formData', 'arrayBuffer'],
+    // ALSO, maybe there's a way to guess the proper `body interface method` for the correct response content-type.
+    // here's a stackoverflow with someone who's tried: https://bit.ly/2X8iaVG
+
     // Allows you to pass in your own cache to useFetch
     // This is controversial though because `cache` is an option in the requestInit
     // and it's value is a string. See: https://developer.mozilla.org/en-US/docs/Web/API/Request/cache

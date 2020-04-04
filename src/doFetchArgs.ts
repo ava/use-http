@@ -44,8 +44,8 @@ export default async function doFetchArgs<TData = any>(
       ((bodyAs2ndParam as any) instanceof FormData ||
         (bodyAs2ndParam as any) instanceof URLSearchParams)
     ) return bodyAs2ndParam as any
-    if (isBodyObject(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
-    if (isBodyObject(initialOptions.body)) return JSON.stringify(initialOptions.body)
+    if (isBodyObject(bodyAs2ndParam) || isString(bodyAs2ndParam)) return JSON.stringify(bodyAs2ndParam)
+    if (isBodyObject(initialOptions.body) || isString(bodyAs2ndParam)) return JSON.stringify(initialOptions.body)
     return null
   })()
 
