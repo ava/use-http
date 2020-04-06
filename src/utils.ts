@@ -155,7 +155,7 @@ export const tryGetData = async (res: Response | undefined, defaultData: any) =>
       data = (await response.text()) as any // FIXME: should not be `any` type
     } catch (er) {}
   }
-  return (defaultData && isEmpty(data)) ? defaultData : data
+  return !isEmpty(defaultData) && isEmpty(data) ? defaultData : data
 }
 
 /**

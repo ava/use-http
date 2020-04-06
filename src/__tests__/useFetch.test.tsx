@@ -1,14 +1,16 @@
 /* eslint-disable no-var */
 /* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/camelcase */
-import React, { ReactElement, ReactNode } from 'react'
+import React, { ReactElement, ReactNode, useEffect } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
+import * as test from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
 import { toCamel } from 'convert-keys'
 import { renderHook, act } from '@testing-library/react-hooks'
 import mockConsole from 'jest-mock-console'
 import * as mockdate from 'mockdate'
+import defaults from '../defaults'
 
 import { Res, Options, CachePolicies } from '../types'
 import { emptyCustomResponse, sleep, makeError } from '../utils'
@@ -92,10 +94,41 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
       var formData = new FormData()
       formData.append('username', 'AlexCory')
       await result.current.post(formData)
-      const options = fetch.mock.calls[0][1] || {}
+      const options = fetch.mock.calls[0][1] || { headers: {} }
       expect(options.method).toBe('POST')
-      expect(options.headers).toBeUndefined()
+      expect('Content-Type' in (options as any).headers).toBe(false)
     })
+  })
+
+  it('should not cause infinite loop with `[request]` as dependency', async () => {
+    function Section() {
+      const { request, data } = useFetch('https://a.co')
+      useEffect(() => {
+        request.get()
+      }, [request])
+      return <div>{JSON.stringify(data)}</div>
+    }
+    const { container } = test.render(<Section />)
+
+    await test.act(async (): Promise<any> => await sleep(100))
+    expect(JSON.parse(container.textContent as string)).toEqual(expected)
+  })
+
+  it('should not cause infinite loop with `[response]` as dependency', async () => {
+    function Section() {
+      const { request, response, data } = useFetch('https://a.co')
+      useEffect(() => {
+        (async () => {
+          await request.get()
+          if (!response.ok) console.error('no okay')
+        })()
+      }, [request, response])
+      return <div>{JSON.stringify(data)}</div>
+    }
+    const { container } = test.render(<Section />)
+
+    await test.act(async (): Promise<any> => await sleep(100))
+    expect(JSON.parse(container.textContent as string)).toEqual(expected)
   })
 })
 
@@ -591,8 +624,9 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   it('should only add Content-Type: application/json for POST and PUT by default', async (): Promise<void> => {
-    const expectedHeadersGET = providerHeaders
+    const expectedHeadersGET = { ...defaults.headers, ...providerHeaders }
     const expectedHeadersPOSTandPUT = {
+      ...defaults.headers,
       ...providerHeaders,
       'Content-Type': 'application/json'
     }
@@ -613,7 +647,10 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   it('should have the correct headers set in the options set in the Provider', async (): Promise<void> => {
-    const expectedHeaders = providerHeaders
+    const expectedHeaders = {
+      ...defaults.headers,
+      ...providerHeaders
+    }
     const { result } = renderHook(
       () => useFetch(),
       { wrapper }
@@ -625,7 +662,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   it('should overwrite url and options set in the Provider', async (): Promise<void> => {
-    const expectedHeaders = undefined
+    const expectedHeaders = defaults.headers
     const expectedURL = 'https://example2.com'
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(expectedURL, globalOptions => {
@@ -644,7 +681,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   it('should overwrite options set in the Provider', async (): Promise<void> => {
-    const expectedHeaders = undefined
+    const expectedHeaders = defaults.headers
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(globalOptions => {
         // TODO: fix the generics here so it knows when a header

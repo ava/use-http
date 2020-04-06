@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks'
-import useFetchArgs, { useFetchArgsDefaults } from '../useFetchArgs'
+import useFetchArgs from '../useFetchArgs'
+import defaults, { useFetchArgsDefaults } from '../defaults'
 import React, { ReactElement, ReactNode } from 'react'
 import { Provider } from '..'
 
@@ -183,7 +184,11 @@ describe('useFetchArgs: general usages', (): void => {
         url: 'https://example.com'
       },
       requestInit: {
-        ...options
+        ...options,
+        headers: {
+          ...defaults.headers,
+          ...options.headers
+        }
       }
     })
   })
@@ -201,7 +206,10 @@ describe('useFetchArgs: general usages', (): void => {
         url: 'http://localhost'
       },
       requestInit: {
-        ...options
+        headers: {
+          ...defaults.headers,
+          ...options.headers
+        }
       }
     })
   })
@@ -231,7 +239,11 @@ describe('useFetchArgs: general usages', (): void => {
         url: 'http://localhost'
       },
       requestInit: {
-        ...overwriteProviderOptions
+        ...overwriteProviderOptions,
+        headers: {
+          ...defaults.headers,
+          ...overwriteProviderOptions.headers
+        }
       }
     })
   })

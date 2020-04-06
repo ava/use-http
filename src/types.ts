@@ -206,6 +206,32 @@ export type OverwriteGlobalOptions = (options: Options) => Options
 export type RetryOn = (<TData = any>({ attempt, error, response }: { attempt: number, error: Error, response: Res<TData> | null }) => boolean) | number[]
 export type RetryDelay = (<TData = any>({ attempt, error, response }: { attempt: number, error: Error, response: Res<TData> | null }) => number) | number
 
+export type UseFetchArgsReturn = {
+  customOptions: {
+    cacheLife: number
+    cachePolicy: CachePolicies
+    interceptors: Interceptors
+    onAbort: () => void
+    onNewData: (currData: any, newData: any) => any
+    onTimeout: () => void
+    path: string
+    perPage: number
+    persist: boolean
+    retries: number
+    retryDelay: RetryDelay
+    retryOn: RetryOn | undefined
+    suspense: boolean
+    timeout: number
+    url: string
+  }
+  requestInit: RequestInit
+  defaults: {
+    loading: boolean
+    data?: any
+  }
+  dependencies?: any[]
+}
+
 /**
  * Helpers
  */
