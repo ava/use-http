@@ -59,7 +59,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const suspender = useRef<Promise<any>>()
   const mounted = useRef(false)
 
-  const [loading, setLoading] = useState<boolean>(defaults.loading)
+  const loading = useRef(defaults.loading)
+  const setLoadingState = useState(defaults.loading)[1]
+  const setLoading = (v: boolean) => {
+    if (!mounted.current) return
+    loading.current = v
+    setLoadingState(v)
+  }
   const forceUpdate = useReducer(() => ({}), [])[1]
 
   const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
@@ -99,7 +105,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         }
       }
 
-      if (!suspense && mounted.current) setLoading(true)
+      if (!suspense) setLoading(true)
 
       // don't perform the request if there is no more data to fetch (pagination)
       if (perPage > 0 && !hasMore.current && !error.current) return data.current
@@ -135,8 +141,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         ) && retries > 0 && retries > attempt.current
 
         if (shouldRetry) {
-          const data = await retry(opts, routeOrBody, body)
-          return data
+          const theData = await retry(opts, routeOrBody, body)
+          return theData
         }
 
         if (cachePolicy === CACHE_FIRST) {
@@ -156,8 +162,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         ) && retries > 0 && retries > attempt.current
 
         if (shouldRetry) {
-          const temp = await retry(opts, routeOrBody, body)
-          return temp
+          const theData = await retry(opts, routeOrBody, body)
+          return theData
         }
         if (err.name !== 'AbortError') error.current = makeError(err.name, err.message)
  
@@ -168,7 +174,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       }
 
       if (newRes && !newRes.ok && !error.current) error.current = makeError(newRes.status, newRes.statusText)
-      if (!suspense && mounted.current) setLoading(false)
+      if (!suspense) setLoading(false)
       if (attempt.current === retries) attempt.current = 0
 
       return data.current
@@ -208,7 +214,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
 
-  const request: Req<TData> = useMemo(() => ({
+  const request: Req<TData> = useMemo(() => Object.defineProperties({
     get: makeFetch(HTTPMethod.GET),
     post,
     patch: makeFetch(HTTPMethod.PATCH),
@@ -216,13 +222,14 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     del,
     delete: del,
     abort: () => controller.current && controller.current.abort(),
-    query: (query, variables) => post({ query, variables }),
-    mutate: (mutation, variables) => post({ mutation, variables }),
-    loading,
-    error: error.current,
-    data: data.current,
+    query: (query: any, variables: any) => post({ query, variables }),
+    mutate: (mutation: any, variables: any) => post({ mutation, variables }),
     cache
-  }), [])
+  }, {
+    loading: { get: () => loading.current },
+    error: { get: () => error.current },
+    data: { get: () => data.current },
+  }), [makeFetch])
 
   const response = useMemo(() => toResponseObject<TData>(res, data), [])
 
@@ -252,8 +259,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     }
   }
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, response, loading, error.current],
-    { request, response, ...request }
+    [request, response, loading.current, error.current],
+    { request, response, ...request, loading: loading.current, data: data.current, error: error.current }
   )
 }
 

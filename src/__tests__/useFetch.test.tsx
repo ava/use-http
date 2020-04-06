@@ -1,9 +1,10 @@
 /* eslint-disable no-var */
 /* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/camelcase */
-import React, { ReactElement, ReactNode } from 'react'
+import React, { ReactElement, ReactNode, useEffect } from 'react'
 import { useFetch, Provider } from '..'
 import { cleanup } from '@testing-library/react'
+import * as test from '@testing-library/react'
 import { FetchMock } from 'jest-fetch-mock'
 import { toCamel } from 'convert-keys'
 import { renderHook, act } from '@testing-library/react-hooks'
@@ -97,6 +98,37 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
       expect(options.method).toBe('POST')
       expect('Content-Type' in (options as any).headers).toBe(false)
     })
+  })
+
+  it('should not cause infinite loop with `[request]` as dependency', async () => {
+    function Section() {
+      const { request, data } = useFetch('https://a.co')
+      useEffect(() => {
+        request.get()
+      }, [request])
+      return <div>{JSON.stringify(data)}</div>
+    }
+    const { container } = test.render(<Section />)
+
+    await test.act(async (): Promise<any> => await sleep(100))
+    expect(JSON.parse(container.textContent as string)).toEqual(expected)
+  })
+
+  it('should not cause infinite loop with `[response]` as dependency', async () => {
+    function Section() {
+      const { request, response, data } = useFetch('https://a.co')
+      useEffect(() => {
+        (async () => {
+          await request.get()
+          if (!response.ok) console.error('no okay')
+        })()
+      }, [request, response])
+      return <div>{JSON.stringify(data)}</div>
+    }
+    const { container } = test.render(<Section />)
+
+    await test.act(async (): Promise<any> => await sleep(100))
+    expect(JSON.parse(container.textContent as string)).toEqual(expected)
   })
 })
 
