@@ -94,9 +94,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       if (response.isCached && cachePolicy === CACHE_FIRST) {
         try {
           res.current = response.cached as Res<TData>
-          const d = await tryGetData(response.cached, defaults.data)
-          res.current.data = d
-          data.current = d
+          const theData = await tryGetData(response.cached, defaults.data)
+          res.current.data = theData
+          res.current = interceptors.response ? await interceptors.response(res.current) : res.current
+          invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
+          data.current = res.current.data as TData
           if (!suspense && mounted.current) forceUpdate()
           return data.current
         } catch (err) {

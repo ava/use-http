@@ -602,6 +602,29 @@ describe('useFetch - BROWSER - interceptors', (): void => {
     await act(result.current.get)
     expect((fetch.mock.calls[0][1] as any).data).toEqual('url')
   })
+  
+  it('should still call both interceptors when using cache', async (): Promise<void> => {
+    let requestCalled = 0
+    let responseCalled = 0
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('url', {
+        interceptors: {
+          async request(options) {
+            requestCalled++
+            return options
+          },
+          async response(response) {
+            responseCalled++
+            return response
+          }
+        }
+      }, []),
+    )
+    await waitForNextUpdate()
+    await act(result.current.get)
+    expect(requestCalled).toBe(2)
+    expect(responseCalled).toBe(2)
+  })
 })
 
 describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): void => {
@@ -813,7 +836,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
 
     it('should retryOn specific error codes', async (): Promise<void> => {
       const { result, waitForNextUpdate } = renderHook(
-        () => useFetch('url', {
+        () => useFetch('some-url-1234124', {
           retries: 2,
           retryOn: [401]
         }, [])
