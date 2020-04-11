@@ -1041,6 +1041,10 @@ Todos
     retryOnError: false,
     refreshWhenHidden: false,
   })
+
+
+  // potential for causing a rerender after clearing cache if needed
+  request.cache.clear(true)
   ```
 
 - [ ] potential option ideas for `GraphQL`
