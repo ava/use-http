@@ -136,6 +136,9 @@ function Todos() {
   )
 }
 ```
+
+ <a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
+
 </details>
 
 <details><summary><b>Basic Usage (auto managed state) <code>useFetch</code></b></summary>
@@ -164,6 +167,9 @@ function Todos() {
   )
 }
 ```
+
+<a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
+
 </details>
 
 
@@ -196,7 +202,7 @@ const App = () => (
 )
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -231,7 +237,7 @@ function App() {
 }
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -340,7 +346,8 @@ const App = () => (
 )
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg)
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
+
 
 </details>
 
@@ -409,6 +416,7 @@ var {
 } = request
 ```
 
+<a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
 </details>
 
 
@@ -426,6 +434,7 @@ request.post('/todos', {
 ```
 </details>
 
+<a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
 
 <details><summary><b>Abort <code>useFetch</code></b></summary>
 
@@ -448,6 +457,9 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
   ))}
 </>
 ```
+
+<a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
+
 </details>
 
 
@@ -545,6 +557,7 @@ export default function QueryComponent() {
 }
 ```
 [![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
+
 
 ##### Add a new todo
 ```jsx
@@ -649,7 +662,9 @@ function App() {
 }
 
 ```
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex)
+
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
+
 </details>
 
 <details id='form-data'><summary><b>File Uploads (FormData)</b></summary>
@@ -709,7 +724,8 @@ const App = () => {
   )
 }
 ```
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-different-response-types-c6csw)
+
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-different-response-types-c6csw'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -792,7 +808,7 @@ const TestRetry = () => {
 }
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9)
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href=''><img  width='150px' height='30px' src='./public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -1012,6 +1028,9 @@ Todos
     // by attempting to extract it via these body interface
     // methods, one by one in this order
     responseType: ['json', 'text', 'blob', 'formData', 'arrayBuffer'],
+    // by default this is true, but if set to false
+    // then we default to the responseType array of trying 'json' first, then 'text', etc.
+    responseTypeGuessing: true,
     // ALSO, maybe there's a way to guess the proper `body interface method` for the correct response content-type.
     // here's a stackoverflow with someone who's tried: https://bit.ly/2X8iaVG
 
