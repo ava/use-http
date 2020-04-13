@@ -288,8 +288,6 @@ function App() {
 }
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
-
 </details>
 
 <div align="center">
@@ -566,7 +564,8 @@ export default function QueryComponent() {
   )
 }
 ```
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
+
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a> 
 
 
 ##### Add a new todo
