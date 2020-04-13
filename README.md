@@ -9,27 +9,27 @@
 <br />
 
 <p align="center">
-    <a href="https://github.com/ava/use-http/pulls">
-      <img src="https://camo.githubusercontent.com/d4e0f63e9613ee474a7dfdc23c240b9795712c96/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e2e737667" />
-    </a>
-    <a href="https://circleci.com/gh/ava/use-http">
-      <img src="https://img.shields.io/circleci/project/github/ava/use-http/master.svg" />
-    </a>
-    <a href="https://www.npmjs.com/package/use-http">
-      <img src="https://img.shields.io/npm/dt/use-http.svg" />
-    </a>
-    <a href="https://lgtm.com/projects/g/ava/use-http/context:javascript">
-      <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/ava/use-http.svg?logo=lgtm&logoWidth=18"/>
-    </a>
-    <a href="http://packagequality.com/#?package=use-http">
-      <img src="https://npm.packagequality.com/shield/use-http.svg" />
-    </a>
-    <a href="https://standardjs.com">
-      <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
-    </a>
-    <a href="https://www.youtube.com/channel/UCbQDX3YQJcQcISK_oyyYP6A">
-      <img src="https://img.shields.io/badge/youtube-subscribe-RED.svg" />
-    </a>
+  <a href="https://github.com/ava/use-http/pulls">
+    <img src="https://camo.githubusercontent.com/d4e0f63e9613ee474a7dfdc23c240b9795712c96/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e2e737667" />
+  </a>
+  <a href="https://circleci.com/gh/ava/use-http">
+    <img src="https://img.shields.io/circleci/project/github/ava/use-http/master.svg" />
+  </a>
+  <a href="https://www.npmjs.com/package/use-http">
+    <img src="https://img.shields.io/npm/dt/use-http.svg" />
+  </a>
+  <a href="https://lgtm.com/projects/g/ava/use-http/context:javascript">
+    <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/ava/use-http.svg?logo=lgtm&logoWidth=18"/>
+  </a>
+  <a href="http://packagequality.com/#?package=use-http">
+    <img src="https://npm.packagequality.com/shield/use-http.svg" />
+  </a>
+  <a href="https://standardjs.com">
+    <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
+  </a>
+  <a href="https://www.youtube.com/channel/UCbQDX3YQJcQcISK_oyyYP6A">
+    <img src="https://img.shields.io/badge/youtube-subscribe-RED.svg" />
+  </a>
 
 <!-- [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/next-js) -->
 <!--     <a href="https://bundlephobia.com/result?p=use-http">
@@ -88,17 +88,17 @@ Usage
 
 ### Examples + Videos
 
-- useFetch - Next.js [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-in-nextjs-nn9fm)
-- useFetch - create-react-app [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/embed/km04k9k9x5)
-- useFetch - route, path, Provider, etc. [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/33jqbLlQm3g)
-- useFetch - pagination [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/wHLo14vza2Y)
-- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/MbWizFdJBoE)
-- useFetch - request/response interceptors [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/2xSQm_OYprc)
-- useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/Y9zJwzR0vTg)
+- useFetch - Next.js [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-in-nextjs-nn9fm)
+- useFetch - create-react-app [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/embed/km04k9k9x5)
+- useFetch - route, path, Provider, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/33jqbLlQm3g)
+- useFetch - pagination [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/wHLo14vza2Y)
+- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/MbWizFdJBoE)
+- useFetch - request/response interceptors [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/2xSQm_OYprc)
+- useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/Y9zJwzR0vTg)
 - useFetch - abort, timeout, onAbort, onTimeout [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/X9X9niivp-0)
 - useFetch - persist, cache [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/EWd3ekEypM8)
 - useFetch - cacheLife, cachePolicy [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/-8vq5VGMGnA)
-- useQuery - GraphQL [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
+- useQuery - GraphQL [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
 
 <details open><summary><b>Basic Usage (managed state) <code>useFetch</code></b></summary>
 

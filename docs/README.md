@@ -66,17 +66,17 @@ Features
 Examples + Videos
 =========
 
-- useFetch - Next.js [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-in-nextjs-nn9fm)
-- useFetch - create-react-app [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/embed/km04k9k9x5)
-- useFetch - route, path, Provider, etc. [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/33jqbLlQm3g)
-- useFetch - pagination [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/wHLo14vza2Y)
-- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/MbWizFdJBoE)
-- useFetch - request/response interceptors [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/2xSQm_OYprc)
-- useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/Y9zJwzR0vTg)
+- useFetch - Next.js [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-in-nextjs-nn9fm)
+- useFetch - create-react-app [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/embed/km04k9k9x5)
+- useFetch - route, path, Provider, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/33jqbLlQm3g)
+- useFetch - pagination [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/wHLo14vza2Y)
+- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/MbWizFdJBoE)
+- useFetch - request/response interceptors [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/2xSQm_OYprc)
+- useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/Y9zJwzR0vTg)
 - useFetch - abort, timeout, onAbort, onTimeout [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/X9X9niivp-0)
 - useFetch - persist, cache [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/EWd3ekEypM8)
 - useFetch - cacheLife, cachePolicy [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/-8vq5VGMGnA)
-- useQuery - GraphQL [![](https://img.shields.io/badge/codesandbox-skyblue.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
+- useQuery - GraphQL [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
 
 Installation
 =============
