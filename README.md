@@ -986,11 +986,6 @@ If you have feature requests, [submit an issue][1] to let us know what you would
 Todos
 ------
 
-- [ ] dynamically check content-type to get data. [Common mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types)
-  - .arrayBuffer() []
-  - .json() ['application/json']
-  - .text() ['text/plain']
-  - .blob() ['image/png', 'application/octet-stream']
 - [ ] is making a [gitpod](https://www.gitpod.io/docs/configuration/) useful here? 🤔
 - [ ] suspense
   - [ ] triggering it from outside the `<Suspense />` component.
@@ -1038,12 +1033,12 @@ Todos
     // OR can be an array. We will try to get the `data`
     // by attempting to extract it via these body interface
     // methods, one by one in this order
-    responseType: ['json', 'text', 'blob', 'formData', 'arrayBuffer'],
+    // we skip `formData` because it's mostly used for service workers
+    responseType: ['json', 'text', 'blob', 'arrayBuffer'],
     // by default this is true, but if set to false
     // then we default to the responseType array of trying 'json' first, then 'text', etc.
+    // hopefully I get some answers on here: https://bit.ly/3afPlJS
     responseTypeGuessing: true,
-    // ALSO, maybe there's a way to guess the proper `body interface method` for the correct response content-type.
-    // here's a stackoverflow with someone who's tried: https://bit.ly/2X8iaVG
 
     // Allows you to pass in your own cache to useFetch
     // This is controversial though because `cache` is an option in the requestInit
