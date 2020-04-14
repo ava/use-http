@@ -9,24 +9,27 @@
 <br />
 
 <p align="center">
-    <a href="https://github.com/ava/use-http/pulls">
-      <img src="https://camo.githubusercontent.com/d4e0f63e9613ee474a7dfdc23c240b9795712c96/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e2e737667" />
-    </a>
-    <a href="https://circleci.com/gh/ava/use-http">
-      <img src="https://img.shields.io/circleci/project/github/ava/use-http/master.svg" />
-    </a>
-    <a href="https://www.npmjs.com/package/use-http">
-      <img src="https://img.shields.io/npm/dt/use-http.svg" />
-    </a>
-    <a href="https://lgtm.com/projects/g/ava/use-http/context:javascript">
-      <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/ava/use-http.svg?logo=lgtm&logoWidth=18"/>
-    </a>
-    <a href="http://packagequality.com/#?package=use-http">
-      <img src="https://npm.packagequality.com/shield/use-http.svg" />
-    </a>
-    <a href="https://standardjs.com">
-      <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
-    </a>
+  <a href="https://github.com/ava/use-http/pulls">
+    <img src="https://camo.githubusercontent.com/d4e0f63e9613ee474a7dfdc23c240b9795712c96/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5052732d77656c636f6d652d627269676874677265656e2e737667" />
+  </a>
+  <a href="https://circleci.com/gh/ava/use-http">
+    <img src="https://img.shields.io/circleci/project/github/ava/use-http/master.svg" />
+  </a>
+  <a href="https://www.npmjs.com/package/use-http">
+    <img src="https://img.shields.io/npm/dt/use-http.svg" />
+  </a>
+  <a href="https://lgtm.com/projects/g/ava/use-http/context:javascript">
+    <img alt="undefined" src="https://img.shields.io/lgtm/grade/javascript/g/ava/use-http.svg?logo=lgtm&logoWidth=18"/>
+  </a>
+  <a href="http://packagequality.com/#?package=use-http">
+    <img src="https://npm.packagequality.com/shield/use-http.svg" />
+  </a>
+  <a href="https://standardjs.com">
+    <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
+  </a>
+  <a href="https://www.youtube.com/channel/UCbQDX3YQJcQcISK_oyyYP6A">
+    <img src="https://img.shields.io/badge/youtube-subscribe-RED.svg" />
+  </a>
 
 <!-- [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/next-js) -->
 <!--     <a href="https://bundlephobia.com/result?p=use-http">
@@ -83,17 +86,20 @@ Features
 Usage
 -----
 
-### Examples
-  <ul>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-in-nextjs-nn9fm'>useFetch - Next.js</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/embed/km04k9k9x5'>useFetch - create-react-app</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'>useFetch + Provider</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'>useFetch + Suspense</a></li>
-<li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg'>useFetch + Pagination + Provider</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'>useFetch + Request/Response Interceptors + Provider</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9'>useFetch + retryOn, retryDelay</a></li>
-    <li><a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'>useQuery - GraphQL</a></li>
-  </ul>
+### Examples + Videos
+
+- useFetch - managed state, request, response, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=gtEwjpXbSik&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - route, path, Provider, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=33jqbLlQm3g&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - request/response interceptors [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=2xSQm_OYprc&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=Y9zJwzR0vTg&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - abort, timeout, onAbort, onTimeout [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=X9X9niivp-0&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - persist, cache [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=EWd3ekEypM8&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - cacheLife, cachePolicy [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=-8vq5VGMGnA&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=MbWizFdJBoE&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - pagination [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=s-r6x1WrMns&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i&index=9)
+- useQuery - GraphQL [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
+- useFetch - Next.js [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-in-nextjs-nn9fm)
+- useFetch - create-react-app [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/embed/km04k9k9x5)
 
 <details open><summary><b>Basic Usage (managed state) <code>useFetch</code></b></summary>
 
@@ -136,6 +142,9 @@ function Todos() {
   )
 }
 ```
+
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=gtEwjpXbSik&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+
 </details>
 
 <details><summary><b>Basic Usage (auto managed state) <code>useFetch</code></b></summary>
@@ -164,6 +173,10 @@ function Todos() {
   )
 }
 ```
+
+<!-- TODO: codesandbox + youtube -->
+<!-- <a target="_blank" rel="noopener noreferrer" href='XXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a> -->
+
 </details>
 
 
@@ -196,7 +209,9 @@ const App = () => (
 )
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2)
+<!-- TODO: youtube -->
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a> 
+<!-- <a target="_blank" rel="noopener noreferrer" href='XXXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a> -->
 
 </details>
 
@@ -231,7 +246,7 @@ function App() {
 }
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=MbWizFdJBoE&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -273,8 +288,6 @@ function App() {
   )
 }
 ```
-
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)]()
 
 </details>
 
@@ -340,13 +353,14 @@ const App = () => (
 )
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg)
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=s-r6x1WrMns&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i&index=9'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+
 
 </details>
 
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
-⚠️ Do not destructure the `response` object! Technically you can do it, but if you need to access the `response.ok` from, for example, within a component's onClick handler, it will be a stale value for `ok` where it will be correct for `response.ok`.  ️️⚠️
+⚠️ Do not destructure the `response` object! Details in [this video](https://youtu.be/gtEwjpXbSik?list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i&t=131). Technically you can do it, but if you need to access the `response.ok` from, for example, within a component's onClick handler, it will be a stale value for `ok` where it will be correct for `response.ok`.  ️️⚠️
 
 ```js
 var [request, response, loading, error] = useFetch('https://example.com')
@@ -409,6 +423,8 @@ var {
 } = request
 ```
 
+<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=gtEwjpXbSik&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+
 </details>
 
 
@@ -424,8 +440,10 @@ request.post('/todos', {
   no: 'way'
 })
 ```
-</details>
 
+<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=33jqbLlQm3g&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+
+</details>
 
 <details><summary><b>Abort <code>useFetch</code></b></summary>
 
@@ -448,6 +466,9 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
   ))}
 </>
 ```
+
+<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=X9X9niivp-0&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+
 </details>
 
 
@@ -544,7 +565,9 @@ export default function QueryComponent() {
   )
 }
 ```
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
+
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/graphql-usequery-provider-uhdmj'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a> 
+
 
 ##### Add a new todo
 ```jsx
@@ -649,7 +672,9 @@ function App() {
 }
 
 ```
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex)
+
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=2xSQm_OYprc&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+
 </details>
 
 <details id='form-data'><summary><b>File Uploads (FormData)</b></summary>
@@ -709,7 +734,9 @@ const App = () => {
   )
 }
 ```
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-different-response-types-c6csw)
+
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-different-response-types-c6csw'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a> 
+<!-- <a target="_blank" rel="noopener noreferrer" href='XXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a> -->
 
 </details>
 
@@ -792,7 +819,7 @@ const TestRetry = () => {
 }
 ```
 
-[![Edit Basic Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9)
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=Y9zJwzR0vTg&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -1012,6 +1039,9 @@ Todos
     // by attempting to extract it via these body interface
     // methods, one by one in this order
     responseType: ['json', 'text', 'blob', 'formData', 'arrayBuffer'],
+    // by default this is true, but if set to false
+    // then we default to the responseType array of trying 'json' first, then 'text', etc.
+    responseTypeGuessing: true,
     // ALSO, maybe there's a way to guess the proper `body interface method` for the correct response content-type.
     // here's a stackoverflow with someone who's tried: https://bit.ly/2X8iaVG
 
