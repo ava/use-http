@@ -143,7 +143,7 @@ function Todos() {
 ```
 
 <!-- TODO: codesandbox + youtube -->
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='XXXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>
 
 Managed State Usage
 -------------------
@@ -220,8 +220,9 @@ const App = () => (
 )
 ```
 
-<!-- TODO: codesandbox + youtube -->
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='XXXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<!-- TODO: youtube -->
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a> 
+<!-- <a target="_blank" rel="noopener noreferrer" href='XXXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a> -->
 
 
 Suspense Mode (auto managed state)
@@ -338,7 +339,7 @@ const App = () => (
 Destructured
 -------------
 
-⚠️ Do not destructure the `response` object! Technically you can do it, but if you need to access the `response.ok` from, for example, within a component's onClick handler, it will be a stale value for `ok` where it will be correct for `response.ok`.  ️️⚠️
+⚠️ Do not destructure the `response` object! Details in [this video](https://youtu.be/gtEwjpXbSik?list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i&t=131). Technically you can do it, but if you need to access the `response.ok` from, for example, within a component's onClick handler, it will be a stale value for `ok` where it will be correct for `response.ok`.  ️️⚠️
 
 ```js
 var [request, response, loading, error] = useFetch('https://example.com')
@@ -900,6 +901,8 @@ useFetch(options)
 // OR
 <Provider options={options}><ResOfYourApp /></Provider>
 ```
+
+<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=gtEwjpXbSik&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 Who's using use-http?
 =====================
