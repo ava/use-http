@@ -88,15 +88,15 @@ Usage
 
 ### Examples + Videos
 
-- useFetch - managed state, request, response, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/gtEwjpXbSik)
-- useFetch - route, path, Provider, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/33jqbLlQm3g)
-- useFetch - request/response interceptors [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/2xSQm_OYprc)
-- useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/Y9zJwzR0vTg)
-- useFetch - abort, timeout, onAbort, onTimeout [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/X9X9niivp-0)
-- useFetch - persist, cache [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/EWd3ekEypM8)
-- useFetch - cacheLife, cachePolicy [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/-8vq5VGMGnA)
-- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/MbWizFdJBoE)
-- useFetch - pagination [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://youtu.be/s-r6x1WrMns)
+- useFetch - managed state, request, response, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=gtEwjpXbSik&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - route, path, Provider, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=33jqbLlQm3g&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - request/response interceptors [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=2xSQm_OYprc&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=Y9zJwzR0vTg&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - abort, timeout, onAbort, onTimeout [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=X9X9niivp-0&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - persist, cache [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=EWd3ekEypM8&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - cacheLife, cachePolicy [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=-8vq5VGMGnA&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=MbWizFdJBoE&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
+- useFetch - pagination [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=s-r6x1WrMns&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i&index=9)
 - useQuery - GraphQL [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
 - useFetch - Next.js [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-in-nextjs-nn9fm)
 - useFetch - create-react-app [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/embed/km04k9k9x5)
@@ -143,7 +143,7 @@ function Todos() {
 }
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://youtu.be/gtEwjpXbSik'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=gtEwjpXbSik&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -245,7 +245,7 @@ function App() {
 }
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://youtu.be/MbWizFdJBoE'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=MbWizFdJBoE&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -352,7 +352,7 @@ const App = () => (
 )
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://youtu.be/wHLo14vza2Y'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=s-r6x1WrMns&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i&index=9'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 
 </details>
@@ -440,7 +440,7 @@ request.post('/todos', {
 })
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://youtu.be/33jqbLlQm3g'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=33jqbLlQm3g&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -466,7 +466,7 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 </>
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://youtu.be/X9X9niivp-0'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=X9X9niivp-0&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -672,7 +672,7 @@ function App() {
 
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://youtu.be/2xSQm_OYprc'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=2xSQm_OYprc&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 </details>
 
@@ -817,7 +817,7 @@ const TestRetry = () => {
 }
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://youtu.be/Y9zJwzR0vTg'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=Y9zJwzR0vTg&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 </details>
 
