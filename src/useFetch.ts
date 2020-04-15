@@ -139,7 +139,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           !isFunction(retryOn) && Array.isArray(retryOn) && retryOn.length < 1 && newRes?.ok === false
           // otherwise only retry when is specified
           || Array.isArray(retryOn) && retryOn.includes(newRes.status)
-          || isFunction(retryOn) && (retryOn as Function)(opts)
+          || isFunction(retryOn) && await (retryOn as Function)(opts)
         ) && retries > 0 && retries > attempt.current
 
         if (shouldRetry) {
@@ -160,7 +160,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           // automatically retry on fail until attempts run out
           !isFunction(retryOn) && Array.isArray(retryOn) && retryOn.length < 1
           // otherwise only retry when is specified
-          || isFunction(retryOn) && (retryOn as Function)(opts)
+          || isFunction(retryOn) && await (retryOn as Function)(opts)
         ) && retries > 0 && retries > attempt.current
 
         if (shouldRetry) {
