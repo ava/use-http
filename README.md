@@ -53,7 +53,7 @@
   <sup>
     🐶 React hook for making isomorphic http requests
     <br/>
-      <a href="http://use-http.com"><b>Main Documentation</b></a>
+      <a href="https://use-http.com"><b>Main Documentation</b></a>
   </sup>
 </div>
 
@@ -61,7 +61,7 @@
 <br/>
     
 <div align="center">
-  <pre>npm i <a href="http://use-http.com">use-http</a></pre>
+  <pre>npm i <a href="https://use-http.com">use-http</a></pre>
 </div>
 
 <br/>
@@ -986,6 +986,10 @@ If you have feature requests, [submit an issue][1] to let us know what you would
 Todos
 ------
 
+- [ ] better loading state management. When using only 1 useFetch in a component and we use
+      `Promise.all([get('/todos/1'), get('/todos/2')])` then don't have a loading true,
+      loading false on each request. Just have loading true on 1st request, and loading false
+      on last request.
 - [ ] is making a [gitpod](https://www.gitpod.io/docs/configuration/) useful here? 🤔
 - [ ] suspense
   - [ ] triggering it from outside the `<Suspense />` component.
@@ -1095,5 +1099,5 @@ Todos
 [2]: https://github.com/ava/use-http/issues/93#issuecomment-600896722
 [3]: https://github.com/ava/use-http/raw/master/public/dog.png
 [4]: https://reactjs.org/docs/javascript-environment-requirements.html
-[5]: http://use-http.com
+[5]: https://use-http.com
 [`react-app-polyfill`]: https://www.npmjs.com/package/react-app-polyfill

@@ -776,7 +776,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-2', {
           retries: 2,
-          retryOn({ error }) {
+          async retryOn({ error }) {
             return !!error
           }
         }, [])
@@ -790,7 +790,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-5', {
           retries: 2,
-          retryOn({ error }) {
+          async retryOn({ error }) {
             return !!error
           },
           retryDelay: 100
@@ -805,7 +805,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-7', {
           retries: 2,
-          retryOn({ error }) {
+          async retryOn({ error }) {
             return !!error
           },
           retryDelay() {
@@ -851,7 +851,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-2', {
           retries: 2,
-          retryOn({ response }) {
+          async retryOn({ response }) {
             return !!(response && response.status === 401)
           }
         }, [])
@@ -867,7 +867,7 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       const { result, waitForNextUpdate } = renderHook(
         () => useFetch('url-12', {
           retries: 2,
-          retryOn({ response }) {
+          async retryOn({ response }) {
             return !!(response && response.status === 400)
           },
           cachePolicy: CachePolicies.NO_CACHE
