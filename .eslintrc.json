@@ -8,7 +8,8 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "standard",
-    "plugin:jest/recommended"
+    "plugin:jest/recommended",
+    "plugin:cypress/recommended"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -27,7 +28,8 @@
     "@typescript-eslint",
     "react-hooks",
     "jest",
-    "jest-formatting"
+    "jest-formatting",
+    "cypress"
   ],
   "rules": {
     "@typescript-eslint/member-delimiter-style": [

@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:12.16.1
+      - image: cypress/browsers:node12.16.1-chrome80-ff73
     environment:
       - NODE_ENV: test
     working_directory: ~/use-http

@@ -1,4 +1,5 @@
 export { default } from './useFetch'
+export { default as ErrorBoundary } from './ErrorBoundary'
 export * from './useFetch'
 export * from './useMutation'
 export * from './useQuery'

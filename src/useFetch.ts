@@ -175,9 +175,13 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         controller.current = undefined
       }
 
-      if (newRes && !newRes.ok && !error.current) error.current = makeError(newRes.status, newRes.statusText)
+      if (newRes && (newRes.ok === false || newRes.status >= 400) && !error.current) {
+        error.current = makeError(newRes.status, newRes.statusText);
+      }
       if (!suspense) setLoading(false)
       if (attempt.current === retries) attempt.current = 0
+
+      if (error.current) throw error.current;
 
       return data.current
     } // end of doFetch()
