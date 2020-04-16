@@ -1,4 +1,4 @@
-import { OptionsMaybeURL, NoUrlOptions, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, RetryOn, RetryDelay, UseFetchArgsReturn } from './types'
+import { OptionsMaybeURL, NoUrlOptions, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, RetryOn, RetryDelay, UseFetchArgsReturn, ResponseTypes } from './types'
 import { isString, isObject, invariant, pullOutRequestInit, isFunction, isPositiveNumber } from './utils'
 import { useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
@@ -80,6 +80,7 @@ export default function useFetchArgs(
   invariant(isValidRetryOn, '`retryOn` must be an array of positive numbers or a function returning a boolean.')
   const retryDelay = useField<RetryDelay>('retryDelay', urlOrOptions, optionsNoURLs)
   invariant(isFunction(retryDelay) || Number.isInteger(retryDelay as number) && retryDelay >= 0, '`retryDelay` must be a positive number or a function returning a positive number.')
+  const responseType = useField<ResponseTypes>('responseType', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)
@@ -125,21 +126,22 @@ export default function useFetchArgs(
 
   return {
     customOptions: {
-      url,
-      path,
-      interceptors,
-      timeout,
-      retries,
-      persist,
-      onAbort,
-      onTimeout,
-      onNewData,
-      perPage,
-      cachePolicy,
       cacheLife,
-      suspense,
+      cachePolicy,
+      interceptors,
+      onAbort,
+      onNewData,
+      onTimeout,
+      path,
+      persist,
+      perPage,
+      responseType,
+      retries,
+      retryDelay,
       retryOn,
-      retryDelay
+      suspense,
+      timeout,
+      url,
     },
     requestInit,
     defaults: {
