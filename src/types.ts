@@ -158,9 +158,9 @@ export type UseFetchObjectReturn<TData> = ReqBase<TData> &
 export type UseFetch<TData> = UseFetchArrayReturn<TData> &
   UseFetchObjectReturn<TData>
 
-export type Interceptors = {
-  request?: (options: Options, url: string, path: string, route: string) => Promise<Options> | Options
-  response?: (response: Res<any>) => Promise<Res<any>>
+export type Interceptors<TData = any> = {
+  request?: ({ options, url, path, route }: { options: Options, url: string, path: string, route: string }) => Promise<Options> | Options
+  response?: ({ response }: { response: Res<TData> }) => Promise<Res<TData>>
 }
 
 // this also holds the response keys. It mimics js Map

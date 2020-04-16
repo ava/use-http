@@ -96,7 +96,7 @@ describe('doFetchArgs: general usages', (): void => {
       cachePolicy: defaults.cachePolicy
     })
     const interceptors = {
-      request(options: any) {
+      async request({ options }: { options: any }) {
         options.headers.Authorization = 'Bearer test'
         return options
       }
