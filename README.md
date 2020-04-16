@@ -986,6 +986,7 @@ If you have feature requests, [submit an issue][1] to let us know what you would
 Todos
 ------
 
+- [ ] `persist` support for React Native
 - [ ] better loading state management. When using only 1 useFetch in a component and we use
       `Promise.all([get('/todos/1'), get('/todos/2')])` then don't have a loading true,
       loading false on each request. Just have loading true on 1st request, and loading false
