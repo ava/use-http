@@ -32,7 +32,7 @@
     <a href="https://standardjs.com">
       <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" />
     </a>
-    <a href="https://www.youtube.com/channel/UCbQDX3YQJcQcISK_oyyYP6A">
+    <a href="https://www.youtube.com/playlist?list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW">
       <img src="https://img.shields.io/badge/youtube-subscribe-RED.svg" />
     </a>
 
@@ -66,15 +66,15 @@ Features
 Examples + Videos
 =========
 
-- useFetch - managed state, request, response, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=gtEwjpXbSik&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
-- useFetch - route, path, Provider, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=33jqbLlQm3g&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
-- useFetch - request/response interceptors [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=2xSQm_OYprc&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
-- useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=Y9zJwzR0vTg&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
-- useFetch - abort, timeout, onAbort, onTimeout [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=X9X9niivp-0&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
-- useFetch - persist, cache [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=EWd3ekEypM8&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
-- useFetch - cacheLife, cachePolicy [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=-8vq5VGMGnA&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
-- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=MbWizFdJBoE&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i)
-- useFetch - pagination [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=s-r6x1WrMns&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i&index=9)
+- useFetch - managed state, request, response, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=_-GujYZFCKI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=6)
+- useFetch - route, path, Provider, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-with-provider-c78w2) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=JWDL_AVOYT0&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=10)
+- useFetch - request/response interceptors [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=3HauoWh0Jts&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=8)
+- useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=grE3AX-Q9ss&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=9)
+- useFetch - abort, timeout, onAbort, onTimeout [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=7SuD3ZOfu7E&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=4)
+- useFetch - persist, cache [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=pJ22Rq9c8mw&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=7)
+- useFetch - cacheLife, cachePolicy [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=AsZ9hnWHCeg&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=3&t=0s)
+- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=7qWLJUpnxHI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=2&t=0s)
+- useFetch - pagination [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=YmcMjRpIYqU&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=5)
 - useQuery - GraphQL [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
 - useFetch - Next.js [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-in-nextjs-nn9fm)
 - useFetch - create-react-app [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/embed/km04k9k9x5)
@@ -188,7 +188,7 @@ function Todos() {
 }
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=gtEwjpXbSik&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=_-GujYZFCKI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=6'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 Basic Usage With Provider (auto managed state)
 ---------------------------------------------
@@ -255,7 +255,7 @@ function App() {
 }
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=MbWizFdJBoE&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=7qWLJUpnxHI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=2&t=0s'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 Suspense Mode (managed state)
 -----------------------------
@@ -334,7 +334,7 @@ const App = () => (
 )
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=s-r6x1WrMns&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i&index=9'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=YmcMjRpIYqU&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=5'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 Destructured
 -------------
@@ -402,6 +402,8 @@ var {
 } = request
 ```
 
+<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=_-GujYZFCKI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=6'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+
 Relative routes
 ---------------
 
@@ -417,7 +419,7 @@ request.post('/todos', {
 })
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=33jqbLlQm3g&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-with-provider-c78w2'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=JWDL_AVOYT0&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=10'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 Abort
 -----
@@ -441,7 +443,7 @@ const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
 </>
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=X9X9niivp-0&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=7SuD3ZOfu7E&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=4'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 Request/Response Interceptors with `Provider`
 ---------------------------------------------
@@ -486,7 +488,7 @@ function App() {
 
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=2xSQm_OYprc&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=3HauoWh0Jts&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=8'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 File Upload (FormData)
 ----------------------
@@ -607,7 +609,7 @@ const TestRetry = () => {
     retries: 1,
     retryOn: [305],
     // OR
-    retryOn: ({ attempt, error, response }) => {
+    retryOn: async ({ attempt, error, response }) => {
       // returns true or false to determine whether to retry
       return error || response && response.status >= 300
     },
@@ -631,7 +633,7 @@ const TestRetry = () => {
 }
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=Y9zJwzR0vTg&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=grE3AX-Q9ss&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=9'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 GraphQL Query
 ---------------
@@ -879,7 +881,7 @@ const options = {
   // can retry on certain http status codes
   retryOn: [503],
   // OR
-  retryOn({ attempt, error, response }) {
+  async retryOn({ attempt, error, response }) {
     // retry on any network error, or 4xx or 5xx status codes
     if (error !== null || response.status >= 400) {
       console.log(`retrying, attempt number ${attempt + 1}`);
@@ -901,8 +903,6 @@ useFetch(options)
 // OR
 <Provider options={options}><ResOfYourApp /></Provider>
 ```
-
-<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=gtEwjpXbSik&list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 Who's using use-http?
 =====================
