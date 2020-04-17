@@ -1015,6 +1015,19 @@ describe('useFetch - BROWSER - errors', (): void => {
     fetch.mockResponse('fail', {
       status: 401
     })
+    const onError = jest.fn()
+    const { waitForNextUpdate } = renderHook(
+      () => useFetch('https://example.com', { onError }, [])
+    )
+    await waitForNextUpdate()
+    expect(onError).toBeCalled()
+  })
+  
+  it('should set the `error` object when response.ok is false', async (): Promise<void> => {
+    fetch.resetMocks()
+    fetch.mockResponse('fail', {
+      status: 401
+    })
     const { result } = renderHook(
       () => useFetch({
         url: 'https://example.com',
