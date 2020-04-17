@@ -850,6 +850,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
 | `loading` | Allows you to set default value for `loading`       | `false` unless the last argument of `useFetch` is `[]` |
 | `onAbort` | Runs when the request is aborted. | empty function |
+| `onError` | Runs when the request get's an error. If retrying, it is only called on the last retry attempt. | empty function |
 | `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
 | `onTimeout` | Called when the request times out. | empty function |
 | `path` | When using a global `url` set in the `Provider`, this is useful for adding onto it       | `''` |
@@ -894,6 +895,9 @@ const options = {
   // called when aborting the request
   onAbort: () => {},
   
+  // runs when an error happens.
+  onError: ({ error }) => {},
+
   // this will allow you to merge the `data` for pagination.
   onNewData: (currData, newData) => {
     return [...currData, ...newData] 
@@ -1062,12 +1066,10 @@ Todos
     // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     onServer: true,
     onSuccess: (/* idk what to put here */) => {},
-    onError: (error) => {},
     // if you would prefer to pass the query in the config
     query: `some graphql query`
     // if you would prefer to pass the mutation in the config
     mutation: `some graphql mutation`
-    retryOnError: false,
     refreshWhenHidden: false,
   })
 

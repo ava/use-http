@@ -1,4 +1,4 @@
-import { OptionsMaybeURL, NoUrlOptions, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, RetryOn, RetryDelay, UseFetchArgsReturn, ResponseType } from './types'
+import { OptionsMaybeURL, NoUrlOptions, CachePolicies, Interceptors, OverwriteGlobalOptions, Options, RetryOn, RetryDelay, UseFetchArgsReturn, ResponseType, OnError } from './types'
 import { isString, isObject, invariant, pullOutRequestInit, isFunction, isPositiveNumber } from './utils'
 import { useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
@@ -62,25 +62,26 @@ export default function useFetchArgs(
   }, [optionsNoURLsOrOverwriteGlobalOrDeps, deps])
 
   const data = useField('data', urlOrOptions, optionsNoURLs)
-  const path = useField<string>('path', urlOrOptions, optionsNoURLs)
-  const timeout = useField<number>('timeout', urlOrOptions, optionsNoURLs)
-  const persist = useField<boolean>('persist', urlOrOptions, optionsNoURLs)
-  const onAbort = useField<() => void>('onAbort', urlOrOptions, optionsNoURLs)
-  const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
-  const onNewData = useField<() => void>('onNewData', urlOrOptions, optionsNoURLs)
-  const perPage = useField<number>('perPage', urlOrOptions, optionsNoURLs)
-  const cachePolicy = useField<CachePolicies>('cachePolicy', urlOrOptions, optionsNoURLs)
   const cacheLife = useField<number>('cacheLife', urlOrOptions, optionsNoURLs)
   invariant(Number.isInteger(cacheLife) && cacheLife >= 0, '`cacheLife` must be a number >= 0')
-  const suspense = useField<boolean>('suspense', urlOrOptions, optionsNoURLs)
+  const cachePolicy = useField<CachePolicies>('cachePolicy', urlOrOptions, optionsNoURLs)
+  const onAbort = useField<() => void>('onAbort', urlOrOptions, optionsNoURLs)
+  const onError = useField<OnError>('onError', urlOrOptions, optionsNoURLs)
+  const onNewData = useField<() => void>('onNewData', urlOrOptions, optionsNoURLs)
+  const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
+  const path = useField<string>('path', urlOrOptions, optionsNoURLs)
+  const perPage = useField<number>('perPage', urlOrOptions, optionsNoURLs)
+  const persist = useField<boolean>('persist', urlOrOptions, optionsNoURLs)
+  const responseType = useField<ResponseType>('responseType', urlOrOptions, optionsNoURLs)
   const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
   invariant(Number.isInteger(retries) && retries >= 0, '`retries` must be a number >= 0')
+  const retryDelay = useField<RetryDelay>('retryDelay', urlOrOptions, optionsNoURLs)
+  invariant(isFunction(retryDelay) || Number.isInteger(retryDelay as number) && retryDelay >= 0, '`retryDelay` must be a positive number or a function returning a positive number.')
   const retryOn = useField<RetryOn>('retryOn', urlOrOptions, optionsNoURLs)
   const isValidRetryOn = isFunction(retryOn) || (Array.isArray(retryOn) && retryOn.every(isPositiveNumber))
   invariant(isValidRetryOn, '`retryOn` must be an array of positive numbers or a function returning a boolean.')
-  const retryDelay = useField<RetryDelay>('retryDelay', urlOrOptions, optionsNoURLs)
-  invariant(isFunction(retryDelay) || Number.isInteger(retryDelay as number) && retryDelay >= 0, '`retryDelay` must be a positive number or a function returning a positive number.')
-  const responseType = useField<ResponseType>('responseType', urlOrOptions, optionsNoURLs)
+  const suspense = useField<boolean>('suspense', urlOrOptions, optionsNoURLs)
+  const timeout = useField<number>('timeout', urlOrOptions, optionsNoURLs)
 
   const loading = useMemo((): boolean => {
     if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)
@@ -130,6 +131,7 @@ export default function useFetchArgs(
       cachePolicy,
       interceptors,
       onAbort,
+      onError,
       onNewData,
       onTimeout,
       path,
