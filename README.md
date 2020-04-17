@@ -360,7 +360,7 @@ const App = () => (
 
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
-⚠️ Do not destructure the `response` object! Details in [this video](https://youtu.be/gtEwjpXbSik?list=PLZIwrWkE9rCfYafpuEkF6swOtiqRX5r9i&t=131). Technically you can do it, but if you need to access the `response.ok` from, for example, within a component's onClick handler, it will be a stale value for `ok` where it will be correct for `response.ok`.  ️️⚠️
+⚠️ Do not destructure the `response` object! Details in [this video](https://youtu.be/_-GujYZFCKI?list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&t=127). Technically you can do it, but if you need to access the `response.ok` from, for example, within a component's onClick handler, it will be a stale value for `ok` where it will be correct for `response.ok`.  ️️⚠️
 
 ```js
 var [request, response, loading, error] = useFetch('https://example.com')
