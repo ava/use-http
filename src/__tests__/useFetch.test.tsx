@@ -1010,11 +1010,55 @@ describe('useFetch - BROWSER - errors', (): void => {
     fetch.mockResponseOnce(JSON.stringify(expectedSuccess))
   })
 
+  it('should call onError when there is a network error', async (): Promise<void> => {
+    const onError = jest.fn()
+    const { waitForNextUpdate } = renderHook(
+      () => useFetch('https://example.com', { onError }, [])
+    )
+    await waitForNextUpdate()
+    expect(onError).toBeCalled()
+    expect(onError).toHaveBeenCalledWith({ error: expectedError })
+  })
+  
+  it('should not call onError when aborting a request', async (): Promise<void> => {
+    fetch.resetMocks()
+    fetch.mockResponse('fail', { status: 401 })
+    const onError = jest.fn()
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('https://example.com', { onError }, [])
+    )
+    act(result.current.abort)
+    await waitForNextUpdate()
+    expect(onError).not.toBeCalled()
+  })
+  
+  it('should only call onError on the last retry', async (): Promise<void> => {
+    fetch.resetMocks()
+    fetch.mockResponse('fail', { status: 401 })
+    const onError = jest.fn()
+    const { waitForNextUpdate } = renderHook(
+      () => useFetch('https://example.com/4', { onError, retries: 1 }, [])
+    )
+    await waitForNextUpdate()
+    expect(onError).toBeCalledTimes(1)
+    expect(onError).toHaveBeenCalledWith({ error: makeError(401, 'Unauthorized') })
+  })
+  
+  it('should call onError when !response.ok', async (): Promise<void> => {
+    fetch.resetMocks()
+    fetch.mockResponse('fail', { status: 401 })
+    const onError = jest.fn()
+    const { waitForNextUpdate } = renderHook(
+      () => useFetch('https://example.com', { onError }, [])
+    )
+    await waitForNextUpdate()
+    expect(onError).toBeCalled()
+    expect(onError).toHaveBeenCalledWith({ error: makeError(401, 'Unauthorized') })
+  })
+  
   it('should set the `error` object when response.ok is false', async (): Promise<void> => {
     fetch.resetMocks()
-    fetch.mockResponse('fail', {
-      status: 401
-    })
+    fetch.mockResponse('fail', { status: 401 })
     const { result } = renderHook(
       () => useFetch({
         url: 'https://example.com',
