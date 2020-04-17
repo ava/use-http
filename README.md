@@ -72,7 +72,7 @@ Features
 
 - SSR (server side rendering) support
 - TypeScript support
-- 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
+- 2 dependencies ([use-ssr](https://github.com/alex-cory/use-ssr), [urs](https://github.com/alex-cory/urs))
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
 - Request/response interceptors <!--https://github.com/ava/use-http#user-content-interceptors-->
@@ -913,12 +913,13 @@ const options = {
   persist: false,
 
   // this would basically call `await response.json()`
+  // and set the `data` and `response.data` field to the output
   responseType: 'json',
-  // OR can be an array.
+  // OR can be an array. It's an array by default.
   // We will try to get the `data` by attempting to extract
   // it via these body interface methods, one by one in
-  // this order we skip `formData` because it's mostly used
-  // for service workers
+  // this order. We skip `formData` because it's mostly used
+  // for service workers.
   responseType: ['json', 'text', 'blob', 'arrayBuffer'],
 
   // amount of times it should retry before erroring out
@@ -1018,7 +1019,7 @@ Todos
   - [ ] if calling `response.json()` and there is no response yet
 - [ ] tests
   - [ ] tests for SSR
-  - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
+  - [ ] tests for react native [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests)
   - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
   - [ ] tests for stale `response` see this [PR](https://github.com/ava/use-http/pull/119/files)
   - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly

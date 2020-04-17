@@ -148,18 +148,17 @@ export const tryGetData = async (res: Response | undefined, defaultData: any, re
   if (typeof res === 'undefined') throw Error('Response cannot be undefined... 😵')
   if (typeof responseType === 'undefined') throw Error('responseType cannot be undefined... 😵')
   const types = (Array.isArray(responseType) ? responseType : [responseType]) as ResponseTypes
-  const data = await tryRetry(res, types)
+  if (types[0] == null) throw Error('could not parse data from response 😵')
+  const data = res.ok ? await tryRetry(res, types) : undefined
   return !isEmpty(defaultData) && isEmpty(data) ? defaultData : data
 }
 
 const tryRetry = async <T = any>(res: Response, types: ResponseTypes): Promise<T> => {
-  if (types[0] == null) throw Error('could not parse data from response')
-  const response = res.clone()
   try {
-    return await (response as any)[types[0]]()
-  } catch (er) {
-    const v = await tryRetry(res, (types as any).slice(1))
-    return v
+    return (res.clone() as any)[types[0]]()
+  } catch (error) {
+    if (types.length === 1) throw error
+    return tryRetry(res.clone(), (types as any).slice(1))
   }
 }
 

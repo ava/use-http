@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback, useRef, useReducer, useMemo } from 'react'
+import { useEffect, useCallback, useRef, useReducer, useMemo } from 'react'
 import useSSR from 'use-ssr'
+import useRefState from 'urs'
 import {
   HTTPMethod,
   UseFetch,
@@ -60,13 +61,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const suspender = useRef<Promise<any>>()
   const mounted = useRef(false)
 
-  const loading = useRef(defaults.loading)
-  const setLoadingState = useState(defaults.loading)[1]
-  const setLoading = (v: boolean) => {
-    if (!mounted.current) return
-    loading.current = v
-    setLoadingState(v)
-  }
+  const [loading, setLoading] = useRefState(defaults.loading)
   const forceUpdate = useReducer(() => ({}), [])[1]
 
   const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
