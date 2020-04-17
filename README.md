@@ -1066,12 +1066,10 @@ Todos
     // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
     onServer: true,
     onSuccess: (/* idk what to put here */) => {},
-    onError: (error) => {},
     // if you would prefer to pass the query in the config
     query: `some graphql query`
     // if you would prefer to pass the mutation in the config
     mutation: `some graphql mutation`
-    retryOnError: false,
     refreshWhenHidden: false,
   })
 
