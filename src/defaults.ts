@@ -13,6 +13,7 @@ export const useFetchArgsDefaults: UseFetchArgsReturn = {
     path: '',
     perPage: 0,
     persist: false,
+    responseType: ['json', 'text', 'blob', 'arrayBuffer'],
     retries: 0,
     retryDelay: 1000,
     retryOn: [],

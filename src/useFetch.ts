@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback, useRef, useReducer, useMemo } from 'react'
+import { useEffect, useCallback, useRef, useReducer, useMemo } from 'react'
 import useSSR from 'use-ssr'
+import useRefState from 'urs'
 import {
   HTTPMethod,
   UseFetch,
@@ -13,7 +14,7 @@ import {
   FetchData,
   NoArgs,
   RouteOrBody,
-  Body,
+  UFBody,
   RetryOpts
 } from './types'
 import useFetchArgs from './useFetchArgs'
@@ -36,6 +37,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     path,
     perPage,
     persist,
+    responseType,
     retries,
     retryDelay,
     retryOn,
@@ -59,18 +61,12 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const suspender = useRef<Promise<any>>()
   const mounted = useRef(false)
 
-  const loading = useRef(defaults.loading)
-  const setLoadingState = useState(defaults.loading)[1]
-  const setLoading = (v: boolean) => {
-    if (!mounted.current) return
-    loading.current = v
-    setLoadingState(v)
-  }
+  const [loading, setLoading] = useRefState(defaults.loading)
   const forceUpdate = useReducer(() => ({}), [])[1]
 
   const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
 
-    const doFetch = async (routeOrBody?: RouteOrBody, body?: Body): Promise<any> => {
+    const doFetch = async (routeOrBody?: RouteOrBody, body?: UFBody): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
       controller.current = new AbortController()
       controller.current.signal.onabort = onAbort
@@ -94,7 +90,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       if (response.isCached && cachePolicy === CACHE_FIRST) {
         try {
           res.current = response.cached as Res<TData>
-          const theData = await tryGetData(response.cached, defaults.data)
+          const theData = await tryGetData(response.cached, defaults.data, responseType)
           res.current.data = theData
           res.current = interceptors.response ? await interceptors.response(res.current) : res.current
           invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
@@ -125,7 +121,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         newRes = await fetch(url, options)
         res.current = newRes.clone()
 
-        newData = await tryGetData(newRes, defaults.data)
+        newData = await tryGetData(newRes, defaults.data, responseType)
         res.current.data = onNewData(data.current, newData)
 
         res.current = interceptors.response ? await interceptors.response(res.current) : res.current
@@ -182,7 +178,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       return data.current
     } // end of doFetch()
 
-    const retry = async (opts: RetryOpts, routeOrBody?: RouteOrBody, body?: Body) => {
+    const retry = async (opts: RetryOpts, routeOrBody?: RouteOrBody, body?: UFBody) => {
       const delay = (isFunction(retryDelay) ? (retryDelay as Function)(opts) : retryDelay) as number
       if (!(Number.isInteger(delay) && delay >= 0)) {
         console.error('retryDelay must be a number >= 0! If you\'re using it as a function, it must also return a number >= 0.')

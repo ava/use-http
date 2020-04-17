@@ -132,6 +132,42 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
   })
 })
 
+describe('useFetch - responseType', (): void => {
+  afterEach((): void => {
+    cleanup()
+    fetch.resetMocks()
+  })
+
+  it('should fail to process a text response with responseType: `json`', async (): Promise<void> => {
+    cleanup()
+    fetch.resetMocks()
+    fetch.mockResponseOnce('Alex Cory')
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('a-fake-url', { data: '', responseType: 'json' }, []), // onMount === true
+    )
+    expect(result.current.data).toEqual('')
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.error.name).toBe('FetchError')
+  })
+
+  it('should process .text() with default array responseType', async (): Promise<void> => {
+    cleanup()
+    fetch.resetMocks()
+    const expectedString = 'Alex Cory'
+    fetch.mockResponseOnce(JSON.stringify(expectedString))
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('a-fake-url', { data: '' }, []), // onMount === true
+    )
+    expect(result.current.data).toEqual('')
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toBe(expectedString)
+  })
+})
+
 describe('useFetch - BROWSER - with <Provider />', (): void => {
   const expected = {
     name: 'Alex Cory',
@@ -151,7 +187,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     fetch.mockResponseOnce(JSON.stringify(expected))
   })
 
-  it('should work correctly: useFetch({ onMount: true, data: [] })', async (): Promise<void> => {
+  it('should work correctly: useFetch({ data: [] }, [])', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({ data: {} }, []), // onMount === true
       { wrapper }
