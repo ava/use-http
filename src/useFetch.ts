@@ -32,6 +32,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     cachePolicy, // 'cache-first' by default
     interceptors,
     onAbort,
+    onError,
     onNewData,
     onTimeout,
     path,
@@ -174,6 +175,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       if (newRes && !newRes.ok && !error.current) error.current = makeError(newRes.status, newRes.statusText)
       if (!suspense) setLoading(false)
       if (attempt.current === retries) attempt.current = 0
+      if (error.current) onError({ error: error.current })
 
       return data.current
     } // end of doFetch()

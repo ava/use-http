@@ -180,6 +180,7 @@ export interface CustomOptions {
   interceptors?: Interceptors
   loading?: boolean
   onAbort?: () => void
+  onError?: OnError
   onNewData?: (currData: any, newData: any) => any
   onTimeout?: () => void
   path?: string
@@ -211,12 +212,15 @@ export type RetryDelay = (<TData = any>({ attempt, error, response }: RetryOpts)
 export type BodyInterfaceMethods = Exclude<FunctionKeys<Body>, 'body' | 'bodyUsed' | 'formData'>
 export type ResponseType = BodyInterfaceMethods | BodyInterfaceMethods[]
 
+export type OnError = ({ error }: { error: Error }) => void
+
 export type UseFetchArgsReturn = {
   customOptions: {
     cacheLife: number
     cachePolicy: CachePolicies
     interceptors: Interceptors
     onAbort: () => void
+    onError: OnError
     onNewData: (currData: any, newData: any) => any
     onTimeout: () => void
     path: string

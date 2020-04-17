@@ -8,6 +8,7 @@ export const useFetchArgsDefaults: UseFetchArgsReturn = {
     cachePolicy: CachePolicies.CACHE_FIRST,
     interceptors: {},
     onAbort: () => { /* do nothing */ },
+    onError: () => { /* do nothing */ },
     onNewData: (currData: any, newData: any) => newData,
     onTimeout: () => { /* do nothing */ },
     path: '',
