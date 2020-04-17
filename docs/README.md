@@ -462,7 +462,7 @@ function App() {
       // every time we make an http request, this will run 1st before the request is made
       // url, path and route are supplied to the interceptor
       // request options can be modified and must be returned
-      request: async (options, url, path, route) => {
+      request: async ({ options, url, path, route }) => {
         if (isExpired(token)) {
           token = await getNewToken()
           setToken(token)
@@ -471,7 +471,7 @@ function App() {
         return options
       },
       // every time we make an http request, before getting the response back, this will run
-      response: async (response) => {
+      response: async ({ response }) => {
         const res = response
         if (res.data) res.data = toCamel(res.data)
         return res
@@ -830,10 +830,10 @@ const options = {
 
   // typically, `interceptors` would be added as an option to the `<Provider />`
   interceptors: {
-    request: async (options, url, path, route) => { // `async` is not required
+    request: async ({ options, url, path, route }) => { // `async` is not required
       return options // returning the `options` is important
     },
-    response: async (response) => {
+    response: async ({ response }) => {
       // note: `response.data` is equivalent to `await response.json()`
       return response // returning the `response` is important
     }

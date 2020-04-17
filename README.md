@@ -645,7 +645,7 @@ function App() {
       // every time we make an http request, this will run 1st before the request is made
       // url, path and route are supplied to the interceptor
       // request options can be modified and must be returned
-      request: async (options, url, path, route) => {
+      request: async ({ options, url, path, route }) => {
         if (isExpired(token)) {
           token = await getNewToken()
           setToken(token)
@@ -654,7 +654,7 @@ function App() {
         return options
       },
       // every time we make an http request, before getting the response back, this will run
-      response: async (response) => {
+      response: async ({ response }) => {
         // unfortunately, because this is a JS Response object, we have to modify it directly.
         // It shouldn't have any negative affect since this is getting reset on each request.
         const res = response
@@ -879,10 +879,10 @@ const options = {
 
   // typically, `interceptors` would be added as an option to the `<Provider />`
   interceptors: {
-    request: async (options, url, path, route) => { // `async` is not required
+    request: async ({ options, url, path, route }) => { // `async` is not required
       return options // returning the `options` is important
     },
-    response: async (response) => {
+    response: async ({ response }) => {
       // note: `response.data` is equivalent to `await response.json()`
       return response // returning the `response` is important
     }
@@ -1057,12 +1057,6 @@ Todos
     // I don't really like this solution though.
     // Another solution is to only allow the `cache` option with the `<Provider cache={new Map()} />`
     cache: new Map(),
-    interceptors: {
-      // I think it's more scalable/clean to have this as an object.
-      // What if we only need the `route` and `options`?
-      request: async ({ options, url, path, route }) => {},
-      response: async ({ response }) => {}
-    },
     // these will be the exact same ones as Apollo's
     cachePolicy: 'cache-and-network', 'network-only', 'cache-only', 'no-cache' // 'cache-first'
     // potential idea to fetch on server instead of just having `loading` state. Not sure if this is a good idea though
