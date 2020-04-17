@@ -81,7 +81,7 @@ export default async function doFetchArgs<TData = any>(
     if (body !== null) opts.body = body
 
     if (requestInterceptor) {
-      const interceptor = await requestInterceptor(opts, initialURL, path, route)
+      const interceptor = await requestInterceptor({ options: opts, url: initialURL, path, route })
       return interceptor as any
     }
     return opts

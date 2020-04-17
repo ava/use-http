@@ -557,7 +557,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
     const options: Options = {
       interceptors: {
-        request: async (opts, url, path, route) => {
+        request: async ({ options: opts, url, path, route }) => {
           if (path === '/path') {
             opts.data = 'path'
           }
@@ -569,7 +569,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
           }
           return opts
         },
-        async response(res) {
+        async response({ response: res }) {
           if (res.data) res.data = toCamel(res.data)
           return res
         }
@@ -645,11 +645,11 @@ describe('useFetch - BROWSER - interceptors', (): void => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch('url', {
         interceptors: {
-          async request(options) {
+          async request({ options }) {
             requestCalled++
             return options
           },
-          async response(response) {
+          async response({ response }) {
             responseCalled++
             return response
           }
@@ -1066,9 +1066,9 @@ describe('useFetch - BROWSER - errors', (): void => {
   const wrapperCustomError = ({ children }: { children?: ReactNode }): ReactElement => {
     const options = {
       interceptors: {
-        async response(res: Res<any>): Promise<Res<any>> {
-          if (!res.ok) throw expectedError
-          return res
+        async response<TData = any>({ response }: { response: Res<TData> }): Promise<Res<TData>> {
+          if (!response.ok) throw expectedError
+          return response
         }
       },
       cachePolicy: NO_CACHE
