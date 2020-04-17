@@ -1,6 +1,6 @@
 {
   "name": "use-http",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "homepage": "https://use-http.com",
   "main": "dist/index.js",
   "license": "MIT",
@@ -9,6 +9,7 @@
     "url": "https://github.com/alex-cory/use-http.git"
   },
   "dependencies": {
+    "urs": "^0.0.4",
     "use-ssr": "^1.0.22"
   },
   "peerDependencies": {

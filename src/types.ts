@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { FunctionKeys } from 'utility-types'
 
 export enum HTTPMethod {
   DELETE = 'DELETE',
@@ -95,7 +96,7 @@ export type RouteAndBodyOnly = (
 ) => Promise<any>
 
 export type RouteOrBody = string | BodyInit | object
-export type Body = BodyInit | object
+export type UFBody = BodyInit | object
 export type RetryOpts = { attempt: number, error?: Error, response?: Response }
 
 export type NoArgs = () => Promise<any>
@@ -184,6 +185,7 @@ export interface CustomOptions {
   path?: string
   persist?: boolean
   perPage?: number
+  responseType?: ResponseType
   retries?: number
   retryOn?: RetryOn
   retryDelay?: RetryDelay
@@ -206,6 +208,9 @@ export type OverwriteGlobalOptions = (options: Options) => Options
 export type RetryOn = (<TData = any>({ attempt, error, response }: RetryOpts) => Promise<boolean>) | number[]
 export type RetryDelay = (<TData = any>({ attempt, error, response }: RetryOpts) => number) | number
 
+export type BodyInterfaceMethods = Exclude<FunctionKeys<Body>, 'body' | 'bodyUsed' | 'formData'>
+export type ResponseType = BodyInterfaceMethods | BodyInterfaceMethods[]
+
 export type UseFetchArgsReturn = {
   customOptions: {
     cacheLife: number
@@ -217,6 +222,7 @@ export type UseFetchArgsReturn = {
     path: string
     perPage: number
     persist: boolean
+    responseType: ResponseType
     retries: number
     retryDelay: RetryDelay
     retryOn: RetryOn | undefined

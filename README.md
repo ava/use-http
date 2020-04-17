@@ -72,7 +72,7 @@ Features
 
 - SSR (server side rendering) support
 - TypeScript support
-- 1 dependency ([use-ssr](https://github.com/alex-cory/use-ssr))
+- 2 dependencies ([use-ssr](https://github.com/alex-cory/use-ssr), [urs](https://github.com/alex-cory/urs))
 - GraphQL support (queries + mutations)
 - Provider to set default `url` and `options`
 - Request/response interceptors <!--https://github.com/ava/use-http#user-content-interceptors-->
@@ -855,6 +855,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `path` | When using a global `url` set in the `Provider`, this is useful for adding onto it       | `''` |
 | `persist` | Persists data for the duration of `cacheLife`. If `cacheLife` is not set it defaults to 24h. Currently only available in Browser. | `false` |
 | `perPage` | Stops making more requests if there is no more data to fetch. (i.e. if we have 25 todos, and the perPage is 10, after fetching 2 times, we will have 20 todos. The last 5 tells us we don't have any more to fetch because it's less than 10) For pagination. | `0` |
+| `responseType` | This will determine how the `data` field is set. If you put `json` then it will try to parse it as JSON. If you set it as an array, it will attempt to parse the `response` in the order of the types you put in the array. Read about why we don't put `formData` in the defaults [in the yellow Note part here](https://developer.mozilla.org/en-US/docs/Web/API/Body/formData).  | `['json', 'text', 'blob', 'readableStream']` |
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
 | `retryDelay` | You can retry with certain intervals i.e. 30 seconds `30000` or with custom logic (i.e. to increase retry intervals). | `1000` |
 | `retryOn` | You can retry on certain http status codes or have custom logic to decide whether to retry or not via a function. Make sure `retries > 0` otherwise it won't retry. | `[]` |
@@ -910,6 +911,16 @@ const options = {
 
   // Allows caching to persist after page refresh. Only supported in the Browser currently.
   persist: false,
+
+  // this would basically call `await response.json()`
+  // and set the `data` and `response.data` field to the output
+  responseType: 'json',
+  // OR can be an array. It's an array by default.
+  // We will try to get the `data` by attempting to extract
+  // it via these body interface methods, one by one in
+  // this order. We skip `formData` because it's mostly used
+  // for service workers.
+  responseType: ['json', 'text', 'blob', 'arrayBuffer'],
 
   // amount of times it should retry before erroring out
   retries: 3,
@@ -1008,7 +1019,7 @@ Todos
   - [ ] if calling `response.json()` and there is no response yet
 - [ ] tests
   - [ ] tests for SSR
-  - [ ] tests for FormData (can also do it for react-native at same time. [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests))
+  - [ ] tests for react native [see here](https://stackoverflow.com/questions/45842088/react-native-mocking-formdata-in-unit-tests)
   - [ ] tests for GraphQL hooks `useMutation` + `useQuery`
   - [ ] tests for stale `response` see this [PR](https://github.com/ava/use-http/pull/119/files)
   - [ ] tests to make sure `response.formData()` and some of the other http `response methods` work properly
@@ -1034,12 +1045,6 @@ Todos
       // to overwrite those of `useFetch` for
       // `useMutation` and `useQuery`
     },
-    responseType: 'json', // similar to axios
-    // OR can be an array. We will try to get the `data`
-    // by attempting to extract it via these body interface
-    // methods, one by one in this order
-    // we skip `formData` because it's mostly used for service workers
-    responseType: ['json', 'text', 'blob', 'arrayBuffer'],
     // by default this is true, but if set to false
     // then we default to the responseType array of trying 'json' first, then 'text', etc.
     // hopefully I get some answers on here: https://bit.ly/3afPlJS
