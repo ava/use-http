@@ -1,6 +1,6 @@
 import { useMemo, useEffect, MutableRefObject, useRef, useCallback, DependencyList } from 'react'
 import useSSR from 'use-ssr'
-import { RequestInitJSON, OptionsMaybeURL, Res, HTTPMethod, ResponseTypes } from './types'
+import { RequestInitJSON, OptionsMaybeURL, Res, HTTPMethod, ResponseType } from './types'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 
 /**
@@ -144,16 +144,16 @@ export const isBrowser = device === Browser
 export const isServer = device === Server
 export const isNative = device === Native
 
-export const tryGetData = async (res: Response | undefined, defaultData: any, responseType: ResponseTypes) => {
+export const tryGetData = async (res: Response | undefined, defaultData: any, responseType: ResponseType) => {
   if (typeof res === 'undefined') throw Error('Response cannot be undefined... 😵')
   if (typeof responseType === 'undefined') throw Error('responseType cannot be undefined... 😵')
-  const types = (Array.isArray(responseType) ? responseType : [responseType]) as ResponseTypes
+  const types = (Array.isArray(responseType) ? responseType : [responseType]) as ResponseType
   if (types[0] == null) throw Error('could not parse data from response 😵')
   const data = res.ok ? await tryRetry(res, types) : undefined
   return !isEmpty(defaultData) && isEmpty(data) ? defaultData : data
 }
 
-const tryRetry = async <T = any>(res: Response, types: ResponseTypes): Promise<T> => {
+const tryRetry = async <T = any>(res: Response, types: ResponseType): Promise<T> => {
   try {
     return (res.clone() as any)[types[0]]()
   } catch (error) {

@@ -185,7 +185,7 @@ export interface CustomOptions {
   path?: string
   persist?: boolean
   perPage?: number
-  responseType?: ResponseTypes
+  responseType?: ResponseType
   retries?: number
   retryOn?: RetryOn
   retryDelay?: RetryDelay
@@ -208,8 +208,8 @@ export type OverwriteGlobalOptions = (options: Options) => Options
 export type RetryOn = (<TData = any>({ attempt, error, response }: RetryOpts) => Promise<boolean>) | number[]
 export type RetryDelay = (<TData = any>({ attempt, error, response }: RetryOpts) => number) | number
 
-export type ResponseType = Exclude<FunctionKeys<Body>, 'body' | 'bodyUsed' | 'formData'>
-export type ResponseTypes = ResponseType | ResponseType[]
+export type BodyInterfaceMethods = Exclude<FunctionKeys<Body>, 'body' | 'bodyUsed' | 'formData'>
+export type ResponseType = BodyInterfaceMethods | BodyInterfaceMethods[]
 
 export type UseFetchArgsReturn = {
   customOptions: {
@@ -222,7 +222,7 @@ export type UseFetchArgsReturn = {
     path: string
     perPage: number
     persist: boolean
-    responseType: ResponseTypes
+    responseType: ResponseType
     retries: number
     retryDelay: RetryDelay
     retryOn: RetryOn | undefined
