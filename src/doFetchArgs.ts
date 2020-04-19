@@ -37,8 +37,10 @@ export default async function doFetchArgs<TData = any>(
   const url = `${initialURL}${path}${route}`
 
   const body = ((): BodyInit | null => {
-    if (isBodyObject(routeOrBody)) return JSON.stringify(routeOrBody)
+    // FormData instanceof check should go first, because React Native's FormData implementation
+    // is indistinguishable from plain object when using isBodyObject check
     if (routeOrBody instanceof FormData) return routeOrBody
+    if (isBodyObject(routeOrBody)) return JSON.stringify(routeOrBody)
     if (
       !isServer &&
       ((bodyAs2ndParam as any) instanceof FormData ||
