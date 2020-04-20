@@ -41,10 +41,10 @@ Now just go into your `use-http-sandbox/src/App.js` and import use-http and now 
 Once you're done making your changes be sure to make some tests and run all of them. What I do is open up 3 different panes in the same iTerm2 window by pressing `⌘ + D` on mac 2 times. In the far left I do `yarn build:watch`, in the middle I do `yarn test:browser:watch` (where you'll probably be writing your tests) and in the 3rd window I do `yarn test:server:watch`. It looks like this.
 ![image](https://user-images.githubusercontent.com/5455859/79790558-bf3e6f00-8300-11ea-89ad-241ce943f1b3.png)
 
-### 4. **Push**
+### 5. **Push**
 Push your changes to your forked repo.
 
-### 5. **Make PR**
+### 6. **Make PR**
 Once you push your changes, you will see a link in your terminal that looks like this.
 ```sh
 remote: Create a pull request for 'master' on GitHub by visiting:
