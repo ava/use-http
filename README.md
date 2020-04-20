@@ -1097,6 +1097,8 @@ Todos
 
 - [ ] make code editor plugin/package/extension that adds GraphQL syntax highlighting for `useQuery` and `useMutation` 😊
 
+- [ ] add React Native test suite
+
 [1]: https://github.com/ava/use-http/issues/new?title=[Feature%20Request]%20YOUR_FEATURE_NAME
 [2]: https://github.com/ava/use-http/issues/93#issuecomment-600896722
 [3]: https://github.com/ava/use-http/raw/master/public/dog.png
