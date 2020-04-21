@@ -180,15 +180,17 @@ function Todos() {
 
 <details open><summary><b>Conditional Auto-Managed State with <code>Provider</code></b></summary>
 
-For conditional fetching via auto-managed state, if you don't want `useFetch` to execute, you must pass `null`. Any other value will not block it from executing. This would execute whenever the `id` changes and whenever the `id` exists.
+For conditional fetching via auto-managed state, if you don't want `useFetch` to execute, one way is to set `skip: true`. This would execute whenever the `id` changes and whenever the `id` exists.
 
 ```js
 import useFetch, { Provider } from 'use-http'
 
 function Todo({ id }) {
-  const path = id ? `/todos/${id}` : null
   const defaultTodo = { title: 'default title' }
-  const { loading, error, data } = useFetch(path, { data: defaultTodo }, [id])
+  const { loading, error, data: todo } = useFetch(`/todos/${id}`, {
+    data: defaultTodo,
+    skip: !id
+  }, [id])
   return (
     <>
       {error && 'Error!'}
