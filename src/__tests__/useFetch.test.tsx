@@ -697,7 +697,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(JSON.stringify({}))
+    fetch.mockResponse(JSON.stringify({}))
   })
 
   it('should only add Content-Type: application/json for POST and PUT by default', async (): Promise<void> => {
@@ -757,7 +757,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
     expect(fetch).toHaveBeenCalledTimes(1)
   })
 
-  it('should overwrite options set in the Provider', async (): Promise<void> => {
+  it('should overwrite options set in the Provider and not every instance of useFetch', async (): Promise<void> => {
     const expectedHeaders = defaults.headers
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(globalOptions => {
@@ -773,6 +773,14 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
     expect(fetch.mock.calls[0][0]).toBe('https://example.com')
     expect((fetch.mock.calls[0][1] as any).headers).toEqual(expectedHeaders)
     expect(fetch).toHaveBeenCalledTimes(1)
+    const expectedHeadersGET = { ...defaults.headers, ...providerHeaders }
+    const { waitForNextUpdate: wait2 } = renderHook(
+      () => useFetch('/', []), // onMount === true
+      { wrapper }
+    )
+    await wait2()
+    expect((fetch.mock.calls[1][1] as any).headers).toEqual(expectedHeadersGET)
+    expect(fetch).toHaveBeenCalledTimes(2)
   })
 })
 
