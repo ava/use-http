@@ -41,6 +41,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     retries,
     retryDelay,
     retryOn,
+    skip,
     suspense,
     timeout,
     ...defaults
@@ -67,7 +68,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
 
     const doFetch = async (routeOrBody?: RouteOrBody, body?: UFBody): Promise<any> => {
-      if (isServer || path === null) return // for now, we don't do anything on the server
+      if (isServer || skip) return // for now, we don't do anything on the server
       controller.current = new AbortController()
       controller.current.signal.onabort = onAbort
       const theController = controller.current

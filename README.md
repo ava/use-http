@@ -848,6 +848,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
 | `retryDelay` | You can retry with certain intervals i.e. 30 seconds `30000` or with custom logic (i.e. to increase retry intervals). | `1000` |
 | `retryOn` | You can retry on certain http status codes or have custom logic to decide whether to retry or not via a function. Make sure `retries > 0` otherwise it won't retry. | `[]` |
+| `skip` | Tells `useFetch` not to execute if set to `true` | `false` |
 | `suspense` | Enables Experimental React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | `false` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**. If set to `0`, it will not timeout except for browser defaults.       | `0` |
 
@@ -935,6 +936,9 @@ const options = {
       return true;
     }
   },
+
+  // tells useFetch not to execute if set to true
+  skip: false,
 
   // enables experimental React Suspense mode
   suspense: true, // defaults to `false`

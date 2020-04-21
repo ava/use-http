@@ -189,6 +189,7 @@ export interface CustomOptions {
   retries: number
   retryOn: RetryOn
   retryDelay: RetryDelay
+  skip: boolean
   suspense: boolean
   timeout: number
 }
@@ -213,7 +214,7 @@ export type OnError = ({ error }: { error: Error }) => void
 
 export type UseFetchArgsReturn = {
   host: string
-  path?: string | null
+  path?: string
   customOptions: {
     cacheLife: number
     cachePolicy: CachePolicies
@@ -228,6 +229,7 @@ export type UseFetchArgsReturn = {
     retries: number
     retryDelay: RetryDelay
     retryOn: RetryOn | undefined
+    skip: boolean
     suspense: boolean
     timeout: number
     // defaults

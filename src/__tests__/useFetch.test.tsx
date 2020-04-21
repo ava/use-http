@@ -132,6 +132,36 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
   })
 })
 
+describe('useFetch - auto-managed state', (): void => {
+  afterEach((): void => {
+    cleanup()
+    fetch.resetMocks()
+  })
+
+  it('should not `skip` fetch execution when false', async (): Promise<void> => {
+    fetch.resetMocks()
+    fetch.mockResponseOnce('Alex Cory')
+    const { result, waitForNextUpdate } = renderHook(
+      () => useFetch('/path', { skip: false }, []), // onMount === true
+    )
+    expect(result.current.data).toEqual(undefined)
+    expect(result.current.loading).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.data).toEqual('Alex Cory')
+    expect(result.current.loading).toBe(false)
+    expect(fetch.mock.calls.length).toBe(1)
+  })
+  
+  it('should `skip` fetch execution when true', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch('/path', { skip: true }, []), // onMount === true
+    )
+    expect(result.current.data).toEqual(undefined)
+    expect(result.current.loading).toBe(false)
+    expect(fetch.mock.calls.length).toBe(0)
+  })
+})
+
 describe('useFetch - responseType', (): void => {
   afterEach((): void => {
     cleanup()

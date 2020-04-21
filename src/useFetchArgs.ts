@@ -23,10 +23,9 @@ export default function useFetchArgs(
     return defaults.host
   }, [context.url, urlOrPathOrOptionsOrOverwriteGlobalOptions])
 
-  const path = useMemo((): string | null | undefined => {
+  const path = useMemo((): string | undefined => {
     const maybePath = urlOrPathOrOptionsOrOverwriteGlobalOptions as string
     if (isString(maybePath) && !maybePath.includes('://')) return maybePath
-    if (maybePath === null) return null
   }, [urlOrPathOrOptionsOrOverwriteGlobalOptions])
 
   const overwriteGlobalOptions = useMemo((): OverwriteGlobalOptions | undefined => {
@@ -64,13 +63,13 @@ export default function useFetchArgs(
     return defaults.dependencies
   }, [optionsOrOverwriteGlobalOrDeps, deps])
 
-  const { cacheLife, retries, retryDelay, retryOn } = options
+  const { cacheLife, retries, retryDelay, retryOn, skip } = options
   invariant(Number.isInteger(cacheLife) && cacheLife >= 0, '`cacheLife` must be a number >= 0')
   invariant(Number.isInteger(retries) && retries >= 0, '`retries` must be a number >= 0')
   invariant(isFunction(retryDelay) || Number.isInteger(retryDelay as number) && retryDelay >= 0, '`retryDelay` must be a positive number or a function returning a positive number.')
   const isValidRetryOn = isFunction(retryOn) || (Array.isArray(retryOn) && retryOn.every(isPositiveNumber))
   invariant(isValidRetryOn, '`retryOn` must be an array of positive numbers or a function returning a boolean.')
-  const loading = options.loading || Array.isArray(dependencies)
+  const loading = (options.loading || Array.isArray(dependencies)) && !skip
 
   const interceptors = useMemo((): Interceptors => {
     const final: Interceptors = {}

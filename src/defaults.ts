@@ -19,6 +19,7 @@ export const useFetchArgsDefaults: UseFetchArgsReturn = {
     retries: 0,
     retryDelay: 1000,
     retryOn: [],
+    skip: false,
     suspense: false,
     timeout: 0,
     // defaults
