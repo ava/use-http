@@ -115,7 +115,7 @@ yarn add use-http    or    npm i -S use-http
 Usage
 =============
 
-Basic Usage (auto-managed state)
+Basic Usage Auto-Managed State
 -------------------
 
 This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). **If no method is specified, GET is the default**
@@ -124,11 +124,10 @@ This fetch is run `onMount/componentDidMount`. The last argument `[]` means it w
 import useFetch from 'use-http'
 
 function Todos() {
-  const options = { // accepts all `fetch` options
-    data: []        // default for `data` will be an array instead of undefined
-  }
-
-  const { loading, error, data } = useFetch('https://example.com/todos', options, []) // onMount (GET by default)
+  const { loading, error, data } = useFetch('https://example.com/todos', {
+    // these options accept all native `fetch` options
+    data: [] // defaults the `data` to an array instead of `undefined`
+  }, [])     // <- this [] means it will fire onMount (GET by default)
 
   return (
     <>
@@ -190,24 +189,24 @@ function Todos() {
 
 <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=_-GujYZFCKI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=6'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
-Basic Usage With Provider (auto-managed state)
+Conditional Auto-Managed State With Provider
 ---------------------------------------------
+
+For conditional fetching via auto-managed state, if you don't want `useFetch` to execute, you must pass `null`. Any other value will not block it from executing. This would execute whenever the `id` changes and whenever the `id` exists.
 
 ```js
 import useFetch, { Provider } from 'use-http'
 
-function Todos() {
-  const { loading, error, data } = useFetch('/todos', {
-    data: [] // default for `data` will be an array instead of undefined
-  }, [])     // <- this [] means it will fire onMount
-
+function Todo({ id }) {
+  const url = id ? `/todos/${id}` : null
+  const { loading, error, data } = useFetch(url, {
+    data: { title: '' }
+  }, [id])
   return (
     <>
       {error && 'Error!'}
       {loading && 'Loading...'}
-      {data.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
+      {todo.title}
     </>
   )
 }

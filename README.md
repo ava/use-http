@@ -155,12 +155,10 @@ This fetch is run `onMount/componentDidMount`. The last argument `[]` means it w
 import useFetch from 'use-http'
 
 function Todos() {
-  // accepts all `fetch` options
-  const options = {
-    data: [],       // setting default for `data` as array instead of undefined
-  }
-  
-  const { loading, error, data } = useFetch('https://example.com/todos', options, []) // onMount (GET by default)
+  const { loading, error, data } = useFetch('https://example.com/todos', {
+    // these options accept all native `fetch` options
+    data: [] // defaults the `data` to an array instead of `undefined`
+  }, [])     // <- this [] means it will fire onMount (GET by default)
 
   return (
     <>
@@ -180,23 +178,22 @@ function Todos() {
 </details>
 
 
-<details open><summary><b>Basic Usage (auto-managed state) with <code>Provider</code></b></summary>
+<details open><summary><b>Conditional (auto-managed state) with <code>Provider</code></b></summary>
+For conditional fetching via auto-managed state, if you don't want `useFetch` to execute, you must pass `null`. Any other value will not block it from executing. This would execute whenever the `id` changes and whenever the `id` exists.
 
 ```js
 import useFetch, { Provider } from 'use-http'
 
-function Todos() {
-  const { loading, error, data } = useFetch('/todos', {
-    data: [] // default for `data` will be an array instead of undefined
-  }, [])     // <- this [] means it will fire onMount
-
+function Todo({ id }) {
+  const url = id ? `/todos/${id}` : null
+  const { loading, error, data: todo } = useFetch(url, {
+    data: { title: '' }
+  }, [id])
   return (
     <>
       {error && 'Error!'}
       {loading && 'Loading...'}
-      {data.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
+      {todo.title}
     </>
   )
 }
