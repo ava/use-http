@@ -201,7 +201,6 @@ export type IncomingOptions = Partial<CustomOptions> &
 export type Options = CustomOptions &
   Omit<RequestInit, 'body'> & { body?: BodyInit | object | null }
 
-// TODO: this is still yet to be implemented
 export type OverwriteGlobalOptions = (options: Options) => Options
 
 export type RetryOn = (<TData = any>({ attempt, error, response }: RetryOpts) => Promise<boolean>) | number[]

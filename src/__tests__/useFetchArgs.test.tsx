@@ -72,19 +72,17 @@ describe('useFetchArgs: general usages', (): void => {
 
   it('should set default data === []', (): void => {
     const { result } = renderHook(
-      (): any => useFetchArgs('https://cool.com', {
-        data: []
-      }),
+      (): any => useFetchArgs({ data: [] }),
       { wrapper }
     )
     expect(result.current).toStrictEqual({
       ...useFetchArgsDefaults,
-      host: 'https://cool.com',
+      host: 'https://example.com',
       customOptions: {
         ...useFetchArgsDefaults.customOptions,
         loading: false,
         data: []
-      },
+      }
     })
   })
 
@@ -124,7 +122,7 @@ describe('useFetchArgs: general usages', (): void => {
     )
 
     const { result } = renderHook(
-      (): any => useFetchArgs('/path'),
+      (): any => useFetchArgs(),
       { wrapper: wrapper2 }
     )
 
@@ -170,7 +168,7 @@ describe('useFetchArgs: general usages', (): void => {
 
   it('should create custom options with `Content-Type: application/text`', (): void => {
     const options = { headers: { 'Content-Type': 'application/text' } }
-    const { result } = renderHook((): any => useFetchArgs('https://example.com', options), { wrapper })
+    const { result } = renderHook((): any => useFetchArgs(options), { wrapper })
     expect(result.current).toStrictEqual({
       ...useFetchArgsDefaults,
       host: 'https://example.com',

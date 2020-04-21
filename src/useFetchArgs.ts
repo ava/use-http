@@ -16,18 +16,18 @@ export default function useFetchArgs(
   )
   const context = useContext(FetchContext)
 
-  const host = ((): string => {
+  const host = useMemo((): string => {
     const maybeHost = urlOrPathOrOptionsOrOverwriteGlobalOptions as string
     if (isString(maybeHost) && maybeHost.includes('://')) return maybeHost
     if (context.url) return context.url
     return defaults.host
-  })()
+  }, [context.url, urlOrPathOrOptionsOrOverwriteGlobalOptions])
 
-  const path = ((): string | null | undefined => {
+  const path = useMemo((): string | null | undefined => {
     const maybePath = urlOrPathOrOptionsOrOverwriteGlobalOptions as string
     if (isString(maybePath) && !maybePath.includes('://')) return maybePath
     if (maybePath === null) return null
-  })()
+  }, [urlOrPathOrOptionsOrOverwriteGlobalOptions])
 
   const overwriteGlobalOptions = useMemo((): OverwriteGlobalOptions | undefined => {
     if (isFunction(urlOrPathOrOptionsOrOverwriteGlobalOptions)) return urlOrPathOrOptionsOrOverwriteGlobalOptions as OverwriteGlobalOptions
@@ -54,7 +54,7 @@ export default function useFetchArgs(
     } as Options
     if (overwriteGlobalOptions) return overwriteGlobalOptions(finalOptions)
     return finalOptions
-  }, [])
+  }, [urlOrPathOrOptionsOrOverwriteGlobalOptions, overwriteGlobalOptions, context.options])
 
   const requestInit = useMemo(() => pullOutRequestInit(options), [options])
 

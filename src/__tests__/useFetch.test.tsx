@@ -245,7 +245,6 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
       ...expected,
       no: 'way'
     })
-    result.current.cache.clear()
   })
 
   it('should not make another request when there is no more data `perPage` pagination', async (): Promise<void> => {

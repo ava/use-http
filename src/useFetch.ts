@@ -43,7 +43,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     retryOn,
     suspense,
     timeout,
-    ...defaults // { data: TData, loading: boolean }
+    ...defaults
   } = customOptions
 
   const cache = useCache({ persist, cacheLife, cachePolicy })

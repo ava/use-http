@@ -86,7 +86,6 @@ export default async function doFetchArgs<TData = any>(
     }
     return opts
   })()
-    // console.log('options', options)
 
   // TODO: if the body is a file, and this is a large file, it might exceed the size
   // limit of the key size. Potential solution: base64 the body
