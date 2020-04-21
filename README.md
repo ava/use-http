@@ -179,6 +179,7 @@ function Todos() {
 
 
 <details open><summary><b>Conditional (auto-managed state) with <code>Provider</code></b></summary>
+
 For conditional fetching via auto-managed state, if you don't want `useFetch` to execute, you must pass `null`. Any other value will not block it from executing. This would execute whenever the `id` changes and whenever the `id` exists.
 
 ```js
