@@ -5,12 +5,12 @@ const { GET } = HTTPMethod
 
 export default async function doFetchArgs<TData = any>(
   initialOptions: RequestInit,
-  initialURL: string,
-  path: string,
   method: HTTPMethod,
   controller: AbortController,
   cacheLife: number,
   cache: Cache,
+  host?: string,
+  path?: string,
   routeOrBody?: string | BodyInit | object,
   bodyAs2ndParam?: BodyInit | object,
   requestInterceptor?: ValueOf<Pick<Interceptors, 'request'>>
@@ -34,7 +34,7 @@ export default async function doFetchArgs<TData = any>(
     return ''
   })()
 
-  const url = `${initialURL}${path}${route}`
+  const url = `${host}${path ?? ''}${route ?? ''}`
 
   const body = ((): BodyInit | null => {
     if (isBodyObject(routeOrBody)) return JSON.stringify(routeOrBody)
@@ -65,8 +65,8 @@ export default async function doFetchArgs<TData = any>(
     return headers
   })()
 
-  const options = await (async (): Promise<RequestInit> => {
-    const opts = {
+  const options = await (async (route): Promise<RequestInit> => {
+    const opts: RequestInit = {
       ...initialOptions,
       method,
       signal: controller.signal
@@ -81,11 +81,15 @@ export default async function doFetchArgs<TData = any>(
     if (body !== null) opts.body = body
 
     if (requestInterceptor) {
-      const interceptor = await requestInterceptor({ options: opts, url: initialURL, path, route })
+      if (url.includes('/route2')) {
+        console.log('route: ', route)
+      }
+      const interceptor = await requestInterceptor({ options: opts, url: host, path, route })
       return interceptor as any
     }
     return opts
-  })()
+  })(route)
+    // console.log('options', options)
 
   // TODO: if the body is a file, and this is a large file, it might exceed the size
   // limit of the key size. Potential solution: base64 the body

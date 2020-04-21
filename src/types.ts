@@ -75,13 +75,13 @@ export interface DoFetchArgs {
 
 export interface FetchContextTypes {
   url: string
-  options: Options
+  options: IncomingOptions
   graphql?: boolean
 }
 
 export interface FetchProviderProps {
   url?: string
-  options?: Options
+  options?: IncomingOptions
   graphql?: boolean
   children: ReactNode
 }
@@ -141,7 +141,7 @@ export interface Res<TData> extends Response {
 
 export type Req<TData = any> = ReqMethods & ReqBase<TData>
 
-export type UseFetchArgs = [(string | OptionsMaybeURL | OverwriteGlobalOptions)?, (NoUrlOptions | OverwriteGlobalOptions | any[])?, any[]?]
+export type UseFetchArgs = [(string | IncomingOptions | OverwriteGlobalOptions)?, (IncomingOptions | OverwriteGlobalOptions | any[])?, any[]?]
 
 export type UseFetchArrayReturn<TData> = [
   Req<TData>,
@@ -160,7 +160,7 @@ export type UseFetch<TData> = UseFetchArrayReturn<TData> &
   UseFetchObjectReturn<TData>
 
 export type Interceptors<TData = any> = {
-  request?: ({ options, url, path, route }: { options: Options, url: string, path: string, route: string }) => Promise<Options> | Options
+  request?: ({ options, url, path, route }: { options: RequestInit, url?: string, path?: string, route?: string }) => Promise<RequestInit> | RequestInit
   response?: ({ response }: { response: Res<TData> }) => Promise<Res<TData>>
 }
 
@@ -173,35 +173,53 @@ export type Cache = {
   clear: () => void
 }
 
+// export interface CustomOptionsChill {
+//   cacheLife?: number
+//   cachePolicy?: CachePolicies
+//   data?: any
+//   interceptors?: Interceptors
+//   loading?: boolean
+//   onAbort?: () => void
+//   onError?: OnError
+//   onNewData?: (currData: any, newData: any) => any
+//   onTimeout?: () => void
+//   persist?: boolean
+//   perPage?: number
+//   responseType?: ResponseType
+//   retries?: number
+//   retryOn?: RetryOn
+//   retryDelay?: RetryDelay
+//   suspense?: boolean
+//   timeout?: number
+// }
+
 export interface CustomOptions {
-  cacheLife?: number
-  cachePolicy?: CachePolicies
-  data?: any
-  interceptors?: Interceptors
-  loading?: boolean
-  onAbort?: () => void
-  onError?: OnError
-  onNewData?: (currData: any, newData: any) => any
-  onTimeout?: () => void
-  path?: string
-  persist?: boolean
-  perPage?: number
-  responseType?: ResponseType
-  retries?: number
-  retryOn?: RetryOn
-  retryDelay?: RetryDelay
-  suspense?: boolean
-  timeout?: number
-  url?: string
+  cacheLife: number
+  cachePolicy: CachePolicies
+  data: any
+  interceptors: Interceptors
+  loading: boolean
+  onAbort: () => void
+  onError: OnError
+  onNewData: (currData: any, newData: any) => any
+  onTimeout: () => void
+  persist: boolean
+  perPage: number
+  responseType: ResponseType
+  retries: number
+  retryOn: RetryOn
+  retryDelay: RetryDelay
+  suspense: boolean
+  timeout: number
 }
 
+// these are the possible options that can be passed
+export type IncomingOptions = Partial<CustomOptions> &
+  Omit<RequestInit, 'body'> & { body?: BodyInit | object | null }
+// these options have `context` and `defaults` applied so
+// the values should all be filled
 export type Options = CustomOptions &
   Omit<RequestInit, 'body'> & { body?: BodyInit | object | null }
-
-export type NoUrlOptions = Omit<Options, 'url'>
-
-export type OptionsMaybeURL = NoUrlOptions &
-  Partial<Pick<Options, 'url'>> & { url?: string }
 
 // TODO: this is still yet to be implemented
 export type OverwriteGlobalOptions = (options: Options) => Options
@@ -215,6 +233,8 @@ export type ResponseType = BodyInterfaceMethods | BodyInterfaceMethods[]
 export type OnError = ({ error }: { error: Error }) => void
 
 export type UseFetchArgsReturn = {
+  host: string
+  path?: string | null
   customOptions: {
     cacheLife: number
     cachePolicy: CachePolicies
@@ -223,7 +243,6 @@ export type UseFetchArgsReturn = {
     onError: OnError
     onNewData: (currData: any, newData: any) => any
     onTimeout: () => void
-    path: string
     perPage: number
     persist: boolean
     responseType: ResponseType
@@ -232,13 +251,11 @@ export type UseFetchArgsReturn = {
     retryOn: RetryOn | undefined
     suspense: boolean
     timeout: number
-    url: string
-  }
-  requestInit: RequestInit
-  defaults: {
+    // defaults
     loading: boolean
     data?: any
   }
+  requestInit: RequestInit
   dependencies?: any[]
 }
 

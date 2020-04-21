@@ -26,7 +26,7 @@ const { CACHE_FIRST } = CachePolicies
 
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
-  const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
+  const { host, path, customOptions, requestInit, dependencies } = useFetchArgs(...args)
   const {
     cacheLife,
     cachePolicy, // 'cache-first' by default
@@ -35,7 +35,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     onError,
     onNewData,
     onTimeout,
-    path,
     perPage,
     persist,
     responseType,
@@ -44,7 +43,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     retryOn,
     suspense,
     timeout,
-    url: initialURL,
+    ...defaults // { data: TData, loading: boolean }
   } = customOptions
 
   const cache = useCache({ persist, cacheLife, cachePolicy })
@@ -68,19 +67,19 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
 
     const doFetch = async (routeOrBody?: RouteOrBody, body?: UFBody): Promise<any> => {
-      if (isServer) return // for now, we don't do anything on the server
+      if (isServer || path === null) return // for now, we don't do anything on the server
       controller.current = new AbortController()
       controller.current.signal.onabort = onAbort
       const theController = controller.current
 
       const { url, options, response } = await doFetchArgs<TData>(
         requestInit,
-        initialURL,
-        path,
         method,
         theController,
         cacheLife,
         cache,
+        host,
+        path,
         routeOrBody,
         body,
         interceptors.request
@@ -104,10 +103,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         }
       }
 
-      if (!suspense) setLoading(true)
-
       // don't perform the request if there is no more data to fetch (pagination)
       if (perPage > 0 && !hasMore.current && !error.current) return data.current
+
+      if (!suspense) setLoading(true)
 
       const timer = timeout && setTimeout(() => {
         timedout.current = true
@@ -209,7 +208,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     }
 
     return doFetch
-  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, persist, cacheLife, onTimeout, defaults.data, onNewData, forceUpdate, suspense])
+  }, [isServer, onAbort, requestInit, host, path, interceptors, cachePolicy, perPage, timeout, persist, cacheLife, onTimeout, defaults.data, onNewData, forceUpdate, suspense])
 
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])

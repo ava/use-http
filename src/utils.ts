@@ -1,6 +1,6 @@
 import { useMemo, useEffect, MutableRefObject, useRef, useCallback, DependencyList } from 'react'
 import useSSR from 'use-ssr'
-import { RequestInitJSON, OptionsMaybeURL, Res, HTTPMethod, ResponseType } from './types'
+import { RequestInitJSON, Options, Res, HTTPMethod, ResponseType } from './types'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 
 /**
@@ -94,7 +94,7 @@ export const isNumber = (v: any): boolean => Object.prototype.toString.call(v) =
  * Makes an object that will match the standards of a normal fetch's options
  * aka: pulls out all useFetch's special options like "onMount"
  */
-export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInit => {
+export const pullOutRequestInit = (options?: Options): RequestInit => {
   if (!options) return {}
   const requestInitFields = [
     'body',

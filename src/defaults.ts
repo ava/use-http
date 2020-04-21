@@ -3,6 +3,8 @@ import { isObject } from './utils'
 
 
 export const useFetchArgsDefaults: UseFetchArgsReturn = {
+  host: '',
+  path: undefined,
   customOptions: {
     cacheLife: 0,
     cachePolicy: CachePolicies.CACHE_FIRST,
@@ -11,7 +13,6 @@ export const useFetchArgsDefaults: UseFetchArgsReturn = {
     onError: () => { /* do nothing */ },
     onNewData: (currData: any, newData: any) => newData,
     onTimeout: () => { /* do nothing */ },
-    path: '',
     perPage: 0,
     persist: false,
     responseType: ['json', 'text', 'blob', 'arrayBuffer'],
@@ -20,16 +21,13 @@ export const useFetchArgsDefaults: UseFetchArgsReturn = {
     retryOn: [],
     suspense: false,
     timeout: 0,
-    url: '',
+    data: undefined,
+    loading: false
   },
   requestInit: {
     headers: {
       Accept: 'application/json, text/plain, */*'
     }
-  },
-  defaults: {
-    data: undefined,
-    loading: false
   },
   dependencies: undefined
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import useFetch, { FetchContext } from '.'
 import { useContext, useCallback } from 'react'
 import { ReqBase, Cache } from './types'
