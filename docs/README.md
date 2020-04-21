@@ -115,7 +115,7 @@ yarn add use-http    or    npm i -S use-http
 Usage
 =============
 
-Basic Usage (auto managed state)
+Basic Usage (auto-managed state)
 -------------------
 
 This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). **If no method is specified, GET is the default**
@@ -190,17 +190,16 @@ function Todos() {
 
 <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=_-GujYZFCKI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=6'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
-Basic Usage With Provider (auto managed state)
+Basic Usage With Provider (auto-managed state)
 ---------------------------------------------
 
 ```js
 import useFetch, { Provider } from 'use-http'
 
 function Todos() {
-  const { loading, error, data } = useFetch({
-    path: '/todos',
-    data: []        // default for `data` will be an array instead of undefined
-  }, [])            // onMount
+  const { loading, error, data } = useFetch('/todos', {
+    data: [] // default for `data` will be an array instead of undefined
+  }, [])     // <- this [] means it will fire onMount
 
   return (
     <>
@@ -225,15 +224,14 @@ const App = () => (
 <!-- <a target="_blank" rel="noopener noreferrer" href='XXXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a> -->
 
 
-Suspense Mode (auto managed state)
+Suspense Mode (auto-managed state)
 ----------------------------------
 
 ```js
 import useFetch, { Provider } from 'use-http'
 
 function Todos() {
-  const { data: todos } = useFetch({
-    path: '/todos',
+  const { data: todos } = useFetch('/todos', {
     data: [],
     suspense: true // can put it in 2 places. Here or in Provider
   }, []) // onMount
@@ -309,8 +307,7 @@ import useFetch, { Provider } from 'use-http'
 const Todos = () => {
   const [page, setPage] = useState(1)
 
-  const { data, loading } = useFetch({
-    path: `/todos?page=${page}&amountPerPage=15`,
+  const { data, loading } = useFetch(`/todos?page=${page}&amountPerPage=15`, {
     onNewData: (currTodos, newTodos) => [...currTodos, ...newTodos], // appends newly fetched todos
     perPage: 15, // stops making more requests if last todos fetched < 15
     data: []
@@ -407,11 +404,7 @@ var {
 Relative routes
 ---------------
 
-⚠️ `baseUrl` is no longer supported, it is now only `url`
-
 ```js
-var request = useFetch({ url: 'https://example.com' })
-// OR
 var request = useFetch('https://example.com')
 
 request.post('/todos', {
@@ -427,17 +420,15 @@ Abort
 <img src="https://raw.githubusercontent.com/ava/use-http/master/public/abort-example-1.gif" height="250" />
 
 ```js
-const githubRepos = useFetch({
-  url: `https://api.github.com/search/repositories?q=`
-})
+const { get, abort, loading, data: repos } = useFetch('https://api.github.com/search/repositories?q=')
 
 // the line below is not isomorphic, but for simplicity we're using the browsers `encodeURI`
-const searchGithubRepos = e => githubRepos.get(encodeURI(e.target.value))
+const searchGithubRepos = e => get(encodeURI(e.target.value))
 
 <>
   <input onChange={searchGithubRepos} />
-  <button onClick={githubRepos.abort}>Abort</button>
-  {githubRepos.loading ? 'Loading...' : githubRepos.data.items.map(repo => (
+  <button onClick={abort}>Abort</button>
+  {loading ? 'Loading...' : repos.data.items.map(repo => (
     <div key={repo.id}>{repo.name}</div>
   ))}
 </>
@@ -804,7 +795,6 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `onError` | Runs when the request get's an error. If retrying, it is only called on the last retry attempt. | empty function |
 | `onNewData` | Merges the current data with the incoming data. Great for pagination.  | `(curr, new) => new` |
 | `onTimeout` | Called when the request times out. | empty function |
-| `path` | When using a global `url` set in the `Provider`, this is useful for adding onto it       | `''` |
 | `persist` | Persists data for the duration of `cacheLife`. If `cacheLife` is not set it defaults to 24h. Currently only available in Browser. | `false` |
 | `responseType` | This will determine how the `data` field is set. If you put `json` then it will try to parse it as JSON. If you set it as an array, it will attempt to parse the `response` in the order of the types you put in the array. Read about why we don't put `formData` in the defaults [in the yellow Note part here](https://developer.mozilla.org/en-US/docs/Web/API/Body/formData).  | `['json', 'text', 'blob', 'readableStream']` |
 | `perPage` | Stops making more requests if there is no more data to fetch. (i.e. if we have 25 todos, and the perPage is 10, after fetching 2 times, we will have 20 todos. The last 5 tells us we don't have any more to fetch because it's less than 10) For pagination. | `0` |
@@ -813,7 +803,6 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `retryOn` | You can retry on certain http status codes or have custom logic to decide whether to retry or not via a function. Make sure `retries > 0` otherwise it won't retry. | `[]` |
 | `suspense` | Enables Experimental React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | `false` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**. If set to `0`, it will not timeout except for browser defaults.       | `0` |
-| `url` | Allows you to set a base path so relative paths can be used for each request :)       | empty string |
 
 ```jsx
 const options = {
@@ -856,9 +845,6 @@ const options = {
   
   // called when the request times out
   onTimeout: () => {},
-  
-  // if you have a global `url` set up, this is how you can add to it
-  path: '/path/to/your/api',
   
   // this will tell useFetch not to run the request if the list doesn't haveMore. (pagination)
   // i.e. if the last page fetched was < 15, don't run the request again
@@ -909,9 +895,6 @@ const options = {
   
   // amount of time before the request get's canceled/aborted
   timeout: 10000,
-
-  // used to be `baseUrl`. You can set your URL this way instead of as the 1st argument
-  url: 'https://example.com',
 }
 
 useFetch(options)

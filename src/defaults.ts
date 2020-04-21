@@ -21,6 +21,7 @@ export const useFetchArgsDefaults: UseFetchArgsReturn = {
     retryOn: [],
     suspense: false,
     timeout: 0,
+    // defaults
     data: undefined,
     loading: false
   },
