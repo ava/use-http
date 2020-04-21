@@ -187,9 +187,9 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     fetch.mockResponseOnce(JSON.stringify(expected))
   })
 
-  it(`should work correctly: useFetch('/', { data: [] }, [])`, async (): Promise<void> => {
+  it(`should work correctly: useFetch({ data: [] }, [])`, async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('/', { data: {} }, []), // onMount === true
+      () => useFetch({ data: {} }, []), // onMount === true
       { wrapper }
     )
 
@@ -202,7 +202,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
 
   it('should execute GET using Provider url', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('/', { data: {} }, []), // onMount === true
+      () => useFetch({ data: {} }, []), // onMount === true
       { wrapper }
     )
 
@@ -320,7 +320,7 @@ describe('timeouts', (): void => {
     const onAbort = jest.fn()
     const onTimeout = jest.fn()
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('/', {
+      () => useFetch({
         timeout,
         onAbort,
         onTimeout

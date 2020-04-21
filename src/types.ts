@@ -173,26 +173,6 @@ export type Cache = {
   clear: () => void
 }
 
-// export interface CustomOptionsChill {
-//   cacheLife?: number
-//   cachePolicy?: CachePolicies
-//   data?: any
-//   interceptors?: Interceptors
-//   loading?: boolean
-//   onAbort?: () => void
-//   onError?: OnError
-//   onNewData?: (currData: any, newData: any) => any
-//   onTimeout?: () => void
-//   persist?: boolean
-//   perPage?: number
-//   responseType?: ResponseType
-//   retries?: number
-//   retryOn?: RetryOn
-//   retryDelay?: RetryDelay
-//   suspense?: boolean
-//   timeout?: number
-// }
-
 export interface CustomOptions {
   cacheLife: number
   cachePolicy: CachePolicies

@@ -65,7 +65,7 @@ export default async function doFetchArgs<TData = any>(
     return headers
   })()
 
-  const options = await (async (route): Promise<RequestInit> => {
+  const options = await (async (): Promise<RequestInit> => {
     const opts: RequestInit = {
       ...initialOptions,
       method,
@@ -81,14 +81,11 @@ export default async function doFetchArgs<TData = any>(
     if (body !== null) opts.body = body
 
     if (requestInterceptor) {
-      if (url.includes('/route2')) {
-        console.log('route: ', route)
-      }
       const interceptor = await requestInterceptor({ options: opts, url: host, path, route })
       return interceptor as any
     }
     return opts
-  })(route)
+  })()
     // console.log('options', options)
 
   // TODO: if the body is a file, and this is a large file, it might exceed the size
