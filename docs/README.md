@@ -199,9 +199,8 @@ import useFetch, { Provider } from 'use-http'
 
 function Todo({ id }) {
   const path = id ? `/todos/${id}` : null
-  const { loading, error, data } = useFetch(path, {
-    data: { title: '' }
-  }, [id])
+  const defaultTodo = { title: 'default title' }
+  const { loading, error, data } = useFetch(path, { data: defaultTodo }, [id])
   return (
     <>
       {error && 'Error!'}
