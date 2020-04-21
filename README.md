@@ -149,7 +149,7 @@ function Todos() {
 
 <details open><summary><b>Basic Usage Auto-Managed State <code>useFetch</code></b></summary>
 
-This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). **If no method is specified, GET is the default**
+This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). If no method is specified, GET is the default.
 
 ```js
 import useFetch from 'use-http'
