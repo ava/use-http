@@ -101,7 +101,7 @@ Usage
 - useFetch - Next.js [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-in-nextjs-nn9fm)
 - useFetch - create-react-app [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/embed/km04k9k9x5)
 
-<details open><summary><b>Basic Usage (managed state) <code>useFetch</code></b></summary>
+<details open><summary><b>Basic Usage Managed State <code>useFetch</code></b></summary>
 
 If the last argument of `useFetch` is not a dependency array `[]`, then it will not fire until you call one of the http methods like `get`, `post`, etc.
 
@@ -147,7 +147,7 @@ function Todos() {
 
 </details>
 
-<details><summary><b>Basic Usage (auto-managed state) <code>useFetch</code></b></summary>
+<details open><summary><b>Basic Usage Auto-Managed State <code>useFetch</code></b></summary>
 
 This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). **If no method is specified, GET is the default**
 
@@ -178,7 +178,7 @@ function Todos() {
 </details>
 
 
-<details open><summary><b>Conditional (auto-managed state) with <code>Provider</code></b></summary>
+<details open><summary><b>Conditional Auto-Managed State with <code>Provider</code></b></summary>
 
 For conditional fetching via auto-managed state, if you don't want `useFetch` to execute, you must pass `null`. Any other value will not block it from executing. This would execute whenever the `id` changes and whenever the `id` exists.
 
@@ -186,8 +186,8 @@ For conditional fetching via auto-managed state, if you don't want `useFetch` to
 import useFetch, { Provider } from 'use-http'
 
 function Todo({ id }) {
-  const url = id ? `/todos/${id}` : null
-  const { loading, error, data: todo } = useFetch(url, {
+  const path = id ? `/todos/${id}` : null
+  const { loading, error, data: todo } = useFetch(path, {
     data: { title: '' }
   }, [id])
   return (
@@ -212,7 +212,7 @@ const App = () => (
 
 </details>
 
-<details open><summary><b>Suspense Mode (auto-managed state)</b></summary>
+<details open><summary><b>Suspense Mode<sup>(experimental)</sup> Auto-Managed State</b></summary>
 
 Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
 
@@ -246,9 +246,9 @@ function App() {
 
 </details>
 
-<details><summary><b>Suspense Mode (managed state)</b></summary>
+<details><summary><b>Suspense Mode<sup>(experimental)</sup> Managed State</b></summary>
 
-Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
+Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B). Suspense mode via managed state is very experimental.
 
 ```js
 import useFetch, { Provider } from 'use-http'

@@ -198,8 +198,8 @@ For conditional fetching via auto-managed state, if you don't want `useFetch` to
 import useFetch, { Provider } from 'use-http'
 
 function Todo({ id }) {
-  const url = id ? `/todos/${id}` : null
-  const { loading, error, data } = useFetch(url, {
+  const path = id ? `/todos/${id}` : null
+  const { loading, error, data } = useFetch(path, {
     data: { title: '' }
   }, [id])
   return (
@@ -223,7 +223,7 @@ const App = () => (
 <!-- <a target="_blank" rel="noopener noreferrer" href='XXXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a> -->
 
 
-Suspense Mode (auto-managed state)
+Suspense Mode Auto-Managed State
 ----------------------------------
 
 ```js
@@ -254,7 +254,7 @@ function App() {
 
 <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-suspense-i22wv'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=7qWLJUpnxHI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=2&t=0s'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
-Suspense Mode (managed state)
+Suspense Mode Managed State
 -----------------------------
 
 Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
