@@ -247,3 +247,29 @@ export const makeError = (name: string | number, message: string) => {
   error.name = name + ''
   return error
 }
+
+/**
+ * Determines if we need to add a slash to front
+ * of a path, and adds it if we do.
+ * Cases:
+ * (path = '', url = '' || null | undefined) => ''
+ * (path = '?foo=bar', url = 'a.com')        => '?foo=bar'
+ * (path = '?foo=bar', url = 'a.com/')       => '?foo=bar'
+ * (path = 'foo', url = 'a.com')             => '/foo'
+ * (path = 'foo', url = 'a.com/')            => 'foo'
+ * (path = '/foo', url = 'a.com')            => '/foo'
+ * (path = '/foo', url = 'a.com/')           => 'foo'
+ * (path = '?foo=bar')                       => '?foo=bar'
+ * (path = 'foo')                            => '/foo'
+ * (path = '/foo')                           => '/foo'
+ */
+export const addSlash = (input?: string, url?: string) => {
+  if (!input) return ''
+  if (!url) {
+    if (input.startsWith('?') || input.startsWith('/')) return input
+    return `/${input}`
+  }
+  if (url.endsWith('/') && input.startsWith('/')) return input.substr(1)
+  if (!url.endsWith('/') && !input.startsWith('/') && !input.startsWith('?')) return `/${input}`
+  return input 
+}

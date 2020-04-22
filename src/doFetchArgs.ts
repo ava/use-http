@@ -1,5 +1,5 @@
 import { HTTPMethod, Interceptors, ValueOf, DoFetchArgs, Cache } from './types'
-import { invariant, isServer, isString, isBodyObject } from './utils'
+import { invariant, isServer, isString, isBodyObject, addSlash } from './utils'
 
 const { GET } = HTTPMethod
 
@@ -34,7 +34,7 @@ export default async function doFetchArgs<TData = any>(
     return ''
   })()
 
-  const url = `${host}${path ?? ''}${route ?? ''}`
+  const url = `${host}${addSlash(path, host)}${addSlash(route)}`
 
   const body = ((): BodyInit | null => {
     if (isBodyObject(routeOrBody)) return JSON.stringify(routeOrBody)

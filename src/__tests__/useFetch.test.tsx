@@ -13,7 +13,7 @@ import * as mockdate from 'mockdate'
 import defaults from '../defaults'
 
 import { Res, IncomingOptions, CachePolicies } from '../types'
-import { emptyCustomResponse, sleep, makeError } from '../utils'
+import { emptyCustomResponse, sleep, makeError, addSlash } from '../utils'
 
 const fetch = global.fetch as FetchMock
 
@@ -129,6 +129,22 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
 
     await test.act(async (): Promise<any> => await sleep(100))
     expect(JSON.parse(container.textContent as string)).toEqual(expected)
+  })
+})
+
+describe('useFetch - handling host/path/route parsing properly', (): void => {
+  it ('should have addSlash run properly', (): void => {
+    expect(addSlash('', '')).toBe('')
+    expect(addSlash('')).toBe('')
+    expect(addSlash('?foo=bar', 'a.com')).toBe('?foo=bar')
+    expect(addSlash('?foo=bar', 'a.com/')).toBe('?foo=bar')
+    expect(addSlash('?foo=bar')).toBe('?foo=bar')
+    expect(addSlash('/foo', 'a.com')).toBe('/foo')
+    expect(addSlash('/foo', 'a.com/')).toBe('foo')
+    expect(addSlash('foo', 'a.com')).toBe('/foo')
+    expect(addSlash('foo', 'a.com/')).toBe('foo')
+    expect(addSlash('foo')).toBe('/foo')
+    expect(addSlash('/foo')).toBe('/foo')
   })
 })
 
