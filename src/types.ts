@@ -189,7 +189,6 @@ export interface CustomOptions {
   retries: number
   retryOn: RetryOn
   retryDelay: RetryDelay
-  skip: boolean
   suspense: boolean
   timeout: number
 }
@@ -229,7 +228,6 @@ export type UseFetchArgsReturn = {
     retries: number
     retryDelay: RetryDelay
     retryOn: RetryOn | undefined
-    skip: boolean
     suspense: boolean
     timeout: number
     // defaults
