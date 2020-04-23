@@ -176,42 +176,6 @@ function Todos() {
 
 </details>
 
-
-<details open><summary><b>Conditional Auto-Managed State with <code>Provider</code></b></summary>
-
-For conditional fetching via auto-managed state, if you don't want `useFetch` to execute, one way is to set `skip: true`. This would execute whenever the `id` changes and whenever the `id` exists.
-
-```js
-import useFetch, { Provider } from 'use-http'
-
-function Todo({ id }) {
-  const defaultTodo = { title: 'default title' }
-  const { loading, error, data: todo } = useFetch(`/todos/${id}`, {
-    data: defaultTodo,
-    skip: !id
-  }, [id])
-  return (
-    <>
-      {error && 'Error!'}
-      {loading && 'Loading...'}
-      {todo.title}
-    </>
-  )
-}
-
-const App = () => (
-  <Provider url='https://example.com'>
-    <Todos />
-  </Provider>
-)
-```
-
-<!-- TODO: youtube -->
-<a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a> 
-<!-- <a target="_blank" rel="noopener noreferrer" href='XXXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a> -->
-
-</details>
-
 <details open><summary><b>Suspense Mode<sup>(experimental)</sup> Auto-Managed State</b></summary>
 
 Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
@@ -849,7 +813,6 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
 | `retryDelay` | You can retry with certain intervals i.e. 30 seconds `30000` or with custom logic (i.e. to increase retry intervals). | `1000` |
 | `retryOn` | You can retry on certain http status codes or have custom logic to decide whether to retry or not via a function. Make sure `retries > 0` otherwise it won't retry. | `[]` |
-| `skip` | Tells `useFetch` not to execute if set to `true` | `false` |
 | `suspense` | Enables Experimental React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | `false` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**. If set to `0`, it will not timeout except for browser defaults.       | `0` |
 
@@ -937,9 +900,6 @@ const options = {
       return true;
     }
   },
-
-  // tells useFetch not to execute if set to true
-  skip: false,
 
   // enables experimental React Suspense mode
   suspense: true, // defaults to `false`
