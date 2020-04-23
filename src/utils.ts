@@ -1,6 +1,6 @@
 import { useMemo, useEffect, MutableRefObject, useRef, useCallback, DependencyList } from 'react'
 import useSSR from 'use-ssr'
-import { RequestInitJSON, OptionsMaybeURL, Res, HTTPMethod, ResponseType } from './types'
+import { RequestInitJSON, Options, Res, HTTPMethod, ResponseType } from './types'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
 
 /**
@@ -94,7 +94,7 @@ export const isNumber = (v: any): boolean => Object.prototype.toString.call(v) =
  * Makes an object that will match the standards of a normal fetch's options
  * aka: pulls out all useFetch's special options like "onMount"
  */
-export const pullOutRequestInit = (options?: OptionsMaybeURL): RequestInit => {
+export const pullOutRequestInit = (options?: Options): RequestInit => {
   if (!options) return {}
   const requestInitFields = [
     'body',
@@ -153,12 +153,12 @@ export const tryGetData = async (res: Response | undefined, defaultData: any, re
   return !isEmpty(defaultData) && isEmpty(data) ? defaultData : data
 }
 
-const tryRetry = async <T = any>(res: Response, types: ResponseType): Promise<T> => {
+const tryRetry = async <T = any>(res: Response, types: ResponseType, i: number = 0): Promise<T> => {
   try {
-    return (res.clone() as any)[types[0]]()
+    return await (res.clone() as any)[types[i]]()
   } catch (error) {
-    if (types.length === 1) throw error
-    return tryRetry(res.clone(), (types as any).slice(1))
+    if (types.length - 1 === i) throw error
+    return tryRetry(res.clone(), types, ++i)
   }
 }
 
@@ -246,4 +246,30 @@ export const makeError = (name: string | number, message: string) => {
   const error = new Error(message)
   error.name = name + ''
   return error
+}
+
+/**
+ * Determines if we need to add a slash to front
+ * of a path, and adds it if we do.
+ * Cases:
+ * (path = '', url = '' || null | undefined) => ''
+ * (path = '?foo=bar', url = 'a.com')        => '?foo=bar'
+ * (path = '?foo=bar', url = 'a.com/')       => '?foo=bar'
+ * (path = 'foo', url = 'a.com')             => '/foo'
+ * (path = 'foo', url = 'a.com/')            => 'foo'
+ * (path = '/foo', url = 'a.com')            => '/foo'
+ * (path = '/foo', url = 'a.com/')           => 'foo'
+ * (path = '?foo=bar')                       => '?foo=bar'
+ * (path = 'foo')                            => '/foo'
+ * (path = '/foo')                           => '/foo'
+ */
+export const addSlash = (input?: string, url?: string) => {
+  if (!input) return ''
+  if (!url) {
+    if (input.startsWith('?') || input.startsWith('/')) return input
+    return `/${input}`
+  }
+  if (url.endsWith('/') && input.startsWith('/')) return input.substr(1)
+  if (!url.endsWith('/') && !input.startsWith('/') && !input.startsWith('?')) return `/${input}`
+  return input 
 }

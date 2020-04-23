@@ -12,8 +12,8 @@ import mockConsole from 'jest-mock-console'
 import * as mockdate from 'mockdate'
 import defaults from '../defaults'
 
-import { Res, Options, CachePolicies } from '../types'
-import { emptyCustomResponse, sleep, makeError } from '../utils'
+import { Res, IncomingOptions, CachePolicies } from '../types'
+import { emptyCustomResponse, sleep, makeError, addSlash } from '../utils'
 
 const fetch = global.fetch as FetchMock
 
@@ -132,6 +132,22 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
   })
 })
 
+describe('useFetch - handling host/path/route parsing properly', (): void => {
+  it ('should have addSlash run properly', (): void => {
+    expect(addSlash('', '')).toBe('')
+    expect(addSlash('')).toBe('')
+    expect(addSlash('?foo=bar', 'a.com')).toBe('?foo=bar')
+    expect(addSlash('?foo=bar', 'a.com/')).toBe('?foo=bar')
+    expect(addSlash('?foo=bar')).toBe('?foo=bar')
+    expect(addSlash('/foo', 'a.com')).toBe('/foo')
+    expect(addSlash('/foo', 'a.com/')).toBe('foo')
+    expect(addSlash('foo', 'a.com')).toBe('/foo')
+    expect(addSlash('foo', 'a.com/')).toBe('foo')
+    expect(addSlash('foo')).toBe('/foo')
+    expect(addSlash('/foo')).toBe('/foo')
+  })
+})
+
 describe('useFetch - responseType', (): void => {
   afterEach((): void => {
     cleanup()
@@ -187,7 +203,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     fetch.mockResponseOnce(JSON.stringify(expected))
   })
 
-  it('should work correctly: useFetch({ data: [] }, [])', async (): Promise<void> => {
+  it(`should work correctly: useFetch({ data: [] }, [])`, async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({ data: {} }, []), // onMount === true
       { wrapper }
@@ -232,8 +248,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
 
   it('should merge the data onNewData for pagination', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({
-        path: '/people',
+      () => useFetch('/people', {
         data: { no: 'way' },
         onNewData: (currData, newData) => ({ ...currData, ...newData })
       }, []), // onMount === true
@@ -251,14 +266,13 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
   it('should not make another request when there is no more data `perPage` pagination', async (): Promise<void> => {
     fetch.resetMocks()
     const expected1 = [1, 2, 3]
-    fetch.mockResponse(JSON.stringify(expected1))
+    fetch.mockResponseOnce(JSON.stringify(expected1))
+      .mockResponseOnce(JSON.stringify([4]))
     const { result, rerender, waitForNextUpdate } = renderHook(
       ({ page }) => useFetch(`https://example.com?page=${page}`, {
         data: [],
         perPage: 3,
         onNewData: (currData, newData) => {
-          // to imitate getting a response with less items
-          if (page === 2) return [...currData, 4]
           return [...currData, ...newData]
         }
       }, [page]), // onMount === true
@@ -276,16 +290,15 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(result.current.data).toEqual([...expected1, 4])
     expect(fetch.mock.calls.length).toBe(2)
     act(() => rerender({ page: 3 }))
-    await waitForNextUpdate()
     expect(result.current.data).toEqual([...expected1, 4])
     expect(fetch.mock.calls.length).toBe(2)
   })
 
-  it('should execute GET using Provider url: useFetch({ path: "/people" }, [])', async (): Promise<
+  it(`should execute GET using Provider url: useFetch('/people', [])`, async (): Promise<
     void
   > => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ path: '/people' }, []), // onMount === true
+      () => useFetch('/people', []), // onMount === true
       { wrapper }
     )
     expect(result.current.loading).toBe(true)
@@ -349,13 +362,12 @@ describe('timeouts', (): void => {
     const onAbort = jest.fn()
     const onTimeout = jest.fn()
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({
+      () => useFetch('/todos', {
         retries: 1,
         // TODO: this test times out if `retryDelay > 0`
         // works in apps, not sure how to advance the timers correctly
         retryDelay: 0,
         timeout,
-        path: '/todos',
         onAbort,
         onTimeout
       }, []), // onMount === true
@@ -496,8 +508,7 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
 
   it('should re-run the request when onUpdate dependencies are updated', async (): Promise<void> => {
     const { result, waitForNextUpdate, rerender } = renderHook(
-      ({ initialValue }) => useFetch({
-        path: `/${initialValue}`,
+      ({ initialValue }) => useFetch(`/${initialValue}`, {
         data: {}
       }, [initialValue]), // (onMount && onUpdate) === true
       {
@@ -520,8 +531,7 @@ describe('useFetch - BROWSER - with <Provider /> - Managed State', (): void => {
 
   it('should fetch cached data when cached path is requested', async (): Promise<void> => {
     const { result, waitForNextUpdate, rerender } = renderHook(
-      ({ initialValue }) => useFetch({
-        path: `/a/${initialValue}`,
+      ({ initialValue }) => useFetch(`/a/${initialValue}`, {
         data: {}
       }, [initialValue]), // (onMount && onUpdate) === true
       {
@@ -554,21 +564,11 @@ describe('useFetch - BROWSER - interceptors', (): void => {
   const snake_case = { title: 'Alex Cory', first_name: 'Alex' }
   const expected = { title: 'Alex Cory', firstName: 'Alex' }
 
+  const request = jest.fn(({ options }) => options)
   const wrapper = ({ children }: { children?: ReactNode }): ReactElement => {
-    const options: Options = {
+    const options: IncomingOptions = {
       interceptors: {
-        request: async ({ options: opts, url, path, route }) => {
-          if (path === '/path') {
-            opts.data = 'path'
-          }
-          if (url === 'url') {
-            opts.data = 'url'
-          }
-          if (route === '/route') {
-            opts.data = 'route'
-          }
-          return opts
-        },
+        request,
         async response({ response: res }) {
           if (res.data) res.data = toCamel(res.data)
           return res
@@ -584,6 +584,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
   afterEach((): void => {
     fetch.resetMocks()
     cleanup()
+    request.mockClear()
   })
 
   beforeEach((): void => {
@@ -612,11 +613,12 @@ describe('useFetch - BROWSER - interceptors', (): void => {
 
   it('should pass the proper path string to `interceptors.request`', async (): Promise<void> => {
     const { result } = renderHook(
-      () => useFetch({ path: '/path' }),
+      () => useFetch('/path'),
       { wrapper }
     )
     await act(result.current.get)
-    expect((fetch.mock.calls[0][1] as any).data).toEqual('path')
+    expect(fetch.mock.calls[0][0]).toBe('https://example.com/path')
+    expect(request.mock.calls[0][0].path).toBe('/path')
   })
 
   it('should pass the proper route string to `interceptors.request`', async (): Promise<void> => {
@@ -627,16 +629,18 @@ describe('useFetch - BROWSER - interceptors', (): void => {
     await act(async () => {
       await result.current.get('/route')
     })
-    expect((fetch.mock.calls[0][1] as any).data).toEqual('route')
+    expect(fetch.mock.calls[0][0]).toBe('https://example.com/route')
+    expect(request.mock.calls[0][0].route).toBe('/route')
   })
 
   it('should pass the proper url string to `interceptors.request`', async (): Promise<void> => {
     const { result } = renderHook(
-      () => useFetch('url'),
+      () => useFetch(),
       { wrapper }
     )
     await act(result.current.get)
-    expect((fetch.mock.calls[0][1] as any).data).toEqual('url')
+    expect(fetch.mock.calls[0][0]).toBe('https://example.com')
+    expect(request.mock.calls[0][0].url).toBe('https://example.com')
   })
   
   it('should still call both interceptors when using cache', async (): Promise<void> => {
@@ -679,7 +683,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
   })
 
   beforeEach((): void => {
-    fetch.mockResponseOnce(JSON.stringify({}))
+    fetch.mockResponse(JSON.stringify({}))
   })
 
   it('should only add Content-Type: application/json for POST and PUT by default', async (): Promise<void> => {
@@ -739,7 +743,7 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
     expect(fetch).toHaveBeenCalledTimes(1)
   })
 
-  it('should overwrite options set in the Provider', async (): Promise<void> => {
+  it('should overwrite options set in the Provider and not every instance of useFetch', async (): Promise<void> => {
     const expectedHeaders = defaults.headers
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch(globalOptions => {
@@ -755,6 +759,14 @@ describe('useFetch - BROWSER - Overwrite Global Options set in Provider', (): vo
     expect(fetch.mock.calls[0][0]).toBe('https://example.com')
     expect((fetch.mock.calls[0][1] as any).headers).toEqual(expectedHeaders)
     expect(fetch).toHaveBeenCalledTimes(1)
+    const expectedHeadersGET = { ...defaults.headers, ...providerHeaders }
+    const { waitForNextUpdate: wait2 } = renderHook(
+      () => useFetch('/', []), // onMount === true
+      { wrapper }
+    )
+    await wait2()
+    expect((fetch.mock.calls[1][1] as any).headers).toEqual(expectedHeadersGET)
+    expect(fetch).toHaveBeenCalledTimes(2)
   })
 })
 
@@ -1060,8 +1072,7 @@ describe('useFetch - BROWSER - errors', (): void => {
     fetch.resetMocks()
     fetch.mockResponse('fail', { status: 401 })
     const { result } = renderHook(
-      () => useFetch({
-        url: 'https://example.com',
+      () => useFetch('https://example.com', {
         data: [],
         cachePolicy: NO_CACHE
       })
@@ -1094,8 +1105,7 @@ describe('useFetch - BROWSER - errors', (): void => {
     fetch.resetMocks()
     fetch.mockReject(expectedError)
     const { result } = renderHook(
-      () => useFetch({
-        url: 'https://example.com/2',
+      () => useFetch('https://example.com/2', {
         data: [],
         cachePolicy: NO_CACHE
       })
@@ -1177,7 +1187,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
 
   it('should fetch once', async (): Promise<void> => {
     const { waitForNextUpdate } = renderHook(
-      () => useFetch({ url: 'https://persist.com', persist: true }, [])
+      () => useFetch('https://persist.com', { persist: true }, [])
     )
     await waitForNextUpdate()
     expect(fetch).toHaveBeenCalledTimes(1)
@@ -1187,7 +1197,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
     fetch.mockResponse(JSON.stringify(unexpected))
 
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch({ url: 'https://persist.com', persist: true }, [])
+      () => useFetch('https://persist.com', { persist: true }, [])
     )
     await waitForNextUpdate()
     expect(fetch).toHaveBeenCalledTimes(0)
@@ -1204,7 +1214,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
     mockdate.set('2020-01-02 02:00:00')
 
     const { waitForNextUpdate } = renderHook(
-      () => useFetch({ url: 'https://persist.com', persist: true }, [])
+      () => useFetch('https://persist.com', { persist: true }, [])
     )
     await waitForNextUpdate()
     expect(fetch).toHaveBeenCalledTimes(1)
@@ -1212,7 +1222,7 @@ describe('useFetch - BROWSER - persistence', (): void => {
 
   it('should have `cache` in the return of useFetch', async (): Promise<void> => {
     const { result } = renderHook(
-      () => useFetch({ url: 'https://persist.com', persist: true })
+      () => useFetch('https://persist.com', { persist: true })
     )
     expect(result.current.cache).toBeDefined()
     expect(result.current.cache.get).toBeInstanceOf(Function)
@@ -1224,14 +1234,14 @@ describe('useFetch - BROWSER - persistence', (): void => {
 
   it('should error if passing wrong cachePolicy with persist: true', async (): Promise<void> => {
     var { result } = renderHook(
-      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NO_CACHE }, [])
+      () => useFetch('https://persist.com', { persist: true, cachePolicy: NO_CACHE }, [])
     )
     expect(result.error.name).toBe('Invariant Violation')
     expect(result.error.message).toBe('You cannot use option \'persist\' with cachePolicy: no-cache 🙅‍♂️')
 
     // eslint-disable-next-line
     var { result } = renderHook(
-      () => useFetch({ url: 'https://persist.com', persist: true, cachePolicy: NETWORK_ONLY }, [])
+      () => useFetch('https://persist.com', { persist: true, cachePolicy: NETWORK_ONLY }, [])
     )
     expect(result.error.name).toBe('Invariant Violation')
     expect(result.error.message).toBe('You cannot use option \'persist\' with cachePolicy: network-only 🙅‍♂️')

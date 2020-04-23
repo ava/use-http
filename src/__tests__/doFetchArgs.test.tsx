@@ -18,12 +18,12 @@ describe('doFetchArgs: general usages', (): void => {
     })
     const { url, options } = await doFetchArgs(
       {},
-      '',
-      '',
       HTTPMethod.POST,
       controller,
       defaults.cacheLife,
       cache,
+      '',
+      '',
       expectedRoute,
       {}
     )
@@ -47,12 +47,12 @@ describe('doFetchArgs: general usages', (): void => {
     })
     const { options, url } = await doFetchArgs(
       {},
-      'https://example.com',
-      '',
       HTTPMethod.POST,
       controller,
       defaults.cacheLife,
       cache,
+      'https://example.com',
+      '',
       '/test',
       []
     )
@@ -76,12 +76,12 @@ describe('doFetchArgs: general usages', (): void => {
     })
     const { url } = await doFetchArgs(
       {},
-      'https://example.com',
-      '/path',
       HTTPMethod.POST,
       controller,
       defaults.cacheLife,
       cache,
+      'https://example.com',
+      '/path',
       '/route',
       {}
     )
@@ -103,12 +103,12 @@ describe('doFetchArgs: general usages', (): void => {
     }
     const { options } = await doFetchArgs(
       {},
-      '',
-      '',
       HTTPMethod.POST,
       controller,
       defaults.cacheLife,
       cache,
+      undefined,
+      '',
       '/test',
       {},
       interceptors.request
@@ -154,12 +154,12 @@ describe('doFetchArgs: Errors', (): void => {
     await expect(
       doFetchArgs(
         {},
-        '',
-        '',
         HTTPMethod.GET,
         controller,
         defaults.cacheLife,
         cache,
+        '',
+        '',
         {},
         {}
       )
@@ -196,12 +196,12 @@ describe('doFetchArgs: Errors', (): void => {
     await expect(
       doFetchArgs(
         {},
-        '',
-        '',
         HTTPMethod.GET,
         controller,
         defaults.cacheLife,
         cache,
+        '',
+        '',
         [],
         []
       )
