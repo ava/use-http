@@ -109,31 +109,25 @@ import useFetch from 'use-http'
 
 function Todos() {
   const [todos, setTodos] = useState([])
+  const { get, post, response, loading, error } = useFetch('https://example.com')
 
-  const [request, response] = useFetch('https://example.com')
-
-  // componentDidMount
-  useEffect(() => {
-    initializeTodos()
-  }, [])
+  useEffect(initializeTodos, []) // componentDidMount
   
   async function initializeTodos() {
-    const initialTodos = await request.get('/todos')
+    const initialTodos = await get('/todos')
     if (response.ok) setTodos(initialTodos)
   }
 
   async function addTodo() {
-    const newTodo = await request.post('/todos', {
-      title: 'no way',
-    })
+    const newTodo = await post('/todos', { title: 'my new todo' })
     if (response.ok) setTodos([...todos, newTodo])
   }
 
   return (
     <>
       <button onClick={addTodo}>Add Todo</button>
-      {request.error && 'Error!'}
-      {request.loading && 'Loading...'}
+      {error && 'Error!'}
+      {loading && 'Loading...'}
       {todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
       )}
