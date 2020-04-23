@@ -26,7 +26,7 @@ const { CACHE_FIRST } = CachePolicies
 
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
-  const { customOptions, requestInit, defaults, dependencies } = useFetchArgs(...args)
+  const { host, path, customOptions, requestInit, dependencies } = useFetchArgs(...args)
   const {
     cacheLife,
     cachePolicy, // 'cache-first' by default
@@ -35,7 +35,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     onError,
     onNewData,
     onTimeout,
-    path,
     perPage,
     persist,
     responseType,
@@ -44,7 +43,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     retryOn,
     suspense,
     timeout,
-    url: initialURL,
+    ...defaults
   } = customOptions
 
   const cache = useCache({ persist, cacheLife, cachePolicy })
@@ -75,12 +74,12 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
       const { url, options, response } = await doFetchArgs<TData>(
         requestInit,
-        initialURL,
-        path,
         method,
         theController,
         cacheLife,
         cache,
+        host,
+        path,
         routeOrBody,
         body,
         interceptors.request
@@ -88,26 +87,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       
       error.current = undefined
 
-      if (response.isCached && cachePolicy === CACHE_FIRST) {
-        try {
-          res.current = response.cached as Res<TData>
-          const theData = await tryGetData(response.cached, defaults.data, responseType)
-          res.current.data = theData
-          res.current = interceptors.response ? await interceptors.response({ response: res.current }) : res.current
-          invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
-          data.current = res.current.data as TData
-          if (!suspense && mounted.current) forceUpdate()
-          return data.current
-        } catch (err) {
-          error.current = err
-          if (mounted.current) forceUpdate()
-        }
-      }
-
-      if (!suspense) setLoading(true)
-
       // don't perform the request if there is no more data to fetch (pagination)
       if (perPage > 0 && !hasMore.current && !error.current) return data.current
+
+      if (!suspense) setLoading(true)
 
       const timer = timeout && setTimeout(() => {
         timedout.current = true
@@ -119,7 +102,11 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       let newRes
 
       try {
-        newRes = await fetch(url, options)
+        if (response.isCached && cachePolicy === CACHE_FIRST) {
+          newRes = response.cached as Response
+        } else {
+          newRes = await fetch(url, options)
+        }
         res.current = newRes.clone()
 
         newData = await tryGetData(newRes, defaults.data, responseType)
@@ -209,7 +196,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     }
 
     return doFetch
-  }, [isServer, onAbort, requestInit, initialURL, path, interceptors, cachePolicy, perPage, timeout, persist, cacheLife, onTimeout, defaults.data, onNewData, forceUpdate, suspense])
+  }, [isServer, onAbort, requestInit, host, path, interceptors, cachePolicy, perPage, timeout, persist, cacheLife, onTimeout, defaults.data, onNewData, forceUpdate, suspense])
 
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
   const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
