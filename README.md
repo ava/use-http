@@ -154,11 +154,9 @@ This fetch is run `onMount/componentDidMount`. The last argument `[]` means it w
 import useFetch from 'use-http'
 
 function Todos() {
-  const { loading, error, data } = useFetch('https://example.com/todos', {
-    // these options accept all native `fetch` options
-    data: [] // defaults the `data` to an array instead of `undefined`
-  }, [])     // <- this [] means it will fire onMount (GET by default)
-
+  const options = {} // these options accept all native `fetch` options
+  // the last argument below [] means it will fire onMount (GET by default)
+  const { loading, error, data = [] } = useFetch('https://example.com/todos', options, [])
   return (
     <>
       {error && 'Error!'}
@@ -184,8 +182,7 @@ Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
 import useFetch, { Provider } from 'use-http'
 
 function Todos() {
-  const { data: todos } = useFetch('/todos', {
-    data: [],
+  const { data: todos = [] } = useFetch('/todos', {
     suspense: true // A. can put `suspense: true` here
   }, []) // onMount
 
@@ -220,7 +217,7 @@ import useFetch, { Provider } from 'use-http'
 function Todos() {
   const [todos, setTodos] = useState([])
   // A. can put `suspense: true` here
-  const { get, response } = useFetch({ data: [], suspense: true })
+  const { get, response } = useFetch({ suspense: true })
 
   const loadInitialTodos = async () => {
     const todos = await get('/todos')
@@ -288,10 +285,9 @@ import useFetch, { Provider } from 'use-http'
 const Todos = () => {
   const [page, setPage] = useState(1)
 
-  const { data, loading } = useFetch(`/todos?page=${page}&amountPerPage=15`, {
+  const { data = [], loading } = useFetch(`/todos?page=${page}&amountPerPage=15`, {
     onNewData: (currTodos, newTodos) => [...currTodos, ...newTodos], // appends newly fetched todos
     perPage: 15, // stops making more requests if last todos fetched < 15
-    data: []
   }, [page]) // runs onMount AND whenever the `page` updates (onUpdate)
 
   return (
@@ -703,17 +699,10 @@ import useFetch from 'use-http'
 
 const Todos = () => {
   // let's say for this request, you don't want the `Accept` header at all
-  const { loading, error, data: todos } = useFetch(globalOptions => {
+  const { loading, error, data: todos = [] } = useFetch('/todos', globalOptions => {
     delete globalOptions.headers.Accept
-    return {
-      data: [],
-      ...globalOptions
-    }
+    return globalOptions
   }, []) // onMount
-  
-  // can also do this and overwrite the url like this
-  // const { loading, error, data: todos } = useFetch('https://my-new-url.com', globalOptions => {
-  
   return (
     <>
       {error && error.messge}
