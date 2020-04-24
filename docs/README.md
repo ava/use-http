@@ -153,7 +153,7 @@ function Todos() {
   const [todos, setTodos] = useState([])
   const { get, post, response, loading, error } = useFetch('https://example.com')
 
-  useEffect(loadInitialTodos, []) // componentDidMount
+  useEffect(() => { initializeTodos() }, []) // componentDidMount
   
   async function loadInitialTodos() {
     const initialTodos = await get('/todos')
