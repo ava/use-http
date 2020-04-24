@@ -642,7 +642,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
     expect(fetch.mock.calls[0][0]).toBe('https://example.com')
     expect(request.mock.calls[0][0].url).toBe('https://example.com')
   })
-  
+
   it('should still call both interceptors when using cache', async (): Promise<void> => {
     let requestCalled = 0
     let responseCalled = 0
@@ -1031,7 +1031,7 @@ describe('useFetch - BROWSER - errors', (): void => {
     expect(onError).toBeCalled()
     expect(onError).toHaveBeenCalledWith({ error: expectedError })
   })
-  
+
   it('should not call onError when aborting a request', async (): Promise<void> => {
     fetch.resetMocks()
     fetch.mockResponse('fail', { status: 401 })
@@ -1043,7 +1043,7 @@ describe('useFetch - BROWSER - errors', (): void => {
     await waitForNextUpdate()
     expect(onError).not.toBeCalled()
   })
-  
+
   it('should only call onError on the last retry', async (): Promise<void> => {
     fetch.resetMocks()
     fetch.mockResponse('fail', { status: 401 })
@@ -1055,7 +1055,7 @@ describe('useFetch - BROWSER - errors', (): void => {
     expect(onError).toBeCalledTimes(1)
     expect(onError).toHaveBeenCalledWith({ error: makeError(401, 'Unauthorized') })
   })
-  
+
   it('should call onError when !response.ok', async (): Promise<void> => {
     fetch.resetMocks()
     fetch.mockResponse('fail', { status: 401 })
@@ -1067,10 +1067,10 @@ describe('useFetch - BROWSER - errors', (): void => {
     expect(onError).toBeCalled()
     expect(onError).toHaveBeenCalledWith({ error: makeError(401, 'Unauthorized') })
   })
-  
+
   it('should set the `error` object when response.ok is false', async (): Promise<void> => {
     fetch.resetMocks()
-    fetch.mockResponse('fail', { status: 401 })
+    fetch.mockResponse(() => Promise.reject(makeError(401, 'Unauthorized')))
     const { result } = renderHook(
       () => useFetch('https://example.com', {
         data: [],
