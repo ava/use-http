@@ -61,7 +61,7 @@
 <br/>
     
 <div align="center">
-  <pre>npm i <a href="https://use-http.com">use-http</a></pre>
+  <pre>npm i <a href="https://usefet.ch">uf</a></pre>
 </div>
 
 <br/>
@@ -80,7 +80,7 @@ Features
 - Aborts/Cancels pending http requests when a component unmounts
 - Built in caching
 - Persistent caching support
-- Suspense<sup>(experimental)</sup> support
+- Suspense support
 - Retry functionality
 
 Usage
@@ -88,49 +88,48 @@ Usage
 
 ### Examples + Videos
 
-- useFetch - managed state, request, response, etc. [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=_-GujYZFCKI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=6)
+- useFetch - lazy, non-lazy, both [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-request-response-managed-state-ruyi3?file=/src/index.js) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=_-GujYZFCKI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=6)
 - useFetch - request/response interceptors [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-requestresponse-interceptors-s1lex) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=3HauoWh0Jts&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=8)
 - useFetch - retries, retryOn, retryDelay [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-retryon-retrydelay-s74q9) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=grE3AX-Q9ss&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=9)
 - useFetch - abort, timeout, onAbort, onTimeout [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=7SuD3ZOfu7E&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=4)
 - useFetch - persist, cache [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=pJ22Rq9c8mw&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=7)
 - useFetch - cacheLife, cachePolicy [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=AsZ9hnWHCeg&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=3&t=0s)
-- useFetch - suspense <sup>(experimental)</sup> [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=7qWLJUpnxHI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=2&t=0s)
+- useFetch - suspense [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-suspense-i22wv) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=7qWLJUpnxHI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=2&t=0s)
 - useFetch - pagination [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-provider-pagination-exttg) [![](https://img.shields.io/badge/video-red.svg)](https://www.youtube.com/watch?v=YmcMjRpIYqU&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=5)
 - useQuery - GraphQL [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/graphql-usequery-provider-uhdmj)
 - useFetch - Next.js [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/s/usefetch-in-nextjs-nn9fm)
 - useFetch - create-react-app [![](https://img.shields.io/badge/example-blue.svg)](https://codesandbox.io/embed/km04k9k9x5)
 
-<details open><summary><b>Basic Usage Managed State <code>useFetch</code></b></summary>
+<details open><summary><b>Basic Usage (mixing lazy + non-lazy) <code>useFetch</code></b></summary>
 
 If the last argument of `useFetch` is not a dependency array `[]`, then it will not fire until you call one of the http methods like `get`, `post`, etc.
 
 ```js
-import useFetch from 'use-http'
+import useFetch from 'uf'
 
 function Todos() {
-  const [todos, setTodos] = useState([])
-  const { get, post, response, loading, error } = useFetch('https://example.com')
+  // this will run a GET to /todos on mount, and load the
+  // data into `todos`. AKA NON-LAZY
+  const [todos = [], setTodos, todosAPI] = useFetch('/todos')
 
-  useEffect(() => { initializeTodos() }, []) // componentDidMount
-  
-  async function initializeTodos() {
-    const initialTodos = await get('/todos')
-    if (response.ok) setTodos(initialTodos)
-  }
-
+  const [adding, setAdding] = useState(false)
   async function addTodo() {
-    const newTodo = await post('/todos', { title: 'my new todo' })
-    if (response.ok) setTodos([...todos, newTodo])
+    setAdding(true)
+    // all methods inside `todosAPI` are LAZY.
+    // Aka, you must call `setTodos` to update `todos`
+    // AND you must handle your own loading state
+    const { data: newTodo, ok } = await todosAPI.post({ title: 'my new todo' })
+    // add the newTodo to the front of the list
+    if (ok) setTodos([newTodo, ...todos])
+    setAdding(false)
   }
 
   return (
     <>
-      <button onClick={addTodo}>Add Todo</button>
-      {error && 'Error!'}
-      {loading && 'Loading...'}
-      {todos.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
+      <button onClick={addTodo}>{adding ? 'Adding Todo...' : 'Add Todo'}</button>
+      {todosAPI.error && 'Error!'}
+      {todosAPI.loading && 'Loading Initial Todos...'}
+      {todos.map(todo => <div key={todo.id}>{todo.title}</div>}
     </>
   )
 }
@@ -140,24 +139,21 @@ function Todos() {
 
 </details>
 
-<details open><summary><b>Basic Usage Auto-Managed State <code>useFetch</code></b></summary>
+<details open><summary><b>Basic Usage <code>useFetch</code></b></summary>
 
-This fetch is run `onMount/componentDidMount`. The last argument `[]` means it will run `onMount`. If you pass it a variable like `[someVariable]`, it will run `onMount` and again whenever `someVariable` changes values (aka `onUpdate`). If no method is specified, GET is the default.
+This fetch is run `onMount/componentDidMount` by default. If no method is specified, GET is the default.
 
 ```js
-import useFetch from 'use-http'
+import useFetch from 'uf'
 
 function Todos() {
   const options = {} // these options accept all native `fetch` options
-  // the last argument below [] means it will fire onMount (GET by default)
-  const { loading, error, data = [] } = useFetch('https://example.com/todos', options, [])
+  const [todos = [],, todosAPI] = useFetch('/todos', options)
   return (
     <>
-      {error && 'Error!'}
-      {loading && 'Loading...'}
-      {data.map(todo => (
-        <div key={todo.id}>{todo.title}</div>
-      )}
+      {todosAPI.error && 'Error!'}
+      {todosAPI.loading && 'Loading Initial Todos...'}
+      {todos.map(todo => <div key={todo.id}>{todo.title}</div>}
     </>
   )
 }
@@ -168,18 +164,16 @@ function Todos() {
 
 </details>
 
-<details open><summary><b>Suspense Mode<sup>(experimental)</sup> Auto-Managed State</b></summary>
+<details open><summary><b>Suspense Mode</b></summary>
 
 Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
 
 ```js
-import useFetch, { Provider } from 'use-http'
+import useFetch, { Provider } from 'uf'
 
 function Todos() {
-  const { data: todos = [] } = useFetch('/todos', {
-    suspense: true // A. can put `suspense: true` here
-  }, []) // onMount
-
+  // A. can put `suspense: true` here
+  const [todos = []] = useFetch('/todos', { suspense: true })
   return todos.map(todo => <div key={todo.id}>{todo.title}</div>)
 }
 
@@ -201,27 +195,27 @@ function App() {
 
 </details>
 
-<details><summary><b>Suspense Mode<sup>(experimental)</sup> Managed State</b></summary>
+<details><summary><b>Suspense Mode (lazy)</b></summary>
 
-Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B). Suspense mode via managed state is very experimental.
+Can put `suspense` in 2 places. Either `useFetch` (A) or `Provider` (B).
 
 ```js
-import useFetch, { Provider } from 'use-http'
+import useFetch, { Provider } from 'uf'
 
 function Todos() {
-  const [todos, setTodos] = useState([])
-  // A. can put `suspense: true` here
-  const { get, response } = useFetch({ suspense: true })
+  const [todos = [], setTodos, todosAPI] = useFetch('/todos', {
+    lazy: true,
+    // A. can put `suspense: true` here
+    suspense: true
+  })
 
   const loadInitialTodos = async () => {
-    const todos = await get('/todos')
-    if (response.ok) setTodos(todos)
+    const { data: todos, ok } = await todosAPI.get('/todos')
+    if (ok) setTodos(todos)
   }
 
   // componentDidMount
-  useEffect(() => {
-    loadInitialTodos()
-  }, [])
+  useEffect(() => { loadInitialTodos() }, [])
 
   return todos.map(todo => <div key={todo.id}>{todo.title}</div>)
 }
@@ -269,29 +263,34 @@ function App() {
   <br>
 </div>
 
-<details><summary><b>Pagination + <code>Provider</code></b></summary>
+<details><summary><b>Pagination/Infinite Scroll + <code>Provider</code></b></summary>
 
 The `onNewData` will take the current data, and the newly fetched data, and allow you to merge the two however you choose. In the example below, we are appending the new todos to the end of the current todos.
 
 ```jsx
-import useFetch, { Provider } from 'use-http'
+import useFetch, { Provider } from 'uf'
 
-const Todos = () => {
+function Todos() {
+  const perPage = 15
   const [page, setPage] = useState(1)
-
-  const { data = [], loading } = useFetch(`/todos?page=${page}&amountPerPage=15`, {
-    onNewData: (currTodos, newTodos) => [...currTodos, ...newTodos], // appends newly fetched todos
-    perPage: 15, // stops making more requests if last todos fetched < 15
-  }, [page]) // runs onMount AND whenever the `page` updates (onUpdate)
+  // aka: load initial todos on mount into `data`. Re-runs when url changes
+  const [todos = [],, todosAPI] = useFetch(`/todos?page=${page}&perPage=${perPage}`, {
+    // appends newly fetched todos
+    onNewData: (currTodos = [], newTodos) => [...currTodos, ...newTodos],
+    perPage, // stops making more requests if last todos fetched < 15.
+  })         // `perPage` REQUIRED if you want loadingMore to work properly
 
   return (
-    <ul>
-      {data.map(todo => <li key={todo.id}>{todo.title}</li>}
-      {loading && 'Loading...'}
-      {!loading && (
-        <button onClick={() => setPage(page + 1)}>Load More Todos</button>
+    <>
+      {todosAPI.error && 'Error!'}
+      {todos.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
       )}
-    </ul>
+      {!todosAPI.loading && 'Loading Initial Todos...'}
+      <button onClick={() => setPage(page + 1)}>
+        {todoAPI.loadingMore ? 'Loading More...' : 'Load More'}
+      </button>
+    </>
   )
 }
 
@@ -302,6 +301,41 @@ const App = () => (
 )
 ```
 
+Or if you want more control you can do
+
+```js
+function Todos() {
+  const perPage = 15
+  const page = useRef(1)
+  // aka: load initial todos on mount into `todos`
+  const [todos = [], setTodos, todosAPI] = useFetch('/todos')
+
+  const [loadingMore, setLoadingMore] = useState(false)
+  async function loadMore() {
+    const hasMore = todos.length % perPage === 0
+    if (!hasMore) return
+    setLoadingMore(true)
+    const { data: moreTodos, ok } = await todosAPI.get(`?page=${++page.current}&perPage=${perPage}`)
+    if (ok) {
+      // setTodos would use the cache key `/todos` and save this into cache
+      setTodos(todos => [...todos, ...moreTodos])
+    }
+    setLoadingMore(false)
+  }
+
+  return (
+    <>
+      {todosAPI.error && 'Error!'}
+      {todos.map(todo => (
+        <div key={todo.id}>{todo.title}</div>
+      )}
+      {!todosAPI.loading && 'Loading Initial Todos...'}
+      <button onClick={loadMore}>{loadingMore ? 'Loading More...' : 'Load More'}</button>
+    </>
+  )
+}
+```
+
 <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-provider-pagination-exttg?file=/src/index.js'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a>  <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=YmcMjRpIYqU&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=5'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
 
 
@@ -309,67 +343,34 @@ const App = () => (
 
 <details open><summary><b>Destructured <code>useFetch</code></b></summary>
 
-⚠️ Do not destructure the `response` object! Details in [this video](https://youtu.be/_-GujYZFCKI?list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&t=127). Technically you can do it, but if you need to access the `response.ok` from, for example, within a component's onClick handler, it will be a stale value for `ok` where it will be correct for `response.ok`.  ️️⚠️
-
 ```js
-var [request, response, loading, error] = useFetch('https://example.com')
+var [data, setData, api] = useFetch('/api')
 
 // want to use object destructuring? You can do that too
-var {
-  request,
-  response, // 🚨 Do not destructure the `response` object!
-  loading,
+var { data, setData, ...api } = useFetch('/api')
+
+const {
+  loading,  // ONLY CHANGES WHEN CALLED VIA NON-LAZY
   error,
-  data,
   cache,    // methods: get, set, has, delete, clear (like `new Map()`)
+  // lazy methods
   get,
   post,
   put,
   patch,
   delete    // don't destructure `delete` though, it's a keyword
-  del,      // <- that's why we have this (del). or use `request.delete`
   mutate,   // GraphQL
   query,    // GraphQL
   abort
-} = useFetch('https://example.com')
-
-// 🚨 Do not destructure the `response` object!
-// 🚨 This just shows what fields are available in it.
-var {
-  ok,
-  status,
-  headers,
-  data,
-  type,
-  statusText,
-  url,
-  body,
-  bodyUsed,
-  redirected,
-  // methods
-  json,
-  text,
-  formData,
-  blob,
-  arrayBuffer,
-  clone
-} = response
+} = api
 
 var {
-  loading,
-  error,
-  data,
-  cache,  // methods: get, set, has, delete, clear (like `new Map()`)
-  get,
-  post,
-  put,
-  patch,
-  delete  // don't destructure `delete` though, it's a keyword
-  del,    // <- that's why we have this (del). or use `request.delete`
-  mutate, // GraphQL
-  query,  // GraphQL
-  abort
-} = request
+  data,    // the json value (or whatever responseType) of the response
+  error,   // if we get a bad network call, this is the error
+  path,    // in this case, would be `/api`
+  // all the rest are normal fields of the JS Response class
+  ...response
+} = await api.get()
 ```
 
 <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=_-GujYZFCKI&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=6'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
@@ -377,17 +378,13 @@ var {
 </details>
 
 
-<details><summary><b>Relative routes <code>useFetch</code></b></summary>
+<details><summary><b>Conditional <code>useFetch</code></b></summary>
 
 ```jsx
-var request = useFetch('https://example.com')
-
-request.post('/todos', {
-  no: 'way'
-})
+// var [, setTodos, todosAPI] = useFetch('/todos', { lazy: true })
 ```
 
-<a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=JWDL_AVOYT0&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=10'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a>
+<!-- <a target="_blank" rel="noopener noreferrer" href='https://www.youtube.com/watch?v=JWDL_AVOYT0&list=PLZIwrWkE9rCdUybd8t3tY-mUMvXkCdenW&index=10'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a> -->
 
 </details>
 
@@ -397,15 +394,21 @@ request.post('/todos', {
 
 
 ```jsx
-const { get, abort, loading, data: repos } = useFetch('https://api.github.com/search/repositories?q=')
+const [repos = [], setRepos, reposAPI] = useFetch('https://api.github.com/search/repositories?q=', { lazy: true })
 
 // the line below is not isomorphic, but for simplicity we're using the browsers `encodeURI`
-const searchGithubRepos = e => get(encodeURI(e.target.value))
+const [searching, setSearching] = useState(false)
+const searchGithubRepos = e => {
+  setSearching(true)
+  const { data: repos, ok } = await reposAPI.get(encodeURI(e.target.value))
+  if (ok) setRepos(repos.data.items)
+  setSearching(false)
+}
 
 <>
   <input onChange={searchGithubRepos} />
-  <button onClick={abort}>Abort</button>
-  {loading ? 'Loading...' : repos.data.items.map(repo => (
+  <button onClick={reposAPI.abort}>Abort</button>
+  {searching ? 'Searching...' : repos.map(repo => (
     <div key={repo.id}>{repo.name}</div>
   ))}
 </>
@@ -430,14 +433,19 @@ const QUERY = `
 `
 
 function App() {
-  const request = useFetch('http://example.com')
+  const [user = {},, userAPI] = useFetch(QUERY, { lazy: true })
 
-  const getTodosForUser = id => request.query(QUERY, { userID: id })
+  const [loading, setLoading] = useState(false)
+  const getTodosForUser = async id => {
+    setLoading(true)
+    await userAPI.query({ userID: id })
+    setLoading(false)
+  }
 
   return (
     <>
       <button onClick={() => getTodosForUser('theUsersID')}>Get User's Todos</button>
-      {request.loading ? 'Loading...' : <pre>{request.data}</pre>}
+      {loading ? 'Loading...' : <pre>{user.name}</pre>}
     </>
   )
 }
@@ -445,7 +453,7 @@ function App() {
 </details>
 
 
-<details><summary><b>GraphQL Mutation <code>useFetch</code></b></summary>
+<!-- <details><summary><b>GraphQL Mutation <code>useFetch</code></b></summary>
 
 The `Provider` allows us to set a default `url`, `options` (such as headers) and so on.
 
@@ -475,14 +483,14 @@ function App() {
   )
 }
 ```
-</details>
+</details> -->
 
-
+<!-- 
 <details><summary><b><code>Provider</code> using the GraphQL <code>useMutation</code> and <code>useQuery</code></b></summary>
 
 ##### Query for todos
 ```jsx
-import { useQuery } from 'use-http'
+import { useQuery } from 'uf'
 
 export default function QueryComponent() {
   
@@ -515,7 +523,7 @@ export default function QueryComponent() {
 
 ##### Add a new todo
 ```jsx
-import { useMutation } from 'use-http'
+import { useMutation } from 'uf'
 
 export default function MutationComponent() {
   const [todoTitle, setTodoTitle] = useState('')
@@ -545,11 +553,11 @@ export default function MutationComponent() {
 }
 ```
 
-
 ##### Adding the Provider
 These props are defaults used in every request inside the `<Provider />`. They can be overwritten individually
+
 ```jsx
-import { Provider } from 'use-http'
+import { Provider } from 'uf'
 import QueryComponent from './QueryComponent'
 import MutationComponent from './MutationComponent'
 
@@ -568,9 +576,9 @@ function App() {
     <Provider/>
   )
 }
-
 ```
-</details>
+
+</details> -->
 
 
 <details id='interceptors'><summary><b>Request/Response Interceptors</b></summary>
@@ -578,7 +586,7 @@ function App() {
 This example shows how we can do authentication in the `request` interceptor and how we can camelCase the results in the `response` interceptor
     
 ```jsx
-import { Provider } from 'use-http'
+import { Provider } from 'uf'
 import { toCamel } from 'convert-keys'
 
 function App() {
@@ -626,17 +634,17 @@ function App() {
 This example shows how we can upload a file using `useFetch`.
     
 ```jsx
-import useFetch from 'use-http'
+import useFetch from 'uf'
 
 const FileUploader = () => {
   const [file, setFile] = useState()
   
-  const { post } = useFetch('https://example.com/upload')
+  const { post } = useFetch('/upload')
 
   const uploadFile = async () => {
     const data = new FormData()
     data.append('file', file)
-    if (file instanceof FormData) await post(data)
+    await post(data)
   }
 
   return (
@@ -650,34 +658,6 @@ const FileUploader = () => {
 ```
 </details>
 
-<details><summary><b>Handling Different Response Types</b></summary>
-    
-This example shows how we can get `.json()`, `.text()`, `.formData()`, `.blob()`, `.arrayBuffer()`, and all the other [http response methods](https://developer.mozilla.org/en-US/docs/Web/API/Response#Methods). By default, `useFetch` 1st tries to call `response.json()` under the hood, if that fails it's backup is `response.text()`. If that fails, then you need a different response type which is where this comes in.
-
-```js
-import useFetch from 'use-http'
-
-const App = () => {
-  const [name, setName] = useState('')
-  
-  const { get, loading, error, response } = useFetch('http://example.com')
-
-  const handleClick = async () => {
-    await get('/users/1?name=true') // will return just the user's name
-    const text = await response.text()
-    setName(text)
-  }
-  
-  return (
-    <>
-      <button onClick={handleClick}>Load Data</button>
-      {error && error.messge}
-      {loading && "Loading..."}
-      {name && <div>{name}</div>}
-    </>
-  )
-}
-```
 
 <a target="_blank" rel="noopener noreferrer" href='https://codesandbox.io/s/usefetch-different-response-types-c6csw'><img  width='150px' height='30px' src='https://codesandbox.io/static/img/play-codesandbox.svg' /></a> 
 <!-- <a target="_blank" rel="noopener noreferrer" href='XXXXXX'><img  width='150px' height='30px' src='https://github.com/ava/use-http/raw/master/public/watch-youtube-video.png' /></a> -->
@@ -689,19 +669,19 @@ const App = () => {
 This example shows how to remove a header all together. Let's say you have `<Provider url='url.com' options={{ headers: { Authentication: 'Bearer MY_TOKEN' } }}><App /></Provider>`, but for one api call, you don't want that header in your `useFetch` at all for one instance in your app. This would allow you to remove that.
 
 ```js
-import useFetch from 'use-http'
+import useFetch from 'uf'
 
 const Todos = () => {
   // let's say for this request, you don't want the `Accept` header at all
-  const { loading, error, data: todos = [] } = useFetch('/todos', globalOptions => {
+  const [todos = [],, todosAPI]= useFetch('/todos', globalOptions => {
     delete globalOptions.headers.Accept
     return globalOptions
-  }, []) // onMount
+  })
   return (
     <>
-      {error && error.messge}
-      {loading && "Loading..."}
-      {todos && <ul>{todos.map(todo => <li key={todo.id}>{todo.title}</li>)}</ul>}
+      {todosAPI.error && todosAPI.error.messge}
+      {todosAPI.loading && "Loading Initial Todos..."}
+      {todos.map(todo => <li key={todo.id}>{todo.title}</li>)}
     </>
   )
 }
@@ -724,10 +704,10 @@ const App = () => {
 In this example you can see how `retryOn` will retry on a status code of `305`, or if we choose the `retryOn()` function, it returns a boolean to decide if we will retry. With `retryDelay` we can either have a fixed delay, or a dynamic one by using `retryDelay()`. Make sure `retries` is set to at minimum `1` otherwise it won't retry the request. If `retries > 0` without `retryOn` then by default we always retry if there's an error or if `!response.ok`. If `retryOn: [400]` and `retries > 0` then we only retry on a response status of `400`.
 
 ```js
-import useFetch from 'use-http'
+import useFetch from 'uf'
 
-const TestRetry = () => {
-  const { response, get } = useFetch('https://httpbin.org/status/305', {
+const TodosRetry = () => {
+  const [todos = []] = useFetch('https://httpbin.org/status/305', {
     // make sure `retries` is set otherwise it won't retry
     retries: 1,
     retryOn: [305],
@@ -747,12 +727,7 @@ const TestRetry = () => {
     }
   })
 
-  return (
-    <>
-      <button onClick={() => get()}>CLICK</button>
-      <pre>{JSON.stringify(response, null, 2)}</pre>
-    </>
-  )
+  return todos.map(todo => <div key={todo.id}>{todo.title}</div>
 }
 ```
 
@@ -760,22 +735,18 @@ const TestRetry = () => {
 
 </details>
 
-Overview
+Options
 --------
 
+<!-- 
 ### Hooks
 
 | Hook                | Description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
 | `useFetch` | The base hook |
 | `useQuery` | For making a GraphQL query |
-| `useMutation` | For making a GraphQL mutation |
-    
-</details>
+| `useMutation` | For making a GraphQL mutation | -->
 
-
-### Options
-    
 This is exactly what you would pass to the normal js `fetch`, with a little extra. All these options can be passed to the `<Provider options={/* every option below */} />`, or directly to `useFetch`. If you have both in the `<Provider />` and in `useFetch`, the `useFetch` options will overwrite the ones from the `<Provider />`
 
 | Option                | Description                                                               |  Default     |
@@ -796,7 +767,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | `retries` | When a request fails or times out, retry the request this many times. By default it will not retry.    | `0` |
 | `retryDelay` | You can retry with certain intervals i.e. 30 seconds `30000` or with custom logic (i.e. to increase retry intervals). | `1000` |
 | `retryOn` | You can retry on certain http status codes or have custom logic to decide whether to retry or not via a function. Make sure `retries > 0` otherwise it won't retry. | `[]` |
-| `suspense` | Enables Experimental React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | `false` |
+| `suspense` | Enables React Suspense mode. [example](https://codesandbox.io/s/usefetch-suspense-i22wv) | `false` |
 | `timeout` | The request will be aborted/cancelled after this amount of time. This is also the interval at which `retries` will be made at. **in milliseconds**. If set to `0`, it will not timeout except for browser defaults.       | `0` |
 
 ```jsx
@@ -884,7 +855,7 @@ const options = {
     }
   },
 
-  // enables experimental React Suspense mode
+  // enables React Suspense mode
   suspense: true, // defaults to `false`
   
   // amount of time before the request get's canceled/aborted
@@ -896,7 +867,7 @@ useFetch(options)
 <Provider options={options}><ResOfYourApp /></Provider>
 ```
 
-Who's using use-http?
+Who's using useFetch?
 ----------------------
 
 Does your company use use-http? Consider sponsoring the project to fund new features, bug fixes, and more.

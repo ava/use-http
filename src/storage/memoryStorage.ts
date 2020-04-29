@@ -16,17 +16,17 @@ const getMemoryStorage = ({ cacheLife }: { cacheLife: number }): Cache => {
     return expired || !inMemoryStorage[responseID]
   }
 
-  const get = async (responseID: string) => {
+  const get = (responseID: string) => {
     if (isExpired(responseID)) return
     return inMemoryStorage[responseID] as Response
   }
 
-  const set = async (responseID: string, res: Response) => {
+  const set = (responseID: string, res: Response) => {
     inMemoryStorage[responseID] = res
     inMemoryStorage[`${responseID}:ts`] = cacheLife > 0 ? Date.now() + cacheLife : 0
   }
 
-  const has = async (responseID: string) => !isExpired(responseID)
+  const has = (responseID: string) => !isExpired(responseID)
 
   const clear = async () => {
     inMemoryStorage = {}

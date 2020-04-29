@@ -69,7 +69,7 @@ export default function useFetchArgs(
   invariant(isFunction(retryDelay) || Number.isInteger(retryDelay as number) && retryDelay >= 0, '`retryDelay` must be a positive number or a function returning a positive number.')
   const isValidRetryOn = isFunction(retryOn) || (Array.isArray(retryOn) && retryOn.every(isPositiveNumber))
   invariant(isValidRetryOn, '`retryOn` must be an array of positive numbers or a function returning a boolean.')
-  const loading = options.loading || Array.isArray(dependencies)
+  const loading = options.loading || Array.isArray(dependencies) || !options.lazy
 
   const interceptors = useMemo((): Interceptors => {
     const final: Interceptors = {}

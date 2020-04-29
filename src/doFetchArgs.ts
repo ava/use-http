@@ -89,11 +89,7 @@ export default async function doFetchArgs<TData = any>(
     return opts
   })()
 
-  // TODO: if the body is a file, and this is a large file, it might exceed the size
-  // limit of the key size. Potential solution: base64 the body
-  // used to tell if a request has already been made
-  const responseID = Object.entries({ url, method, body: options.body || '' })
-    .map(([key, value]) => `${key}:${value}`).join('||')
+  const responseID = path + route
 
   return {
     url,

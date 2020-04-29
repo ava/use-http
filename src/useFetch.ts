@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useCallback, useRef, useReducer, useMemo } from 'react'
 import useSSR from 'use-ssr'
 import useRefState from 'urs'
@@ -19,11 +20,12 @@ import {
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, sleep, makeError } from './utils'
+import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, sleep, makeError, isEmpty } from './utils'
 import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
 
+const DATA_CACHE = {}
 
 function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { host, path, customOptions, requestInit, dependencies } = useFetchArgs(...args)
@@ -31,6 +33,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     cacheLife,
     cachePolicy, // 'cache-first' by default
     interceptors,
+    lazy,
     onAbort,
     onError,
     onNewData,
@@ -51,8 +54,6 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { isServer } = useSSR()
 
   const controller = useRef<AbortController>()
-  const res = useRef<Res<TData>>({} as Res<TData>)
-  const data = useRef<TData>(defaults.data)
   const timedout = useRef(false)
   const attempt = useRef(0)
   const error = useRef<any>()
@@ -61,10 +62,15 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const suspender = useRef<Promise<any>>()
   const mounted = useRef(false)
 
+  const [data, setData] = useRefState<TData>(defaults.data)
   const [loading, setLoading] = useRefState(defaults.loading)
-  const forceUpdate = useReducer(() => ({}), [])[1]
+  const rerender = useReducer(() => ({}), [])[1]
 
-  const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
+  if (cachePolicy === CACHE_FIRST && DATA_CACHE[path]) {
+    data.current = DATA_CACHE[path]
+  }
+
+  const makeFetch = useDeepCallback((method: HTTPMethod, isAutomanaged = false): FetchData => {
 
     const doFetch = async (routeOrBody?: RouteOrBody, body?: UFBody): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
@@ -87,10 +93,18 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       
       error.current = undefined
 
+      if (lazy && !mounted.current && cachePolicy === CACHE_FIRST) {
+        data.current = response.isCached ? await response.cache : defaults.data
+        return
+      }
+      console.log('response.id', response.id)
+
       // don't perform the request if there is no more data to fetch (pagination)
       if (perPage > 0 && !hasMore.current && !error.current) return data.current
 
-      if (!suspense) setLoading(true)
+      if (!suspense && !lazy) {
+        setLoading(true)
+      }
 
       const timer = timeout && setTimeout(() => {
         timedout.current = true
@@ -107,14 +121,12 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         } else {
           newRes = await fetch(url, options)
         }
-        res.current = newRes.clone()
-
         newData = await tryGetData(newRes, defaults.data, responseType)
-        res.current.data = onNewData(data.current, newData)
-
-        res.current = interceptors.response ? await interceptors.response({ response: res.current }) : res.current
-        invariant('data' in res.current, 'You must have `data` field on the Response returned from your `interceptors.response`')
-        data.current = res.current.data as TData
+        newRes.data  = onNewData(data.current, newData)
+        newRes = interceptors.response ? await interceptors.response({ response: newRes }) : newRes
+        newData = newRes.data as TData
+        invariant('data' in newRes, 'You must have `data` field on the Response returned from your `interceptors.response`')
+        data.current = newData
 
         const opts = { attempt: attempt.current, response: newRes }
         const shouldRetry = (
@@ -128,14 +140,23 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
 
         if (shouldRetry) {
           const theData = await retry(opts, routeOrBody, body)
-          return theData
+          return {
+            config: options,
+            data: newData,
+            ok: newRes?.ok,
+            status: newRes?.status,
+            statusText: newRes?.statusText,
+            error: error.current,
+            path: response.id
+          }
         }
 
-        if (cachePolicy === CACHE_FIRST) {
+        if (cachePolicy === CACHE_FIRST && !isEmpty(newData) && method === HTTPMethod.GET) {
           await cache.set(response.id, newRes.clone())
+          DATA_CACHE[response.id] = newData
         }
 
-        if (Array.isArray(data.current) && !!(data.current.length % perPage)) hasMore.current = false
+        if (Array.isArray(newData) && !!(newData.length % perPage)) hasMore.current = false
       } catch (err) {
         if (attempt.current >= retries && timedout.current) error.current = makeError('AbortError', 'Timeout Error')
         const opts = { attempt: attempt.current, error: err }
@@ -160,11 +181,19 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       }
 
       if (newRes && !newRes.ok && !error.current) error.current = makeError(newRes.status, newRes.statusText)
-      if (!suspense) setLoading(false)
+      if (!suspense && !lazy) setLoading(false)
       if (attempt.current === retries) attempt.current = 0
       if (error.current) onError({ error: error.current })
 
-      return data.current
+      return {
+        config: options,
+        data: newData,
+        ok: newRes?.ok,
+        status: newRes?.status,
+        statusText: newRes?.statusText,
+        error: error.current,
+        path: response.id
+      }
     } // end of doFetch()
 
     const retry = async (opts: RetryOpts, routeOrBody?: RouteOrBody, body?: UFBody) => {
@@ -174,8 +203,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       }
       attempt.current++
       if (delay) await sleep(delay)
-      const d = await doFetch(routeOrBody, body)
-      return d
+      const res = await doFetch(routeOrBody, body)
+      return res
     }
 
     if (suspense) {
@@ -189,48 +218,54 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
             suspenseStatus.current = 'error'
           }
         )
-        forceUpdate()
-        const newData = await suspender.current
-        return newData
+        rerender()
+        const res = await suspender.current
+        return res
       }
     }
 
     return doFetch
-  }, [isServer, onAbort, requestInit, host, path, interceptors, cachePolicy, perPage, timeout, persist, cacheLife, onTimeout, defaults.data, onNewData, forceUpdate, suspense])
+  }, [isServer, onAbort, requestInit, host, path, interceptors, cachePolicy, perPage, timeout, persist, cacheLife, onTimeout, defaults.data, onNewData, rerender, suspense])
 
   const post = useCallback(makeFetch(HTTPMethod.POST), [makeFetch])
-  const del = useCallback(makeFetch(HTTPMethod.DELETE), [makeFetch])
-
-  const request: Req<TData> = useMemo(() => Object.defineProperties({
+  const request: Req<TData> = useMemo(() => ({
     get: makeFetch(HTTPMethod.GET),
     post,
     patch: makeFetch(HTTPMethod.PATCH),
     put: makeFetch(HTTPMethod.PUT),
-    del,
-    delete: del,
+    delete: makeFetch(HTTPMethod.DELETE),
     abort: () => controller.current && controller.current.abort(),
     query: (query: any, variables: any) => post({ query, variables }),
     mutate: (mutation: any, variables: any) => post({ mutation, variables }),
-    cache
-  }, {
-    loading: { get: () => loading.current },
-    error: { get: () => error.current },
-    data: { get: () => data.current },
-  }), [makeFetch])
+    cache,
+    loading: loading.current,
+    error: error.current
+  }), [makeFetch, loading.current, error.current])
 
-  const response = useMemo(() => toResponseObject<TData>(res, data), [])
+  const setDataRevalidate = useCallback(async (dataOrFn, shouldRevalidate = true) => {
+    // if (currentResponse.isCached)
+    data.current = isFunction(dataOrFn) ? dataOrFn(data.current) : dataOrFn
+    // this will need to trigger the other components with this
+    // route to re-run their non-lazy useFetch requests
+    if (shouldRevalidate) {
+      // TODO: revalidation
+    }
+  }, [])
 
   // onMount/onUpdate
   useEffect((): any => {
-    mounted.current = true
-    if (Array.isArray(dependencies)) {
-      const methodName = requestInit.method || HTTPMethod.GET
-      const methodLower = methodName.toLowerCase() as keyof ReqMethods
-      const req = request[methodLower] as NoArgs
-      req()
+    if (Array.isArray(dependencies) || !mounted.current) {
+      (async () => {
+        const methodName = (requestInit.method || HTTPMethod.GET) as HTTPMethod
+        // const methodLower = methodName.toLowerCase() as keyof ReqMethods
+        const req = makeFetch(methodName, true) as NoArgs
+        await req()
+        mounted.current = true
+      })()
+      console.log('mounted.current', mounted.current)
     }
     return () => mounted.current = false
-  }, dependencies)
+  }, [makeFetch, host + path, ...(dependencies || [])])
 
   // Cancel any running request when unmounting to avoid updating state after component has unmounted
   // This can happen if a request's promise resolves after component unmounts
@@ -246,8 +281,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     }
   }
   return Object.assign<UseFetchArrayReturn<TData>, UseFetchObjectReturn<TData>>(
-    [request, response, loading.current, error.current],
-    { request, response, ...request, loading: loading.current, data: data.current, error: error.current }
+    [data.current, setDataRevalidate, request],
+    { request, setDataRevalidate, ...request, loading: loading.current, data: data.current, error: error.current }
   )
 }
 

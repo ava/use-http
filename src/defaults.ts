@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Flatten, CachePolicies, UseFetchArgsReturn } from './types'
 import { isObject } from './utils'
 
@@ -23,7 +24,8 @@ export const useFetchArgsDefaults: UseFetchArgsReturn = {
     timeout: 0,
     // defaults
     data: undefined,
-    loading: false
+    loading: false,
+    lazy: false
   },
   requestInit: {
     headers: {

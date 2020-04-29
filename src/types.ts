@@ -178,6 +178,7 @@ export interface CustomOptions {
   cachePolicy: CachePolicies
   data: any
   interceptors: Interceptors
+  lazy: boolean
   loading: boolean
   onAbort: () => void
   onError: OnError
