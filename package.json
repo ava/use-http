@@ -1,12 +1,12 @@
 {
-  "name": "use-http",
-  "version": "1.0.8",
-  "homepage": "https://use-http.com",
+  "name": "uf",
+  "version": "0.1.0",
+  "homepage": "https://usefet.ch",
   "main": "dist/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alex-cory/use-http.git"
+    "url": "https://github.com/ava/uf.git"
   },
   "dependencies": {
     "urs": "^0.0.4",
