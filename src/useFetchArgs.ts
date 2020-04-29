@@ -49,7 +49,12 @@ export default function useFetchArgs(
         ...defaults.headers,
         ...globalOptions.headers,
         ...localOptions.headers
-      } as Headers
+      } as Headers,
+      interceptors: {
+        ...defaults.interceptors,
+        ...globalOptions.interceptors,
+        ...localOptions.interceptors
+      } as Interceptors
     } as Options
     if (overwriteGlobalOptions) return overwriteGlobalOptions(finalOptions)
     return finalOptions
@@ -79,7 +84,7 @@ export default function useFetchArgs(
   }, [options])
 
   const customOptions = useMemo((): CustomOptions => {
-    const customOptionKeys = Object.keys(useFetchArgsDefaults.customOptions) as (keyof CustomOptions)[] // Array<keyof CustomOptions> 
+    const customOptionKeys = Object.keys(useFetchArgsDefaults.customOptions) as (keyof CustomOptions)[] // Array<keyof CustomOptions>
     const customOptions = customOptionKeys.reduce((opts, key) => {
       (opts as any)[key] = options[key]
       return opts
