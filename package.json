@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "urs": "^0.0.4",
-    "use-ssr": "^1.0.22"
+    "use-ssr": "^1.0.22",
+    "utility-types": "^3.10.0"
   },
   "peerDependencies": {
     "react": "^16.13.1",
@@ -49,7 +50,6 @@
     "react-test-renderer": "^16.13.1",
     "ts-jest": "^25.3.0",
     "typescript": "^3.8.3",
-    "utility-types": "^3.10.0",
     "watch": "^1.0.2"
   },
   "scripts": {
