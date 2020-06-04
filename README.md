@@ -929,7 +929,8 @@ If you have feature requests, [submit an issue][1] to let us know what you would
 
 Todos
 ------
-
+- [ ] [OSS analytics](https://www.npmjs.com/package/@scarf/scarf)
+- [ ] [contributors](https://github.com/all-contributors/all-contributors)
 - [ ] prefetching
 - [ ] global cache state management
 - [ ] optimistic updates
