@@ -427,7 +427,7 @@ function App() {
   return (
     <Provider url='http://example.com' options={options}>
       <SomeComponent />
-    <Provider/>
+    </Provider>
   )
 }
 
@@ -712,7 +712,7 @@ function App() {
     <Provider url='http://example.com' options={options}>
       <QueryComponent />
       <MutationComponent />
-    <Provider/>
+    </Provider>
   )
 }
 ```
