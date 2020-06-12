@@ -16,7 +16,7 @@
     "moduleResolution": "node",
     "noImplicitAny": true,
     "noUnusedLocals": true,
-    "outDir": "dist",
+    "outDir": "dist/esm",
     "sourceMap": true,
     "strict": true,
     "target": "es5"
