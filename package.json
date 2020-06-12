@@ -1,8 +1,9 @@
 {
   "name": "use-http",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "homepage": "https://use-http.com",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -53,9 +54,11 @@
     "watch": "^1.0.2"
   },
   "scripts": {
-    "prepublishOnly": "yarn build:production # runs before publish",
-    "build": "rm -rf dist && tsc --module CommonJS",
+    "prepublishOnly": "yarn build:production && yarn build:production:esm # runs before publish",
+    "build": "rm -rf dist/cjs && tsc --module CommonJS --outDir dist/cjs",
+    "build:esm": "rm -rf dist/esm && tsc", 
     "build:production": "yarn build -p tsconfig.production.json",
+    "build:production:esm": "yarn build:esm -p tsconfig.production.json",
     "build:watch": "rm -rf dist && tsc -w --module CommonJS",
     "tsc": "tsc -p . --noEmit && tsc -p ./src/__tests__",
     "test:browser": "yarn tsc && jest -c ./config/jest.config.js --env=jsdom",
