@@ -2,6 +2,7 @@ import { useMemo, useEffect, MutableRefObject, useRef, useCallback, DependencyLi
 import useSSR from 'use-ssr'
 import { RequestInitJSON, Options, Res, HTTPMethod, ResponseType } from './types'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
+import deepEqual from 'dequal'
 
 /**
  * Used for error checking. If the condition is false, throw an error
@@ -153,7 +154,7 @@ export const tryGetData = async (res: Response | undefined, defaultData: any, re
   return !isEmpty(defaultData) && isEmpty(data) ? defaultData : data
 }
 
-const tryRetry = async <T = any>(res: Response, types: ResponseType, i: number = 0): Promise<T> => {
+const tryRetry = async <T = any>(res: Response, types: ResponseType, i = 0): Promise<T> => {
   try {
     return await (res.clone() as any)[types[i]]()
   } catch (error) {
@@ -232,7 +233,7 @@ export const serializeResponse = async (response: Response) => {
 
 function useDeepCompareMemoize(value: DependencyList) {
   const ref = useRef<DependencyList>()
-  if (JSON.stringify(value) !== JSON.stringify(ref.current)) ref.current = value
+  if (!deepEqual(value, ref.current)) ref.current = value
   return ref.current as DependencyList
 }
 

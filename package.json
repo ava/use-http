@@ -10,6 +10,7 @@
     "url": "https://github.com/alex-cory/use-http.git"
   },
   "dependencies": {
+    "dequal": "^1.0.0",
     "urs": "^0.0.7",
     "use-ssr": "^1.0.22",
     "utility-types": "^3.10.0"
@@ -56,7 +57,7 @@
   "scripts": {
     "prepublishOnly": "yarn build:production && yarn build:production:esm # runs before publish",
     "build": "rm -rf dist/cjs && tsc --module CommonJS --outDir dist/cjs",
-    "build:esm": "rm -rf dist/esm && tsc", 
+    "build:esm": "rm -rf dist/esm && tsc",
     "build:production": "yarn build -p tsconfig.production.json",
     "build:production:esm": "yarn build:esm -p tsconfig.production.json",
     "build:watch": "rm -rf dist && tsc -w --module CommonJS",
