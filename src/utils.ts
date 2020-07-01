@@ -154,7 +154,7 @@ export const tryGetData = async (res: Response | undefined, defaultData: any, re
   return !isEmpty(defaultData) && isEmpty(data) ? defaultData : data
 }
 
-const tryRetry = async <T = any>(res: Response, types: ResponseType, i = 0): Promise<T> => {
+const tryRetry = async <T = any>(res: Response, types: ResponseType, i: number = 0): Promise<T> => {
   try {
     return await (res.clone() as any)[types[i]]()
   } catch (error) {
