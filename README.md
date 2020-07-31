@@ -808,7 +808,7 @@ const options = {
 
   // Cache responses to improve speed and reduce amount of requests
   // Only one request to the same endpoint will be initiated unless cacheLife expires for 'cache-first'.
-  cachePolicy: 'cache-first' // 'no-cache'
+  cachePolicy: 'cache-first', // 'no-cache'
   
   // set's the default for the `data` field
   data: [],
