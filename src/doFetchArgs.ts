@@ -53,7 +53,7 @@ export default async function doFetchArgs<TData = any>(
 
   const headers = ((): HeadersInit | null => {
     const contentType = ((initialOptions.headers || {}) as any)['Content-Type']
-    const shouldAddContentType = !!contentType || [HTTPMethod.POST, HTTPMethod.PUT].includes(method) && !(body instanceof FormData)
+    const shouldAddContentType = !!contentType || [HTTPMethod.POST, HTTPMethod.PUT, HTTPMethod.PATCH].includes(method) && !(body instanceof FormData)
     const headers: any = { ...initialOptions.headers }
     if (shouldAddContentType) {
       // default content types http://bit.ly/2N2ovOZ
