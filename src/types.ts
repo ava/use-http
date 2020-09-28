@@ -11,7 +11,7 @@ export enum HTTPMethod {
   PUT = 'PUT',
 }
 
-// https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy
+// https://www.apollographql.com/docs/react/api/react/hoc/#optionsfetchpolicy
 export enum CachePolicies {
   /**
    * This is the default value where we always try reading data

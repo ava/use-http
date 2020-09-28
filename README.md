@@ -781,7 +781,7 @@ This is exactly what you would pass to the normal js `fetch`, with a little extr
 | Option                | Description                                                               |  Default     |
 | --------------------- | --------------------------------------------------------------------------|------------- |
 | `cacheLife` | After a successful cache update, that cache data will become stale after this duration       | `0` |
-| `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
+| `cachePolicy` | These will be the same ones as Apollo's [fetch policies](https://www.apollographql.com/docs/react/api/react/hoc/#optionsfetchpolicy). Possible values are `cache-and-network`, `network-only`, `cache-only`, `no-cache`, `cache-first`. Currently only supports **`cache-first`**  or **`no-cache`**      | `cache-first` |
 | `data` | Allows you to set a default value for `data`       | `undefined` |
 | `interceptors.request` | Allows you to do something before an http request is sent out. Useful for authentication if you need to refresh tokens a lot.  | `undefined` |
 | `interceptors.response` | Allows you to do something after an http response is recieved. Useful for something like camelCasing the keys of the response.  | `undefined` |
@@ -808,7 +808,7 @@ const options = {
 
   // Cache responses to improve speed and reduce amount of requests
   // Only one request to the same endpoint will be initiated unless cacheLife expires for 'cache-first'.
-  cachePolicy: 'cache-first' // 'no-cache'
+  cachePolicy: 'cache-first', // 'no-cache'
   
   // set's the default for the `data` field
   data: [],
