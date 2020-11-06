@@ -860,11 +860,11 @@ Who's using use-http?
   <a href="https://github.com/microsoft/DLWorkspace">
     <img height="140px" src="https://github.com/ava/use-http/raw/master/public/microsoft-logo.png" />
   </a>
+  <a href="https://beapte.com">
+    <img height="140px" src="https://user-images.githubusercontent.com/5455859/98412764-5c5abe00-202d-11eb-9a2d-73377cfbfd86.png" />
+  </a>
   <a href="https://github.com/mozilla/Spoke">
     <img height="140px" src="https://github.com/ava/use-http/raw/master/public/mozilla.png" />
-  </a>
-  <a href="https://beapte.com">
-    <img height="140px" src="https://github.com/ava/use-http/raw/master/public/apte-logo.png" />
   </a>
 </div>
 

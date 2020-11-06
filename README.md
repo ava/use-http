@@ -911,6 +911,13 @@ Does your company use use-http? Consider sponsoring the project to fund new feat
   <a href="https://github.com/mozilla/Spoke">
     <img height="110px" src="https://github.com/ava/use-http/raw/master/public/mozilla.png" />
   </a>
+  <a href="https://beapte.com">
+    <img height="140px" src="https://github.com/ava/use-http/raw/master/public/apte-logo.png" />
+  </a>
+  <img height="140px" src="https://user-images.githubusercontent.com/5455859/98412764-5c5abe00-202d-11eb-9a2d-73377cfbfd86.png" />
+<!--   <a href="#">
+    <img height="140px" src="https://user-images.githubusercontent.com/5455859/98412608-1aca1300-202d-11eb-9d20-295ce85bda9c.png" />
+  </a> -->
 </p>
 
 Browser Support
