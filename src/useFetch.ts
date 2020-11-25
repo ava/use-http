@@ -84,7 +84,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         body,
         interceptors.request
       )
-      
+
       error.current = undefined
 
       // don't perform the request if there is no more data to fetch (pagination)
@@ -151,8 +151,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           const theData = await retry(opts, routeOrBody, body)
           return theData
         }
-        if (err.name !== 'AbortError') error.current = makeError(err.name, err.message)
- 
+        if (err.name !== 'AbortError') {
+          error.current = err
+        }
+
       } finally {
         timedout.current = false
         if (timer) clearTimeout(timer)

@@ -1084,6 +1084,23 @@ describe('useFetch - BROWSER - errors', (): void => {
     expect(result.current.data).toEqual([])
   })
 
+  it('should set the `error` with custom errors', async (): Promise<void> => {
+    const customError = { id: 'Custom Error'}
+    fetch.resetMocks()
+    fetch.mockResponse(() => Promise.reject(customError))
+    const { result } = renderHook(
+      () => useFetch('https://example.com', {
+        data: [],
+        cachePolicy: NO_CACHE
+      })
+    )
+    expect(result.current.data).toEqual([])
+    expect(result.current.loading).toBe(false)
+    await act(result.current.get)
+    expect(result.current.error).toEqual(customError)
+    expect(result.current.data).toEqual([])
+  })
+
   it('should reset the error after each call', async (): Promise<void> => {
     fetch.resetMocks()
     fetch.mockRejectOnce(expectedError)
