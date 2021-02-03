@@ -208,6 +208,8 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     post,
     patch: makeFetch(HTTPMethod.PATCH),
     put: makeFetch(HTTPMethod.PUT),
+    options: makeFetch(HTTPMethod.OPTIONS),
+    head: makeFetch(HTTPMethod.HEAD),
     del,
     delete: del,
     abort: () => controller.current && controller.current.abort(),
