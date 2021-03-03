@@ -902,6 +902,7 @@ Who's using use-http?
 Does your company use use-http? Consider sponsoring the project to fund new features, bug fixes, and more.
 
 <p align="center">
+  <img height="140px" src="https://user-images.githubusercontent.com/5455859/98412764-5c5abe00-202d-11eb-9a2d-73377cfbfd86.png" />
   <a href="https://ava.inc" style="margin-right: 2rem;" target="_blank">
     <img width="110px" src="https://ava.inc/ava-logo-green.png" />
   </a>
@@ -914,7 +915,7 @@ Does your company use use-http? Consider sponsoring the project to fund new feat
   <a href="https://beapte.com">
     <img height="140px" src="https://github.com/ava/use-http/raw/master/public/apte-logo.png" />
   </a>
-  <img height="140px" src="https://user-images.githubusercontent.com/5455859/98412764-5c5abe00-202d-11eb-9a2d-73377cfbfd86.png" />
+
 <!--   <a href="#">
     <img height="140px" src="https://user-images.githubusercontent.com/5455859/98412608-1aca1300-202d-11eb-9d20-295ce85bda9c.png" />
   </a> -->
