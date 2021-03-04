@@ -2,6 +2,7 @@ import { useMemo, useEffect, MutableRefObject, useRef, useCallback, DependencyLi
 import useSSR from 'use-ssr'
 import { RequestInitJSON, Options, Res, HTTPMethod, ResponseType } from './types'
 import { FunctionKeys, NonFunctionKeys } from 'utility-types'
+import deepEqual from 'dequal'
 
 /**
  * Used for error checking. If the condition is false, throw an error
@@ -232,7 +233,7 @@ export const serializeResponse = async (response: Response) => {
 
 function useDeepCompareMemoize(value: DependencyList) {
   const ref = useRef<DependencyList>()
-  if (JSON.stringify(value) !== JSON.stringify(ref.current)) ref.current = value
+  if (!deepEqual(value, ref.current)) ref.current = value
   return ref.current as DependencyList
 }
 

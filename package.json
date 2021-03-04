@@ -10,6 +10,7 @@
     "url": "https://github.com/alex-cory/use-http.git"
   },
   "dependencies": {
+    "dequal": "^1.0.0",
     "urs": "^0.0.7",
     "use-ssr": "^1.0.22",
     "utility-types": "^3.10.0"
