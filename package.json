@@ -1,6 +1,6 @@
 {
   "name": "use-http",
-  "version": "1.1.0",
+  "version": "1.0.18",
   "homepage": "https://use-http.com",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -10,8 +10,8 @@
     "url": "https://github.com/alex-cory/use-http.git"
   },
   "dependencies": {
-    "urs": "^0.0.7",
-    "use-ssr": "^1.0.22",
+    "urs": "^0.0.8",
+    "use-ssr": "^1.0.24",
     "utility-types": "^3.10.0"
   },
   "peerDependencies": {
