@@ -105,7 +105,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (response.isCached && cachePolicy === CACHE_FIRST) {
           newRes = response.cached as Response
         } else {
-          newRes = await fetch(url, options)
+          newRes = (await fetch(url, options)).clone()
         }
         res.current = newRes.clone()
 
