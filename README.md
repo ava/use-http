@@ -328,6 +328,10 @@ var {
   patch,
   delete    // don't destructure `delete` though, it's a keyword
   del,      // <- that's why we have this (del). or use `request.delete`
+  head,
+  options,
+  connect,
+  trace,
   mutate,   // GraphQL
   query,    // GraphQL
   abort

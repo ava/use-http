@@ -105,7 +105,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
         if (response.isCached && cachePolicy === CACHE_FIRST) {
           newRes = response.cached as Response
         } else {
-          newRes = await fetch(url, options)
+          newRes = (await fetch(url, options)).clone()
         }
         res.current = newRes.clone()
 
@@ -208,6 +208,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     post,
     patch: makeFetch(HTTPMethod.PATCH),
     put: makeFetch(HTTPMethod.PUT),
+    options: makeFetch(HTTPMethod.OPTIONS),
+    head: makeFetch(HTTPMethod.HEAD),
+    connect: makeFetch(HTTPMethod.CONNECT),
+    trace: makeFetch(HTTPMethod.TRACE),
     del,
     delete: del,
     abort: () => controller.current && controller.current.abort(),

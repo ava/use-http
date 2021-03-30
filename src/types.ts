@@ -9,6 +9,8 @@ export enum HTTPMethod {
   PATCH = 'PATCH',
   POST = 'POST',
   PUT = 'PUT',
+  CONNECT = 'CONNECT',
+  TRACE = 'TRACE'
 }
 
 // https://www.apollographql.com/docs/react/api/react/hoc/#optionsfetchpolicy
