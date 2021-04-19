@@ -1,5 +1,6 @@
-import useFetch, { FetchContext } from '.'
 import { useContext, useCallback } from 'react'
+import useFetch from './useFetch'
+import { FetchContext } from './FetchContext'
 import { ReqBase } from './types'
 import { invariant, isString, useURLRequiredInvariant } from './utils'
 
