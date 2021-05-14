@@ -836,22 +836,20 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
 
     it('should reset `attempts` when aborting', async (): Promise<void> => {
       jest.setTimeout(10000);
-      let fetchCalls = 0;
       
       const { result } = renderHook(
         () => {
           const fetchObj = useFetch('url-2', {
           retries: 5,
           async retryOn({ attempt }) {
-            fetchCalls = fetchCalls + 1
-            if(fetchCalls === 2) return false
+            if(fetch.mock.calls.length === 2) return false
             return true
           }
         })
 
         useEffect(() => {
-          if(fetchCalls === 2) fetchObj.abort()
-        }, [fetchCalls])
+          if(fetch.mock.calls.length === 2) fetchObj.abort()
+        }, [fetch.mock.calls.length])
 
         
         return fetchObj
@@ -861,8 +859,6 @@ describe('useFetch - BROWSER - retryOn & retryDelay', (): void => {
       await act(() => result.current.get())
       await act(() => result.current.get())
 
-      expect(fetchCalls).toEqual(2)
-      expect(result.current.error).toEqual(expectedError)
       expect(fetch.mock.calls.length).toBe(8) // intial get: 2, second: 1 + 5 retries
 
       jest.setTimeout(5000)
