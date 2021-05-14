@@ -214,7 +214,10 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     trace: makeFetch(HTTPMethod.TRACE),
     del,
     delete: del,
-    abort: () => controller.current && controller.current.abort(),
+    abort: () => {
+      attempt.current = 0;
+      return controller.current && controller.current.abort();
+    },
     query: (query: any, variables: any) => post({ query, variables }),
     mutate: (mutation: any, variables: any) => post({ mutation, variables }),
     cache
