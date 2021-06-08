@@ -131,7 +131,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
           return theData
         }
 
-        if (cachePolicy === CACHE_FIRST) {
+        if (cachePolicy === CACHE_FIRST && !response.isCached) {
           await cache.set(response.id, newRes.clone())
         }
 
