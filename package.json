@@ -1,6 +1,6 @@
 {
   "name": "use-http",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "homepage": "https://use-http.com",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
