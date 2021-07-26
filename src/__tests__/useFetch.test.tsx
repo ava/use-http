@@ -10,7 +10,7 @@ import { toCamel } from 'convert-keys'
 import { renderHook, act } from '@testing-library/react-hooks'
 import mockConsole from 'jest-mock-console'
 import * as mockdate from 'mockdate'
-import defaults from '../defaults'
+import defaults, { useFetchArgsDefaults } from '../defaults'
 
 import { Res, IncomingOptions, CachePolicies } from '../types'
 import { emptyCustomResponse, sleep, makeError, addSlash } from '../utils'
@@ -581,10 +581,25 @@ describe('useFetch - BROWSER - interceptors', (): void => {
     )
   }
 
+  const response = jest.fn(({ response: res }) => res)
+  const mockResInterceptorWrapper = ({ children }: { children?: ReactNode }): ReactElement => {
+    const options: IncomingOptions = {
+      interceptors: {
+        request,
+        response
+      },
+      cachePolicy: NO_CACHE
+    }
+    return (
+      <Provider url='https://example.com' options={options}>{children}</Provider>
+    )
+  }
+
   afterEach((): void => {
     fetch.resetMocks()
     cleanup()
     request.mockClear()
+    response.mockClear()
   })
 
   beforeEach((): void => {
@@ -641,6 +656,44 @@ describe('useFetch - BROWSER - interceptors', (): void => {
     await act(result.current.get)
     expect(fetch.mock.calls[0][0]).toBe('https://example.com')
     expect(request.mock.calls[0][0].url).toBe('https://example.com')
+  })
+
+  it('should pass the proper request to `interceptors.response`', async (): Promise<void> => {
+    const { result } = renderHook(
+      () => useFetch(),
+      { wrapper: mockResInterceptorWrapper }
+    )
+    await act(result.current.get)
+    expect(fetch.mock.calls[0][0]).toBe('https://example.com')
+    expect(request.mock.calls[0][0].url).toBe('https://example.com')
+    expect(response.mock.calls[0][0].request).toStrictEqual(useFetchArgsDefaults.requestInit)
+  })
+
+  it('should pass custom request options to `interceptors.response`', async (): Promise<void> => {
+    const customReqOptions: RequestInit = {
+      headers: {
+        Authorization: 'Bearer TOKEN'
+      },
+      credentials: 'include',
+      cache: 'no-store'
+    }
+    const { result } = renderHook(
+      () => useFetch('https://custom-url.com', customReqOptions),
+      { wrapper: mockResInterceptorWrapper }
+    )
+    await act(result.current.get)
+    expect(fetch.mock.calls[0][0]).toBe('https://custom-url.com')
+    expect(request.mock.calls[0][0].url).toBe('https://custom-url.com')
+
+    const expectedOpts = {
+      headers: {
+        ...useFetchArgsDefaults.requestInit.headers,
+        ...customReqOptions.headers
+      },
+      credentials: customReqOptions.credentials,
+      cache: customReqOptions.cache
+    }
+    expect(response.mock.calls[0][0].request).toStrictEqual(expectedOpts)
   })
 
   it('should still call both interceptors when using cache', async (): Promise<void> => {

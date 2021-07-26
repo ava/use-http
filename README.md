@@ -130,7 +130,7 @@ function Todos() {
       {loading && 'Loading...'}
       {todos.map(todo => (
         <div key={todo.id}>{todo.title}</div>
-      )}
+      ))}
     </>
   )
 }
@@ -157,7 +157,7 @@ function Todos() {
       {loading && 'Loading...'}
       {data.map(todo => (
         <div key={todo.id}>{todo.title}</div>
-      )}
+      ))}
     </>
   )
 }
@@ -602,7 +602,7 @@ function App() {
         return options
       },
       // every time we make an http request, before getting the response back, this will run
-      response: async ({ response }) => {
+      response: async ({ response, request }) => {
         // unfortunately, because this is a JS Response object, we have to modify it directly.
         // It shouldn't have any negative affect since this is getting reset on each request.
         const res = response
@@ -822,8 +822,10 @@ const options = {
     request: async ({ options, url, path, route }) => { // `async` is not required
       return options // returning the `options` is important
     },
-    response: async ({ response }) => {
-      // note: `response.data` is equivalent to `await response.json()`
+    response: async ({ response, request }) => {
+      // notes:
+      // - `response.data` is equivalent to `await response.json()`
+      // - `request` is an object matching the standard fetch's options
       return response // returning the `response` is important
     }
   },
