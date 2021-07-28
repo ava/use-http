@@ -262,6 +262,8 @@ export const makeError = (name: string | number, message: string) => {
  * (path = '?foo=bar')                       => '?foo=bar'
  * (path = 'foo')                            => '/foo'
  * (path = '/foo')                           => '/foo'
+ * (path = '&foo=bar', url = 'a.com?b=k')    => '&foo=bar'
+ * (path = '&foo=bar')                       => '&foo=bar'
  */
 export const addSlash = (input?: string, url?: string) => {
   if (!input) return ''
