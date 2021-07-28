@@ -266,10 +266,10 @@ export const makeError = (name: string | number, message: string) => {
 export const addSlash = (input?: string, url?: string) => {
   if (!input) return ''
   if (!url) {
-    if (input.startsWith('?') || input.startsWith('/')) return input
+    if (input.startsWith('?') || input.startsWith('&') || input.startsWith('/')) return input
     return `/${input}`
   }
   if (url.endsWith('/') && input.startsWith('/')) return input.substr(1)
-  if (!url.endsWith('/') && !input.startsWith('/') && !input.startsWith('?')) return `/${input}`
+  if (!url.endsWith('/') && !input.startsWith('/') && !input.startsWith('?') && !input.startsWith('&')) return `/${input}`
   return input
 }
