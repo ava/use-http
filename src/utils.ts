@@ -255,6 +255,7 @@ export const makeError = (name: string | number, message: string) => {
  * (path = '', url = '' || null | undefined) => ''
  * (path = '?foo=bar', url = 'a.com')        => '?foo=bar'
  * (path = '?foo=bar', url = 'a.com/')       => '?foo=bar'
+ * (path = 'bar', url = 'a.com/?foo=')       => 'bar'
  * (path = 'foo', url = 'a.com')             => '/foo'
  * (path = 'foo', url = 'a.com/')            => 'foo'
  * (path = '/foo', url = 'a.com')            => '/foo'
@@ -262,14 +263,16 @@ export const makeError = (name: string | number, message: string) => {
  * (path = '?foo=bar')                       => '?foo=bar'
  * (path = 'foo')                            => '/foo'
  * (path = '/foo')                           => '/foo'
+ * (path = '&foo=bar', url = 'a.com?b=k')    => '&foo=bar'
+ * (path = '&foo=bar')                       => '&foo=bar'
  */
 export const addSlash = (input?: string, url?: string) => {
   if (!input) return ''
   if (!url) {
-    if (input.startsWith('?') || input.startsWith('/')) return input
+    if (input.startsWith('?') || input.startsWith('&') || input.startsWith('/')) return input
     return `/${input}`
   }
   if (url.endsWith('/') && input.startsWith('/')) return input.substr(1)
-  if (!url.endsWith('/') && !input.startsWith('/') && !input.startsWith('?')) return `/${input}`
+  if (!url.endsWith('/') && !input.startsWith('/') && !input.startsWith('?') && !input.startsWith('&') && !url.includes('?') ) return `/${input}`
   return input
 }
