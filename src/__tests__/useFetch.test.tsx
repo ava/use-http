@@ -133,7 +133,7 @@ describe('useFetch - BROWSER - basic functionality', (): void => {
 })
 
 describe('useFetch - handling host/path/route parsing properly', (): void => {
-  it ('should have addSlash run properly', (): void => {
+  it('should have addSlash run properly', (): void => {
     expect(addSlash('', '')).toBe('')
     expect(addSlash('')).toBe('')
     expect(addSlash('?foo=bar', 'a.com')).toBe('?foo=bar')
@@ -145,6 +145,9 @@ describe('useFetch - handling host/path/route parsing properly', (): void => {
     expect(addSlash('foo', 'a.com/')).toBe('foo')
     expect(addSlash('foo')).toBe('/foo')
     expect(addSlash('/foo')).toBe('/foo')
+    expect(addSlash('bar', 'a.com?foo=')).toBe('bar')
+    expect(addSlash('&foo=bar', 'a.com?b=k')).toBe('&foo=bar')
+    expect(addSlash('&foo=bar')).toBe('&foo=bar')
   })
 })
 
@@ -159,7 +162,7 @@ describe('useFetch - responseType', (): void => {
     fetch.resetMocks()
     fetch.mockResponseOnce('Alex Cory')
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('a-fake-url', { data: '', responseType: 'json' }, []), // onMount === true
+      () => useFetch('a-fake-url', { data: '', responseType: 'json' }, []) // onMount === true
     )
     expect(result.current.data).toEqual('')
     expect(result.current.loading).toBe(true)
@@ -174,7 +177,7 @@ describe('useFetch - responseType', (): void => {
     const expectedString = 'Alex Cory'
     fetch.mockResponseOnce(JSON.stringify(expectedString))
     const { result, waitForNextUpdate } = renderHook(
-      () => useFetch('a-fake-url', { data: '' }, []), // onMount === true
+      () => useFetch('a-fake-url', { data: '' }, []) // onMount === true
     )
     expect(result.current.data).toEqual('')
     expect(result.current.loading).toBe(true)
@@ -203,7 +206,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     fetch.mockResponseOnce(JSON.stringify(expected))
   })
 
-  it(`should work correctly: useFetch({ data: [] }, [])`, async (): Promise<void> => {
+  it('should work correctly: useFetch({ data: [] }, [])', async (): Promise<void> => {
     const { result, waitForNextUpdate } = renderHook(
       () => useFetch({ data: {} }, []), // onMount === true
       { wrapper }
@@ -294,7 +297,7 @@ describe('useFetch - BROWSER - with <Provider />', (): void => {
     expect(fetch.mock.calls.length).toBe(2)
   })
 
-  it(`should execute GET using Provider url: useFetch('/people', [])`, async (): Promise<
+  it('should execute GET using Provider url: useFetch(\'/people\', [])', async (): Promise<
     void
   > => {
     const { result, waitForNextUpdate } = renderHook(
@@ -711,7 +714,7 @@ describe('useFetch - BROWSER - interceptors', (): void => {
             return response
           }
         }
-      }, []),
+      }, [])
     )
     await waitForNextUpdate()
     await act(result.current.get)
@@ -1138,7 +1141,7 @@ describe('useFetch - BROWSER - errors', (): void => {
   })
 
   it('should set the `error` with custom errors', async (): Promise<void> => {
-    const customError = { id: 'Custom Error'}
+    const customError = { id: 'Custom Error' }
     fetch.resetMocks()
     fetch.mockResponse(() => Promise.reject(customError))
     const { result } = renderHook(
