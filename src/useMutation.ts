@@ -7,7 +7,7 @@ import { invariant, isString, useURLRequiredInvariant } from './utils'
 type ArrayDestructure<TData = any> = [
   TData | undefined,
   boolean,
-  Error,
+  Error | undefined,
   (variables?: object) => Promise<any>,
 ]
 interface ObjectDestructure<TData = any> extends ReqBase<TData> {
