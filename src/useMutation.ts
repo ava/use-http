@@ -1,12 +1,13 @@
-import useFetch, { FetchContext } from '.'
 import { useContext, useCallback } from 'react'
+import useFetch from './useFetch'
+import { FetchContext } from './FetchContext'
 import { ReqBase } from './types'
 import { invariant, isString, useURLRequiredInvariant } from './utils'
 
 type ArrayDestructure<TData = any> = [
   TData | undefined,
   boolean,
-  Error,
+  Error | undefined,
   (variables?: object) => Promise<any>,
 ]
 interface ObjectDestructure<TData = any> extends ReqBase<TData> {
@@ -16,18 +17,18 @@ type UseMutation<TData = any> = ArrayDestructure<TData> & ObjectDestructure<TDat
 
 export const useMutation = <TData = any>(
   urlOrMutation: string | TemplateStringsArray,
-  mutationArg?: string,
+  mutationArg?: string
 ): UseMutation<TData> => {
   const context = useContext(FetchContext)
 
   useURLRequiredInvariant(
     !!context.url && Array.isArray(urlOrMutation),
-    'useMutation',
+    'useMutation'
   )
   useURLRequiredInvariant(
-    !!context.url || isString(urlOrMutation) && !mutationArg,
+    !!context.url || (isString(urlOrMutation) && !mutationArg),
     'useMutation',
-    'OR you need to do useMutation("https://example.com", `your graphql mutation`)',
+    'OR you need to do useMutation("https://example.com", `your graphql mutation`)'
   )
 
   // regular no context: useMutation('https://example.com', `graphql MUTATION`)
@@ -38,7 +39,7 @@ export const useMutation = <TData = any>(
   if (Array.isArray(urlOrMutation) && context.url) {
     invariant(
       !mutationArg,
-      'You cannot have a 2nd argument when using tagged template literal syntax with useMutation.',
+      'You cannot have a 2nd argument when using tagged template literal syntax with useMutation.'
     )
     url = context.url
     MUTATION = urlOrMutation[0]
@@ -49,17 +50,17 @@ export const useMutation = <TData = any>(
     MUTATION = urlOrMutation as string
   }
 
-  const { loading, error, ...request } = useFetch<TData>(url as string)
+  const { loading, error, cache, ...request } = useFetch<TData>(url as string)
 
   const mutate = useCallback(
     (inputs?: object): Promise<any> => request.mutate(MUTATION, inputs),
-    [MUTATION, request],
+    [MUTATION, request]
   )
 
   const data = (request.data as TData & { data: any } || { data: undefined }).data
 
   return Object.assign<ArrayDestructure<TData>, ObjectDestructure<TData>>(
     [data, loading, error, mutate],
-    { data, loading, error, mutate },
+    { data, loading, error, mutate, cache }
   )
 }

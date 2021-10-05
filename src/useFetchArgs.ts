@@ -1,187 +1,102 @@
-import { OptionsMaybeURL, NoUrlOptions, Flatten, CachePolicies } from './types'
-import { Interceptors, OverwriteGlobalOptions, Options } from './types'
-import { isString, isObject, invariant, pullOutRequestInit } from './utils'
+import { Interceptors, OverwriteGlobalOptions, Options, IncomingOptions, UseFetchArgsReturn, CustomOptions } from './types'
+import { isString, isObject, invariant, pullOutRequestInit, isFunction, isPositiveNumber } from './utils'
 import { useContext, useMemo } from 'react'
 import FetchContext from './FetchContext'
-import { isFunction } from './utils'
-
-type UseFetchArgsReturn = {
-  customOptions: {
-    retries: number
-    timeout: number
-    path: string
-    url: string
-    interceptors: Interceptors
-    onAbort: () => void
-    onTimeout: () => void
-    onNewData: (currData: any, newData: any) => any
-    perPage: number
-    cachePolicy: CachePolicies
-    cacheLife: number
-  },
-  requestInit: RequestInit
-  defaults: {
-    loading: boolean
-    data?: any
-  },
-  dependencies?: any[]
-}
-
-export const useFetchArgsDefaults = {
-  customOptions: {
-    retries: 0,
-    timeout: 30000, // 30 seconds
-    path: '',
-    url: '',
-    interceptors: {},
-    onAbort: () => {},
-    onTimeout: () => {},
-    onNewData: (currData: any, newData: any) => newData,
-    perPage: 0,
-    cachePolicy: CachePolicies.CACHE_FIRST,
-    cacheLife: 0
-  },
-  requestInit: { headers: {} },
-  defaults: {
-    data: undefined,
-    loading: false,
-  },
-  dependencies: undefined,
-}
-
-const defaults = Object.entries(useFetchArgsDefaults).reduce((acc, [key, value]) => {
-  if (isObject(value)) return { ...acc, ...value }
-  return { ...acc, [key]: value }
-}, {} as Flatten<UseFetchArgsReturn>)
+import defaults, { useFetchArgsDefaults } from './defaults'
 
 
 export default function useFetchArgs(
-  urlOrOptionsOrOverwriteGlobal?: string | OptionsMaybeURL | OverwriteGlobalOptions,
-  optionsNoURLsOrOverwriteGlobalOrDeps?: NoUrlOptions | OverwriteGlobalOptions | any[],
+  urlOrPathOrOptionsOrOverwriteGlobalOptions?: string | IncomingOptions | OverwriteGlobalOptions,
+  optionsOrOverwriteGlobalOrDeps?: IncomingOptions | OverwriteGlobalOptions | any[],
   deps?: any[]
 ): UseFetchArgsReturn {
+  invariant(
+    !(isObject(urlOrPathOrOptionsOrOverwriteGlobalOptions) && isObject(optionsOrOverwriteGlobalOrDeps)),
+    'You cannot have a 2nd parameter of useFetch as object when your first argument is an object.'
+  )
   const context = useContext(FetchContext)
-  context.options = useMemo(() => {
-    const overwriteGlobalOptions = (isFunction(urlOrOptionsOrOverwriteGlobal) ? urlOrOptionsOrOverwriteGlobal : isFunction(optionsNoURLsOrOverwriteGlobalOrDeps) && optionsNoURLsOrOverwriteGlobalOrDeps) as OverwriteGlobalOptions
-    if (!overwriteGlobalOptions) return context.options
-    // make a copy so we make sure not to modify the original context
-    return overwriteGlobalOptions({ ...context.options } as Options)
-  }, [context.options])
 
-  const urlOrOptions = urlOrOptionsOrOverwriteGlobal as string | OptionsMaybeURL
-  const optionsNoURLs = optionsNoURLsOrOverwriteGlobalOrDeps as NoUrlOptions
-
-  invariant(
-    !(isObject(urlOrOptions) && isObject(optionsNoURLs)),
-    'You cannot have a 2nd parameter of useFetch when your first argument is an object config.',
-  )
-
-  const url = useMemo((): string => {
-    if (isString(urlOrOptions) && urlOrOptions) return urlOrOptions as string
-    if (isObject(urlOrOptions) && !!urlOrOptions.url) return urlOrOptions.url
+  const host = useMemo((): string => {
+    const maybeHost = urlOrPathOrOptionsOrOverwriteGlobalOptions as string
+    if (isString(maybeHost) && maybeHost.includes('://')) return maybeHost
     if (context.url) return context.url
-    return defaults.url
-  }, [context.url, urlOrOptions])
+    return defaults.host
+  }, [context.url, urlOrPathOrOptionsOrOverwriteGlobalOptions])
 
-  invariant(
-    !!url,
-    'The first argument of useFetch is required unless you have a global url setup like: <Provider url="https://example.com"></Provider>',
-  )
+  const path = useMemo((): string | undefined => {
+    const maybePath = urlOrPathOrOptionsOrOverwriteGlobalOptions as string
+    if (isString(maybePath) && !maybePath.includes('://')) return maybePath
+  }, [urlOrPathOrOptionsOrOverwriteGlobalOptions])
+
+  const overwriteGlobalOptions = useMemo((): OverwriteGlobalOptions | undefined => {
+    if (isFunction(urlOrPathOrOptionsOrOverwriteGlobalOptions)) return urlOrPathOrOptionsOrOverwriteGlobalOptions as OverwriteGlobalOptions
+    if (isFunction(optionsOrOverwriteGlobalOrDeps)) return optionsOrOverwriteGlobalOrDeps as OverwriteGlobalOptions
+  }, [])
+
+  const options = useMemo(() => {
+    let localOptions = { headers: {} } as IncomingOptions
+    if (isObject(urlOrPathOrOptionsOrOverwriteGlobalOptions)) {
+      localOptions = urlOrPathOrOptionsOrOverwriteGlobalOptions as IncomingOptions
+    } else if (isObject(optionsOrOverwriteGlobalOrDeps)) {
+      localOptions = optionsOrOverwriteGlobalOrDeps as IncomingOptions
+    }
+    let globalOptions = context.options
+    const finalOptions = {
+      ...defaults,
+      ...globalOptions,
+      ...localOptions,
+      headers: {
+        ...defaults.headers,
+        ...globalOptions.headers,
+        ...localOptions.headers
+      } as Headers,
+      interceptors: {
+        ...defaults.interceptors,
+        ...globalOptions.interceptors,
+        ...localOptions.interceptors
+      } as Interceptors
+    } as Options
+    if (overwriteGlobalOptions) return overwriteGlobalOptions(finalOptions)
+    return finalOptions
+  }, [urlOrPathOrOptionsOrOverwriteGlobalOptions, overwriteGlobalOptions, context.options])
+
+  const requestInit = useMemo(() => pullOutRequestInit(options), [options])
 
   const dependencies = useMemo((): any[] | undefined => {
-    if (Array.isArray(optionsNoURLsOrOverwriteGlobalOrDeps)) return optionsNoURLsOrOverwriteGlobalOrDeps
+    if (Array.isArray(optionsOrOverwriteGlobalOrDeps)) return optionsOrOverwriteGlobalOrDeps
     if (Array.isArray(deps)) return deps
     return defaults.dependencies
-  }, [optionsNoURLsOrOverwriteGlobalOrDeps, deps])
+  }, [optionsOrOverwriteGlobalOrDeps, deps])
 
-  const data = useField('data', urlOrOptions, optionsNoURLs)
-  const path = useField<string>('path', urlOrOptions, optionsNoURLs)
-  const timeout = useField<number>('timeout', urlOrOptions, optionsNoURLs)
-  const retries = useField<number>('retries', urlOrOptions, optionsNoURLs)
-  const onAbort = useField<() => void>('onAbort', urlOrOptions, optionsNoURLs)
-  const onTimeout = useField<() => void>('onTimeout', urlOrOptions, optionsNoURLs)
-  const onNewData = useField<() => void>('onNewData', urlOrOptions, optionsNoURLs)
-  const perPage = useField<number>('perPage', urlOrOptions, optionsNoURLs)
-  const cachePolicy = useField<CachePolicies>('cachePolicy', urlOrOptions, optionsNoURLs)
-  const cacheLife = useField<number>('cacheLife', urlOrOptions, optionsNoURLs)
-
-  const loading = useMemo((): boolean => {
-    if (isObject(urlOrOptions)) return !!urlOrOptions.loading || Array.isArray(dependencies)
-    if (isObject(optionsNoURLs)) return !!optionsNoURLs.loading || Array.isArray(dependencies)
-    return defaults.loading || Array.isArray(dependencies)
-  }, [urlOrOptions, optionsNoURLs])
+  const { cacheLife, retries, retryDelay, retryOn } = options
+  invariant(Number.isInteger(cacheLife) && cacheLife >= 0, '`cacheLife` must be a number >= 0')
+  invariant(Number.isInteger(retries) && retries >= 0, '`retries` must be a number >= 0')
+  invariant(isFunction(retryDelay) || Number.isInteger(retryDelay as number) && retryDelay >= 0, '`retryDelay` must be a positive number or a function returning a positive number.')
+  const isValidRetryOn = isFunction(retryOn) || (Array.isArray(retryOn) && retryOn.every(isPositiveNumber))
+  invariant(isValidRetryOn, '`retryOn` must be an array of positive numbers or a function returning a boolean.')
+  const loading = options.loading || Array.isArray(dependencies)
 
   const interceptors = useMemo((): Interceptors => {
-    const contextInterceptors = context.options && context.options.interceptors || {}
-    const final: Interceptors  = { ...contextInterceptors }
-    if (isObject(urlOrOptions) && isObject(urlOrOptions.interceptors)) {
-      if (urlOrOptions.interceptors.request) final.request = urlOrOptions.interceptors.request
-      if (urlOrOptions.interceptors.response) final.response = urlOrOptions.interceptors.response
-    }
-    if (isObject(optionsNoURLs) && isObject(optionsNoURLs.interceptors)) {
-      if (optionsNoURLs.interceptors.request) final.request = optionsNoURLs.interceptors.request
-      if (optionsNoURLs.interceptors.response) final.response = optionsNoURLs.interceptors.response
-    }
+    const final: Interceptors = {}
+    if ('request' in options.interceptors) final.request = options.interceptors.request
+    if ('response' in options.interceptors) final.response = options.interceptors.response
     return final
-  }, [urlOrOptions, optionsNoURLs])
+  }, [options])
 
-  const requestInit = useMemo((): RequestInit => {
-    const contextRequestInit = pullOutRequestInit(context.options as OptionsMaybeURL)
-
-    const requestInitOptions = isObject(urlOrOptions)
-      ? urlOrOptions
-      : isObject(optionsNoURLs)
-      ? optionsNoURLs
-      : {}
-
-    const requestInit = pullOutRequestInit(requestInitOptions)
-
-    return {
-      ...contextRequestInit,
-      ...requestInit,
-      headers: {
-        ...contextRequestInit.headers,
-        ...requestInit.headers,
-      },
-    }
-  }, [urlOrOptions, optionsNoURLs])
+  const customOptions = useMemo((): CustomOptions => {
+    const customOptionKeys = Object.keys(useFetchArgsDefaults.customOptions) as (keyof CustomOptions)[] // Array<keyof CustomOptions>
+    const customOptions = customOptionKeys.reduce((opts, key) => {
+      (opts as any)[key] = options[key]
+      return opts
+    }, {} as CustomOptions)
+    return { ...customOptions, interceptors, loading }
+  }, [interceptors, loading])
 
   return {
-    customOptions: {
-      url,
-      path,
-      interceptors,
-      timeout,
-      retries,
-      onAbort,
-      onTimeout,
-      onNewData,
-      perPage,
-      cachePolicy,
-      cacheLife,
-    },
+    host,
+    path,
+    customOptions,
     requestInit,
-    defaults: {
-      data, 
-      loading
-    },
     dependencies
   }
-}
-
-const useField = <DV = any>(
-  field: keyof OptionsMaybeURL | keyof NoUrlOptions,
-  urlOrOptions?: string | OptionsMaybeURL,
-  optionsNoURLs?: NoUrlOptions | any[]
-) => {
-  const context = useContext(FetchContext)
-  const contextOptions = context.options || {}
-  return useMemo((): DV => {
-    if (isObject(urlOrOptions) && urlOrOptions[field]) return urlOrOptions[field]
-    if (isObject(optionsNoURLs) && (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]) {
-      return (optionsNoURLs as NoUrlOptions)[field as keyof NoUrlOptions]
-    }
-    if (contextOptions[field]) return  contextOptions[field]
-    return defaults[field]
-  }, [urlOrOptions, optionsNoURLs])
 }

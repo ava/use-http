@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { FunctionKeys } from 'utility-types'
 
 export enum HTTPMethod {
   DELETE = 'DELETE',
@@ -8,9 +9,11 @@ export enum HTTPMethod {
   PATCH = 'PATCH',
   POST = 'POST',
   PUT = 'PUT',
+  CONNECT = 'CONNECT',
+  TRACE = 'TRACE'
 }
 
-// https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy
+// https://www.apollographql.com/docs/react/api/react/hoc/#optionsfetchpolicy
 export enum CachePolicies {
   /**
    * This is the default value where we always try reading data
@@ -37,7 +40,7 @@ export enum CachePolicies {
   /**
    * This fetch policy will never return your initial data from the
    * cache. Instead it will always make a request using your network
-   * interface to the server. This fetch policy optimizes for data 
+   * interface to the server. This fetch policy optimizes for data
    * consistency with the server, but at the cost of an instant response
    * to the user when one is available.
    */
@@ -65,18 +68,22 @@ export enum CachePolicies {
 export interface DoFetchArgs {
   url: string
   options: RequestInit
-  requestID: string
+  response: {
+    isCached: boolean
+    id: string
+    cached?: Response
+  }
 }
 
 export interface FetchContextTypes {
   url: string
-  options: Options,
+  options: IncomingOptions
   graphql?: boolean
 }
 
 export interface FetchProviderProps {
   url?: string
-  options?: Options,
+  options?: IncomingOptions
   graphql?: boolean
   children: ReactNode
 }
@@ -89,6 +96,10 @@ export type RouteAndBodyOnly = (
   route: string,
   body: BodyInit | object,
 ) => Promise<any>
+
+export type RouteOrBody = string | BodyInit | object
+export type UFBody = BodyInit | object
+export type RetryOpts = { attempt: number, error?: Error, response?: Response }
 
 export type NoArgs = () => Promise<any>
 
@@ -122,7 +133,8 @@ export interface Data<TData> {
 export interface ReqBase<TData> {
   data: TData | undefined
   loading: boolean
-  error: Error
+  error: Error | undefined
+  cache: Cache
 }
 
 export interface Res<TData> extends Response {
@@ -131,7 +143,7 @@ export interface Res<TData> extends Response {
 
 export type Req<TData = any> = ReqMethods & ReqBase<TData>
 
-export type UseFetchArgs = [(string | OptionsMaybeURL | OverwriteGlobalOptions)?, (NoUrlOptions | OverwriteGlobalOptions | any[])?, any[]?]
+export type UseFetchArgs = [(string | IncomingOptions | OverwriteGlobalOptions)?, (IncomingOptions | OverwriteGlobalOptions | any[])?, any[]?]
 
 export type UseFetchArrayReturn<TData> = [
   Req<TData>,
@@ -149,37 +161,84 @@ export type UseFetchObjectReturn<TData> = ReqBase<TData> &
 export type UseFetch<TData> = UseFetchArrayReturn<TData> &
   UseFetchObjectReturn<TData>
 
-export type Interceptors = {
-  request?: (options: Options, url: string, path: string, route: string) => Promise<Options> | Options
-  response?: (response: Res<any>) => Res<any>
+export type Interceptors<TData = any> = {
+  request?: ({ options, url, path, route }: { options: RequestInit, url?: string, path?: string, route?: string }) => Promise<RequestInit> | RequestInit
+  response?: ({ response }: { response: Res<TData>, request: RequestInit }) => Promise<Res<TData>>
+}
+
+// this also holds the response keys. It mimics js Map
+export type Cache = {
+  get: (name: string) => Promise<Response | undefined>
+  set: (name: string, data: Response) => Promise<void>
+  has: (name: string) => Promise<boolean>
+  delete: (...names: string[]) => Promise<void>
+  clear: () => void
 }
 
 export interface CustomOptions {
-  retries?: number
-  timeout?: number
-  path?: string
-  url?: string
-  loading?: boolean
-  data?: any
-  interceptors?: Interceptors
-  onAbort?: () => void
-  onTimeout?: () => void
-  onNewData?: (currData: any, newData: any) => any
-  perPage?: number
-  cachePolicy?: CachePolicies
-  cacheLife?: number
+  cacheLife: number
+  cachePolicy: CachePolicies
+  data: any
+  interceptors: Interceptors
+  loading: boolean
+  onAbort: () => void
+  onError: OnError
+  onNewData: (currData: any, newData: any) => any
+  onTimeout: () => void
+  persist: boolean
+  perPage: number
+  responseType: ResponseType
+  retries: number
+  retryOn: RetryOn
+  retryDelay: RetryDelay
+  suspense: boolean
+  timeout: number
 }
 
+// these are the possible options that can be passed
+export type IncomingOptions = Partial<CustomOptions> &
+  Omit<RequestInit, 'body'> & { body?: BodyInit | object | null }
+// these options have `context` and `defaults` applied so
+// the values should all be filled
 export type Options = CustomOptions &
   Omit<RequestInit, 'body'> & { body?: BodyInit | object | null }
 
-export type NoUrlOptions = Omit<Options, 'url'>
-
-export type OptionsMaybeURL = NoUrlOptions &
-  Partial<Pick<Options, 'url'>> & { url?: string }
-
-// TODO: this is still yet to be implemented
 export type OverwriteGlobalOptions = (options: Options) => Options
+
+export type RetryOn = (<TData = any>({ attempt, error, response }: RetryOpts) => Promise<boolean>) | number[]
+export type RetryDelay = (<TData = any>({ attempt, error, response }: RetryOpts) => number) | number
+
+export type BodyInterfaceMethods = Exclude<FunctionKeys<Body>, 'body' | 'bodyUsed' | 'formData'>
+export type ResponseType = BodyInterfaceMethods | BodyInterfaceMethods[]
+
+export type OnError = ({ error }: { error: Error }) => void
+
+export type UseFetchArgsReturn = {
+  host: string
+  path?: string
+  customOptions: {
+    cacheLife: number
+    cachePolicy: CachePolicies
+    interceptors: Interceptors
+    onAbort: () => void
+    onError: OnError
+    onNewData: (currData: any, newData: any) => any
+    onTimeout: () => void
+    perPage: number
+    persist: boolean
+    responseType: ResponseType
+    retries: number
+    retryDelay: RetryDelay
+    retryOn: RetryOn | undefined
+    suspense: boolean
+    timeout: number
+    // defaults
+    loading: boolean
+    data?: any
+  }
+  requestInit: RequestInit
+  dependencies?: any[]
+}
 
 /**
  * Helpers
@@ -190,7 +249,7 @@ export type NonObjectKeysOf<T> = {
   [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
 }[keyof T]
 
-export type ObjectValuesOf<T extends Object> = Exclude<
+export type ObjectValuesOf<T extends Record<string, any>> = Exclude<
   Exclude<Extract<ValueOf<T>, object>, never>,
   Array<any>
 >
