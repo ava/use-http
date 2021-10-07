@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "urs": "^0.0.8",
-    "use-ssr": "^1.0.25",
+    "use-ssr": "^1.0.24",
     "utility-types": "^3.10.0"
   },
   "peerDependencies": {
