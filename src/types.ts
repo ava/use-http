@@ -103,10 +103,10 @@ export type RetryOpts = { attempt: number, error?: Error, response?: Response }
 
 export type NoArgs = () => Promise<any>
 
-export type FetchData = (
+export type FetchData<TData> = (
   routeOrBody?: string | BodyInit | object,
   body?: BodyInit | object,
-) => Promise<any>
+) => Promise<TData>
 
 export type RequestInitJSON = RequestInit & {
   headers: {
@@ -114,15 +114,15 @@ export type RequestInitJSON = RequestInit & {
   }
 }
 
-export interface ReqMethods {
-  get: (route?: string) => Promise<any>
-  post: FetchData
-  patch: FetchData
-  put: FetchData
-  del: FetchData
-  delete: FetchData
-  query: (query: string, variables?: BodyInit | object) => Promise<any>
-  mutate: (mutation: string, variables?: BodyInit | object) => Promise<any>
+export interface ReqMethods<TData> {
+  get: (route?: string) => Promise<TData>
+  post: FetchData<TData>
+  patch: FetchData<TData>
+  put: FetchData<TData>
+  del: FetchData<TData>
+  delete: FetchData<TData>
+  query: (query: string, variables?: BodyInit | object) => Promise<TData>
+  mutate: (mutation: string, variables?: BodyInit | object) => Promise<TData>
   abort: () => void
 }
 
@@ -141,7 +141,7 @@ export interface Res<TData> extends Response {
   data?: TData | undefined
 }
 
-export type Req<TData = any> = ReqMethods & ReqBase<TData>
+export type Req<TData = any> = ReqMethods<TData> & ReqBase<TData>
 
 export type UseFetchArgs = [(string | IncomingOptions | OverwriteGlobalOptions)?, (IncomingOptions | OverwriteGlobalOptions | any[])?, any[]?]
 
@@ -153,7 +153,7 @@ export type UseFetchArrayReturn<TData> = [
 ]
 
 export type UseFetchObjectReturn<TData> = ReqBase<TData> &
-  ReqMethods & {
+  ReqMethods<TData> & {
     request: Req<TData>
     response: Res<TData>
   }

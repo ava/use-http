@@ -64,7 +64,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const [loading, setLoading] = useRefState(defaults.loading)
   const forceUpdate = useReducer(() => ({}), [])[1]
 
-  const makeFetch = useDeepCallback((method: HTTPMethod): FetchData => {
+  const makeFetch = useDeepCallback((method: HTTPMethod): FetchData<TData> => {
 
     const doFetch = async (routeOrBody?: RouteOrBody, body?: UFBody): Promise<any> => {
       if (isServer) return // for now, we don't do anything on the server
@@ -231,7 +231,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
     mounted.current = true
     if (Array.isArray(dependencies)) {
       const methodName = requestInit.method || HTTPMethod.GET
-      const methodLower = methodName.toLowerCase() as keyof ReqMethods
+      const methodLower = methodName.toLowerCase() as keyof ReqMethods<TData>
       const req = request[methodLower] as NoArgs
       req()
     }
