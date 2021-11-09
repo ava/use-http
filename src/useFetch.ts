@@ -19,7 +19,7 @@ import {
 } from './types'
 import useFetchArgs from './useFetchArgs'
 import doFetchArgs from './doFetchArgs'
-import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, sleep, makeError } from './utils'
+import { invariant, tryGetData, toResponseObject, useDeepCallback, isFunction, sleep, makeError, isEmpty } from './utils'
 import useCache from './useCache'
 
 const { CACHE_FIRST } = CachePolicies
@@ -229,11 +229,15 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   // onMount/onUpdate
   useEffect((): any => {
     mounted.current = true
-    if (Array.isArray(dependencies)) {
-      const methodName = requestInit.method || HTTPMethod.GET
-      const methodLower = methodName.toLowerCase() as keyof ReqMethods<TData>
-      const req = request[methodLower] as NoArgs
-      req()
+    if (
+      Array.isArray(dependencies) &&
+      (dependencies.length === 0 ||
+        dependencies.filter((d) => !isEmpty(d)).length > 0)
+    ) {
+      const methodName = requestInit.method || HTTPMethod.GET;
+      const methodLower = methodName.toLowerCase() as keyof ReqMethods<TData>;
+      const req = request[methodLower] as NoArgs;
+      req();
     }
     return () => mounted.current = false
   }, dependencies)
