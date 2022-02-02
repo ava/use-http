@@ -272,7 +272,7 @@ const Todos = () => {
       {data.map(todo => <li key={todo.id}>{todo.title}</li>}
       {loading && 'Loading...'}
       {!loading && (
-        <button onClick={() => setPage(page + 1)}>Load More Todos</button>
+        <button onClick={() => setPage(prev => prev + 1)}>Load More Todos</button>
       )}
     </ul>
   )
