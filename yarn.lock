@@ -4561,15 +4561,15 @@ urix@^0.1.0:
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
 
-urs@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/urs/-/urs-0.0.4.tgz#d559d660f2a468e0bb116e0b7b505af57cb59ae4"
-  integrity sha512-+QflFOKa9DmjWclPB2audGCV83uWUnTXHOxLPQyu7XXcaY9yQ4+Tb3UEm8m4N7abJ0kJUCUAQBpFlq6mx80j9g==
+urs@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/urs/-/urs-0.0.8.tgz#8a0e0b792073cdb7eec926d08ab1e017ffab3f66"
+  integrity sha512-LaSSPpr91XrVA3vW2zPupw4K6DSQEDKdL4yQZX1mO2fpljIMpB5zctrjRvxLurelWSgKsHsCmfHNCImscryirQ==
 
-use-ssr@^1.0.22:
-  version "1.0.22"
-  resolved "https://registry.yarnpkg.com/use-ssr/-/use-ssr-1.0.22.tgz#a43c2587b1907fabda61c6542b80542c619228fe"
-  integrity sha512-0kA0qfI4uw7PeRsz7X0XOdl2CdbgMBSFhj3n5JzMu8ZNlcZ2NrarhGjdmoxW1Q5d3WtNKbCNIjns/CKhpL7z8g==
+use-ssr@^1.0.24:
+  version "1.0.25"
+  resolved "https://registry.yarnpkg.com/use-ssr/-/use-ssr-1.0.25.tgz#c7f54b59d6e52db26749b1d4115a650101a190bd"
+  integrity sha512-VYF8kJKI+X7+U4XgGoUER2BUl0vIr+8OhlIhyldgSGE0KHMoDRXPvWeHUUeUktq7ACEOVLzXGq1+QRxcvtwvyQ==
 
 use@^3.1.0:
   version "3.1.1"
