@@ -1320,3 +1320,48 @@ describe('useFetch - BROWSER - persistence', (): void => {
     expect(result.error.message).toBe('You cannot use option \'persist\' with cachePolicy: network-only 🙅‍♂️')
   })
 })
+
+
+describe('useFetch - racing conditions', (): void => {
+  afterEach((): void => {
+    cleanup()
+    fetch.resetMocks()
+  })
+
+  it('should fail to process a text response with responseType: `json`', async (): Promise<void> => {
+    cleanup()
+    fetch.resetMocks()
+    
+    let finisDdelayedResponse = () => {};
+    const delayedResponse = new Promise<string>((_resolve) => {
+      finisDdelayedResponse = () => {_resolve(JSON.stringify("first"))};
+    });
+
+    fetch.mockResponseOnce(() => delayedResponse)
+    const {rerender, result, waitForNextUpdate} = renderHook(
+      (props:{page:number}) => useFetch('a-fake-url-'+props.page, { data: '', responseType: 'json' }, [props.page]),
+      {initialProps: {page:1}}
+    )
+
+    // Load page 1 (but it doesn't resolve yet)
+    expect(result.current.loading).toBe(true)
+    expect(result.current.data).toBe("");
+
+    // Change to page 2 and let it resolve directly
+    fetch.mockResponseOnce(JSON.stringify("second"))
+    act(() => rerender({ page: 2 }))
+
+    expect(result.current.loading).toBe(true)
+    expect(result.current.data).toBe("");
+    await waitForNextUpdate()
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toBe("second");
+
+    // Now the first delayed page is finished.
+    // The newest data should not be taken into account, as it is an old request
+    // That is only now finished.
+    act(() => finisDdelayedResponse());
+    expect(result.current.loading).toBe(false)
+    expect(result.current.data).toBe("second");
+  })
+})
