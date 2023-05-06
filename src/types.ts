@@ -115,12 +115,27 @@ export type RequestInitJSON = RequestInit & {
 }
 
 export interface ReqMethods<TData> {
-  get: (route?: string) => Promise<TData>
-  post: FetchData<TData>
-  patch: FetchData<TData>
-  put: FetchData<TData>
-  del: FetchData<TData>
-  delete: FetchData<TData>
+  get: <T = TData>(route?: string) => Promise<T>
+  post: <T = TData>(
+      routeOrBody?: string | BodyInit | object,
+      body?: BodyInit | object,
+  ) => Promise<T>
+  patch: <T = TData>(
+    routeOrBody?: string | BodyInit | object,
+    body?: BodyInit | object,
+  ) => Promise<T>
+  put: <T = TData>(
+    routeOrBody?: string | BodyInit | object,
+    body?: BodyInit | object,
+  ) => Promise<T>
+  del: <T = TData>(
+    routeOrBody?: string | BodyInit | object,
+    body?: BodyInit | object,
+  ) => Promise<T>
+  delete: <T = TData>(
+    routeOrBody?: string | BodyInit | object,
+    body?: BodyInit | object,
+  ) => Promise<T>
   query: (query: string, variables?: BodyInit | object) => Promise<TData>
   mutate: (mutation: string, variables?: BodyInit | object) => Promise<TData>
   abort: () => void
