@@ -640,7 +640,7 @@ const FileUploader = () => {
   const uploadFile = async () => {
     const data = new FormData()
     data.append('file', file)
-    if (file instanceof FormData) await post(data)
+    if (data instanceof FormData) await post(data)
   }
 
   return (
