@@ -158,7 +158,7 @@ function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
       } finally {
         timedout.current = false
         if (timer) clearTimeout(timer)
-        controller.current = undefined
+        if (controller.current === theController) controller.current = undefined
       }
 
       if (newRes && !newRes.ok && !error.current) error.current = makeError(newRes.status, newRes.statusText)
